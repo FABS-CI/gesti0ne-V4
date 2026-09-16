@@ -32,7 +32,7 @@ function StockAuditPage() {
   const resumeQ = useQuery({
     queryKey: ["stock-audit-resume"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("audit_stock_anomalies");
+      const { data, error } = await supabase.rpc("audit_stock_resume");
       if (error) throw error;
       return data as unknown as Resume;
     },
