@@ -64,6 +64,27 @@ erreurs console et des appels base de données en échec, puis scénario de bout
 - Pages stock, audit stock, produits, alertes, dépôts, transferts : ouvertes sans erreur.
 - Inventaire de test supprimé après contrôle. Compilation TypeScript : aucune erreur.
 
+---
+
+## Module 4 — Paiements & comptabilité
+
+| Domaine | Problème constaté | Gravité | Cause | Correction |
+|---|---|---|---|---|
+| Journal comptable | La page « Comptabilité » n'affichait aucune écriture (erreur serveur à chaque ouverture) | 🔴 Critique | Les colonnes « origine » et « montant total » attendues par l'écran n'existaient pas en base | Colonnes ajoutées, alimentées automatiquement et synchronisées avec le montant existant |
+| Saisie manuelle | « Nouvelle écriture comptable » : l'enregistrement échouait systématiquement | 🔴 Critique | Même cause (colonnes manquantes) ; l'écriture n'était en outre rattachée à aucun exercice, donc invisible dans le journal | Enregistrement réparé ; rattachement automatique à l'exercice de la date saisie |
+| Audit comptabilité & finances | Tous les compteurs restaient vides et le verdict affichait « ANOMALIES DÉTECTÉES » en permanence | 🔴 Critique | La fonction interrogée renvoyait une liste de lignes, pas le résumé attendu par l'écran | Nouveau résumé d'audit (écritures, factures, paiements, déséquilibres, incohérences, orphelins, doublons) avec verdict calculé |
+| Audit comptabilité | Les tableaux « Factures incohérentes » et « Soldes clients » n'auraient affiché que des cases vides s'il y avait eu des anomalies | 🟠 Important | Les colonnes renvoyées ne correspondaient pas à celles affichées | Fonctions de détail alignées sur l'affichage (référence, client, montants, écart, problème) |
+| Audit comptabilité | Les boutons « Recalculer » (un client / tous les clients) provoquaient une erreur « fonction introuvable » | 🔴 Critique | L'écran envoyait un motif que les traitements n'acceptaient pas | Traitements acceptant le motif ; recalcul global renvoyant le nombre de clients traités |
+| Journal des annulations de paiement | Identifiants techniques illisibles à la place du paiement et de l'utilisateur | 🟡 Moyen | Affichage brut des identifiants | Référence du paiement, nom du client et nom de l'utilisateur affichés (liste et détail) |
+
+### Vérifications après correction (navigateur, session réelle)
+- Journal comptable : 20 écritures, total débit = total crédit (20 359 000 FCFA), mention « Équilibré ».
+- Saisie d'une écriture manuelle équilibrée : enregistrée, rattachée à l'exercice, visible dans le journal (écriture de test supprimée).
+- Audit comptabilité : verdict « GO PRODUCTION », 20 écritures / 14 factures / 3 paiements, aucune anomalie.
+- Paiement de bout en bout : sélection client → facture → montant 100 000 FCFA → confirmation → paiement enregistré, facture passée en « partielle » (payé 100 000), solde client mis à jour, écriture comptable générée.
+- Annulation du paiement avec motif : facture remise à « impayée » (payé 0), solde client restauré, trace horodatée dans le journal d'audit (journal inaltérable par conception : la trace de test reste visible).
+- Balance, grand livre, export FEC, tableau de bord comptable, états de compte clients, exercices, journal de clôture, finances : affichage réel sans erreur, y compris sur mobile.
+- Compilation TypeScript : aucune erreur.
+
 ## Modules restants (à auditer)
-4. Paiements & comptabilité — 5. Logistique — 6. Achats — 7. RH & paie —
-8. Administration — 9. Transverse.
+5. Logistique — 6. Achats — 7. RH & paie — 8. Administration — 9. Transverse.

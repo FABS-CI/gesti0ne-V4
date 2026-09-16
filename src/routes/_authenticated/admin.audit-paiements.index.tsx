@@ -103,14 +103,20 @@ function AuditPaiementsPage() {
                         <TableCell className="whitespace-nowrap">
                           {frDateTime(row.annule_le)}
                         </TableCell>
-                        <TableCell className="font-mono text-xs">
-                          {row.paiement_id.slice(0, 8)}…
+                        <TableCell className="text-xs">
+                          <span className="font-medium">
+                            {row.paiement_reference ?? `${row.paiement_id.slice(0, 8)}…`}
+                          </span>
+                          {row.client_nom && (
+                            <span className="block text-muted-foreground">{row.client_nom}</span>
+                          )}
                         </TableCell>
                         <TableCell className="text-right font-medium">
                           {formatFCFA(Number(row.montant_annule))}
                         </TableCell>
-                        <TableCell className="font-mono text-xs">
-                          {row.annule_par ? `${row.annule_par.slice(0, 8)}…` : "—"}
+                        <TableCell className="text-xs">
+                          {row.annule_par_nom ??
+                            (row.annule_par ? `${row.annule_par.slice(0, 8)}…` : "—")}
                         </TableCell>
                         <TableCell className="max-w-[240px] truncate" title={row.raison}>
                           {row.raison}

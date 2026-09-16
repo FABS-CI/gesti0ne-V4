@@ -2204,8 +2204,11 @@ export type Database = {
           lettrage: string | null
           libelle: string | null
           montant: number | null
+          montant_total: number
           piece_ref: string | null
           reference: string | null
+          source_id: string | null
+          source_type: string | null
           statut: string | null
           updated_at: string
         }
@@ -2219,8 +2222,11 @@ export type Database = {
           lettrage?: string | null
           libelle?: string | null
           montant?: number | null
+          montant_total?: number
           piece_ref?: string | null
           reference?: string | null
+          source_id?: string | null
+          source_type?: string | null
           statut?: string | null
           updated_at?: string
         }
@@ -2234,8 +2240,11 @@ export type Database = {
           lettrage?: string | null
           libelle?: string | null
           montant?: number | null
+          montant_total?: number
           piece_ref?: string | null
           reference?: string | null
+          source_id?: string | null
+          source_type?: string | null
           statut?: string | null
           updated_at?: string
         }
@@ -7464,6 +7473,20 @@ export type Database = {
         Returns: undefined
       }
       assert_permission: { Args: { _perm: string }; Returns: undefined }
+      audit_compta_factures_anomalies: {
+        Args: never
+        Returns: {
+          client_nom: string
+          ecart: number
+          facture_id: string
+          montant_paye_calcule: number
+          montant_paye_enregistre: number
+          montant_total: number
+          probleme: string
+          reference: string
+          statut: string
+        }[]
+      }
       audit_compta_factures_paiements: {
         Args: never
         Returns: {
@@ -7482,6 +7505,17 @@ export type Database = {
           nom: string
           solde_calcule: number
           solde_stocke: number
+        }[]
+      }
+      audit_compta_soldes_ecarts: {
+        Args: never
+        Returns: {
+          client_id: string
+          ecart: number
+          nom: string
+          reference: string
+          solde_calcule: number
+          solde_enregistre: number
         }[]
       }
       audit_events_by_module: {
@@ -7540,6 +7574,7 @@ export type Database = {
           type: string
         }[]
       }
+      audit_finances_resume: { Args: never; Returns: Json }
       audit_stats_v2: { Args: never; Returns: Json }
       audit_stock_anomalies: {
         Args: never
@@ -8646,8 +8681,12 @@ export type Database = {
           notifies: number
         }[]
       }
-      recalculer_solde_client: { Args: { _client_id: string }; Returns: number }
-      recalculer_soldes_global_clients: { Args: never; Returns: number }
+      recalculer_solde_client:
+        | { Args: { _client_id: string }; Returns: number }
+        | { Args: { _client_id: string; _motif: string }; Returns: number }
+      recalculer_soldes_global_clients:
+        | { Args: never; Returns: number }
+        | { Args: { _motif: string }; Returns: Json }
       receptionner_achat: { Args: { _achat_id: string }; Returns: undefined }
       receptionner_transfert: {
         Args: { _transfert_id: string }

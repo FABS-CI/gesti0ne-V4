@@ -154,7 +154,50 @@ export type PaiementAnnulationAudit = {
   notes: string | null;
   montant_annule: number;
   created_at: string;
+  /** Libellés lisibles résolus côté client (référence paiement, nom utilisateur). */
+  paiement_reference?: string | null;
+  client_nom?: string | null;
+  annule_par_nom?: string | null;
 };
+
+/** Remplace les identifiants techniques par la référence du paiement et le nom de l'utilisateur. */
+async function enrichirAnnulations(rows: PaiementAnnulationAudit[]) {
+  if (!rows.length) return rows;
+  const paiementIds = [...new Set(rows.map((r) => r.paiement_id).filter(Boolean))];
+  const userIds = [...new Set(rows.map((r) => r.annule_par).filter(Boolean))] as string[];
+
+  type PaiementLite = { paiement_id: string; reference: string; client_nom: string | null };
+  type ProfilLite = { id: string; nom_complet: string | null; email: string | null };
+
+  const paiementsData: PaiementLite[] = paiementIds.length
+    ? (
+        (
+          await supabase
+            .from("paiements")
+            .select("paiement_id, reference, client_nom")
+            .in("paiement_id", paiementIds)
+        ).data ?? []
+      )
+    : [];
+  const profilsData: ProfilLite[] = userIds.length
+    ? ((await supabase.from("profiles").select("id, nom_complet, email").in("id", userIds)).data ??
+      [])
+    : [];
+
+  const paiements = new Map(paiementsData.map((p) => [p.paiement_id, p]));
+  const profils = new Map(profilsData.map((p) => [p.id, p]));
+
+  return rows.map((r) => {
+    const p = paiements.get(r.paiement_id);
+    const u = r.annule_par ? profils.get(r.annule_par) : undefined;
+    return {
+      ...r,
+      paiement_reference: p?.reference ?? null,
+      client_nom: p?.client_nom ?? null,
+      annule_par_nom: u?.nom_complet || u?.email || null,
+    };
+  });
+}
 
 export async function listPaiementAnnulationsAudit(q?: string) {
   let query = supabase
@@ -166,7 +209,7 @@ export async function listPaiementAnnulationsAudit(q?: string) {
   }
   const { data, error } = await query;
   if (error) throw error;
-  return (data ?? []) as PaiementAnnulationAudit[];
+  return enrichirAnnulations((data ?? []) as PaiementAnnulationAudit[]);
 }
 
 export async function getPaiementAnnulationAudit(id: string) {
@@ -176,7 +219,9 @@ export async function getPaiementAnnulationAudit(id: string) {
     .eq("id", id)
     .maybeSingle();
   if (error) throw error;
-  return data as PaiementAnnulationAudit | null;
+  if (!data) return null;
+  const [row] = await enrichirAnnulations([data as PaiementAnnulationAudit]);
+  return row as PaiementAnnulationAudit;
 }
 
 export type FactureImpayee = {
