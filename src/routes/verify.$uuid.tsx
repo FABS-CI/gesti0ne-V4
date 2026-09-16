@@ -20,6 +20,9 @@ import {
 import { formatFCFA, formatDate } from '@/lib/format';
 import { Button } from '@/components/ui/button';
 
+/** Site officiel vers lequel pointe le bouton « Site officiel » de la page de vérification. */
+const OFFICIAL_SITE_URL = 'https://editions-fabsci.lovable.app/';
+
 export const Route = createFileRoute('/verify/$uuid')({
   validateSearch: (search: Record<string, unknown>) => ({
     t: typeof search['t'] === 'string' ? (search['t'] as string) : undefined,
@@ -230,9 +233,6 @@ function VerificationPage() {
     retry: 1,
   });
 
-  const handleBack = () => {
-    window.location.href = 'https://editionsfabs.ci';
-  };
 
   const ui = data ? STATUS_UI[data.status] : null;
   const hasDocumentInfo = !!data && data.status !== 'NOT_FOUND' && !!data.reference;
@@ -458,9 +458,11 @@ function VerificationPage() {
               )}
 
               <div className="flex">
-                <Button variant="ghost" className="flex-1 text-slate-500" onClick={handleBack}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Site officiel
+                <Button variant="ghost" className="flex-1 text-slate-500" asChild>
+                  <a href={OFFICIAL_SITE_URL}>
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Site officiel
+                  </a>
                 </Button>
               </div>
             </div>
