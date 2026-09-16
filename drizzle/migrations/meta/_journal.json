@@ -8,6 +8,13 @@
       "when": 1789469888857,
       "tag": "0000_add_verification_token_columns",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789553366011,
+      "tag": "0001_align_fne_and_document_templates_schema",
+      "breakpoints": true
     }
   ]
 }
