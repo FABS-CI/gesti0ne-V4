@@ -75,7 +75,7 @@ function ComptaAuditPage() {
   const resumeQ = useQuery({
     queryKey: ["compta-audit-resume"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("audit_finances_anomalies");
+      const { data, error } = await supabase.rpc("audit_finances_resume");
       if (error) throw error;
       return data as unknown as Resume;
     },
@@ -85,7 +85,7 @@ function ComptaAuditPage() {
   const facturesQ = useQuery({
     queryKey: ["compta-audit-factures"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("audit_compta_factures_paiements");
+      const { data, error } = await supabase.rpc("audit_compta_factures_anomalies");
       if (error) throw error;
       return (data ?? []) as FactAnom[];
     },
@@ -95,7 +95,7 @@ function ComptaAuditPage() {
   const soldesQ = useQuery({
     queryKey: ["compta-audit-soldes"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("audit_compta_soldes_clients");
+      const { data, error } = await supabase.rpc("audit_compta_soldes_ecarts");
       if (error) throw error;
       return (data ?? []) as SoldeCli[];
     },
