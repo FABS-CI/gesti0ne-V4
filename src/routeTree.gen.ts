@@ -174,7 +174,6 @@ import { Route as AuthenticatedColisageHistoricalRouteImport } from './routes/_a
 import { Route as AuthenticatedColisageBlIdRouteImport } from './routes/_authenticated/colisage.$blId'
 import { Route as AuthenticatedClientsNouveauRouteImport } from './routes/_authenticated/clients.nouveau'
 import { Route as AuthenticatedClientsDashboardRouteImport } from './routes/_authenticated/clients.dashboard'
-import { Route as AuthenticatedClientsClientIdRouteImport } from './routes/_authenticated/clients.$clientId'
 import { Route as AuthenticatedBonDeTourneeTourneeIdRouteImport } from './routes/_authenticated/bon-de-tournee.$tourneeId'
 import { Route as AuthenticatedBonDeSortieTourneeIdRouteImport } from './routes/_authenticated/bon-de-sortie.$tourneeId'
 import { Route as AuthenticatedAdminWebVitalsRouteImport } from './routes/_authenticated/admin.web-vitals'
@@ -194,6 +193,7 @@ import { Route as AuthenticatedAbsencesNouveauRouteImport } from './routes/_auth
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AuthenticatedEmployesEmployeIdIndexRouteImport } from './routes/_authenticated/employes.$employeId.index'
 import { Route as AuthenticatedCommandesCommandeIdIndexRouteImport } from './routes/_authenticated/commandes.$commandeId.index'
+import { Route as AuthenticatedClientsClientIdIndexRouteImport } from './routes/_authenticated/clients.$clientId.index'
 import { Route as ApiPublicVerifyDocUuidRouteImport } from './routes/api/public/verify-doc.$uuid'
 import { Route as ApiPublicHooksRunSchedulesRouteImport } from './routes/api/public/hooks/run-schedules'
 import { Route as ApiPublicHooksGlobalBackupRouteImport } from './routes/api/public/hooks/global-backup'
@@ -1161,12 +1161,6 @@ const AuthenticatedClientsDashboardRoute =
     path: '/dashboard',
     getParentRoute: () => AuthenticatedClientsRoute,
   } as any)
-const AuthenticatedClientsClientIdRoute =
-  AuthenticatedClientsClientIdRouteImport.update({
-    id: '/$clientId',
-    path: '/$clientId',
-    getParentRoute: () => AuthenticatedClientsRoute,
-  } as any)
 const AuthenticatedBonDeTourneeTourneeIdRoute =
   AuthenticatedBonDeTourneeTourneeIdRouteImport.update({
     id: '/bon-de-tournee/$tourneeId',
@@ -1279,6 +1273,12 @@ const AuthenticatedCommandesCommandeIdIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedCommandesCommandeIdRoute,
   } as any)
+const AuthenticatedClientsClientIdIndexRoute =
+  AuthenticatedClientsClientIdIndexRouteImport.update({
+    id: '/$clientId/',
+    path: '/$clientId/',
+    getParentRoute: () => AuthenticatedClientsRoute,
+  } as any)
 const ApiPublicVerifyDocUuidRoute = ApiPublicVerifyDocUuidRouteImport.update({
   id: '/api/public/verify-doc/$uuid',
   path: '/api/public/verify-doc/$uuid',
@@ -1368,9 +1368,9 @@ const AuthenticatedCommandesCommandeIdModifierRoute =
   } as any)
 const AuthenticatedClientsClientIdModifierRoute =
   AuthenticatedClientsClientIdModifierRouteImport.update({
-    id: '/modifier',
-    path: '/modifier',
-    getParentRoute: () => AuthenticatedClientsClientIdRoute,
+    id: '/$clientId/modifier',
+    path: '/$clientId/modifier',
+    getParentRoute: () => AuthenticatedClientsRoute,
   } as any)
 const AuthenticatedAdminAuditPaiementsAuditIdRoute =
   AuthenticatedAdminAuditPaiementsAuditIdRouteImport.update({
@@ -1497,7 +1497,6 @@ export interface FileRoutesByFullPath {
   '/admin/web-vitals': typeof AuthenticatedAdminWebVitalsRoute
   '/bon-de-sortie/$tourneeId': typeof AuthenticatedBonDeSortieTourneeIdRoute
   '/bon-de-tournee/$tourneeId': typeof AuthenticatedBonDeTourneeTourneeIdRoute
-  '/clients/$clientId': typeof AuthenticatedClientsClientIdRouteWithChildren
   '/clients/dashboard': typeof AuthenticatedClientsDashboardRoute
   '/clients/nouveau': typeof AuthenticatedClientsNouveauRoute
   '/colisage/$blId': typeof AuthenticatedColisageBlIdRoute
@@ -1592,6 +1591,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/global-backup': typeof ApiPublicHooksGlobalBackupRoute
   '/api/public/hooks/run-schedules': typeof ApiPublicHooksRunSchedulesRoute
   '/api/public/verify-doc/$uuid': typeof ApiPublicVerifyDocUuidRouteWithChildren
+  '/clients/$clientId/': typeof AuthenticatedClientsClientIdIndexRoute
   '/commandes/$commandeId/': typeof AuthenticatedCommandesCommandeIdIndexRoute
   '/employes/$employeId/': typeof AuthenticatedEmployesEmployeIdIndexRoute
   '/api/public/verify-doc/$uuid/document': typeof ApiPublicVerifyDocUuidDocumentRoute
@@ -1681,7 +1681,6 @@ export interface FileRoutesByTo {
   '/admin/web-vitals': typeof AuthenticatedAdminWebVitalsRoute
   '/bon-de-sortie/$tourneeId': typeof AuthenticatedBonDeSortieTourneeIdRoute
   '/bon-de-tournee/$tourneeId': typeof AuthenticatedBonDeTourneeTourneeIdRoute
-  '/clients/$clientId': typeof AuthenticatedClientsClientIdRouteWithChildren
   '/clients/dashboard': typeof AuthenticatedClientsDashboardRoute
   '/clients/nouveau': typeof AuthenticatedClientsNouveauRoute
   '/colisage/$blId': typeof AuthenticatedColisageBlIdRoute
@@ -1775,6 +1774,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/global-backup': typeof ApiPublicHooksGlobalBackupRoute
   '/api/public/hooks/run-schedules': typeof ApiPublicHooksRunSchedulesRoute
   '/api/public/verify-doc/$uuid': typeof ApiPublicVerifyDocUuidRouteWithChildren
+  '/clients/$clientId': typeof AuthenticatedClientsClientIdIndexRoute
   '/commandes/$commandeId': typeof AuthenticatedCommandesCommandeIdIndexRoute
   '/employes/$employeId': typeof AuthenticatedEmployesEmployeIdIndexRoute
   '/api/public/verify-doc/$uuid/document': typeof ApiPublicVerifyDocUuidDocumentRoute
@@ -1887,7 +1887,6 @@ export interface FileRoutesById {
   '/_authenticated/admin/web-vitals': typeof AuthenticatedAdminWebVitalsRoute
   '/_authenticated/bon-de-sortie/$tourneeId': typeof AuthenticatedBonDeSortieTourneeIdRoute
   '/_authenticated/bon-de-tournee/$tourneeId': typeof AuthenticatedBonDeTourneeTourneeIdRoute
-  '/_authenticated/clients/$clientId': typeof AuthenticatedClientsClientIdRouteWithChildren
   '/_authenticated/clients/dashboard': typeof AuthenticatedClientsDashboardRoute
   '/_authenticated/clients/nouveau': typeof AuthenticatedClientsNouveauRoute
   '/_authenticated/colisage/$blId': typeof AuthenticatedColisageBlIdRoute
@@ -1982,6 +1981,7 @@ export interface FileRoutesById {
   '/api/public/hooks/global-backup': typeof ApiPublicHooksGlobalBackupRoute
   '/api/public/hooks/run-schedules': typeof ApiPublicHooksRunSchedulesRoute
   '/api/public/verify-doc/$uuid': typeof ApiPublicVerifyDocUuidRouteWithChildren
+  '/_authenticated/clients/$clientId/': typeof AuthenticatedClientsClientIdIndexRoute
   '/_authenticated/commandes/$commandeId/': typeof AuthenticatedCommandesCommandeIdIndexRoute
   '/_authenticated/employes/$employeId/': typeof AuthenticatedEmployesEmployeIdIndexRoute
   '/api/public/verify-doc/$uuid/document': typeof ApiPublicVerifyDocUuidDocumentRoute
@@ -2094,7 +2094,6 @@ export interface FileRouteTypes {
     | '/admin/web-vitals'
     | '/bon-de-sortie/$tourneeId'
     | '/bon-de-tournee/$tourneeId'
-    | '/clients/$clientId'
     | '/clients/dashboard'
     | '/clients/nouveau'
     | '/colisage/$blId'
@@ -2189,6 +2188,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/global-backup'
     | '/api/public/hooks/run-schedules'
     | '/api/public/verify-doc/$uuid'
+    | '/clients/$clientId/'
     | '/commandes/$commandeId/'
     | '/employes/$employeId/'
     | '/api/public/verify-doc/$uuid/document'
@@ -2278,7 +2278,6 @@ export interface FileRouteTypes {
     | '/admin/web-vitals'
     | '/bon-de-sortie/$tourneeId'
     | '/bon-de-tournee/$tourneeId'
-    | '/clients/$clientId'
     | '/clients/dashboard'
     | '/clients/nouveau'
     | '/colisage/$blId'
@@ -2372,6 +2371,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/global-backup'
     | '/api/public/hooks/run-schedules'
     | '/api/public/verify-doc/$uuid'
+    | '/clients/$clientId'
     | '/commandes/$commandeId'
     | '/employes/$employeId'
     | '/api/public/verify-doc/$uuid/document'
@@ -2483,7 +2483,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/web-vitals'
     | '/_authenticated/bon-de-sortie/$tourneeId'
     | '/_authenticated/bon-de-tournee/$tourneeId'
-    | '/_authenticated/clients/$clientId'
     | '/_authenticated/clients/dashboard'
     | '/_authenticated/clients/nouveau'
     | '/_authenticated/colisage/$blId'
@@ -2578,6 +2577,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/global-backup'
     | '/api/public/hooks/run-schedules'
     | '/api/public/verify-doc/$uuid'
+    | '/_authenticated/clients/$clientId/'
     | '/_authenticated/commandes/$commandeId/'
     | '/_authenticated/employes/$employeId/'
     | '/api/public/verify-doc/$uuid/document'
@@ -3759,13 +3759,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientsDashboardRouteImport
       parentRoute: typeof AuthenticatedClientsRoute
     }
-    '/_authenticated/clients/$clientId': {
-      id: '/_authenticated/clients/$clientId'
-      path: '/$clientId'
-      fullPath: '/clients/$clientId'
-      preLoaderRoute: typeof AuthenticatedClientsClientIdRouteImport
-      parentRoute: typeof AuthenticatedClientsRoute
-    }
     '/_authenticated/bon-de-tournee/$tourneeId': {
       id: '/_authenticated/bon-de-tournee/$tourneeId'
       path: '/bon-de-tournee/$tourneeId'
@@ -3899,6 +3892,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCommandesCommandeIdIndexRouteImport
       parentRoute: typeof AuthenticatedCommandesCommandeIdRoute
     }
+    '/_authenticated/clients/$clientId/': {
+      id: '/_authenticated/clients/$clientId/'
+      path: '/$clientId'
+      fullPath: '/clients/$clientId/'
+      preLoaderRoute: typeof AuthenticatedClientsClientIdIndexRouteImport
+      parentRoute: typeof AuthenticatedClientsRoute
+    }
     '/api/public/verify-doc/$uuid': {
       id: '/api/public/verify-doc/$uuid'
       path: '/api/public/verify-doc/$uuid'
@@ -4006,10 +4006,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/clients/$clientId/modifier': {
       id: '/_authenticated/clients/$clientId/modifier'
-      path: '/modifier'
+      path: '/$clientId/modifier'
       fullPath: '/clients/$clientId/modifier'
       preLoaderRoute: typeof AuthenticatedClientsClientIdModifierRouteImport
-      parentRoute: typeof AuthenticatedClientsClientIdRoute
+      parentRoute: typeof AuthenticatedClientsRoute
     }
     '/_authenticated/admin/audit-paiements/$auditId': {
       id: '/_authenticated/admin/audit-paiements/$auditId'
@@ -4053,34 +4053,22 @@ const AuthenticatedAbsencesRouteWithChildren =
     AuthenticatedAbsencesRouteChildren,
   )
 
-interface AuthenticatedClientsClientIdRouteChildren {
-  AuthenticatedClientsClientIdModifierRoute: typeof AuthenticatedClientsClientIdModifierRoute
-}
-
-const AuthenticatedClientsClientIdRouteChildren: AuthenticatedClientsClientIdRouteChildren =
-  {
-    AuthenticatedClientsClientIdModifierRoute:
-      AuthenticatedClientsClientIdModifierRoute,
-  }
-
-const AuthenticatedClientsClientIdRouteWithChildren =
-  AuthenticatedClientsClientIdRoute._addFileChildren(
-    AuthenticatedClientsClientIdRouteChildren,
-  )
-
 interface AuthenticatedClientsRouteChildren {
-  AuthenticatedClientsClientIdRoute: typeof AuthenticatedClientsClientIdRouteWithChildren
   AuthenticatedClientsDashboardRoute: typeof AuthenticatedClientsDashboardRoute
   AuthenticatedClientsNouveauRoute: typeof AuthenticatedClientsNouveauRoute
   AuthenticatedClientsIndexRoute: typeof AuthenticatedClientsIndexRoute
+  AuthenticatedClientsClientIdModifierRoute: typeof AuthenticatedClientsClientIdModifierRoute
+  AuthenticatedClientsClientIdIndexRoute: typeof AuthenticatedClientsClientIdIndexRoute
 }
 
 const AuthenticatedClientsRouteChildren: AuthenticatedClientsRouteChildren = {
-  AuthenticatedClientsClientIdRoute:
-    AuthenticatedClientsClientIdRouteWithChildren,
   AuthenticatedClientsDashboardRoute: AuthenticatedClientsDashboardRoute,
   AuthenticatedClientsNouveauRoute: AuthenticatedClientsNouveauRoute,
   AuthenticatedClientsIndexRoute: AuthenticatedClientsIndexRoute,
+  AuthenticatedClientsClientIdModifierRoute:
+    AuthenticatedClientsClientIdModifierRoute,
+  AuthenticatedClientsClientIdIndexRoute:
+    AuthenticatedClientsClientIdIndexRoute,
 }
 
 const AuthenticatedClientsRouteWithChildren =
