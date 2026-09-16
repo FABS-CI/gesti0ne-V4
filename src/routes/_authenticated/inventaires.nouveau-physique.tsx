@@ -54,8 +54,8 @@ function NouveauPhysiquePage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories_produits")
-        .select("categorie_id, nom")
-        .order("nom");
+        .select("categorie_id, libelle")
+        .order("libelle");
       if (error) throw error;
       return data ?? [];
     },
@@ -142,7 +142,7 @@ function NouveauPhysiquePage() {
               <SelectItem value="all">Toutes les catégories</SelectItem>
               {categories.map((c) => (
                 <SelectItem key={c.categorie_id} value={c.categorie_id}>
-                  {c.nom}
+                  {c.libelle}
                 </SelectItem>
               ))}
             </SelectContent>

@@ -109,6 +109,13 @@ export async function getInventaireLignes(id: string) {
   return lignes;
 }
 
+/** Les RPC d'inventaire renvoient SETOF inventaires : on normalise en un objet. */
+function firstInventaire(data: unknown): Inventaire {
+  const row = Array.isArray(data) ? data[0] : data;
+  if (!row) throw new Error("Inventaire introuvable après l'opération");
+  return row as Inventaire;
+}
+
 export async function creerInventairePhysique(input: {
   depot_id: string;
   categorie_id?: string | null;
@@ -126,7 +133,7 @@ export async function creerInventairePhysique(input: {
     },
   });
   if (error) throw error;
-  return data as Inventaire;
+  return firstInventaire(data);
 }
 
 export async function creerInventaireTheorique(input: {
@@ -143,7 +150,7 @@ export async function creerInventaireTheorique(input: {
     },
   });
   if (error) throw error;
-  return data as Inventaire;
+  return firstInventaire(data);
 }
 
 export async function creerInventaireGlobal(input?: {
@@ -158,7 +165,7 @@ export async function creerInventaireGlobal(input?: {
     },
   });
   if (error) throw error;
-  return data as Inventaire;
+  return firstInventaire(data);
 }
 
 export async function validerInventairePhysique(
@@ -171,7 +178,7 @@ export async function validerInventairePhysique(
     _lignes: lignes,
   });
   if (error) throw error;
-  return data as Inventaire;
+  return firstInventaire(data);
 }
 
 export async function regulariserInventaire(inventaire_id: string) {
