@@ -5,7 +5,7 @@ Livrable par module : rapport (gravité) + correction des problèmes critiques.
 ## Modules
 - [x] 1. Documents commerciaux (commandes, factures, proformas, BL, PDF/QR/vérification) — voir AUDIT-RAPPORT.md
 - [x] 2. Clients & CRM — voir AUDIT-RAPPORT.md
-- [ ] 3. Stock, produits, dépôts, inventaires, transferts
+- [x] 3. Stock, produits, dépôts, inventaires, transferts
 - [ ] 4. Paiements & comptabilité
 - [ ] 5. Logistique (colisage, tournées, livraison-suivi, retours, incidents)
 - [ ] 6. Achats & fournisseurs
