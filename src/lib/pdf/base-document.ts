@@ -450,6 +450,28 @@ export class BaseDocument {
               });
             });
           }
+          this.page.drawText(
+            isCommande ? "Scanner pour authentifier" : "Scanner pour vérifier l'authenticité",
+            { x: textX, y: y - boxH + 14, size: 6, font: this.fonts.regular, color: COLORS.grisTexte },
+          );
+        } else {
+          if (!masquerDetailsCert) {
+            this.page.drawText("Certification en attente", {
+              x: textX,
+              y: y - 34,
+              size: 6.5,
+              font: this.fonts.regular,
+              color: COLORS.grisTexte,
+            });
+          }
+          this.page.drawText("Scanner pour vérifier l'authenticité", {
+            x: textX,
+            y: masquerDetailsCert ? y - 34 : y - 44,
+            size: 6,
+            font: this.fonts.regular,
+            color: COLORS.grisTexte,
+          });
+        }
       } catch (e) {
         console.error("QR Error", e);
       }
