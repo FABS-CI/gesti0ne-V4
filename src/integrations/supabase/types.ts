@@ -6080,7 +6080,15 @@ export type Database = {
           user_id?: string | null
           user_nom?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "stock_mouvements_depot_id_fkey"
+            columns: ["depot_id"]
+            isOneToOne: false
+            referencedRelation: "depots"
+            referencedColumns: ["depot_id"]
+          },
+        ]
       }
       stocks_depots: {
         Row: {
@@ -7988,6 +7996,16 @@ export type Database = {
         Returns: Json
       }
       get_carton_public: { Args: { _colis_id: string }; Returns: Json }
+      get_derniers_prix_achat: {
+        Args: { _produit_ids: string[] }
+        Returns: {
+          achat_id: string
+          date_achat: string
+          prix_unitaire: number
+          produit_id: string
+          reference: string
+        }[]
+      }
       get_lignes_retournables: {
         Args: { _facture_id: string }
         Returns: {

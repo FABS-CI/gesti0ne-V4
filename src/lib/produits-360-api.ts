@@ -201,7 +201,7 @@ export async function getProduitInventaires(
   const { data, error } = await supabase
     .from("inventaire_lignes")
     .select(
-      "ligne_id, designation, stock_theorique, quantite_comptee, ecart, observation, inventaires!inner(inventaire_id, numero, date_inventaire, statut)",
+      "ligne_id, designation, quantite_theorique, quantite_physique, ecart, observation, inventaires!inner(inventaire_id, reference, date_inventaire, statut)",
     )
     .eq("produit_id", prod.produit_id)
     .order("created_at", { ascending: false })
@@ -209,10 +209,10 @@ export async function getProduitInventaires(
   if (error) throw error;
   return (data ?? []).map((row) => ({
     inventaire_id: row.inventaires?.inventaire_id ?? "",
-    reference: row.inventaires?.numero ?? "—",
+    reference: row.inventaires?.reference ?? "—",
     produit_nom: row.designation,
-    stock_theorique: Number(row.stock_theorique ?? 0),
-    stock_compte: Number(row.quantite_comptee ?? 0),
+    stock_theorique: Number(row.quantite_theorique ?? 0),
+    stock_compte: Number(row.quantite_physique ?? 0),
     ecart: Number(row.ecart ?? 0),
     date_inventaire: row.inventaires?.date_inventaire ?? "",
     statut: row.inventaires?.statut ?? "",
