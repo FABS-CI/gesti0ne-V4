@@ -1,5 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { Download } from 'lucide-react';
 import {
   CheckCircle2,
   XCircle,
@@ -168,9 +170,26 @@ function Row({
   );
 }
 
+/** Libellé du bouton de téléchargement selon le type de document vérifié. */
+const DOWNLOAD_LABEL: Record<string, string> = {
+  FACTURE: 'Télécharger la facture',
+  PROFORMA: 'Télécharger la facture proforma',
+  COMMANDE: 'Télécharger le bon de commande',
+};
+
+function docKeyFromLabel(docType?: string): 'FACTURE' | 'PROFORMA' | 'COMMANDE' | null {
+  const v = (docType ?? '').toLowerCase();
+  if (v.includes('proforma')) return 'PROFORMA';
+  if (v.includes('commande')) return 'COMMANDE';
+  if (v.includes('facture')) return 'FACTURE';
+  return null;
+}
+
 function VerificationPage() {
   const { uuid } = Route.useParams();
   const { t } = Route.useSearch();
+  const [downloading, setDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
 
   const malformed = !REFERENCE_RE.test(uuid);
 
