@@ -166,22 +166,26 @@ async function enrichirAnnulations(rows: PaiementAnnulationAudit[]) {
   const paiementIds = [...new Set(rows.map((r) => r.paiement_id).filter(Boolean))];
   const userIds = [...new Set(rows.map((r) => r.annule_par).filter(Boolean))] as string[];
 
-  const [paiementsRes, profilsRes] = await Promise.all([
-    paiementIds.length
-      ? supabase
-          .from("paiements")
-          .select("paiement_id, reference, client_nom")
-          .in("paiement_id", paiementIds)
-      : Promise.resolve({ data: [] as { paiement_id: string; reference: string; client_nom: string | null }[] }),
-    userIds.length
-      ? supabase.from("profiles").select("id, nom_complet, email").in("id", userIds)
-      : Promise.resolve({ data: [] as { id: string; nom_complet: string | null; email: string | null }[] }),
-  ]);
+  type PaiementLite = { paiement_id: string; reference: string; client_nom: string | null };
+  type ProfilLite = { id: string; nom_complet: string | null; email: string | null };
 
-  const paiements = new Map(
-    (paiementsRes.data ?? []).map((p) => [p.paiement_id, p]),
-  );
-  const profils = new Map((profilsRes.data ?? []).map((p) => [p.id, p]));
+  const paiementsData: PaiementLite[] = paiementIds.length
+    ? (
+        (
+          await supabase
+            .from("paiements")
+            .select("paiement_id, reference, client_nom")
+            .in("paiement_id", paiementIds)
+        ).data ?? []
+      )
+    : [];
+  const profilsData: ProfilLite[] = userIds.length
+    ? ((await supabase.from("profiles").select("id, nom_complet, email").in("id", userIds)).data ??
+      [])
+    : [];
+
+  const paiements = new Map(paiementsData.map((p) => [p.paiement_id, p]));
+  const profils = new Map(profilsData.map((p) => [p.id, p]));
 
   return rows.map((r) => {
     const p = paiements.get(r.paiement_id);

@@ -90,7 +90,9 @@ function AuditPaiementDetailPage() {
               <UserIcon className="h-4 w-4" /> Utilisateur
             </CardTitle>
           </CardHeader>
-          <CardContent className="font-mono text-xs">{audit.annule_par ?? "—"}</CardContent>
+          <CardContent className="text-sm font-medium">
+            {audit.annule_par_nom ?? audit.annule_par ?? "—"}
+          </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
