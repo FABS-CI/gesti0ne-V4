@@ -1993,18 +1993,21 @@ export type Database = {
       }
       document_template_prefs: {
         Row: {
+          active_template_id: string | null
           created_at: string
           prefs: Json
           updated_at: string
           user_id: string
         }
         Insert: {
+          active_template_id?: string | null
           created_at?: string
           prefs?: Json
           updated_at?: string
           user_id: string
         }
         Update: {
+          active_template_id?: string | null
           created_at?: string
           prefs?: Json
           updated_at?: string
@@ -2016,32 +2019,44 @@ export type Database = {
         Row: {
           actif: boolean
           code: string
+          config: Json
           contenu: Json
           created_at: string
           description: string | null
           id: string
+          label: string | null
           libelle: string
+          template_id: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           actif?: boolean
-          code: string
+          code?: string
+          config?: Json
           contenu?: Json
           created_at?: string
           description?: string | null
           id?: string
-          libelle: string
+          label?: string | null
+          libelle?: string
+          template_id?: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           actif?: boolean
           code?: string
+          config?: Json
           contenu?: Json
           created_at?: string
           description?: string | null
           id?: string
+          label?: string | null
           libelle?: string
+          template_id?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -2759,100 +2774,211 @@ export type Database = {
       }
       fne_factures: {
         Row: {
+          balance_sticker: number | null
+          client_email: string | null
+          client_ncc: string | null
+          client_nom: string | null
+          client_seller_name: string | null
+          client_telephone: string | null
+          code_dgi: string | null
+          commercial_message: string | null
           created_at: string
+          date_emission: string | null
+          discount: number
+          error_message: string | null
+          establishment: string | null
           facture_id: string | null
+          fne_id: string
           fne_ref: string | null
+          footer: string | null
           id: string
+          invoice_type: string | null
+          items: Json
           metadata: Json
+          montant: number | null
+          notes: string | null
+          parent_fne_id: string | null
+          payment_method: string | null
+          point_of_sale: string | null
           qr_code: string | null
           reference: string | null
+          response_payload: Json | null
+          source: string | null
           statut: string
           submitted_at: string | null
+          template: string | null
+          token: string | null
           updated_at: string
+          validated_at: string | null
+          verification_url: string | null
         }
         Insert: {
+          balance_sticker?: number | null
+          client_email?: string | null
+          client_ncc?: string | null
+          client_nom?: string | null
+          client_seller_name?: string | null
+          client_telephone?: string | null
+          code_dgi?: string | null
+          commercial_message?: string | null
           created_at?: string
+          date_emission?: string | null
+          discount?: number
+          error_message?: string | null
+          establishment?: string | null
           facture_id?: string | null
+          fne_id?: string
           fne_ref?: string | null
+          footer?: string | null
           id?: string
+          invoice_type?: string | null
+          items?: Json
           metadata?: Json
+          montant?: number | null
+          notes?: string | null
+          parent_fne_id?: string | null
+          payment_method?: string | null
+          point_of_sale?: string | null
           qr_code?: string | null
           reference?: string | null
+          response_payload?: Json | null
+          source?: string | null
           statut?: string
           submitted_at?: string | null
+          template?: string | null
+          token?: string | null
           updated_at?: string
+          validated_at?: string | null
+          verification_url?: string | null
         }
         Update: {
+          balance_sticker?: number | null
+          client_email?: string | null
+          client_ncc?: string | null
+          client_nom?: string | null
+          client_seller_name?: string | null
+          client_telephone?: string | null
+          code_dgi?: string | null
+          commercial_message?: string | null
           created_at?: string
+          date_emission?: string | null
+          discount?: number
+          error_message?: string | null
+          establishment?: string | null
           facture_id?: string | null
+          fne_id?: string
           fne_ref?: string | null
+          footer?: string | null
           id?: string
+          invoice_type?: string | null
+          items?: Json
           metadata?: Json
+          montant?: number | null
+          notes?: string | null
+          parent_fne_id?: string | null
+          payment_method?: string | null
+          point_of_sale?: string | null
           qr_code?: string | null
           reference?: string | null
+          response_payload?: Json | null
+          source?: string | null
           statut?: string
           submitted_at?: string | null
+          template?: string | null
+          token?: string | null
           updated_at?: string
+          validated_at?: string | null
+          verification_url?: string | null
         }
         Relationships: []
       }
       fne_logs: {
         Row: {
+          action: string | null
+          attempt_number: number | null
           created_at: string
+          duration_ms: number | null
           facture_id: string | null
+          fne_facture_id: string | null
+          http_status: number | null
           id: string
           message: string | null
           niveau: string
           payload: Json
+          response: Json | null
+          statut: string | null
         }
         Insert: {
+          action?: string | null
+          attempt_number?: number | null
           created_at?: string
+          duration_ms?: number | null
           facture_id?: string | null
+          fne_facture_id?: string | null
+          http_status?: number | null
           id?: string
           message?: string | null
           niveau?: string
           payload?: Json
+          response?: Json | null
+          statut?: string | null
         }
         Update: {
+          action?: string | null
+          attempt_number?: number | null
           created_at?: string
+          duration_ms?: number | null
           facture_id?: string | null
+          fne_facture_id?: string | null
+          http_status?: number | null
           id?: string
           message?: string | null
           niveau?: string
           payload?: Json
+          response?: Json | null
+          statut?: string | null
         }
         Relationships: []
       }
       fne_settings: {
         Row: {
           actif: boolean
+          cle: string | null
           cle_api: string | null
           config: Json
           created_at: string
           environnement: string
           id: string
           identifiant: string | null
+          setting_id: string
           updated_at: string
+          valeur: string | null
         }
         Insert: {
           actif?: boolean
+          cle?: string | null
           cle_api?: string | null
           config?: Json
           created_at?: string
           environnement?: string
           id?: string
           identifiant?: string | null
+          setting_id?: string
           updated_at?: string
+          valeur?: string | null
         }
         Update: {
           actif?: boolean
+          cle?: string | null
           cle_api?: string | null
           config?: Json
           created_at?: string
           environnement?: string
           id?: string
           identifiant?: string | null
+          setting_id?: string
           updated_at?: string
+          valeur?: string | null
         }
         Relationships: []
       }
@@ -5954,7 +6080,15 @@ export type Database = {
           user_id?: string | null
           user_nom?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "stock_mouvements_depot_id_fkey"
+            columns: ["depot_id"]
+            isOneToOne: false
+            referencedRelation: "depots"
+            referencedColumns: ["depot_id"]
+          },
+        ]
       }
       stocks_depots: {
         Row: {
@@ -7862,6 +7996,16 @@ export type Database = {
         Returns: Json
       }
       get_carton_public: { Args: { _colis_id: string }; Returns: Json }
+      get_derniers_prix_achat: {
+        Args: { _produit_ids: string[] }
+        Returns: {
+          achat_id: string
+          date_achat: string
+          prix_unitaire: number
+          produit_id: string
+          reference: string
+        }[]
+      }
       get_lignes_retournables: {
         Args: { _facture_id: string }
         Returns: {
