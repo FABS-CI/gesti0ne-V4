@@ -420,42 +420,53 @@ export class BaseDocument {
           color: COLORS.bleuFabs,
         });
 
+        // Factures, Proformas et Bons de commande : QR + mention seulement
+        // (pas de lignes techniques Statut / Version / Date / Empreinte).
+        const masquerDetailsCert =
+          this.data.type === "Facture" ||
+          this.data.type === "Proforma" ||
+          this.data.type === "Commande";
+
         if (cert && isCertificationActive(cert.statut)) {
-          const dateFr = cert.certified_at
-            ? new Date(cert.certified_at).toLocaleDateString("fr-FR")
-            : "—";
-          const hash = cert.canonical_hash ?? "";
-          const hashCourt = hash ? `${hash.slice(0, 8).toUpperCase()}…${hash.slice(-4).toUpperCase()}` : "—";
-          const lignesCert = [
-            `Statut : ACTIVE`,
-            `Version : ${cert.version ?? 1}`,
-            `Date : ${dateFr}`,
-            `Empreinte : ${hashCourt}`,
-          ];
-          lignesCert.forEach((txt, i) => {
-            this.page.drawText(txt, {
-              x: textX,
-              y: y - 34 - i * 10,
-              size: 6.5,
-              font: this.fonts.regular,
-              color: COLORS.grisTexte,
+          if (!masquerDetailsCert) {
+            const dateFr = cert.certified_at
+              ? new Date(cert.certified_at).toLocaleDateString("fr-FR")
+              : "—";
+            const hash = cert.canonical_hash ?? "";
+            const hashCourt = hash ? `${hash.slice(0, 8).toUpperCase()}…${hash.slice(-4).toUpperCase()}` : "—";
+            const lignesCert = [
+              `Statut : ACTIVE`,
+              `Version : ${cert.version ?? 1}`,
+              `Date : ${dateFr}`,
+              `Empreinte : ${hashCourt}`,
+            ];
+            lignesCert.forEach((txt, i) => {
+              this.page.drawText(txt, {
+                x: textX,
+                y: y - 34 - i * 10,
+                size: 6.5,
+                font: this.fonts.regular,
+                color: COLORS.grisTexte,
+              });
             });
-          });
+          }
           this.page.drawText(
             isCommande ? "Scanner pour authentifier" : "Scanner pour vérifier l'authenticité",
             { x: textX, y: y - boxH + 14, size: 6, font: this.fonts.regular, color: COLORS.grisTexte },
           );
         } else {
-          this.page.drawText("Certification en attente", {
-            x: textX,
-            y: y - 34,
-            size: 6.5,
-            font: this.fonts.regular,
-            color: COLORS.grisTexte,
-          });
+          if (!masquerDetailsCert) {
+            this.page.drawText("Certification en attente", {
+              x: textX,
+              y: y - 34,
+              size: 6.5,
+              font: this.fonts.regular,
+              color: COLORS.grisTexte,
+            });
+          }
           this.page.drawText("Scanner pour vérifier l'authenticité", {
             x: textX,
-            y: y - 44,
+            y: masquerDetailsCert ? y - 34 : y - 44,
             size: 6,
             font: this.fonts.regular,
             color: COLORS.grisTexte,
