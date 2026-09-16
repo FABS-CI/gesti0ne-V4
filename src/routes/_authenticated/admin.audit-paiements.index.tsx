@@ -19,7 +19,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
-export const Route = createFileRoute("/_authenticated/admin/audit-paiements")({
+export const Route = createFileRoute("/_authenticated/admin/audit-paiements/")({
   component: AuditPaiementsPage,
   errorComponent: RouteError,
   notFoundComponent: RouteNotFound,

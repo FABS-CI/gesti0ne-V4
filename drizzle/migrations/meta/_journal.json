@@ -22,6 +22,13 @@
       "when": 1789553591569,
       "tag": "0002_fix_stock_mouvements_depot_fk_and_prix_achat_rpc",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789554718559,
+      "tag": "0003_audit_stock_resume",
+      "breakpoints": true
     }
   ]
 }

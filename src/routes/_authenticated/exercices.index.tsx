@@ -27,7 +27,7 @@ import { COMPARATIF_SEARCH_DEFAULTS } from "@/lib/route-schemas";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 import { friendlyError } from "@/lib/friendly-error";
 
-export const Route = createFileRoute("/_authenticated/exercices")({
+export const Route = createFileRoute("/_authenticated/exercices/")({
   component: ExercicesPage,
   errorComponent: RouteError,
   notFoundComponent: RouteNotFound,

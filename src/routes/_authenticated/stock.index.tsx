@@ -37,7 +37,7 @@ import {
 import { ResponsiveTable } from "@/components/layout/ResponsiveTable";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
-export const Route = createFileRoute("/_authenticated/stock")({
+export const Route = createFileRoute("/_authenticated/stock/")({
   component: StockPage,
   errorComponent: RouteError,
   notFoundComponent: RouteNotFound,

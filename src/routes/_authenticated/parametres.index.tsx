@@ -3,7 +3,7 @@ import { Settings } from "lucide-react";
 import { ResourceManager, type ResourceConfig } from "@/components/crud/ResourceManager";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
-export const Route = createFileRoute("/_authenticated/parametres")({
+export const Route = createFileRoute("/_authenticated/parametres/")({
   component: () => <ResourceManager config={config} />,
   errorComponent: RouteError,
   notFoundComponent: RouteNotFound,

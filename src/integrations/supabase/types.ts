@@ -7457,6 +7457,7 @@ export type Database = {
           type: string
         }[]
       }
+      audit_stock_resume: { Args: never; Returns: Json }
       can_access_depot: {
         Args: { _depot_id: string; _user_id: string }
         Returns: boolean

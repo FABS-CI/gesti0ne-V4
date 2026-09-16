@@ -25,7 +25,7 @@ export const COMMANDE_REF_SEARCH_DEFAULTS = {
 import { SORT_KEYS } from "@/components/exercices/comparatif/ComparatifFilters";
 
 export const comparatifSearchSchema = z.object({
-  exos: fallback(z.string().optional(), undefined),
+  exos: z.string().optional().catch(undefined),
   sort: fallback(z.enum(SORT_KEYS), "code").default("code"),
   dir: fallback(z.enum(["asc", "desc"]), "asc").default("asc"),
   pct: fallback(z.boolean(), true).default(true),

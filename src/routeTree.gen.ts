@@ -19,7 +19,6 @@ import { Route as CartonColisIdRouteImport } from './routes/carton.$colisId'
 import { Route as AuthenticatedWorkflowsDefinitionsRouteImport } from './routes/_authenticated/workflows-definitions'
 import { Route as AuthenticatedWorkflowApprovalsRouteImport } from './routes/_authenticated/workflow-approvals'
 import { Route as AuthenticatedTransfertsRouteImport } from './routes/_authenticated/transferts'
-import { Route as AuthenticatedStockRouteImport } from './routes/_authenticated/stock'
 import { Route as AuthenticatedRolesPermissionsRouteImport } from './routes/_authenticated/roles-permissions'
 import { Route as AuthenticatedRhDashboardRouteImport } from './routes/_authenticated/rh-dashboard'
 import { Route as AuthenticatedRetoursRouteImport } from './routes/_authenticated/retours'
@@ -30,7 +29,6 @@ import { Route as AuthenticatedProformasRouteImport } from './routes/_authentica
 import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated/profil'
 import { Route as AuthenticatedProduitsRouteImport } from './routes/_authenticated/produits'
 import { Route as AuthenticatedPlanComptableRouteImport } from './routes/_authenticated/plan-comptable'
-import { Route as AuthenticatedParametresRouteImport } from './routes/_authenticated/parametres'
 import { Route as AuthenticatedPaiementsRouteImport } from './routes/_authenticated/paiements'
 import { Route as AuthenticatedPaieRubriquesRouteImport } from './routes/_authenticated/paie-rubriques'
 import { Route as AuthenticatedPaieRapportsRouteImport } from './routes/_authenticated/paie-rapports'
@@ -65,7 +63,6 @@ import { Route as AuthenticatedFileStorageRouteImport } from './routes/_authenti
 import { Route as AuthenticatedFacturesRouteImport } from './routes/_authenticated/factures'
 import { Route as AuthenticatedExportsRouteImport } from './routes/_authenticated/exports'
 import { Route as AuthenticatedExpeditionsRouteImport } from './routes/_authenticated/expeditions'
-import { Route as AuthenticatedExercicesRouteImport } from './routes/_authenticated/exercices'
 import { Route as AuthenticatedEvaluationsRouteImport } from './routes/_authenticated/evaluations'
 import { Route as AuthenticatedEtatsComptablesRouteImport } from './routes/_authenticated/etats-comptables'
 import { Route as AuthenticatedEtatCompteClientsRouteImport } from './routes/_authenticated/etat-compte-clients'
@@ -101,11 +98,13 @@ import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]
 import { Route as AuthenticatedUtilisateursIndexRouteImport } from './routes/_authenticated/utilisateurs.index'
 import { Route as AuthenticatedTransfertsIndexRouteImport } from './routes/_authenticated/transferts.index'
 import { Route as AuthenticatedTourneesIndexRouteImport } from './routes/_authenticated/tournees.index'
+import { Route as AuthenticatedStockIndexRouteImport } from './routes/_authenticated/stock.index'
 import { Route as AuthenticatedSpecimensIndexRouteImport } from './routes/_authenticated/specimens.index'
 import { Route as AuthenticatedRetoursIndexRouteImport } from './routes/_authenticated/retours.index'
 import { Route as AuthenticatedRapportsIndexRouteImport } from './routes/_authenticated/rapports.index'
 import { Route as AuthenticatedProformasIndexRouteImport } from './routes/_authenticated/proformas.index'
 import { Route as AuthenticatedProduitsIndexRouteImport } from './routes/_authenticated/produits.index'
+import { Route as AuthenticatedParametresIndexRouteImport } from './routes/_authenticated/parametres.index'
 import { Route as AuthenticatedPaiementsIndexRouteImport } from './routes/_authenticated/paiements.index'
 import { Route as AuthenticatedPaieIndexRouteImport } from './routes/_authenticated/paie.index'
 import { Route as AuthenticatedLivraisonSuiviIndexRouteImport } from './routes/_authenticated/livraison-suivi.index'
@@ -113,6 +112,7 @@ import { Route as AuthenticatedInventairesIndexRouteImport } from './routes/_aut
 import { Route as AuthenticatedIncidentsIndexRouteImport } from './routes/_authenticated/incidents.index'
 import { Route as AuthenticatedFournisseursIndexRouteImport } from './routes/_authenticated/fournisseurs.index'
 import { Route as AuthenticatedFacturesIndexRouteImport } from './routes/_authenticated/factures.index'
+import { Route as AuthenticatedExercicesIndexRouteImport } from './routes/_authenticated/exercices.index'
 import { Route as AuthenticatedEvaluationsIndexRouteImport } from './routes/_authenticated/evaluations.index'
 import { Route as AuthenticatedEmployesIndexRouteImport } from './routes/_authenticated/employes.index'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
@@ -146,8 +146,6 @@ import { Route as AuthenticatedPaiementsNouveauRouteImport } from './routes/_aut
 import { Route as AuthenticatedPaiementsPaiementIdRouteImport } from './routes/_authenticated/paiements.$paiementId'
 import { Route as AuthenticatedPaieNouveauRouteImport } from './routes/_authenticated/paie.nouveau'
 import { Route as AuthenticatedPaieBulletinIdRouteImport } from './routes/_authenticated/paie.$bulletinId'
-import { Route as AuthenticatedLivraisonSuiviTourneesRouteImport } from './routes/_authenticated/livraison-suivi.tournees'
-import { Route as AuthenticatedLivraisonSuiviCommandeRefRouteImport } from './routes/_authenticated/livraison-suivi.$commandeRef'
 import { Route as AuthenticatedInventairesNouveauPhysiqueRouteImport } from './routes/_authenticated/inventaires.nouveau-physique'
 import { Route as AuthenticatedInventairesInventaireIdRouteImport } from './routes/_authenticated/inventaires.$inventaireId'
 import { Route as AuthenticatedIncidentsNouveauRouteImport } from './routes/_authenticated/incidents.nouveau'
@@ -162,7 +160,6 @@ import { Route as AuthenticatedExercicesComparatifRouteImport } from './routes/_
 import { Route as AuthenticatedEvaluationsNouveauRouteImport } from './routes/_authenticated/evaluations.nouveau'
 import { Route as AuthenticatedEmployesNouveauRouteImport } from './routes/_authenticated/employes.nouveau'
 import { Route as AuthenticatedContratsNouveauRouteImport } from './routes/_authenticated/contrats.nouveau'
-import { Route as AuthenticatedContratsContratIdRouteImport } from './routes/_authenticated/contrats.$contratId'
 import { Route as AuthenticatedCongesNouveauRouteImport } from './routes/_authenticated/conges.nouveau'
 import { Route as AuthenticatedComptabiliteNouvelleRouteImport } from './routes/_authenticated/comptabilite.nouvelle'
 import { Route as AuthenticatedComptabiliteFecRouteImport } from './routes/_authenticated/comptabilite.fec'
@@ -174,7 +171,6 @@ import { Route as AuthenticatedColisageHistoricalRouteImport } from './routes/_a
 import { Route as AuthenticatedColisageBlIdRouteImport } from './routes/_authenticated/colisage.$blId'
 import { Route as AuthenticatedClientsNouveauRouteImport } from './routes/_authenticated/clients.nouveau'
 import { Route as AuthenticatedClientsDashboardRouteImport } from './routes/_authenticated/clients.dashboard'
-import { Route as AuthenticatedClientsClientIdRouteImport } from './routes/_authenticated/clients.$clientId'
 import { Route as AuthenticatedBonDeTourneeTourneeIdRouteImport } from './routes/_authenticated/bon-de-tournee.$tourneeId'
 import { Route as AuthenticatedBonDeSortieTourneeIdRouteImport } from './routes/_authenticated/bon-de-sortie.$tourneeId'
 import { Route as AuthenticatedAdminWebVitalsRouteImport } from './routes/_authenticated/admin.web-vitals'
@@ -186,14 +182,18 @@ import { Route as AuthenticatedAdminRolesV3RouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminPerfRouteImport } from './routes/_authenticated/admin.perf'
 import { Route as AuthenticatedAdminGoogleDriveRouteImport } from './routes/_authenticated/admin.google-drive'
 import { Route as AuthenticatedAdminDataQualityRouteImport } from './routes/_authenticated/admin.data-quality'
-import { Route as AuthenticatedAdminAuditPaiementsRouteImport } from './routes/_authenticated/admin.audit-paiements'
 import { Route as AuthenticatedAdminApprobationSeuilsRouteImport } from './routes/_authenticated/admin.approbation-seuils'
 import { Route as AuthenticatedAchatsNouveauRouteImport } from './routes/_authenticated/achats.nouveau'
 import { Route as AuthenticatedAchatsAchatIdRouteImport } from './routes/_authenticated/achats.$achatId'
 import { Route as AuthenticatedAbsencesNouveauRouteImport } from './routes/_authenticated/absences.nouveau'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as AuthenticatedLivraisonSuiviTourneesIndexRouteImport } from './routes/_authenticated/livraison-suivi.tournees.index'
+import { Route as AuthenticatedLivraisonSuiviCommandeRefIndexRouteImport } from './routes/_authenticated/livraison-suivi.$commandeRef.index'
 import { Route as AuthenticatedEmployesEmployeIdIndexRouteImport } from './routes/_authenticated/employes.$employeId.index'
+import { Route as AuthenticatedContratsContratIdIndexRouteImport } from './routes/_authenticated/contrats.$contratId.index'
 import { Route as AuthenticatedCommandesCommandeIdIndexRouteImport } from './routes/_authenticated/commandes.$commandeId.index'
+import { Route as AuthenticatedClientsClientIdIndexRouteImport } from './routes/_authenticated/clients.$clientId.index'
+import { Route as AuthenticatedAdminAuditPaiementsIndexRouteImport } from './routes/_authenticated/admin.audit-paiements.index'
 import { Route as ApiPublicVerifyDocUuidRouteImport } from './routes/api/public/verify-doc.$uuid'
 import { Route as ApiPublicHooksRunSchedulesRouteImport } from './routes/api/public/hooks/run-schedules'
 import { Route as ApiPublicHooksGlobalBackupRouteImport } from './routes/api/public/hooks/global-backup'
@@ -265,11 +265,6 @@ const AuthenticatedTransfertsRoute = AuthenticatedTransfertsRouteImport.update({
   path: '/transferts',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedStockRoute = AuthenticatedStockRouteImport.update({
-  id: '/stock',
-  path: '/stock',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedRolesPermissionsRoute =
   AuthenticatedRolesPermissionsRouteImport.update({
     id: '/roles-permissions',
@@ -325,11 +320,6 @@ const AuthenticatedPlanComptableRoute =
     path: '/plan-comptable',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedParametresRoute = AuthenticatedParametresRouteImport.update({
-  id: '/parametres',
-  path: '/parametres',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedPaiementsRoute = AuthenticatedPaiementsRouteImport.update({
   id: '/paiements',
   path: '/paiements',
@@ -521,11 +511,6 @@ const AuthenticatedExpeditionsRoute =
     path: '/expeditions',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedExercicesRoute = AuthenticatedExercicesRouteImport.update({
-  id: '/exercices',
-  path: '/exercices',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedEvaluationsRoute =
   AuthenticatedEvaluationsRouteImport.update({
     id: '/evaluations',
@@ -725,6 +710,11 @@ const AuthenticatedTourneesIndexRoute =
     path: '/tournees/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedStockIndexRoute = AuthenticatedStockIndexRouteImport.update({
+  id: '/stock/',
+  path: '/stock/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSpecimensIndexRoute =
   AuthenticatedSpecimensIndexRouteImport.update({
     id: '/specimens/',
@@ -754,6 +744,12 @@ const AuthenticatedProduitsIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedProduitsRoute,
+  } as any)
+const AuthenticatedParametresIndexRoute =
+  AuthenticatedParametresIndexRouteImport.update({
+    id: '/parametres/',
+    path: '/parametres/',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedPaiementsIndexRoute =
   AuthenticatedPaiementsIndexRouteImport.update({
@@ -795,6 +791,12 @@ const AuthenticatedFacturesIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedFacturesRoute,
+  } as any)
+const AuthenticatedExercicesIndexRoute =
+  AuthenticatedExercicesIndexRouteImport.update({
+    id: '/exercices/',
+    path: '/exercices/',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedEvaluationsIndexRoute =
   AuthenticatedEvaluationsIndexRouteImport.update({
@@ -911,9 +913,9 @@ const AuthenticatedTourneesBlTourneeIdRoute =
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedStockAuditRoute = AuthenticatedStockAuditRouteImport.update({
-  id: '/audit',
-  path: '/audit',
-  getParentRoute: () => AuthenticatedStockRoute,
+  id: '/stock/audit',
+  path: '/stock/audit',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedSpecimensNouveauRoute =
   AuthenticatedSpecimensNouveauRouteImport.update({
@@ -965,9 +967,9 @@ const AuthenticatedProduitsProduitIdRoute =
   } as any)
 const AuthenticatedParametresZonesLivraisonRoute =
   AuthenticatedParametresZonesLivraisonRouteImport.update({
-    id: '/zones-livraison',
-    path: '/zones-livraison',
-    getParentRoute: () => AuthenticatedParametresRoute,
+    id: '/parametres/zones-livraison',
+    path: '/parametres/zones-livraison',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedPaiementsNouveauRoute =
   AuthenticatedPaiementsNouveauRouteImport.update({
@@ -992,18 +994,6 @@ const AuthenticatedPaieBulletinIdRoute =
     id: '/$bulletinId',
     path: '/$bulletinId',
     getParentRoute: () => AuthenticatedPaieRoute,
-  } as any)
-const AuthenticatedLivraisonSuiviTourneesRoute =
-  AuthenticatedLivraisonSuiviTourneesRouteImport.update({
-    id: '/tournees',
-    path: '/tournees',
-    getParentRoute: () => AuthenticatedLivraisonSuiviRoute,
-  } as any)
-const AuthenticatedLivraisonSuiviCommandeRefRoute =
-  AuthenticatedLivraisonSuiviCommandeRefRouteImport.update({
-    id: '/$commandeRef',
-    path: '/$commandeRef',
-    getParentRoute: () => AuthenticatedLivraisonSuiviRoute,
   } as any)
 const AuthenticatedInventairesNouveauPhysiqueRoute =
   AuthenticatedInventairesNouveauPhysiqueRouteImport.update({
@@ -1055,21 +1045,21 @@ const AuthenticatedFacturesFactureIdRoute =
   } as any)
 const AuthenticatedExercicesRapportRoute =
   AuthenticatedExercicesRapportRouteImport.update({
-    id: '/rapport',
-    path: '/rapport',
-    getParentRoute: () => AuthenticatedExercicesRoute,
+    id: '/exercices/rapport',
+    path: '/exercices/rapport',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedExercicesJournalRoute =
   AuthenticatedExercicesJournalRouteImport.update({
-    id: '/journal',
-    path: '/journal',
-    getParentRoute: () => AuthenticatedExercicesRoute,
+    id: '/exercices/journal',
+    path: '/exercices/journal',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedExercicesComparatifRoute =
   AuthenticatedExercicesComparatifRouteImport.update({
-    id: '/comparatif',
-    path: '/comparatif',
-    getParentRoute: () => AuthenticatedExercicesRoute,
+    id: '/exercices/comparatif',
+    path: '/exercices/comparatif',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedEvaluationsNouveauRoute =
   AuthenticatedEvaluationsNouveauRouteImport.update({
@@ -1087,12 +1077,6 @@ const AuthenticatedContratsNouveauRoute =
   AuthenticatedContratsNouveauRouteImport.update({
     id: '/nouveau',
     path: '/nouveau',
-    getParentRoute: () => AuthenticatedContratsRoute,
-  } as any)
-const AuthenticatedContratsContratIdRoute =
-  AuthenticatedContratsContratIdRouteImport.update({
-    id: '/$contratId',
-    path: '/$contratId',
     getParentRoute: () => AuthenticatedContratsRoute,
   } as any)
 const AuthenticatedCongesNouveauRoute =
@@ -1161,12 +1145,6 @@ const AuthenticatedClientsDashboardRoute =
     path: '/dashboard',
     getParentRoute: () => AuthenticatedClientsRoute,
   } as any)
-const AuthenticatedClientsClientIdRoute =
-  AuthenticatedClientsClientIdRouteImport.update({
-    id: '/$clientId',
-    path: '/$clientId',
-    getParentRoute: () => AuthenticatedClientsRoute,
-  } as any)
 const AuthenticatedBonDeTourneeTourneeIdRoute =
   AuthenticatedBonDeTourneeTourneeIdRouteImport.update({
     id: '/bon-de-tournee/$tourneeId',
@@ -1231,12 +1209,6 @@ const AuthenticatedAdminDataQualityRoute =
     path: '/admin/data-quality',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedAdminAuditPaiementsRoute =
-  AuthenticatedAdminAuditPaiementsRouteImport.update({
-    id: '/admin/audit-paiements',
-    path: '/admin/audit-paiements',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedAdminApprobationSeuilsRoute =
   AuthenticatedAdminApprobationSeuilsRouteImport.update({
     id: '/admin/approbation-seuils',
@@ -1267,17 +1239,47 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedLivraisonSuiviTourneesIndexRoute =
+  AuthenticatedLivraisonSuiviTourneesIndexRouteImport.update({
+    id: '/tournees/',
+    path: '/tournees/',
+    getParentRoute: () => AuthenticatedLivraisonSuiviRoute,
+  } as any)
+const AuthenticatedLivraisonSuiviCommandeRefIndexRoute =
+  AuthenticatedLivraisonSuiviCommandeRefIndexRouteImport.update({
+    id: '/$commandeRef/',
+    path: '/$commandeRef/',
+    getParentRoute: () => AuthenticatedLivraisonSuiviRoute,
+  } as any)
 const AuthenticatedEmployesEmployeIdIndexRoute =
   AuthenticatedEmployesEmployeIdIndexRouteImport.update({
     id: '/$employeId/',
     path: '/$employeId/',
     getParentRoute: () => AuthenticatedEmployesRoute,
   } as any)
+const AuthenticatedContratsContratIdIndexRoute =
+  AuthenticatedContratsContratIdIndexRouteImport.update({
+    id: '/$contratId/',
+    path: '/$contratId/',
+    getParentRoute: () => AuthenticatedContratsRoute,
+  } as any)
 const AuthenticatedCommandesCommandeIdIndexRoute =
   AuthenticatedCommandesCommandeIdIndexRouteImport.update({
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedCommandesCommandeIdRoute,
+  } as any)
+const AuthenticatedClientsClientIdIndexRoute =
+  AuthenticatedClientsClientIdIndexRouteImport.update({
+    id: '/$clientId/',
+    path: '/$clientId/',
+    getParentRoute: () => AuthenticatedClientsRoute,
+  } as any)
+const AuthenticatedAdminAuditPaiementsIndexRoute =
+  AuthenticatedAdminAuditPaiementsIndexRouteImport.update({
+    id: '/admin/audit-paiements/',
+    path: '/admin/audit-paiements/',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const ApiPublicVerifyDocUuidRoute = ApiPublicVerifyDocUuidRouteImport.update({
   id: '/api/public/verify-doc/$uuid',
@@ -1320,15 +1322,15 @@ const AuthenticatedStockProduitIdMouvementsRoute =
   } as any)
 const AuthenticatedLivraisonSuiviTourneesTourneeIdRoute =
   AuthenticatedLivraisonSuiviTourneesTourneeIdRouteImport.update({
-    id: '/$tourneeId',
-    path: '/$tourneeId',
-    getParentRoute: () => AuthenticatedLivraisonSuiviTourneesRoute,
+    id: '/tournees/$tourneeId',
+    path: '/tournees/$tourneeId',
+    getParentRoute: () => AuthenticatedLivraisonSuiviRoute,
   } as any)
 const AuthenticatedLivraisonSuiviCommandeRefRemiseRoute =
   AuthenticatedLivraisonSuiviCommandeRefRemiseRouteImport.update({
-    id: '/remise',
-    path: '/remise',
-    getParentRoute: () => AuthenticatedLivraisonSuiviCommandeRefRoute,
+    id: '/$commandeRef/remise',
+    path: '/$commandeRef/remise',
+    getParentRoute: () => AuthenticatedLivraisonSuiviRoute,
   } as any)
 const AuthenticatedFournisseursFournisseurIdModifierRoute =
   AuthenticatedFournisseursFournisseurIdModifierRouteImport.update({
@@ -1350,9 +1352,9 @@ const AuthenticatedEmployesEmployeIdModifierRoute =
   } as any)
 const AuthenticatedContratsContratIdModifierRoute =
   AuthenticatedContratsContratIdModifierRouteImport.update({
-    id: '/modifier',
-    path: '/modifier',
-    getParentRoute: () => AuthenticatedContratsContratIdRoute,
+    id: '/$contratId/modifier',
+    path: '/$contratId/modifier',
+    getParentRoute: () => AuthenticatedContratsRoute,
   } as any)
 const AuthenticatedCongesCongeIdModifierRoute =
   AuthenticatedCongesCongeIdModifierRouteImport.update({
@@ -1368,15 +1370,15 @@ const AuthenticatedCommandesCommandeIdModifierRoute =
   } as any)
 const AuthenticatedClientsClientIdModifierRoute =
   AuthenticatedClientsClientIdModifierRouteImport.update({
-    id: '/modifier',
-    path: '/modifier',
-    getParentRoute: () => AuthenticatedClientsClientIdRoute,
+    id: '/$clientId/modifier',
+    path: '/$clientId/modifier',
+    getParentRoute: () => AuthenticatedClientsRoute,
   } as any)
 const AuthenticatedAdminAuditPaiementsAuditIdRoute =
   AuthenticatedAdminAuditPaiementsAuditIdRouteImport.update({
-    id: '/$auditId',
-    path: '/$auditId',
-    getParentRoute: () => AuthenticatedAdminAuditPaiementsRoute,
+    id: '/admin/audit-paiements/$auditId',
+    path: '/admin/audit-paiements/$auditId',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAbsencesAbsenceIdModifierRoute =
   AuthenticatedAbsencesAbsenceIdModifierRouteImport.update({
@@ -1428,7 +1430,6 @@ export interface FileRoutesByFullPath {
   '/etat-compte-clients': typeof AuthenticatedEtatCompteClientsRoute
   '/etats-comptables': typeof AuthenticatedEtatsComptablesRoute
   '/evaluations': typeof AuthenticatedEvaluationsRouteWithChildren
-  '/exercices': typeof AuthenticatedExercicesRouteWithChildren
   '/expeditions': typeof AuthenticatedExpeditionsRoute
   '/exports': typeof AuthenticatedExportsRoute
   '/factures': typeof AuthenticatedFacturesRouteWithChildren
@@ -1463,7 +1464,6 @@ export interface FileRoutesByFullPath {
   '/paie-rapports': typeof AuthenticatedPaieRapportsRoute
   '/paie-rubriques': typeof AuthenticatedPaieRubriquesRoute
   '/paiements': typeof AuthenticatedPaiementsRouteWithChildren
-  '/parametres': typeof AuthenticatedParametresRouteWithChildren
   '/plan-comptable': typeof AuthenticatedPlanComptableRoute
   '/produits': typeof AuthenticatedProduitsRouteWithChildren
   '/profil': typeof AuthenticatedProfilRoute
@@ -1474,7 +1474,6 @@ export interface FileRoutesByFullPath {
   '/retours': typeof AuthenticatedRetoursRouteWithChildren
   '/rh-dashboard': typeof AuthenticatedRhDashboardRoute
   '/roles-permissions': typeof AuthenticatedRolesPermissionsRoute
-  '/stock': typeof AuthenticatedStockRouteWithChildren
   '/transferts': typeof AuthenticatedTransfertsRouteWithChildren
   '/workflow-approvals': typeof AuthenticatedWorkflowApprovalsRoute
   '/workflows-definitions': typeof AuthenticatedWorkflowsDefinitionsRoute
@@ -1485,7 +1484,6 @@ export interface FileRoutesByFullPath {
   '/achats/$achatId': typeof AuthenticatedAchatsAchatIdRoute
   '/achats/nouveau': typeof AuthenticatedAchatsNouveauRoute
   '/admin/approbation-seuils': typeof AuthenticatedAdminApprobationSeuilsRoute
-  '/admin/audit-paiements': typeof AuthenticatedAdminAuditPaiementsRouteWithChildren
   '/admin/data-quality': typeof AuthenticatedAdminDataQualityRoute
   '/admin/google-drive': typeof AuthenticatedAdminGoogleDriveRoute
   '/admin/perf': typeof AuthenticatedAdminPerfRoute
@@ -1497,7 +1495,6 @@ export interface FileRoutesByFullPath {
   '/admin/web-vitals': typeof AuthenticatedAdminWebVitalsRoute
   '/bon-de-sortie/$tourneeId': typeof AuthenticatedBonDeSortieTourneeIdRoute
   '/bon-de-tournee/$tourneeId': typeof AuthenticatedBonDeTourneeTourneeIdRoute
-  '/clients/$clientId': typeof AuthenticatedClientsClientIdRouteWithChildren
   '/clients/dashboard': typeof AuthenticatedClientsDashboardRoute
   '/clients/nouveau': typeof AuthenticatedClientsNouveauRoute
   '/colisage/$blId': typeof AuthenticatedColisageBlIdRoute
@@ -1509,7 +1506,6 @@ export interface FileRoutesByFullPath {
   '/comptabilite/fec': typeof AuthenticatedComptabiliteFecRoute
   '/comptabilite/nouvelle': typeof AuthenticatedComptabiliteNouvelleRoute
   '/conges/nouveau': typeof AuthenticatedCongesNouveauRoute
-  '/contrats/$contratId': typeof AuthenticatedContratsContratIdRouteWithChildren
   '/contrats/nouveau': typeof AuthenticatedContratsNouveauRoute
   '/employes/nouveau': typeof AuthenticatedEmployesNouveauRoute
   '/evaluations/nouveau': typeof AuthenticatedEvaluationsNouveauRoute
@@ -1524,8 +1520,6 @@ export interface FileRoutesByFullPath {
   '/incidents/nouveau': typeof AuthenticatedIncidentsNouveauRoute
   '/inventaires/$inventaireId': typeof AuthenticatedInventairesInventaireIdRoute
   '/inventaires/nouveau-physique': typeof AuthenticatedInventairesNouveauPhysiqueRoute
-  '/livraison-suivi/$commandeRef': typeof AuthenticatedLivraisonSuiviCommandeRefRouteWithChildren
-  '/livraison-suivi/tournees': typeof AuthenticatedLivraisonSuiviTourneesRouteWithChildren
   '/paie/$bulletinId': typeof AuthenticatedPaieBulletinIdRoute
   '/paie/nouveau': typeof AuthenticatedPaieNouveauRoute
   '/paiements/$paiementId': typeof AuthenticatedPaiementsPaiementIdRoute
@@ -1559,6 +1553,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/employes/': typeof AuthenticatedEmployesIndexRoute
   '/evaluations/': typeof AuthenticatedEvaluationsIndexRoute
+  '/exercices/': typeof AuthenticatedExercicesIndexRoute
   '/factures/': typeof AuthenticatedFacturesIndexRoute
   '/fournisseurs/': typeof AuthenticatedFournisseursIndexRoute
   '/incidents/': typeof AuthenticatedIncidentsIndexRoute
@@ -1566,11 +1561,13 @@ export interface FileRoutesByFullPath {
   '/livraison-suivi/': typeof AuthenticatedLivraisonSuiviIndexRoute
   '/paie/': typeof AuthenticatedPaieIndexRoute
   '/paiements/': typeof AuthenticatedPaiementsIndexRoute
+  '/parametres/': typeof AuthenticatedParametresIndexRoute
   '/produits/': typeof AuthenticatedProduitsIndexRoute
   '/proformas/': typeof AuthenticatedProformasIndexRoute
   '/rapports/': typeof AuthenticatedRapportsIndexRoute
   '/retours/': typeof AuthenticatedRetoursIndexRoute
   '/specimens/': typeof AuthenticatedSpecimensIndexRoute
+  '/stock/': typeof AuthenticatedStockIndexRoute
   '/tournees/': typeof AuthenticatedTourneesIndexRoute
   '/transferts/': typeof AuthenticatedTransfertsIndexRoute
   '/utilisateurs/': typeof AuthenticatedUtilisateursIndexRoute
@@ -1592,8 +1589,13 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/global-backup': typeof ApiPublicHooksGlobalBackupRoute
   '/api/public/hooks/run-schedules': typeof ApiPublicHooksRunSchedulesRoute
   '/api/public/verify-doc/$uuid': typeof ApiPublicVerifyDocUuidRouteWithChildren
+  '/admin/audit-paiements/': typeof AuthenticatedAdminAuditPaiementsIndexRoute
+  '/clients/$clientId/': typeof AuthenticatedClientsClientIdIndexRoute
   '/commandes/$commandeId/': typeof AuthenticatedCommandesCommandeIdIndexRoute
+  '/contrats/$contratId/': typeof AuthenticatedContratsContratIdIndexRoute
   '/employes/$employeId/': typeof AuthenticatedEmployesEmployeIdIndexRoute
+  '/livraison-suivi/$commandeRef/': typeof AuthenticatedLivraisonSuiviCommandeRefIndexRoute
+  '/livraison-suivi/tournees/': typeof AuthenticatedLivraisonSuiviTourneesIndexRoute
   '/api/public/verify-doc/$uuid/document': typeof ApiPublicVerifyDocUuidDocumentRoute
 }
 export interface FileRoutesByTo {
@@ -1624,7 +1626,6 @@ export interface FileRoutesByTo {
   '/ecritures-comptables': typeof AuthenticatedEcrituresComptablesRoute
   '/etat-compte-clients': typeof AuthenticatedEtatCompteClientsRoute
   '/etats-comptables': typeof AuthenticatedEtatsComptablesRoute
-  '/exercices': typeof AuthenticatedExercicesRouteWithChildren
   '/expeditions': typeof AuthenticatedExpeditionsRoute
   '/exports': typeof AuthenticatedExportsRoute
   '/file-storage': typeof AuthenticatedFileStorageRoute
@@ -1652,14 +1653,12 @@ export interface FileRoutesByTo {
   '/paie-parametres': typeof AuthenticatedPaieParametresRoute
   '/paie-rapports': typeof AuthenticatedPaieRapportsRoute
   '/paie-rubriques': typeof AuthenticatedPaieRubriquesRoute
-  '/parametres': typeof AuthenticatedParametresRouteWithChildren
   '/plan-comptable': typeof AuthenticatedPlanComptableRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/rapports-comptables': typeof AuthenticatedRapportsComptablesRoute
   '/rapports-logistique': typeof AuthenticatedRapportsLogistiqueRoute
   '/rh-dashboard': typeof AuthenticatedRhDashboardRoute
   '/roles-permissions': typeof AuthenticatedRolesPermissionsRoute
-  '/stock': typeof AuthenticatedStockRouteWithChildren
   '/workflow-approvals': typeof AuthenticatedWorkflowApprovalsRoute
   '/workflows-definitions': typeof AuthenticatedWorkflowsDefinitionsRoute
   '/carton/$colisId': typeof CartonColisIdRoute
@@ -1669,7 +1668,6 @@ export interface FileRoutesByTo {
   '/achats/$achatId': typeof AuthenticatedAchatsAchatIdRoute
   '/achats/nouveau': typeof AuthenticatedAchatsNouveauRoute
   '/admin/approbation-seuils': typeof AuthenticatedAdminApprobationSeuilsRoute
-  '/admin/audit-paiements': typeof AuthenticatedAdminAuditPaiementsRouteWithChildren
   '/admin/data-quality': typeof AuthenticatedAdminDataQualityRoute
   '/admin/google-drive': typeof AuthenticatedAdminGoogleDriveRoute
   '/admin/perf': typeof AuthenticatedAdminPerfRoute
@@ -1681,7 +1679,6 @@ export interface FileRoutesByTo {
   '/admin/web-vitals': typeof AuthenticatedAdminWebVitalsRoute
   '/bon-de-sortie/$tourneeId': typeof AuthenticatedBonDeSortieTourneeIdRoute
   '/bon-de-tournee/$tourneeId': typeof AuthenticatedBonDeTourneeTourneeIdRoute
-  '/clients/$clientId': typeof AuthenticatedClientsClientIdRouteWithChildren
   '/clients/dashboard': typeof AuthenticatedClientsDashboardRoute
   '/clients/nouveau': typeof AuthenticatedClientsNouveauRoute
   '/colisage/$blId': typeof AuthenticatedColisageBlIdRoute
@@ -1692,7 +1689,6 @@ export interface FileRoutesByTo {
   '/comptabilite/fec': typeof AuthenticatedComptabiliteFecRoute
   '/comptabilite/nouvelle': typeof AuthenticatedComptabiliteNouvelleRoute
   '/conges/nouveau': typeof AuthenticatedCongesNouveauRoute
-  '/contrats/$contratId': typeof AuthenticatedContratsContratIdRouteWithChildren
   '/contrats/nouveau': typeof AuthenticatedContratsNouveauRoute
   '/employes/nouveau': typeof AuthenticatedEmployesNouveauRoute
   '/evaluations/nouveau': typeof AuthenticatedEvaluationsNouveauRoute
@@ -1707,8 +1703,6 @@ export interface FileRoutesByTo {
   '/incidents/nouveau': typeof AuthenticatedIncidentsNouveauRoute
   '/inventaires/$inventaireId': typeof AuthenticatedInventairesInventaireIdRoute
   '/inventaires/nouveau-physique': typeof AuthenticatedInventairesNouveauPhysiqueRoute
-  '/livraison-suivi/$commandeRef': typeof AuthenticatedLivraisonSuiviCommandeRefRouteWithChildren
-  '/livraison-suivi/tournees': typeof AuthenticatedLivraisonSuiviTourneesRouteWithChildren
   '/paie/$bulletinId': typeof AuthenticatedPaieBulletinIdRoute
   '/paie/nouveau': typeof AuthenticatedPaieNouveauRoute
   '/paiements/$paiementId': typeof AuthenticatedPaiementsPaiementIdRoute
@@ -1742,6 +1736,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/employes': typeof AuthenticatedEmployesIndexRoute
   '/evaluations': typeof AuthenticatedEvaluationsIndexRoute
+  '/exercices': typeof AuthenticatedExercicesIndexRoute
   '/factures': typeof AuthenticatedFacturesIndexRoute
   '/fournisseurs': typeof AuthenticatedFournisseursIndexRoute
   '/incidents': typeof AuthenticatedIncidentsIndexRoute
@@ -1749,11 +1744,13 @@ export interface FileRoutesByTo {
   '/livraison-suivi': typeof AuthenticatedLivraisonSuiviIndexRoute
   '/paie': typeof AuthenticatedPaieIndexRoute
   '/paiements': typeof AuthenticatedPaiementsIndexRoute
+  '/parametres': typeof AuthenticatedParametresIndexRoute
   '/produits': typeof AuthenticatedProduitsIndexRoute
   '/proformas': typeof AuthenticatedProformasIndexRoute
   '/rapports': typeof AuthenticatedRapportsIndexRoute
   '/retours': typeof AuthenticatedRetoursIndexRoute
   '/specimens': typeof AuthenticatedSpecimensIndexRoute
+  '/stock': typeof AuthenticatedStockIndexRoute
   '/tournees': typeof AuthenticatedTourneesIndexRoute
   '/transferts': typeof AuthenticatedTransfertsIndexRoute
   '/utilisateurs': typeof AuthenticatedUtilisateursIndexRoute
@@ -1775,8 +1772,13 @@ export interface FileRoutesByTo {
   '/api/public/hooks/global-backup': typeof ApiPublicHooksGlobalBackupRoute
   '/api/public/hooks/run-schedules': typeof ApiPublicHooksRunSchedulesRoute
   '/api/public/verify-doc/$uuid': typeof ApiPublicVerifyDocUuidRouteWithChildren
+  '/admin/audit-paiements': typeof AuthenticatedAdminAuditPaiementsIndexRoute
+  '/clients/$clientId': typeof AuthenticatedClientsClientIdIndexRoute
   '/commandes/$commandeId': typeof AuthenticatedCommandesCommandeIdIndexRoute
+  '/contrats/$contratId': typeof AuthenticatedContratsContratIdIndexRoute
   '/employes/$employeId': typeof AuthenticatedEmployesEmployeIdIndexRoute
+  '/livraison-suivi/$commandeRef': typeof AuthenticatedLivraisonSuiviCommandeRefIndexRoute
+  '/livraison-suivi/tournees': typeof AuthenticatedLivraisonSuiviTourneesIndexRoute
   '/api/public/verify-doc/$uuid/document': typeof ApiPublicVerifyDocUuidDocumentRoute
 }
 export interface FileRoutesById {
@@ -1818,7 +1820,6 @@ export interface FileRoutesById {
   '/_authenticated/etat-compte-clients': typeof AuthenticatedEtatCompteClientsRoute
   '/_authenticated/etats-comptables': typeof AuthenticatedEtatsComptablesRoute
   '/_authenticated/evaluations': typeof AuthenticatedEvaluationsRouteWithChildren
-  '/_authenticated/exercices': typeof AuthenticatedExercicesRouteWithChildren
   '/_authenticated/expeditions': typeof AuthenticatedExpeditionsRoute
   '/_authenticated/exports': typeof AuthenticatedExportsRoute
   '/_authenticated/factures': typeof AuthenticatedFacturesRouteWithChildren
@@ -1853,7 +1854,6 @@ export interface FileRoutesById {
   '/_authenticated/paie-rapports': typeof AuthenticatedPaieRapportsRoute
   '/_authenticated/paie-rubriques': typeof AuthenticatedPaieRubriquesRoute
   '/_authenticated/paiements': typeof AuthenticatedPaiementsRouteWithChildren
-  '/_authenticated/parametres': typeof AuthenticatedParametresRouteWithChildren
   '/_authenticated/plan-comptable': typeof AuthenticatedPlanComptableRoute
   '/_authenticated/produits': typeof AuthenticatedProduitsRouteWithChildren
   '/_authenticated/profil': typeof AuthenticatedProfilRoute
@@ -1864,7 +1864,6 @@ export interface FileRoutesById {
   '/_authenticated/retours': typeof AuthenticatedRetoursRouteWithChildren
   '/_authenticated/rh-dashboard': typeof AuthenticatedRhDashboardRoute
   '/_authenticated/roles-permissions': typeof AuthenticatedRolesPermissionsRoute
-  '/_authenticated/stock': typeof AuthenticatedStockRouteWithChildren
   '/_authenticated/transferts': typeof AuthenticatedTransfertsRouteWithChildren
   '/_authenticated/workflow-approvals': typeof AuthenticatedWorkflowApprovalsRoute
   '/_authenticated/workflows-definitions': typeof AuthenticatedWorkflowsDefinitionsRoute
@@ -1875,7 +1874,6 @@ export interface FileRoutesById {
   '/_authenticated/achats/$achatId': typeof AuthenticatedAchatsAchatIdRoute
   '/_authenticated/achats/nouveau': typeof AuthenticatedAchatsNouveauRoute
   '/_authenticated/admin/approbation-seuils': typeof AuthenticatedAdminApprobationSeuilsRoute
-  '/_authenticated/admin/audit-paiements': typeof AuthenticatedAdminAuditPaiementsRouteWithChildren
   '/_authenticated/admin/data-quality': typeof AuthenticatedAdminDataQualityRoute
   '/_authenticated/admin/google-drive': typeof AuthenticatedAdminGoogleDriveRoute
   '/_authenticated/admin/perf': typeof AuthenticatedAdminPerfRoute
@@ -1887,7 +1885,6 @@ export interface FileRoutesById {
   '/_authenticated/admin/web-vitals': typeof AuthenticatedAdminWebVitalsRoute
   '/_authenticated/bon-de-sortie/$tourneeId': typeof AuthenticatedBonDeSortieTourneeIdRoute
   '/_authenticated/bon-de-tournee/$tourneeId': typeof AuthenticatedBonDeTourneeTourneeIdRoute
-  '/_authenticated/clients/$clientId': typeof AuthenticatedClientsClientIdRouteWithChildren
   '/_authenticated/clients/dashboard': typeof AuthenticatedClientsDashboardRoute
   '/_authenticated/clients/nouveau': typeof AuthenticatedClientsNouveauRoute
   '/_authenticated/colisage/$blId': typeof AuthenticatedColisageBlIdRoute
@@ -1899,7 +1896,6 @@ export interface FileRoutesById {
   '/_authenticated/comptabilite/fec': typeof AuthenticatedComptabiliteFecRoute
   '/_authenticated/comptabilite/nouvelle': typeof AuthenticatedComptabiliteNouvelleRoute
   '/_authenticated/conges/nouveau': typeof AuthenticatedCongesNouveauRoute
-  '/_authenticated/contrats/$contratId': typeof AuthenticatedContratsContratIdRouteWithChildren
   '/_authenticated/contrats/nouveau': typeof AuthenticatedContratsNouveauRoute
   '/_authenticated/employes/nouveau': typeof AuthenticatedEmployesNouveauRoute
   '/_authenticated/evaluations/nouveau': typeof AuthenticatedEvaluationsNouveauRoute
@@ -1914,8 +1910,6 @@ export interface FileRoutesById {
   '/_authenticated/incidents/nouveau': typeof AuthenticatedIncidentsNouveauRoute
   '/_authenticated/inventaires/$inventaireId': typeof AuthenticatedInventairesInventaireIdRoute
   '/_authenticated/inventaires/nouveau-physique': typeof AuthenticatedInventairesNouveauPhysiqueRoute
-  '/_authenticated/livraison-suivi/$commandeRef': typeof AuthenticatedLivraisonSuiviCommandeRefRouteWithChildren
-  '/_authenticated/livraison-suivi/tournees': typeof AuthenticatedLivraisonSuiviTourneesRouteWithChildren
   '/_authenticated/paie/$bulletinId': typeof AuthenticatedPaieBulletinIdRoute
   '/_authenticated/paie/nouveau': typeof AuthenticatedPaieNouveauRoute
   '/_authenticated/paiements/$paiementId': typeof AuthenticatedPaiementsPaiementIdRoute
@@ -1949,6 +1943,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/employes/': typeof AuthenticatedEmployesIndexRoute
   '/_authenticated/evaluations/': typeof AuthenticatedEvaluationsIndexRoute
+  '/_authenticated/exercices/': typeof AuthenticatedExercicesIndexRoute
   '/_authenticated/factures/': typeof AuthenticatedFacturesIndexRoute
   '/_authenticated/fournisseurs/': typeof AuthenticatedFournisseursIndexRoute
   '/_authenticated/incidents/': typeof AuthenticatedIncidentsIndexRoute
@@ -1956,11 +1951,13 @@ export interface FileRoutesById {
   '/_authenticated/livraison-suivi/': typeof AuthenticatedLivraisonSuiviIndexRoute
   '/_authenticated/paie/': typeof AuthenticatedPaieIndexRoute
   '/_authenticated/paiements/': typeof AuthenticatedPaiementsIndexRoute
+  '/_authenticated/parametres/': typeof AuthenticatedParametresIndexRoute
   '/_authenticated/produits/': typeof AuthenticatedProduitsIndexRoute
   '/_authenticated/proformas/': typeof AuthenticatedProformasIndexRoute
   '/_authenticated/rapports/': typeof AuthenticatedRapportsIndexRoute
   '/_authenticated/retours/': typeof AuthenticatedRetoursIndexRoute
   '/_authenticated/specimens/': typeof AuthenticatedSpecimensIndexRoute
+  '/_authenticated/stock/': typeof AuthenticatedStockIndexRoute
   '/_authenticated/tournees/': typeof AuthenticatedTourneesIndexRoute
   '/_authenticated/transferts/': typeof AuthenticatedTransfertsIndexRoute
   '/_authenticated/utilisateurs/': typeof AuthenticatedUtilisateursIndexRoute
@@ -1982,8 +1979,13 @@ export interface FileRoutesById {
   '/api/public/hooks/global-backup': typeof ApiPublicHooksGlobalBackupRoute
   '/api/public/hooks/run-schedules': typeof ApiPublicHooksRunSchedulesRoute
   '/api/public/verify-doc/$uuid': typeof ApiPublicVerifyDocUuidRouteWithChildren
+  '/_authenticated/admin/audit-paiements/': typeof AuthenticatedAdminAuditPaiementsIndexRoute
+  '/_authenticated/clients/$clientId/': typeof AuthenticatedClientsClientIdIndexRoute
   '/_authenticated/commandes/$commandeId/': typeof AuthenticatedCommandesCommandeIdIndexRoute
+  '/_authenticated/contrats/$contratId/': typeof AuthenticatedContratsContratIdIndexRoute
   '/_authenticated/employes/$employeId/': typeof AuthenticatedEmployesEmployeIdIndexRoute
+  '/_authenticated/livraison-suivi/$commandeRef/': typeof AuthenticatedLivraisonSuiviCommandeRefIndexRoute
+  '/_authenticated/livraison-suivi/tournees/': typeof AuthenticatedLivraisonSuiviTourneesIndexRoute
   '/api/public/verify-doc/$uuid/document': typeof ApiPublicVerifyDocUuidDocumentRoute
 }
 export interface FileRouteTypes {
@@ -2025,7 +2027,6 @@ export interface FileRouteTypes {
     | '/etat-compte-clients'
     | '/etats-comptables'
     | '/evaluations'
-    | '/exercices'
     | '/expeditions'
     | '/exports'
     | '/factures'
@@ -2060,7 +2061,6 @@ export interface FileRouteTypes {
     | '/paie-rapports'
     | '/paie-rubriques'
     | '/paiements'
-    | '/parametres'
     | '/plan-comptable'
     | '/produits'
     | '/profil'
@@ -2071,7 +2071,6 @@ export interface FileRouteTypes {
     | '/retours'
     | '/rh-dashboard'
     | '/roles-permissions'
-    | '/stock'
     | '/transferts'
     | '/workflow-approvals'
     | '/workflows-definitions'
@@ -2082,7 +2081,6 @@ export interface FileRouteTypes {
     | '/achats/$achatId'
     | '/achats/nouveau'
     | '/admin/approbation-seuils'
-    | '/admin/audit-paiements'
     | '/admin/data-quality'
     | '/admin/google-drive'
     | '/admin/perf'
@@ -2094,7 +2092,6 @@ export interface FileRouteTypes {
     | '/admin/web-vitals'
     | '/bon-de-sortie/$tourneeId'
     | '/bon-de-tournee/$tourneeId'
-    | '/clients/$clientId'
     | '/clients/dashboard'
     | '/clients/nouveau'
     | '/colisage/$blId'
@@ -2106,7 +2103,6 @@ export interface FileRouteTypes {
     | '/comptabilite/fec'
     | '/comptabilite/nouvelle'
     | '/conges/nouveau'
-    | '/contrats/$contratId'
     | '/contrats/nouveau'
     | '/employes/nouveau'
     | '/evaluations/nouveau'
@@ -2121,8 +2117,6 @@ export interface FileRouteTypes {
     | '/incidents/nouveau'
     | '/inventaires/$inventaireId'
     | '/inventaires/nouveau-physique'
-    | '/livraison-suivi/$commandeRef'
-    | '/livraison-suivi/tournees'
     | '/paie/$bulletinId'
     | '/paie/nouveau'
     | '/paiements/$paiementId'
@@ -2156,6 +2150,7 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/employes/'
     | '/evaluations/'
+    | '/exercices/'
     | '/factures/'
     | '/fournisseurs/'
     | '/incidents/'
@@ -2163,11 +2158,13 @@ export interface FileRouteTypes {
     | '/livraison-suivi/'
     | '/paie/'
     | '/paiements/'
+    | '/parametres/'
     | '/produits/'
     | '/proformas/'
     | '/rapports/'
     | '/retours/'
     | '/specimens/'
+    | '/stock/'
     | '/tournees/'
     | '/transferts/'
     | '/utilisateurs/'
@@ -2189,8 +2186,13 @@ export interface FileRouteTypes {
     | '/api/public/hooks/global-backup'
     | '/api/public/hooks/run-schedules'
     | '/api/public/verify-doc/$uuid'
+    | '/admin/audit-paiements/'
+    | '/clients/$clientId/'
     | '/commandes/$commandeId/'
+    | '/contrats/$contratId/'
     | '/employes/$employeId/'
+    | '/livraison-suivi/$commandeRef/'
+    | '/livraison-suivi/tournees/'
     | '/api/public/verify-doc/$uuid/document'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -2221,7 +2223,6 @@ export interface FileRouteTypes {
     | '/ecritures-comptables'
     | '/etat-compte-clients'
     | '/etats-comptables'
-    | '/exercices'
     | '/expeditions'
     | '/exports'
     | '/file-storage'
@@ -2249,14 +2250,12 @@ export interface FileRouteTypes {
     | '/paie-parametres'
     | '/paie-rapports'
     | '/paie-rubriques'
-    | '/parametres'
     | '/plan-comptable'
     | '/profil'
     | '/rapports-comptables'
     | '/rapports-logistique'
     | '/rh-dashboard'
     | '/roles-permissions'
-    | '/stock'
     | '/workflow-approvals'
     | '/workflows-definitions'
     | '/carton/$colisId'
@@ -2266,7 +2265,6 @@ export interface FileRouteTypes {
     | '/achats/$achatId'
     | '/achats/nouveau'
     | '/admin/approbation-seuils'
-    | '/admin/audit-paiements'
     | '/admin/data-quality'
     | '/admin/google-drive'
     | '/admin/perf'
@@ -2278,7 +2276,6 @@ export interface FileRouteTypes {
     | '/admin/web-vitals'
     | '/bon-de-sortie/$tourneeId'
     | '/bon-de-tournee/$tourneeId'
-    | '/clients/$clientId'
     | '/clients/dashboard'
     | '/clients/nouveau'
     | '/colisage/$blId'
@@ -2289,7 +2286,6 @@ export interface FileRouteTypes {
     | '/comptabilite/fec'
     | '/comptabilite/nouvelle'
     | '/conges/nouveau'
-    | '/contrats/$contratId'
     | '/contrats/nouveau'
     | '/employes/nouveau'
     | '/evaluations/nouveau'
@@ -2304,8 +2300,6 @@ export interface FileRouteTypes {
     | '/incidents/nouveau'
     | '/inventaires/$inventaireId'
     | '/inventaires/nouveau-physique'
-    | '/livraison-suivi/$commandeRef'
-    | '/livraison-suivi/tournees'
     | '/paie/$bulletinId'
     | '/paie/nouveau'
     | '/paiements/$paiementId'
@@ -2339,6 +2333,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/employes'
     | '/evaluations'
+    | '/exercices'
     | '/factures'
     | '/fournisseurs'
     | '/incidents'
@@ -2346,11 +2341,13 @@ export interface FileRouteTypes {
     | '/livraison-suivi'
     | '/paie'
     | '/paiements'
+    | '/parametres'
     | '/produits'
     | '/proformas'
     | '/rapports'
     | '/retours'
     | '/specimens'
+    | '/stock'
     | '/tournees'
     | '/transferts'
     | '/utilisateurs'
@@ -2372,8 +2369,13 @@ export interface FileRouteTypes {
     | '/api/public/hooks/global-backup'
     | '/api/public/hooks/run-schedules'
     | '/api/public/verify-doc/$uuid'
+    | '/admin/audit-paiements'
+    | '/clients/$clientId'
     | '/commandes/$commandeId'
+    | '/contrats/$contratId'
     | '/employes/$employeId'
+    | '/livraison-suivi/$commandeRef'
+    | '/livraison-suivi/tournees'
     | '/api/public/verify-doc/$uuid/document'
   id:
     | '__root__'
@@ -2414,7 +2416,6 @@ export interface FileRouteTypes {
     | '/_authenticated/etat-compte-clients'
     | '/_authenticated/etats-comptables'
     | '/_authenticated/evaluations'
-    | '/_authenticated/exercices'
     | '/_authenticated/expeditions'
     | '/_authenticated/exports'
     | '/_authenticated/factures'
@@ -2449,7 +2450,6 @@ export interface FileRouteTypes {
     | '/_authenticated/paie-rapports'
     | '/_authenticated/paie-rubriques'
     | '/_authenticated/paiements'
-    | '/_authenticated/parametres'
     | '/_authenticated/plan-comptable'
     | '/_authenticated/produits'
     | '/_authenticated/profil'
@@ -2460,7 +2460,6 @@ export interface FileRouteTypes {
     | '/_authenticated/retours'
     | '/_authenticated/rh-dashboard'
     | '/_authenticated/roles-permissions'
-    | '/_authenticated/stock'
     | '/_authenticated/transferts'
     | '/_authenticated/workflow-approvals'
     | '/_authenticated/workflows-definitions'
@@ -2471,7 +2470,6 @@ export interface FileRouteTypes {
     | '/_authenticated/achats/$achatId'
     | '/_authenticated/achats/nouveau'
     | '/_authenticated/admin/approbation-seuils'
-    | '/_authenticated/admin/audit-paiements'
     | '/_authenticated/admin/data-quality'
     | '/_authenticated/admin/google-drive'
     | '/_authenticated/admin/perf'
@@ -2483,7 +2481,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/web-vitals'
     | '/_authenticated/bon-de-sortie/$tourneeId'
     | '/_authenticated/bon-de-tournee/$tourneeId'
-    | '/_authenticated/clients/$clientId'
     | '/_authenticated/clients/dashboard'
     | '/_authenticated/clients/nouveau'
     | '/_authenticated/colisage/$blId'
@@ -2495,7 +2492,6 @@ export interface FileRouteTypes {
     | '/_authenticated/comptabilite/fec'
     | '/_authenticated/comptabilite/nouvelle'
     | '/_authenticated/conges/nouveau'
-    | '/_authenticated/contrats/$contratId'
     | '/_authenticated/contrats/nouveau'
     | '/_authenticated/employes/nouveau'
     | '/_authenticated/evaluations/nouveau'
@@ -2510,8 +2506,6 @@ export interface FileRouteTypes {
     | '/_authenticated/incidents/nouveau'
     | '/_authenticated/inventaires/$inventaireId'
     | '/_authenticated/inventaires/nouveau-physique'
-    | '/_authenticated/livraison-suivi/$commandeRef'
-    | '/_authenticated/livraison-suivi/tournees'
     | '/_authenticated/paie/$bulletinId'
     | '/_authenticated/paie/nouveau'
     | '/_authenticated/paiements/$paiementId'
@@ -2545,6 +2539,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/'
     | '/_authenticated/employes/'
     | '/_authenticated/evaluations/'
+    | '/_authenticated/exercices/'
     | '/_authenticated/factures/'
     | '/_authenticated/fournisseurs/'
     | '/_authenticated/incidents/'
@@ -2552,11 +2547,13 @@ export interface FileRouteTypes {
     | '/_authenticated/livraison-suivi/'
     | '/_authenticated/paie/'
     | '/_authenticated/paiements/'
+    | '/_authenticated/parametres/'
     | '/_authenticated/produits/'
     | '/_authenticated/proformas/'
     | '/_authenticated/rapports/'
     | '/_authenticated/retours/'
     | '/_authenticated/specimens/'
+    | '/_authenticated/stock/'
     | '/_authenticated/tournees/'
     | '/_authenticated/transferts/'
     | '/_authenticated/utilisateurs/'
@@ -2578,8 +2575,13 @@ export interface FileRouteTypes {
     | '/api/public/hooks/global-backup'
     | '/api/public/hooks/run-schedules'
     | '/api/public/verify-doc/$uuid'
+    | '/_authenticated/admin/audit-paiements/'
+    | '/_authenticated/clients/$clientId/'
     | '/_authenticated/commandes/$commandeId/'
+    | '/_authenticated/contrats/$contratId/'
     | '/_authenticated/employes/$employeId/'
+    | '/_authenticated/livraison-suivi/$commandeRef/'
+    | '/_authenticated/livraison-suivi/tournees/'
     | '/api/public/verify-doc/$uuid/document'
   fileRoutesById: FileRoutesById
 }
@@ -2674,13 +2676,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTransfertsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/stock': {
-      id: '/_authenticated/stock'
-      path: '/stock'
-      fullPath: '/stock'
-      preLoaderRoute: typeof AuthenticatedStockRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/roles-permissions': {
       id: '/_authenticated/roles-permissions'
       path: '/roles-permissions'
@@ -2749,13 +2744,6 @@ declare module '@tanstack/react-router' {
       path: '/plan-comptable'
       fullPath: '/plan-comptable'
       preLoaderRoute: typeof AuthenticatedPlanComptableRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/parametres': {
-      id: '/_authenticated/parametres'
-      path: '/parametres'
-      fullPath: '/parametres'
-      preLoaderRoute: typeof AuthenticatedParametresRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/paiements': {
@@ -2994,13 +2982,6 @@ declare module '@tanstack/react-router' {
       path: '/expeditions'
       fullPath: '/expeditions'
       preLoaderRoute: typeof AuthenticatedExpeditionsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/exercices': {
-      id: '/_authenticated/exercices'
-      path: '/exercices'
-      fullPath: '/exercices'
-      preLoaderRoute: typeof AuthenticatedExercicesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/evaluations': {
@@ -3248,6 +3229,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTourneesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/stock/': {
+      id: '/_authenticated/stock/'
+      path: '/stock'
+      fullPath: '/stock/'
+      preLoaderRoute: typeof AuthenticatedStockIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/specimens/': {
       id: '/_authenticated/specimens/'
       path: '/specimens'
@@ -3282,6 +3270,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/produits/'
       preLoaderRoute: typeof AuthenticatedProduitsIndexRouteImport
       parentRoute: typeof AuthenticatedProduitsRoute
+    }
+    '/_authenticated/parametres/': {
+      id: '/_authenticated/parametres/'
+      path: '/parametres'
+      fullPath: '/parametres/'
+      preLoaderRoute: typeof AuthenticatedParametresIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/paiements/': {
       id: '/_authenticated/paiements/'
@@ -3331,6 +3326,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/factures/'
       preLoaderRoute: typeof AuthenticatedFacturesIndexRouteImport
       parentRoute: typeof AuthenticatedFacturesRoute
+    }
+    '/_authenticated/exercices/': {
+      id: '/_authenticated/exercices/'
+      path: '/exercices'
+      fullPath: '/exercices/'
+      preLoaderRoute: typeof AuthenticatedExercicesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/evaluations/': {
       id: '/_authenticated/evaluations/'
@@ -3467,10 +3469,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/stock/audit': {
       id: '/_authenticated/stock/audit'
-      path: '/audit'
+      path: '/stock/audit'
       fullPath: '/stock/audit'
       preLoaderRoute: typeof AuthenticatedStockAuditRouteImport
-      parentRoute: typeof AuthenticatedStockRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/specimens/nouveau': {
       id: '/_authenticated/specimens/nouveau'
@@ -3530,10 +3532,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/parametres/zones-livraison': {
       id: '/_authenticated/parametres/zones-livraison'
-      path: '/zones-livraison'
+      path: '/parametres/zones-livraison'
       fullPath: '/parametres/zones-livraison'
       preLoaderRoute: typeof AuthenticatedParametresZonesLivraisonRouteImport
-      parentRoute: typeof AuthenticatedParametresRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/paiements/nouveau': {
       id: '/_authenticated/paiements/nouveau'
@@ -3562,20 +3564,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/paie/$bulletinId'
       preLoaderRoute: typeof AuthenticatedPaieBulletinIdRouteImport
       parentRoute: typeof AuthenticatedPaieRoute
-    }
-    '/_authenticated/livraison-suivi/tournees': {
-      id: '/_authenticated/livraison-suivi/tournees'
-      path: '/tournees'
-      fullPath: '/livraison-suivi/tournees'
-      preLoaderRoute: typeof AuthenticatedLivraisonSuiviTourneesRouteImport
-      parentRoute: typeof AuthenticatedLivraisonSuiviRoute
-    }
-    '/_authenticated/livraison-suivi/$commandeRef': {
-      id: '/_authenticated/livraison-suivi/$commandeRef'
-      path: '/$commandeRef'
-      fullPath: '/livraison-suivi/$commandeRef'
-      preLoaderRoute: typeof AuthenticatedLivraisonSuiviCommandeRefRouteImport
-      parentRoute: typeof AuthenticatedLivraisonSuiviRoute
     }
     '/_authenticated/inventaires/nouveau-physique': {
       id: '/_authenticated/inventaires/nouveau-physique'
@@ -3635,24 +3623,24 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/exercices/rapport': {
       id: '/_authenticated/exercices/rapport'
-      path: '/rapport'
+      path: '/exercices/rapport'
       fullPath: '/exercices/rapport'
       preLoaderRoute: typeof AuthenticatedExercicesRapportRouteImport
-      parentRoute: typeof AuthenticatedExercicesRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/exercices/journal': {
       id: '/_authenticated/exercices/journal'
-      path: '/journal'
+      path: '/exercices/journal'
       fullPath: '/exercices/journal'
       preLoaderRoute: typeof AuthenticatedExercicesJournalRouteImport
-      parentRoute: typeof AuthenticatedExercicesRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/exercices/comparatif': {
       id: '/_authenticated/exercices/comparatif'
-      path: '/comparatif'
+      path: '/exercices/comparatif'
       fullPath: '/exercices/comparatif'
       preLoaderRoute: typeof AuthenticatedExercicesComparatifRouteImport
-      parentRoute: typeof AuthenticatedExercicesRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/evaluations/nouveau': {
       id: '/_authenticated/evaluations/nouveau'
@@ -3673,13 +3661,6 @@ declare module '@tanstack/react-router' {
       path: '/nouveau'
       fullPath: '/contrats/nouveau'
       preLoaderRoute: typeof AuthenticatedContratsNouveauRouteImport
-      parentRoute: typeof AuthenticatedContratsRoute
-    }
-    '/_authenticated/contrats/$contratId': {
-      id: '/_authenticated/contrats/$contratId'
-      path: '/$contratId'
-      fullPath: '/contrats/$contratId'
-      preLoaderRoute: typeof AuthenticatedContratsContratIdRouteImport
       parentRoute: typeof AuthenticatedContratsRoute
     }
     '/_authenticated/conges/nouveau': {
@@ -3759,13 +3740,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientsDashboardRouteImport
       parentRoute: typeof AuthenticatedClientsRoute
     }
-    '/_authenticated/clients/$clientId': {
-      id: '/_authenticated/clients/$clientId'
-      path: '/$clientId'
-      fullPath: '/clients/$clientId'
-      preLoaderRoute: typeof AuthenticatedClientsClientIdRouteImport
-      parentRoute: typeof AuthenticatedClientsRoute
-    }
     '/_authenticated/bon-de-tournee/$tourneeId': {
       id: '/_authenticated/bon-de-tournee/$tourneeId'
       path: '/bon-de-tournee/$tourneeId'
@@ -3843,13 +3817,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminDataQualityRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/admin/audit-paiements': {
-      id: '/_authenticated/admin/audit-paiements'
-      path: '/admin/audit-paiements'
-      fullPath: '/admin/audit-paiements'
-      preLoaderRoute: typeof AuthenticatedAdminAuditPaiementsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/admin/approbation-seuils': {
       id: '/_authenticated/admin/approbation-seuils'
       path: '/admin/approbation-seuils'
@@ -3885,6 +3852,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/livraison-suivi/tournees/': {
+      id: '/_authenticated/livraison-suivi/tournees/'
+      path: '/tournees'
+      fullPath: '/livraison-suivi/tournees/'
+      preLoaderRoute: typeof AuthenticatedLivraisonSuiviTourneesIndexRouteImport
+      parentRoute: typeof AuthenticatedLivraisonSuiviRoute
+    }
+    '/_authenticated/livraison-suivi/$commandeRef/': {
+      id: '/_authenticated/livraison-suivi/$commandeRef/'
+      path: '/$commandeRef'
+      fullPath: '/livraison-suivi/$commandeRef/'
+      preLoaderRoute: typeof AuthenticatedLivraisonSuiviCommandeRefIndexRouteImport
+      parentRoute: typeof AuthenticatedLivraisonSuiviRoute
+    }
     '/_authenticated/employes/$employeId/': {
       id: '/_authenticated/employes/$employeId/'
       path: '/$employeId'
@@ -3892,12 +3873,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEmployesEmployeIdIndexRouteImport
       parentRoute: typeof AuthenticatedEmployesRoute
     }
+    '/_authenticated/contrats/$contratId/': {
+      id: '/_authenticated/contrats/$contratId/'
+      path: '/$contratId'
+      fullPath: '/contrats/$contratId/'
+      preLoaderRoute: typeof AuthenticatedContratsContratIdIndexRouteImport
+      parentRoute: typeof AuthenticatedContratsRoute
+    }
     '/_authenticated/commandes/$commandeId/': {
       id: '/_authenticated/commandes/$commandeId/'
       path: '/'
       fullPath: '/commandes/$commandeId/'
       preLoaderRoute: typeof AuthenticatedCommandesCommandeIdIndexRouteImport
       parentRoute: typeof AuthenticatedCommandesCommandeIdRoute
+    }
+    '/_authenticated/clients/$clientId/': {
+      id: '/_authenticated/clients/$clientId/'
+      path: '/$clientId'
+      fullPath: '/clients/$clientId/'
+      preLoaderRoute: typeof AuthenticatedClientsClientIdIndexRouteImport
+      parentRoute: typeof AuthenticatedClientsRoute
+    }
+    '/_authenticated/admin/audit-paiements/': {
+      id: '/_authenticated/admin/audit-paiements/'
+      path: '/admin/audit-paiements'
+      fullPath: '/admin/audit-paiements/'
+      preLoaderRoute: typeof AuthenticatedAdminAuditPaiementsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/public/verify-doc/$uuid': {
       id: '/api/public/verify-doc/$uuid'
@@ -3950,17 +3952,17 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/livraison-suivi/tournees/$tourneeId': {
       id: '/_authenticated/livraison-suivi/tournees/$tourneeId'
-      path: '/$tourneeId'
+      path: '/tournees/$tourneeId'
       fullPath: '/livraison-suivi/tournees/$tourneeId'
       preLoaderRoute: typeof AuthenticatedLivraisonSuiviTourneesTourneeIdRouteImport
-      parentRoute: typeof AuthenticatedLivraisonSuiviTourneesRoute
+      parentRoute: typeof AuthenticatedLivraisonSuiviRoute
     }
     '/_authenticated/livraison-suivi/$commandeRef/remise': {
       id: '/_authenticated/livraison-suivi/$commandeRef/remise'
-      path: '/remise'
+      path: '/$commandeRef/remise'
       fullPath: '/livraison-suivi/$commandeRef/remise'
       preLoaderRoute: typeof AuthenticatedLivraisonSuiviCommandeRefRemiseRouteImport
-      parentRoute: typeof AuthenticatedLivraisonSuiviCommandeRefRoute
+      parentRoute: typeof AuthenticatedLivraisonSuiviRoute
     }
     '/_authenticated/fournisseurs/$fournisseurId_/modifier': {
       id: '/_authenticated/fournisseurs/$fournisseurId_/modifier'
@@ -3985,10 +3987,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/contrats/$contratId/modifier': {
       id: '/_authenticated/contrats/$contratId/modifier'
-      path: '/modifier'
+      path: '/$contratId/modifier'
       fullPath: '/contrats/$contratId/modifier'
       preLoaderRoute: typeof AuthenticatedContratsContratIdModifierRouteImport
-      parentRoute: typeof AuthenticatedContratsContratIdRoute
+      parentRoute: typeof AuthenticatedContratsRoute
     }
     '/_authenticated/conges/$congeId/modifier': {
       id: '/_authenticated/conges/$congeId/modifier'
@@ -4006,17 +4008,17 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/clients/$clientId/modifier': {
       id: '/_authenticated/clients/$clientId/modifier'
-      path: '/modifier'
+      path: '/$clientId/modifier'
       fullPath: '/clients/$clientId/modifier'
       preLoaderRoute: typeof AuthenticatedClientsClientIdModifierRouteImport
-      parentRoute: typeof AuthenticatedClientsClientIdRoute
+      parentRoute: typeof AuthenticatedClientsRoute
     }
     '/_authenticated/admin/audit-paiements/$auditId': {
       id: '/_authenticated/admin/audit-paiements/$auditId'
-      path: '/$auditId'
+      path: '/admin/audit-paiements/$auditId'
       fullPath: '/admin/audit-paiements/$auditId'
       preLoaderRoute: typeof AuthenticatedAdminAuditPaiementsAuditIdRouteImport
-      parentRoute: typeof AuthenticatedAdminAuditPaiementsRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/absences/$absenceId/modifier': {
       id: '/_authenticated/absences/$absenceId/modifier'
@@ -4053,34 +4055,22 @@ const AuthenticatedAbsencesRouteWithChildren =
     AuthenticatedAbsencesRouteChildren,
   )
 
-interface AuthenticatedClientsClientIdRouteChildren {
-  AuthenticatedClientsClientIdModifierRoute: typeof AuthenticatedClientsClientIdModifierRoute
-}
-
-const AuthenticatedClientsClientIdRouteChildren: AuthenticatedClientsClientIdRouteChildren =
-  {
-    AuthenticatedClientsClientIdModifierRoute:
-      AuthenticatedClientsClientIdModifierRoute,
-  }
-
-const AuthenticatedClientsClientIdRouteWithChildren =
-  AuthenticatedClientsClientIdRoute._addFileChildren(
-    AuthenticatedClientsClientIdRouteChildren,
-  )
-
 interface AuthenticatedClientsRouteChildren {
-  AuthenticatedClientsClientIdRoute: typeof AuthenticatedClientsClientIdRouteWithChildren
   AuthenticatedClientsDashboardRoute: typeof AuthenticatedClientsDashboardRoute
   AuthenticatedClientsNouveauRoute: typeof AuthenticatedClientsNouveauRoute
   AuthenticatedClientsIndexRoute: typeof AuthenticatedClientsIndexRoute
+  AuthenticatedClientsClientIdModifierRoute: typeof AuthenticatedClientsClientIdModifierRoute
+  AuthenticatedClientsClientIdIndexRoute: typeof AuthenticatedClientsClientIdIndexRoute
 }
 
 const AuthenticatedClientsRouteChildren: AuthenticatedClientsRouteChildren = {
-  AuthenticatedClientsClientIdRoute:
-    AuthenticatedClientsClientIdRouteWithChildren,
   AuthenticatedClientsDashboardRoute: AuthenticatedClientsDashboardRoute,
   AuthenticatedClientsNouveauRoute: AuthenticatedClientsNouveauRoute,
   AuthenticatedClientsIndexRoute: AuthenticatedClientsIndexRoute,
+  AuthenticatedClientsClientIdModifierRoute:
+    AuthenticatedClientsClientIdModifierRoute,
+  AuthenticatedClientsClientIdIndexRoute:
+    AuthenticatedClientsClientIdIndexRoute,
 }
 
 const AuthenticatedClientsRouteWithChildren =
@@ -4180,32 +4170,20 @@ const AuthenticatedCongesRouteChildren: AuthenticatedCongesRouteChildren = {
 const AuthenticatedCongesRouteWithChildren =
   AuthenticatedCongesRoute._addFileChildren(AuthenticatedCongesRouteChildren)
 
-interface AuthenticatedContratsContratIdRouteChildren {
-  AuthenticatedContratsContratIdModifierRoute: typeof AuthenticatedContratsContratIdModifierRoute
-}
-
-const AuthenticatedContratsContratIdRouteChildren: AuthenticatedContratsContratIdRouteChildren =
-  {
-    AuthenticatedContratsContratIdModifierRoute:
-      AuthenticatedContratsContratIdModifierRoute,
-  }
-
-const AuthenticatedContratsContratIdRouteWithChildren =
-  AuthenticatedContratsContratIdRoute._addFileChildren(
-    AuthenticatedContratsContratIdRouteChildren,
-  )
-
 interface AuthenticatedContratsRouteChildren {
-  AuthenticatedContratsContratIdRoute: typeof AuthenticatedContratsContratIdRouteWithChildren
   AuthenticatedContratsNouveauRoute: typeof AuthenticatedContratsNouveauRoute
   AuthenticatedContratsIndexRoute: typeof AuthenticatedContratsIndexRoute
+  AuthenticatedContratsContratIdModifierRoute: typeof AuthenticatedContratsContratIdModifierRoute
+  AuthenticatedContratsContratIdIndexRoute: typeof AuthenticatedContratsContratIdIndexRoute
 }
 
 const AuthenticatedContratsRouteChildren: AuthenticatedContratsRouteChildren = {
-  AuthenticatedContratsContratIdRoute:
-    AuthenticatedContratsContratIdRouteWithChildren,
   AuthenticatedContratsNouveauRoute: AuthenticatedContratsNouveauRoute,
   AuthenticatedContratsIndexRoute: AuthenticatedContratsIndexRoute,
+  AuthenticatedContratsContratIdModifierRoute:
+    AuthenticatedContratsContratIdModifierRoute,
+  AuthenticatedContratsContratIdIndexRoute:
+    AuthenticatedContratsContratIdIndexRoute,
 }
 
 const AuthenticatedContratsRouteWithChildren =
@@ -4251,25 +4229,6 @@ const AuthenticatedEvaluationsRouteChildren: AuthenticatedEvaluationsRouteChildr
 const AuthenticatedEvaluationsRouteWithChildren =
   AuthenticatedEvaluationsRoute._addFileChildren(
     AuthenticatedEvaluationsRouteChildren,
-  )
-
-interface AuthenticatedExercicesRouteChildren {
-  AuthenticatedExercicesComparatifRoute: typeof AuthenticatedExercicesComparatifRoute
-  AuthenticatedExercicesJournalRoute: typeof AuthenticatedExercicesJournalRoute
-  AuthenticatedExercicesRapportRoute: typeof AuthenticatedExercicesRapportRoute
-}
-
-const AuthenticatedExercicesRouteChildren: AuthenticatedExercicesRouteChildren =
-  {
-    AuthenticatedExercicesComparatifRoute:
-      AuthenticatedExercicesComparatifRoute,
-    AuthenticatedExercicesJournalRoute: AuthenticatedExercicesJournalRoute,
-    AuthenticatedExercicesRapportRoute: AuthenticatedExercicesRapportRoute,
-  }
-
-const AuthenticatedExercicesRouteWithChildren =
-  AuthenticatedExercicesRoute._addFileChildren(
-    AuthenticatedExercicesRouteChildren,
   )
 
 interface AuthenticatedFacturesRouteChildren {
@@ -4349,50 +4308,26 @@ const AuthenticatedInventairesRouteWithChildren =
     AuthenticatedInventairesRouteChildren,
   )
 
-interface AuthenticatedLivraisonSuiviCommandeRefRouteChildren {
-  AuthenticatedLivraisonSuiviCommandeRefRemiseRoute: typeof AuthenticatedLivraisonSuiviCommandeRefRemiseRoute
-}
-
-const AuthenticatedLivraisonSuiviCommandeRefRouteChildren: AuthenticatedLivraisonSuiviCommandeRefRouteChildren =
-  {
-    AuthenticatedLivraisonSuiviCommandeRefRemiseRoute:
-      AuthenticatedLivraisonSuiviCommandeRefRemiseRoute,
-  }
-
-const AuthenticatedLivraisonSuiviCommandeRefRouteWithChildren =
-  AuthenticatedLivraisonSuiviCommandeRefRoute._addFileChildren(
-    AuthenticatedLivraisonSuiviCommandeRefRouteChildren,
-  )
-
-interface AuthenticatedLivraisonSuiviTourneesRouteChildren {
-  AuthenticatedLivraisonSuiviTourneesTourneeIdRoute: typeof AuthenticatedLivraisonSuiviTourneesTourneeIdRoute
-}
-
-const AuthenticatedLivraisonSuiviTourneesRouteChildren: AuthenticatedLivraisonSuiviTourneesRouteChildren =
-  {
-    AuthenticatedLivraisonSuiviTourneesTourneeIdRoute:
-      AuthenticatedLivraisonSuiviTourneesTourneeIdRoute,
-  }
-
-const AuthenticatedLivraisonSuiviTourneesRouteWithChildren =
-  AuthenticatedLivraisonSuiviTourneesRoute._addFileChildren(
-    AuthenticatedLivraisonSuiviTourneesRouteChildren,
-  )
-
 interface AuthenticatedLivraisonSuiviRouteChildren {
-  AuthenticatedLivraisonSuiviCommandeRefRoute: typeof AuthenticatedLivraisonSuiviCommandeRefRouteWithChildren
-  AuthenticatedLivraisonSuiviTourneesRoute: typeof AuthenticatedLivraisonSuiviTourneesRouteWithChildren
   AuthenticatedLivraisonSuiviIndexRoute: typeof AuthenticatedLivraisonSuiviIndexRoute
+  AuthenticatedLivraisonSuiviCommandeRefRemiseRoute: typeof AuthenticatedLivraisonSuiviCommandeRefRemiseRoute
+  AuthenticatedLivraisonSuiviTourneesTourneeIdRoute: typeof AuthenticatedLivraisonSuiviTourneesTourneeIdRoute
+  AuthenticatedLivraisonSuiviCommandeRefIndexRoute: typeof AuthenticatedLivraisonSuiviCommandeRefIndexRoute
+  AuthenticatedLivraisonSuiviTourneesIndexRoute: typeof AuthenticatedLivraisonSuiviTourneesIndexRoute
 }
 
 const AuthenticatedLivraisonSuiviRouteChildren: AuthenticatedLivraisonSuiviRouteChildren =
   {
-    AuthenticatedLivraisonSuiviCommandeRefRoute:
-      AuthenticatedLivraisonSuiviCommandeRefRouteWithChildren,
-    AuthenticatedLivraisonSuiviTourneesRoute:
-      AuthenticatedLivraisonSuiviTourneesRouteWithChildren,
     AuthenticatedLivraisonSuiviIndexRoute:
       AuthenticatedLivraisonSuiviIndexRoute,
+    AuthenticatedLivraisonSuiviCommandeRefRemiseRoute:
+      AuthenticatedLivraisonSuiviCommandeRefRemiseRoute,
+    AuthenticatedLivraisonSuiviTourneesTourneeIdRoute:
+      AuthenticatedLivraisonSuiviTourneesTourneeIdRoute,
+    AuthenticatedLivraisonSuiviCommandeRefIndexRoute:
+      AuthenticatedLivraisonSuiviCommandeRefIndexRoute,
+    AuthenticatedLivraisonSuiviTourneesIndexRoute:
+      AuthenticatedLivraisonSuiviTourneesIndexRoute,
   }
 
 const AuthenticatedLivraisonSuiviRouteWithChildren =
@@ -4432,21 +4367,6 @@ const AuthenticatedPaiementsRouteChildren: AuthenticatedPaiementsRouteChildren =
 const AuthenticatedPaiementsRouteWithChildren =
   AuthenticatedPaiementsRoute._addFileChildren(
     AuthenticatedPaiementsRouteChildren,
-  )
-
-interface AuthenticatedParametresRouteChildren {
-  AuthenticatedParametresZonesLivraisonRoute: typeof AuthenticatedParametresZonesLivraisonRoute
-}
-
-const AuthenticatedParametresRouteChildren: AuthenticatedParametresRouteChildren =
-  {
-    AuthenticatedParametresZonesLivraisonRoute:
-      AuthenticatedParametresZonesLivraisonRoute,
-  }
-
-const AuthenticatedParametresRouteWithChildren =
-  AuthenticatedParametresRoute._addFileChildren(
-    AuthenticatedParametresRouteChildren,
   )
 
 interface AuthenticatedProduitsRouteChildren {
@@ -4513,17 +4433,6 @@ const AuthenticatedRetoursRouteChildren: AuthenticatedRetoursRouteChildren = {
 const AuthenticatedRetoursRouteWithChildren =
   AuthenticatedRetoursRoute._addFileChildren(AuthenticatedRetoursRouteChildren)
 
-interface AuthenticatedStockRouteChildren {
-  AuthenticatedStockAuditRoute: typeof AuthenticatedStockAuditRoute
-}
-
-const AuthenticatedStockRouteChildren: AuthenticatedStockRouteChildren = {
-  AuthenticatedStockAuditRoute: AuthenticatedStockAuditRoute,
-}
-
-const AuthenticatedStockRouteWithChildren =
-  AuthenticatedStockRoute._addFileChildren(AuthenticatedStockRouteChildren)
-
 interface AuthenticatedTransfertsRouteChildren {
   AuthenticatedTransfertsTransfertIdRoute: typeof AuthenticatedTransfertsTransfertIdRoute
   AuthenticatedTransfertsNouveauRoute: typeof AuthenticatedTransfertsNouveauRoute
@@ -4541,21 +4450,6 @@ const AuthenticatedTransfertsRouteChildren: AuthenticatedTransfertsRouteChildren
 const AuthenticatedTransfertsRouteWithChildren =
   AuthenticatedTransfertsRoute._addFileChildren(
     AuthenticatedTransfertsRouteChildren,
-  )
-
-interface AuthenticatedAdminAuditPaiementsRouteChildren {
-  AuthenticatedAdminAuditPaiementsAuditIdRoute: typeof AuthenticatedAdminAuditPaiementsAuditIdRoute
-}
-
-const AuthenticatedAdminAuditPaiementsRouteChildren: AuthenticatedAdminAuditPaiementsRouteChildren =
-  {
-    AuthenticatedAdminAuditPaiementsAuditIdRoute:
-      AuthenticatedAdminAuditPaiementsAuditIdRoute,
-  }
-
-const AuthenticatedAdminAuditPaiementsRouteWithChildren =
-  AuthenticatedAdminAuditPaiementsRoute._addFileChildren(
-    AuthenticatedAdminAuditPaiementsRouteChildren,
   )
 
 interface AuthenticatedRouteRouteChildren {
@@ -4589,7 +4483,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedEtatCompteClientsRoute: typeof AuthenticatedEtatCompteClientsRoute
   AuthenticatedEtatsComptablesRoute: typeof AuthenticatedEtatsComptablesRoute
   AuthenticatedEvaluationsRoute: typeof AuthenticatedEvaluationsRouteWithChildren
-  AuthenticatedExercicesRoute: typeof AuthenticatedExercicesRouteWithChildren
   AuthenticatedExpeditionsRoute: typeof AuthenticatedExpeditionsRoute
   AuthenticatedExportsRoute: typeof AuthenticatedExportsRoute
   AuthenticatedFacturesRoute: typeof AuthenticatedFacturesRouteWithChildren
@@ -4624,7 +4517,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPaieRapportsRoute: typeof AuthenticatedPaieRapportsRoute
   AuthenticatedPaieRubriquesRoute: typeof AuthenticatedPaieRubriquesRoute
   AuthenticatedPaiementsRoute: typeof AuthenticatedPaiementsRouteWithChildren
-  AuthenticatedParametresRoute: typeof AuthenticatedParametresRouteWithChildren
   AuthenticatedPlanComptableRoute: typeof AuthenticatedPlanComptableRoute
   AuthenticatedProduitsRoute: typeof AuthenticatedProduitsRouteWithChildren
   AuthenticatedProfilRoute: typeof AuthenticatedProfilRoute
@@ -4635,14 +4527,12 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedRetoursRoute: typeof AuthenticatedRetoursRouteWithChildren
   AuthenticatedRhDashboardRoute: typeof AuthenticatedRhDashboardRoute
   AuthenticatedRolesPermissionsRoute: typeof AuthenticatedRolesPermissionsRoute
-  AuthenticatedStockRoute: typeof AuthenticatedStockRouteWithChildren
   AuthenticatedTransfertsRoute: typeof AuthenticatedTransfertsRouteWithChildren
   AuthenticatedWorkflowApprovalsRoute: typeof AuthenticatedWorkflowApprovalsRoute
   AuthenticatedWorkflowsDefinitionsRoute: typeof AuthenticatedWorkflowsDefinitionsRoute
   AuthenticatedAchatsAchatIdRoute: typeof AuthenticatedAchatsAchatIdRoute
   AuthenticatedAchatsNouveauRoute: typeof AuthenticatedAchatsNouveauRoute
   AuthenticatedAdminApprobationSeuilsRoute: typeof AuthenticatedAdminApprobationSeuilsRoute
-  AuthenticatedAdminAuditPaiementsRoute: typeof AuthenticatedAdminAuditPaiementsRouteWithChildren
   AuthenticatedAdminDataQualityRoute: typeof AuthenticatedAdminDataQualityRoute
   AuthenticatedAdminGoogleDriveRoute: typeof AuthenticatedAdminGoogleDriveRoute
   AuthenticatedAdminPerfRoute: typeof AuthenticatedAdminPerfRoute
@@ -4654,9 +4544,14 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminWebVitalsRoute: typeof AuthenticatedAdminWebVitalsRoute
   AuthenticatedBonDeSortieTourneeIdRoute: typeof AuthenticatedBonDeSortieTourneeIdRoute
   AuthenticatedBonDeTourneeTourneeIdRoute: typeof AuthenticatedBonDeTourneeTourneeIdRoute
+  AuthenticatedExercicesComparatifRoute: typeof AuthenticatedExercicesComparatifRoute
+  AuthenticatedExercicesJournalRoute: typeof AuthenticatedExercicesJournalRoute
+  AuthenticatedExercicesRapportRoute: typeof AuthenticatedExercicesRapportRoute
   AuthenticatedFneDetailFactureIdRoute: typeof AuthenticatedFneDetailFactureIdRoute
+  AuthenticatedParametresZonesLivraisonRoute: typeof AuthenticatedParametresZonesLivraisonRoute
   AuthenticatedSpecimensSpecimenIdRoute: typeof AuthenticatedSpecimensSpecimenIdRoute
   AuthenticatedSpecimensNouveauRoute: typeof AuthenticatedSpecimensNouveauRoute
+  AuthenticatedStockAuditRoute: typeof AuthenticatedStockAuditRoute
   AuthenticatedTourneesBlTourneeIdRoute: typeof AuthenticatedTourneesBlTourneeIdRoute
   AuthenticatedTourneesTourneeIdRoute: typeof AuthenticatedTourneesTourneeIdRoute
   AuthenticatedTourneesNouvelleRoute: typeof AuthenticatedTourneesNouvelleRoute
@@ -4664,11 +4559,16 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedUtilisateursProductionRoute: typeof AuthenticatedUtilisateursProductionRoute
   AuthenticatedAchatsIndexRoute: typeof AuthenticatedAchatsIndexRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
+  AuthenticatedExercicesIndexRoute: typeof AuthenticatedExercicesIndexRoute
+  AuthenticatedParametresIndexRoute: typeof AuthenticatedParametresIndexRoute
   AuthenticatedSpecimensIndexRoute: typeof AuthenticatedSpecimensIndexRoute
+  AuthenticatedStockIndexRoute: typeof AuthenticatedStockIndexRoute
   AuthenticatedTourneesIndexRoute: typeof AuthenticatedTourneesIndexRoute
   AuthenticatedUtilisateursIndexRoute: typeof AuthenticatedUtilisateursIndexRoute
+  AuthenticatedAdminAuditPaiementsAuditIdRoute: typeof AuthenticatedAdminAuditPaiementsAuditIdRoute
   AuthenticatedStockProduitIdMouvementsRoute: typeof AuthenticatedStockProduitIdMouvementsRoute
   AuthenticatedUtilisateursUserIdModifierRoute: typeof AuthenticatedUtilisateursUserIdModifierRoute
+  AuthenticatedAdminAuditPaiementsIndexRoute: typeof AuthenticatedAdminAuditPaiementsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -4702,7 +4602,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedEtatCompteClientsRoute: AuthenticatedEtatCompteClientsRoute,
   AuthenticatedEtatsComptablesRoute: AuthenticatedEtatsComptablesRoute,
   AuthenticatedEvaluationsRoute: AuthenticatedEvaluationsRouteWithChildren,
-  AuthenticatedExercicesRoute: AuthenticatedExercicesRouteWithChildren,
   AuthenticatedExpeditionsRoute: AuthenticatedExpeditionsRoute,
   AuthenticatedExportsRoute: AuthenticatedExportsRoute,
   AuthenticatedFacturesRoute: AuthenticatedFacturesRouteWithChildren,
@@ -4738,7 +4637,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPaieRapportsRoute: AuthenticatedPaieRapportsRoute,
   AuthenticatedPaieRubriquesRoute: AuthenticatedPaieRubriquesRoute,
   AuthenticatedPaiementsRoute: AuthenticatedPaiementsRouteWithChildren,
-  AuthenticatedParametresRoute: AuthenticatedParametresRouteWithChildren,
   AuthenticatedPlanComptableRoute: AuthenticatedPlanComptableRoute,
   AuthenticatedProduitsRoute: AuthenticatedProduitsRouteWithChildren,
   AuthenticatedProfilRoute: AuthenticatedProfilRoute,
@@ -4749,7 +4647,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedRetoursRoute: AuthenticatedRetoursRouteWithChildren,
   AuthenticatedRhDashboardRoute: AuthenticatedRhDashboardRoute,
   AuthenticatedRolesPermissionsRoute: AuthenticatedRolesPermissionsRoute,
-  AuthenticatedStockRoute: AuthenticatedStockRouteWithChildren,
   AuthenticatedTransfertsRoute: AuthenticatedTransfertsRouteWithChildren,
   AuthenticatedWorkflowApprovalsRoute: AuthenticatedWorkflowApprovalsRoute,
   AuthenticatedWorkflowsDefinitionsRoute:
@@ -4758,8 +4655,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAchatsNouveauRoute: AuthenticatedAchatsNouveauRoute,
   AuthenticatedAdminApprobationSeuilsRoute:
     AuthenticatedAdminApprobationSeuilsRoute,
-  AuthenticatedAdminAuditPaiementsRoute:
-    AuthenticatedAdminAuditPaiementsRouteWithChildren,
   AuthenticatedAdminDataQualityRoute: AuthenticatedAdminDataQualityRoute,
   AuthenticatedAdminGoogleDriveRoute: AuthenticatedAdminGoogleDriveRoute,
   AuthenticatedAdminPerfRoute: AuthenticatedAdminPerfRoute,
@@ -4773,9 +4668,15 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedBonDeSortieTourneeIdRoute,
   AuthenticatedBonDeTourneeTourneeIdRoute:
     AuthenticatedBonDeTourneeTourneeIdRoute,
+  AuthenticatedExercicesComparatifRoute: AuthenticatedExercicesComparatifRoute,
+  AuthenticatedExercicesJournalRoute: AuthenticatedExercicesJournalRoute,
+  AuthenticatedExercicesRapportRoute: AuthenticatedExercicesRapportRoute,
   AuthenticatedFneDetailFactureIdRoute: AuthenticatedFneDetailFactureIdRoute,
+  AuthenticatedParametresZonesLivraisonRoute:
+    AuthenticatedParametresZonesLivraisonRoute,
   AuthenticatedSpecimensSpecimenIdRoute: AuthenticatedSpecimensSpecimenIdRoute,
   AuthenticatedSpecimensNouveauRoute: AuthenticatedSpecimensNouveauRoute,
+  AuthenticatedStockAuditRoute: AuthenticatedStockAuditRoute,
   AuthenticatedTourneesBlTourneeIdRoute: AuthenticatedTourneesBlTourneeIdRoute,
   AuthenticatedTourneesTourneeIdRoute: AuthenticatedTourneesTourneeIdRoute,
   AuthenticatedTourneesNouvelleRoute: AuthenticatedTourneesNouvelleRoute,
@@ -4784,13 +4685,20 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedUtilisateursProductionRoute,
   AuthenticatedAchatsIndexRoute: AuthenticatedAchatsIndexRoute,
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
+  AuthenticatedExercicesIndexRoute: AuthenticatedExercicesIndexRoute,
+  AuthenticatedParametresIndexRoute: AuthenticatedParametresIndexRoute,
   AuthenticatedSpecimensIndexRoute: AuthenticatedSpecimensIndexRoute,
+  AuthenticatedStockIndexRoute: AuthenticatedStockIndexRoute,
   AuthenticatedTourneesIndexRoute: AuthenticatedTourneesIndexRoute,
   AuthenticatedUtilisateursIndexRoute: AuthenticatedUtilisateursIndexRoute,
+  AuthenticatedAdminAuditPaiementsAuditIdRoute:
+    AuthenticatedAdminAuditPaiementsAuditIdRoute,
   AuthenticatedStockProduitIdMouvementsRoute:
     AuthenticatedStockProduitIdMouvementsRoute,
   AuthenticatedUtilisateursUserIdModifierRoute:
     AuthenticatedUtilisateursUserIdModifierRoute,
+  AuthenticatedAdminAuditPaiementsIndexRoute:
+    AuthenticatedAdminAuditPaiementsIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

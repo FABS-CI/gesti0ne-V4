@@ -22,6 +22,27 @@ erreurs console et des appels base de données en échec, puis scénario de bout
   impossible. Facture de test supprimée après contrôle.
 - Compilation TypeScript : aucune erreur.
 
+## Module 2 — Clients & CRM (et pages devenues inaccessibles)
+
+| Module | Fonction | Problème | Gravité | Cause | Correction |
+|---|---|---|---|---|---|
+| Clients | Bouton « Modifier » (liste + fiche) | Le formulaire de modification ne s'ouvrait jamais : l'adresse affichait à nouveau la fiche du client | 🔴 Critique | La page « fiche client » était déclarée comme page parente de la page « modifier » sans zone d'affichage pour sa page enfant | Page fiche transformée en page d'accueil de la section ; la page « modifier » s'affiche maintenant |
+| Contrats RH | Modifier un contrat | Même problème : page inaccessible | 🔴 Critique | Idem | Corrigé |
+| Livraison-suivi | Remise d'une commande, détail d'une tournée | Pages inaccessibles | 🔴 Critique | Idem | Corrigé |
+| Exercices comptables | Journal de clôture, Comparatif, Rapport | Pages inaccessibles | 🔴 Critique | Idem | Corrigé |
+| Paramètres | Zones de livraison | Page inaccessible | 🔴 Critique | Idem | Corrigé |
+| Stock | Audit stock | Page inaccessible | 🔴 Critique | Idem | Corrigé |
+| Administration | Détail d'une annulation de paiement | Page inaccessible | 🔴 Critique | Idem | Corrigé |
+| Exercices | Comparatif ouvert directement (lien copié, favori) | Écran d'erreur « Cette page n'a pas pu charger » | 🟠 Important | Paramètre d'adresse obligatoire | Paramètre rendu optionnel |
+| Stock | Audit stock — indicateurs | Tous les compteurs vides et date « Invalid Date », verdict faux | 🟠 Important | La page lisait un résultat qui n'avait pas la forme attendue | Nouveau calcul de synthèse côté base ; la page affiche produits, mouvements, écarts, stock négatif, doublons et la date |
+
+### Vérifications après correction (navigateur, session réelle)
+- Création d'un client → enregistré en base ; ouverture de la fiche → informations correctes.
+- Modification (nom + ville) → enregistrée, redirection vers la fiche, valeurs à jour en base.
+- Fiche client (onglets, indicateurs), tableau de bord CRM (CA, encaissements, taux) : OK, aucune erreur.
+- Les 12 pages auparavant inaccessibles s'affichent toutes avec leur contenu réel.
+- Client de test supprimé après contrôle. Compilation TypeScript : aucune erreur.
+
 ## Modules restants (à auditer)
-2. Clients & CRM — 3. Stock / inventaires / transferts — 4. Paiements & comptabilité —
+3. Stock / inventaires / transferts — 4. Paiements & comptabilité —
 5. Logistique — 6. Achats — 7. RH & paie — 8. Administration — 9. Transverse.
