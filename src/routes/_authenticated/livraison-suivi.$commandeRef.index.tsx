@@ -38,7 +38,7 @@ import { commandeRefSearchSchema, COMMANDE_REF_SEARCH_DEFAULTS } from "@/lib/rou
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 import { friendlyError } from "@/lib/friendly-error";
 
-export const Route = createFileRoute("/_authenticated/livraison-suivi/$commandeRef")({
+export const Route = createFileRoute("/_authenticated/livraison-suivi/$commandeRef/")({
   validateSearch: zodValidator(commandeRefSearchSchema),
   component: SuiviDetail,
   errorComponent: RouteError,
