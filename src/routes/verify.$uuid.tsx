@@ -1,5 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { Download } from 'lucide-react';
 import {
   CheckCircle2,
   XCircle,
@@ -168,9 +170,26 @@ function Row({
   );
 }
 
+/** Libellé du bouton de téléchargement selon le type de document vérifié. */
+const DOWNLOAD_LABEL: Record<string, string> = {
+  FACTURE: 'Télécharger la facture',
+  PROFORMA: 'Télécharger la facture proforma',
+  COMMANDE: 'Télécharger le bon de commande',
+};
+
+function docKeyFromLabel(docType?: string): 'FACTURE' | 'PROFORMA' | 'COMMANDE' | null {
+  const v = (docType ?? '').toLowerCase();
+  if (v.includes('proforma')) return 'PROFORMA';
+  if (v.includes('commande')) return 'COMMANDE';
+  if (v.includes('facture')) return 'FACTURE';
+  return null;
+}
+
 function VerificationPage() {
   const { uuid } = Route.useParams();
   const { t } = Route.useSearch();
+  const [downloading, setDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
 
   const malformed = !REFERENCE_RE.test(uuid);
 
@@ -217,6 +236,38 @@ function VerificationPage() {
 
   const ui = data ? STATUS_UI[data.status] : null;
   const hasDocumentInfo = !!data && data.status !== 'NOT_FOUND' && !!data.reference;
+
+  // Téléchargement réservé aux documents authentiques Facture / Proforma / Bon de commande.
+  const downloadKey =
+    data?.status === 'AUTHENTIC' ? docKeyFromLabel(data.docType) : null;
+
+  const handleDownload = async () => {
+    setDownloadError(null);
+    setDownloading(true);
+    try {
+      const res = await fetch(
+        `/api/public/verify-doc/${encodeURIComponent(uuid)}/document${t ? `?t=${encodeURIComponent(t)}` : ''}`,
+      );
+      if (!res.ok) throw new Error('indisponible');
+      const payload = (await res.json()) as {
+        label: 'Facture' | 'Proforma' | 'Commande';
+        reference: string;
+        data: Record<string, unknown>;
+      };
+      const [{ generateUnifiedCommercialPDF }, { downloadBlob }] = await Promise.all([
+        import('@/lib/pdf/unified-generator'),
+        import('@/lib/pdf/fabsTemplates'),
+      ]);
+      const blob = await generateUnifiedCommercialPDF(payload.label, payload.data as never);
+      downloadBlob(blob, `${payload.reference}.pdf`);
+    } catch {
+      setDownloadError(
+        'Le document est actuellement indisponible au téléchargement. Veuillez réessayer.',
+      );
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col items-center px-4 py-8">
@@ -376,7 +427,7 @@ function VerificationPage() {
                 </p>
               )}
 
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <Button
                   variant="outline"
                   className="flex-1"
@@ -386,6 +437,27 @@ function VerificationPage() {
                   <RefreshCw className={`mr-2 h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
                   Revérifier
                 </Button>
+                {downloadKey && (
+                  <Button
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={() => void handleDownload()}
+                    disabled={downloading}
+                  >
+                    {downloading ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Download className="mr-2 h-4 w-4" />
+                    )}
+                    {downloading ? 'Préparation…' : DOWNLOAD_LABEL[downloadKey]}
+                  </Button>
+                )}
+              </div>
+
+              {downloadError && (
+                <p className="text-[12px] text-amber-700 text-center">{downloadError}</p>
+              )}
+
+              <div className="flex">
                 <Button variant="ghost" className="flex-1 text-slate-500" onClick={handleBack}>
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Site officiel
