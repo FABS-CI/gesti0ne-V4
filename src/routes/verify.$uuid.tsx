@@ -237,6 +237,38 @@ function VerificationPage() {
   const ui = data ? STATUS_UI[data.status] : null;
   const hasDocumentInfo = !!data && data.status !== 'NOT_FOUND' && !!data.reference;
 
+  // Téléchargement réservé aux documents authentiques Facture / Proforma / Bon de commande.
+  const downloadKey =
+    data?.status === 'AUTHENTIC' ? docKeyFromLabel(data.docType) : null;
+
+  const handleDownload = async () => {
+    setDownloadError(null);
+    setDownloading(true);
+    try {
+      const res = await fetch(
+        `/api/public/verify-doc/${encodeURIComponent(uuid)}/document${t ? `?t=${encodeURIComponent(t)}` : ''}`,
+      );
+      if (!res.ok) throw new Error('indisponible');
+      const payload = (await res.json()) as {
+        label: 'Facture' | 'Proforma' | 'Commande';
+        reference: string;
+        data: Record<string, unknown>;
+      };
+      const [{ generateUnifiedCommercialPDF }, { downloadBlob }] = await Promise.all([
+        import('@/lib/pdf/unified-generator'),
+        import('@/lib/pdf/fabsTemplates'),
+      ]);
+      const blob = await generateUnifiedCommercialPDF(payload.label, payload.data as never);
+      downloadBlob(blob, `${payload.reference}.pdf`);
+    } catch {
+      setDownloadError(
+        'Le document est actuellement indisponible au téléchargement. Veuillez réessayer.',
+      );
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col items-center px-4 py-8">
       <div className="w-full max-w-md space-y-4">
