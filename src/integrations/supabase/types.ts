@@ -3312,9 +3312,14 @@ export type Database = {
           ligne_id: string
           observation: string | null
           produit_id: string | null
+          quantite_comptee: number
           quantite_physique: number | null
           quantite_theorique: number | null
+          reference_produit: string | null
+          stock_theorique: number
           updated_at: string
+          valeur_ecart: number
+          valeur_unitaire: number
         }
         Insert: {
           created_at?: string
@@ -3324,9 +3329,14 @@ export type Database = {
           ligne_id?: string
           observation?: string | null
           produit_id?: string | null
+          quantite_comptee?: number
           quantite_physique?: number | null
           quantite_theorique?: number | null
+          reference_produit?: string | null
+          stock_theorique?: number
           updated_at?: string
+          valeur_ecart?: number
+          valeur_unitaire?: number
         }
         Update: {
           created_at?: string
@@ -3336,9 +3346,14 @@ export type Database = {
           ligne_id?: string
           observation?: string | null
           produit_id?: string | null
+          quantite_comptee?: number
           quantite_physique?: number | null
           quantite_theorique?: number | null
+          reference_produit?: string | null
+          stock_theorique?: number
           updated_at?: string
+          valeur_ecart?: number
+          valeur_unitaire?: number
         }
         Relationships: [
           {
@@ -3348,43 +3363,122 @@ export type Database = {
             referencedRelation: "inventaires"
             referencedColumns: ["inventaire_id"]
           },
+          {
+            foreignKeyName: "inventaire_lignes_produit_id_fkey"
+            columns: ["produit_id"]
+            isOneToOne: false
+            referencedRelation: "produits"
+            referencedColumns: ["produit_id"]
+          },
+          {
+            foreignKeyName: "inventaire_lignes_produit_id_fkey"
+            columns: ["produit_id"]
+            isOneToOne: false
+            referencedRelation: "v_produits"
+            referencedColumns: ["produit_id"]
+          },
         ]
       }
       inventaires: {
         Row: {
+          categorie_id: string | null
           created_at: string
+          created_by: string | null
+          created_by_nom: string | null
           date_inventaire: string | null
           depot_id: string | null
           ecart_total: number | null
+          exercice_id: string | null
           inventaire_id: string
+          nb_ecarts: number
+          nb_produits: number
           notes: string | null
+          numero: string | null
+          observations: string | null
           reference: string | null
+          regularized_at: string | null
           statut: string | null
+          type_inventaire: string
           updated_at: string
+          valeur_totale: number
+          validated_at: string | null
         }
         Insert: {
+          categorie_id?: string | null
           created_at?: string
+          created_by?: string | null
+          created_by_nom?: string | null
           date_inventaire?: string | null
           depot_id?: string | null
           ecart_total?: number | null
+          exercice_id?: string | null
           inventaire_id?: string
+          nb_ecarts?: number
+          nb_produits?: number
           notes?: string | null
+          numero?: string | null
+          observations?: string | null
           reference?: string | null
+          regularized_at?: string | null
           statut?: string | null
+          type_inventaire?: string
           updated_at?: string
+          valeur_totale?: number
+          validated_at?: string | null
         }
         Update: {
+          categorie_id?: string | null
           created_at?: string
+          created_by?: string | null
+          created_by_nom?: string | null
           date_inventaire?: string | null
           depot_id?: string | null
           ecart_total?: number | null
+          exercice_id?: string | null
           inventaire_id?: string
+          nb_ecarts?: number
+          nb_produits?: number
           notes?: string | null
+          numero?: string | null
+          observations?: string | null
           reference?: string | null
+          regularized_at?: string | null
           statut?: string | null
+          type_inventaire?: string
           updated_at?: string
+          valeur_totale?: number
+          validated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "inventaires_categorie_id_fkey"
+            columns: ["categorie_id"]
+            isOneToOne: false
+            referencedRelation: "categories_produits"
+            referencedColumns: ["categorie_id"]
+          },
+          {
+            foreignKeyName: "inventaires_depot_id_fkey"
+            columns: ["depot_id"]
+            isOneToOne: false
+            referencedRelation: "depots"
+            referencedColumns: ["depot_id"]
+          },
+          {
+            foreignKeyName: "inventaires_exercice_id_fkey"
+            columns: ["exercice_id"]
+            isOneToOne: false
+            referencedRelation: "exercices"
+            referencedColumns: ["exercice_id"]
+          },
+          {
+            foreignKeyName: "inventaires_exercice_id_fkey"
+            columns: ["exercice_id"]
+            isOneToOne: false
+            referencedRelation: "exercices_comptables"
+            referencedColumns: ["exercice_id"]
+          },
+        ]
       }
       journaux_comptables: {
         Row: {
@@ -7691,15 +7785,27 @@ export type Database = {
       creer_inventaire_global: {
         Args: { _payload: Json }
         Returns: {
+          categorie_id: string | null
           created_at: string
+          created_by: string | null
+          created_by_nom: string | null
           date_inventaire: string | null
           depot_id: string | null
           ecart_total: number | null
+          exercice_id: string | null
           inventaire_id: string
+          nb_ecarts: number
+          nb_produits: number
           notes: string | null
+          numero: string | null
+          observations: string | null
           reference: string | null
+          regularized_at: string | null
           statut: string | null
+          type_inventaire: string
           updated_at: string
+          valeur_totale: number
+          validated_at: string | null
         }[]
         SetofOptions: {
           from: "*"
@@ -7711,15 +7817,27 @@ export type Database = {
       creer_inventaire_physique: {
         Args: { _payload: Json }
         Returns: {
+          categorie_id: string | null
           created_at: string
+          created_by: string | null
+          created_by_nom: string | null
           date_inventaire: string | null
           depot_id: string | null
           ecart_total: number | null
+          exercice_id: string | null
           inventaire_id: string
+          nb_ecarts: number
+          nb_produits: number
           notes: string | null
+          numero: string | null
+          observations: string | null
           reference: string | null
+          regularized_at: string | null
           statut: string | null
+          type_inventaire: string
           updated_at: string
+          valeur_totale: number
+          validated_at: string | null
         }[]
         SetofOptions: {
           from: "*"
@@ -7731,15 +7849,27 @@ export type Database = {
       creer_inventaire_theorique: {
         Args: { _payload: Json }
         Returns: {
+          categorie_id: string | null
           created_at: string
+          created_by: string | null
+          created_by_nom: string | null
           date_inventaire: string | null
           depot_id: string | null
           ecart_total: number | null
+          exercice_id: string | null
           inventaire_id: string
+          nb_ecarts: number
+          nb_produits: number
           notes: string | null
+          numero: string | null
+          observations: string | null
           reference: string | null
+          regularized_at: string | null
           statut: string | null
+          type_inventaire: string
           updated_at: string
+          valeur_totale: number
+          validated_at: string | null
         }[]
         SetofOptions: {
           from: "*"
@@ -8721,15 +8851,27 @@ export type Database = {
       valider_inventaire_physique: {
         Args: { _inventaire_id: string; _lignes: Json }
         Returns: {
+          categorie_id: string | null
           created_at: string
+          created_by: string | null
+          created_by_nom: string | null
           date_inventaire: string | null
           depot_id: string | null
           ecart_total: number | null
+          exercice_id: string | null
           inventaire_id: string
+          nb_ecarts: number
+          nb_produits: number
           notes: string | null
+          numero: string | null
+          observations: string | null
           reference: string | null
+          regularized_at: string | null
           statut: string | null
+          type_inventaire: string
           updated_at: string
+          valeur_totale: number
+          validated_at: string | null
         }[]
         SetofOptions: {
           from: "*"

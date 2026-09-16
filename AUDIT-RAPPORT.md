@@ -43,6 +43,27 @@ erreurs console et des appels base de données en échec, puis scénario de bout
 - Les 12 pages auparavant inaccessibles s'affichent toutes avec leur contenu réel.
 - Client de test supprimé après contrôle. Compilation TypeScript : aucune erreur.
 
+---
+
+## Module 3 — Stock, produits, dépôts, inventaires
+
+| Domaine | Problème constaté | Gravité | Cause | Correction |
+|---|---|---|---|---|
+| Inventaires | La liste des inventaires ne s'affichait jamais (erreur serveur à chaque ouverture) | 🔴 Critique | La table n'avait ni exercice comptable, ni type, ni numéro, ni compteurs attendus par l'application | Colonnes ajoutées (numéro, type, catégorie, exercice, nb produits, nb écarts, valeur, observations, auteur, dates de validation/régularisation) et rattachement automatique à l'exercice |
+| Inventaires | Le formulaire « Nouvel inventaire physique » ne chargeait pas les catégories (erreur serveur) | 🔴 Critique | La liste demandait un libellé de catégorie sous un nom inexistant | Lecture du bon libellé |
+| Inventaires | Le filtre « Catégorie » du formulaire n'avait aucun effet : l'inventaire contenait toujours tous les produits | 🟠 Important | La catégorie choisie n'était pas transmise ni utilisée à la création | La création filtre désormais réellement les produits de la catégorie choisie |
+| Inventaires | Après création, message « Inventaire undefined » et fiche « Inventaire introuvable » | 🔴 Critique | Le résultat de la création n'était pas lu correctement + relations manquantes entre inventaires, dépôts et produits | Lecture normalisée du résultat ; relations ajoutées |
+| Inventaires | La validation d'un comptage remettait toutes les quantités comptées à zéro | 🔴 Critique | Les quantités saisies étaient envoyées sous un nom que le traitement ignorait | La validation accepte la saisie réelle, recalcule écarts, nombre d'écarts et valeur, et horodate la validation |
+| Inventaires | Statut initial incohérent : l'inventaire créé n'était jamais modifiable | 🔴 Critique | Statut « en cours » créé, alors que seule la mention « brouillon » autorise la saisie | Les inventaires sont créés en brouillon, saisissables immédiatement |
+| Inventaires | Valeurs unitaires et références produit absentes des lignes | 🟠 Important | Colonnes inexistantes | Ajoutées et renseignées à la création (prix d'achat, référence) |
+
+### Vérifications après correction (navigateur, session réelle)
+- Création d'un inventaire physique depuis le formulaire : inventaire INV-2026-00001 créé, 50 produits, valeur théorique calculée, statut Brouillon.
+- Liste des inventaires : numéro, type, date (16/09/2026), dépôt, produits, écarts, valeur, statut — tout s'affiche.
+- Fiche inventaire : lignes produits avec référence, stock théorique, écart et valeurs ; saisie possible.
+- Pages stock, audit stock, produits, alertes, dépôts, transferts : ouvertes sans erreur.
+- Inventaire de test supprimé après contrôle. Compilation TypeScript : aucune erreur.
+
 ## Modules restants (à auditer)
-3. Stock / inventaires / transferts — 4. Paiements & comptabilité —
-5. Logistique — 6. Achats — 7. RH & paie — 8. Administration — 9. Transverse.
+4. Paiements & comptabilité — 5. Logistique — 6. Achats — 7. RH & paie —
+8. Administration — 9. Transverse.
