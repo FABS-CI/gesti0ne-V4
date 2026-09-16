@@ -39,10 +39,17 @@ export const Route = createFileRoute('/api/public/verify-doc/$uuid')({
             )
           }
 
-          const result = token ? await verifyByToken(token) : await verifyByReference(uuid)
+          // Le segment d'URL peut être soit un jeton d'authenticité, soit une
+          // référence de document (QR historiques). On tente d'abord le jeton.
+          let result = await verifyByToken(token ?? uuid)
+          let usedToken = true
+          if (result.status === 'INVALID' && !token) {
+            result = await verifyByReference(uuid)
+            usedToken = false
+          }
 
           await logVerification({
-            reference: token ? null : uuid,
+            reference: usedToken ? null : uuid,
             result: result.status,
             ip,
             userAgent,
