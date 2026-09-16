@@ -3363,6 +3363,20 @@ export type Database = {
             referencedRelation: "inventaires"
             referencedColumns: ["inventaire_id"]
           },
+          {
+            foreignKeyName: "inventaire_lignes_produit_id_fkey"
+            columns: ["produit_id"]
+            isOneToOne: false
+            referencedRelation: "produits"
+            referencedColumns: ["produit_id"]
+          },
+          {
+            foreignKeyName: "inventaire_lignes_produit_id_fkey"
+            columns: ["produit_id"]
+            isOneToOne: false
+            referencedRelation: "v_produits"
+            referencedColumns: ["produit_id"]
+          },
         ]
       }
       inventaires: {
@@ -3442,6 +3456,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "categories_produits"
             referencedColumns: ["categorie_id"]
+          },
+          {
+            foreignKeyName: "inventaires_depot_id_fkey"
+            columns: ["depot_id"]
+            isOneToOne: false
+            referencedRelation: "depots"
+            referencedColumns: ["depot_id"]
           },
           {
             foreignKeyName: "inventaires_exercice_id_fkey"
