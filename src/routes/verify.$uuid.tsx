@@ -427,7 +427,7 @@ function VerificationPage() {
                 </p>
               )}
 
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <Button
                   variant="outline"
                   className="flex-1"
@@ -437,6 +437,27 @@ function VerificationPage() {
                   <RefreshCw className={`mr-2 h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
                   Revérifier
                 </Button>
+                {downloadKey && (
+                  <Button
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={() => void handleDownload()}
+                    disabled={downloading}
+                  >
+                    {downloading ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Download className="mr-2 h-4 w-4" />
+                    )}
+                    {downloading ? 'Préparation…' : DOWNLOAD_LABEL[downloadKey]}
+                  </Button>
+                )}
+              </div>
+
+              {downloadError && (
+                <p className="text-[12px] text-amber-700 text-center">{downloadError}</p>
+              )}
+
+              <div className="flex">
                 <Button variant="ghost" className="flex-1 text-slate-500" onClick={handleBack}>
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Site officiel
