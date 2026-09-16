@@ -29,6 +29,13 @@
       "when": 1789554718559,
       "tag": "0003_audit_stock_resume",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1789555185523,
+      "tag": "0004_align_inventaires_schema",
+      "breakpoints": true
     }
   ]
 }
