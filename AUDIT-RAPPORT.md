@@ -86,5 +86,24 @@ erreurs console et des appels base de données en échec, puis scénario de bout
 - Balance, grand livre, export FEC, tableau de bord comptable, états de compte clients, exercices, journal de clôture, finances : affichage réel sans erreur, y compris sur mobile.
 - Compilation TypeScript : aucune erreur.
 
+## Module 5 — Logistique (colisage, tournées, livraison-suivi, retours, incidents)
+
+| Domaine | Problème constaté | Gravité | Cause | Correction |
+|---|---|---|---|---|
+| Incidents de stock | La liste des incidents ne s'affichait jamais (erreur serveur à chaque ouverture) | 🔴 Critique | Aucun lien n'existait en base entre un incident et son magasin/dépôt | Lien ajouté (avec index) ; la liste, les filtres et la création fonctionnent |
+| Détail d'une tournée | La page restait bloquée sur « Chargement… » — tournée impossible à ouvrir, modifier ou clôturer | 🔴 Critique | L'écran demandait des informations de clôture (mode, date, auteur) inexistantes en base, et un statut de colis qui n'existe pas | Informations de clôture ajoutées et désormais enregistrées (clôture manuelle : auteur et date ; clôture automatique après réception : mode « auto ») ; sélection des colis disponibles corrigée |
+| Bon de sortie d'une tournée | Page en erreur pour la même raison | 🔴 Critique | Idem ci-dessus | Corrigé : le bon de sortie s'affiche et s'imprime |
+| Dates dans les listes | Les dates s'affichaient en format brut « 2026-08-27 » dans les tableaux (tournées, expéditions, flotte, véhicules…) | 🟠 Important | Le format français n'était appliqué qu'à l'export PDF | Format JJ/MM/AAAA appliqué partout dans les tableaux |
+| Colisage — mode d'acheminement | Un client d'une commune d'Abidjan saisie dans le champ « Ville » (ex. Yopougon) était proposé en « Expédition » au lieu de « Livraison » | 🟠 Important | La commune n'était comparée qu'au champ « Commune » | La ville saisie est aussi comparée à la liste des communes en livraison directe |
+| Outil interne liste des colis | Requête sur deux colonnes inexistantes | 🟡 Moyen | Colonnes jamais créées | Requête alignée sur les colonnes réelles |
+
+### Vérifications après correction (navigateur, session réelle)
+- Incidents : création complète depuis l'écran (produit, quantité, motif, dépôt) → incident INC-2026-00001 enregistré, affiché avec la date 17/09/2026, le dépôt, le responsable et le statut « Déclaré » (incident de test supprimé ensuite).
+- Détail de tournée TRN-20260827-9672 : page complète (colis affectés, sélection des colis par date, coûts, récapitulatif temps réel, journal d'événements, statut) sans aucune erreur.
+- Bon de sortie de la même tournée : en-tête entreprise, contrôle de cohérence et impression disponibles.
+- Colisage d'un BL réel (BL-2026-00015) : produits, client, récapitulatif, responsables, mode d'acheminement et répartition affichés correctement.
+- Listes tournées, expéditions, flotte, livreurs, retours, dépôts, bons de livraison, dashboard logistique : contenu réel, dates au format français, aucune erreur réseau ni console — vérifié sur ordinateur et sur smartphone.
+- Compilation TypeScript : aucune erreur.
+
 ## Modules restants (à auditer)
-5. Logistique — 6. Achats — 7. RH & paie — 8. Administration — 9. Transverse.
+6. Achats — 7. RH & paie — 8. Administration — 9. Transverse.
