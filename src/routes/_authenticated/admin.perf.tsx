@@ -23,9 +23,10 @@ export const Route = createFileRoute("/_authenticated/admin/perf")({
 
 type PerfRow = {
   id: string;
-  query_name: string;
+  query_key: string | null;
+  route: string | null;
   duration_ms: number;
-  row_count: number | null;
+  status: string | null;
   error: string | null;
   created_at: string;
 };
@@ -48,7 +49,7 @@ function PerfPage() {
     queryFn: async (): Promise<PerfRow[]> => {
       const { data, error } = await supabase
         .from("perf_query_log")
-        .select("id, query_name, duration_ms, row_count, error, created_at")
+        .select("id, query_key, route, duration_ms, status, error, created_at")
         .order("created_at", { ascending: false })
         .limit(200);
       if (error) throw error;
@@ -60,7 +61,7 @@ function PerfPage() {
   const rows = recent ?? [];
   const aggregates: Aggregate[] = Object.values(
     rows.reduce<Record<string, Aggregate>>((acc, r) => {
-      const key = r.query_name;
+      const key = r.query_key ?? "?";
       const cur = acc[key] ?? {
         query_name: key,
         calls: 0,
@@ -172,7 +173,7 @@ function PerfPage() {
                 key={e.id}
                 className="rounded border border-destructive/40 bg-destructive/5 p-2 text-sm"
               >
-                <div className="font-mono">{e.query_name}</div>
+                <div className="font-mono">{e.query_key ?? "—"}</div>
                 <div className="text-muted-foreground text-xs">
                   {new Date(e.created_at).toLocaleString("fr-FR")} — {e.duration_ms}ms
                 </div>

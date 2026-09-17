@@ -65,14 +65,14 @@ function SanteSystemePage() {
         c("factures"),
         c("paiements"),
         c("stock_mouvements"),
-        c("audit_events", (q) => q.gte("created_at", startIso)),
-        c("audit_events", (q) => q.gte("created_at", startIso).eq("status", "error")),
+        c("audit_events", (q) => q.gte("occurred_at", startIso)),
+        c("audit_events", (q) => q.gte("occurred_at", startIso).eq("status", "error")),
         c("commandes", (q) => q.gte("created_at", startIso)),
         c("factures", (q) => q.gte("created_at", startIso)),
         c("paiements", (q) => q.gte("created_at", startIso)),
         c("stock_mouvements", (q) => q.gte("created_at", startIso)),
-        c("login_history", (q) => q.gte("created_at", last24).neq("status", "success")),
-        c("login_history", (q) => q.gte("created_at", startIso).eq("status", "success")),
+        c("login_history", (q) => q.gte("created_at", last24).eq("success", false)),
+        c("login_history", (q) => q.gte("created_at", startIso).eq("success", true)),
       ]);
       return {
         clients: clients.count ?? 0,
@@ -102,9 +102,9 @@ function SanteSystemePage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("audit_events")
-        .select("id, created_at, module, action, actor_email, error_message, severity")
+        .select("id, occurred_at, module, action, user_email, error_message, criticite")
         .eq("status", "error")
-        .order("created_at", { ascending: false })
+        .order("occurred_at", { ascending: false })
         .limit(20);
       if (error) throw error;
       return data ?? [];
@@ -120,7 +120,7 @@ function SanteSystemePage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("login_history")
-        .select("id, created_at, status, user_id, ip_address")
+        .select("id, created_at, success, user_id, email, ip")
         .order("created_at", { ascending: false })
         .limit(10);
       if (error) throw error;
@@ -184,10 +184,10 @@ function SanteSystemePage() {
       // Notifications & impression: dérivé des erreurs récentes
       const last5 = new Date(now - 5 * 60_000).toISOString();
       const [notifErr, printErr, waErr, mailErr] = await Promise.all([
-        supabase.from("audit_events").select("*", { count: "exact", head: true }).eq("status", "error").eq("module", "notifications").gte("created_at", last5),
-        supabase.from("audit_events").select("*", { count: "exact", head: true }).eq("status", "error").eq("module", "impression").gte("created_at", last5),
-        supabase.from("audit_events").select("*", { count: "exact", head: true }).eq("status", "error").eq("module", "whatsapp").gte("created_at", last5),
-        supabase.from("audit_events").select("*", { count: "exact", head: true }).eq("status", "error").eq("module", "email").gte("created_at", last5),
+        supabase.from("audit_events").select("*", { count: "exact", head: true }).eq("status", "error").eq("module", "notifications").gte("occurred_at", last5),
+        supabase.from("audit_events").select("*", { count: "exact", head: true }).eq("status", "error").eq("module", "impression").gte("occurred_at", last5),
+        supabase.from("audit_events").select("*", { count: "exact", head: true }).eq("status", "error").eq("module", "whatsapp").gte("occurred_at", last5),
+        supabase.from("audit_events").select("*", { count: "exact", head: true }).eq("status", "error").eq("module", "email").gte("occurred_at", last5),
       ]);
       const dyn = (n: number | null): ServiceStatus => (n && n > 0 ? "degraded" : "online");
       return {
@@ -232,7 +232,7 @@ function SanteSystemePage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("incident_alerts")
-        .select("id, created_at, alert_type, severity, message")
+        .select("id, created_at, title, severity, message")
         .order("created_at", { ascending: false })
         .limit(10);
       return data ?? [];
@@ -493,7 +493,7 @@ function SanteSystemePage() {
               {alerts.data!.map((a: any) => (
                 <div key={a.id} className="flex items-start justify-between gap-3 rounded border p-2 text-sm">
                   <div>
-                    <div className="font-medium">{a.alert_type}</div>
+                    <div className="font-medium">{a.title}</div>
                     <div className="text-xs text-muted-foreground">{a.message}</div>
                   </div>
                   <div className="flex flex-col items-end gap-1">
@@ -531,15 +531,15 @@ function SanteSystemePage() {
                 {errors.data!.map((e: any) => (
                   <TableRow key={e.id}>
                     <TableCell className="whitespace-nowrap text-xs">
-                      {new Date(e.created_at).toLocaleString("fr-FR")}
+                      {new Date(e.occurred_at).toLocaleString("fr-FR")}
                     </TableCell>
                     <TableCell className="text-xs">{e.module ?? "—"}</TableCell>
                     <TableCell className="text-xs">{e.action ?? "—"}</TableCell>
-                    <TableCell className="text-xs">{e.actor_email ?? "—"}</TableCell>
+                    <TableCell className="text-xs">{e.user_email ?? "—"}</TableCell>
                     <TableCell className="text-xs max-w-[380px] truncate" title={e.error_message ?? ""}>
                       {e.error_message ?? "—"}
                     </TableCell>
-                    <TableCell><Badge variant={severityVariant(e.severity)}>{e.severity ?? "error"}</Badge></TableCell>
+                    <TableCell><Badge variant={severityVariant(e.criticite)}>{e.criticite ?? "error"}</Badge></TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -567,9 +567,9 @@ function SanteSystemePage() {
                   <TableRow key={l.id}>
                     <TableCell className="text-xs">{new Date(l.created_at).toLocaleString("fr-FR")}</TableCell>
                     <TableCell className="text-xs">{l.user_id ?? "—"}</TableCell>
-                    <TableCell className="text-xs">{l.ip_address ?? "—"}</TableCell>
+                    <TableCell className="text-xs">{l.ip ?? "—"}</TableCell>
                     <TableCell>
-                      {l.status === "success"
+                      {l.success
                         ? <Badge variant="secondary">Succès</Badge>
                         : <Badge variant="destructive">Échec</Badge>}
                     </TableCell>

@@ -66,7 +66,7 @@ function DataQualityPage() {
   const dupQ = useQuery({
     queryKey: ["dq", "duplicates"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("report_client_duplicates" as never);
+      const { data, error } = await supabase.rpc("report_client_duplicates_v2" as never);
       if (error) throw error;
       return (data ?? []) as Duplicate[];
     },
@@ -75,7 +75,7 @@ function DataQualityPage() {
   const orphanQ = useQuery({
     queryKey: ["dq", "orphans"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("report_bl_orphelins" as never);
+      const { data, error } = await supabase.rpc("report_bl_orphelins_v2" as never);
       if (error) throw error;
       return (data ?? []) as OrphanBl[];
     },
@@ -84,7 +84,7 @@ function DataQualityPage() {
   const stockQ = useQuery({
     queryKey: ["dq", "stock"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("report_stock_ecarts" as never);
+      const { data, error } = await supabase.rpc("report_stock_ecarts_v2" as never);
       if (error) throw error;
       return (data ?? []) as StockEcart[];
     },
@@ -194,8 +194,8 @@ function DataQualityPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {dupQ.data?.map((d) => (
-                <TableRow key={d.nom_normalise}>
+              {dupQ.data?.map((d, i) => (
+                <TableRow key={`${d.nom_normalise ?? "dup"}-${i}`}>
                   <TableCell className="font-medium">{d.nom_normalise}</TableCell>
                   <TableCell className="text-right">
                     <Badge variant="destructive">{d.nb}</Badge>
@@ -246,8 +246,8 @@ function DataQualityPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {orphanQ.data?.map((o) => (
-                <TableRow key={o.bl_id}>
+              {orphanQ.data?.map((o, i) => (
+                <TableRow key={o.bl_id ?? `bl-${i}`}>
                   <TableCell className="font-mono text-xs">
                     {o.reference ?? o.bl_id.slice(0, 8)}
                   </TableCell>
@@ -292,8 +292,8 @@ function DataQualityPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {stockQ.data?.map((s) => (
-                <TableRow key={s.produit_id}>
+              {stockQ.data?.map((s, i) => (
+                <TableRow key={s.produit_id ?? `p-${i}`}>
                   <TableCell>{s.titre}</TableCell>
                   <TableCell className="text-right">{s.stock_actuel}</TableCell>
                   <TableCell className="text-right">{s.stock_calcule}</TableCell>
