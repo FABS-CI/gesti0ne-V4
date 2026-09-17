@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { EmptyState } from "@/components/common/EmptyState";
-import { formatFCFA } from "@/lib/format";
+import { formatFCFA, formatDate } from "@/lib/format";
 
 import type { ColumnDef, ResourceConfig, Row } from "./resource-manager-types";
 import { optionMeta } from "./resource-manager-types";
@@ -28,6 +28,7 @@ function renderCell(col: ColumnDef, row: Row): ReactNode {
       </Badge>
     );
   }
+  if (col.type === "date") return v ? formatDate(String(v)) : "—";
   return v ?? "—";
 }
 

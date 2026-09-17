@@ -3310,7 +3310,15 @@ export type Database = {
           type_incident?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "incidents_depot_id_fkey"
+            columns: ["depot_id"]
+            isOneToOne: false
+            referencedRelation: "depots"
+            referencedColumns: ["depot_id"]
+          },
+        ]
       }
       inventaire_lignes: {
         Row: {
@@ -6245,6 +6253,9 @@ export type Database = {
       tournees: {
         Row: {
           chauffeur_nom: string | null
+          cloture_at: string | null
+          cloture_by: string | null
+          cloture_mode: string | null
           cout_autres: number | null
           cout_carburant: number | null
           cout_expeditions: number | null
@@ -6280,6 +6291,9 @@ export type Database = {
         }
         Insert: {
           chauffeur_nom?: string | null
+          cloture_at?: string | null
+          cloture_by?: string | null
+          cloture_mode?: string | null
           cout_autres?: number | null
           cout_carburant?: number | null
           cout_expeditions?: number | null
@@ -6315,6 +6329,9 @@ export type Database = {
         }
         Update: {
           chauffeur_nom?: string | null
+          cloture_at?: string | null
+          cloture_by?: string | null
+          cloture_mode?: string | null
           cout_autres?: number | null
           cout_carburant?: number | null
           cout_expeditions?: number | null

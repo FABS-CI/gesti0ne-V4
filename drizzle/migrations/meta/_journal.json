@@ -57,6 +57,20 @@
       "when": 1789556167016,
       "tag": "0007_audit_compta_rpc_alignment",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1789634850350,
+      "tag": "0008_add_incidents_depot_fk",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1789635418917,
+      "tag": "0009_add_tournees_cloture_tracking",
+      "breakpoints": true
     }
   ]
 }
