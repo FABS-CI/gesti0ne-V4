@@ -159,3 +159,21 @@ erreurs console et des appels base de données en échec, puis scénario de bout
 
 ### Vérifié E2E
 Paramètres système (création/suppression), rôles (création, validation, suppression), qualité des données (fusion de doublons), SLO, sauvegarde globale réelle. Toutes les pages d'administration s'ouvrent sans erreur 400 ni erreur console.
+
+## Module 9 — Transverse (navigation, recherche, responsive, notifications)
+
+### MAJEUR (corrigé)
+1. **Journal d'audit — toutes les lignes affichaient « Invalid Date » et aucune information** : la fonction de liste paginée lisait une autre table (`audit_logs`) et renvoyait des colonnes sans rapport avec l'écran. Réécrite sur `audit_events` avec les vraies colonnes (migration `0022_fix_audit_events_list_real_columns.sql`). Chronologie vérifiée : dates, utilisateur, action, module et criticité affichés.
+2. **Contrats — champ « Type » inexistant côté base** : le code utilisait `type_contrat` alors que la table `contrats` a la colonne `type`. Conséquences : génération d'alertes en erreur (400), type vide en liste et en fiche, création/modification impossibles. Corrigé dans la configuration Contrats, la fiche contrat, la fiche employé et les alertes. Testé E2E : création d'un contrat depuis l'écran (type CDI enregistré), liste et alertes sans erreur ; contrat de test supprimé.
+3. **Photos de profil des utilisateurs** : l'écran Utilisateurs affichait le chemin de stockage brut au lieu d'une URL signée → requête 404 sur chaque avatar. Nouveau composant `StorageAvatarImage` (URL signée, comme ailleurs dans l'application).
+4. **Dates au format ISO dans les tableaux génériques** (contrats, absences, évaluations…) : `ResearchTable`/`ResourceTable` n'appliquait le format JJ/MM/AAAA que si la colonne était explicitement typée. Toute colonne de date est désormais affichée en JJ/MM/AAAA.
+
+### Vérifié E2E (navigateur, session réelle)
+- Balayage de l'ensemble des routes authentifiées : aucune page vide, aucune erreur 400, aucune erreur console bloquante.
+- Responsive : ordinateur (1280×1800) et smartphone (390×844) sur tableau de bord, clients, stock, audit, notifications — aucun débordement horizontal.
+- Recherche globale (Ctrl + K) : la saisie « FAC » retourne clients et factures correspondants.
+- Notifications : « Actualiser », « Générer alertes » (plus aucune erreur), « Tout marquer lu » (testé avec une notification non lue : passée à lue en base) ; le bouton est volontairement désactivé quand il n'y a rien à marquer. Données de test supprimées.
+- Compilation TypeScript : aucune erreur.
+
+## Audit terminé
+Les 9 modules ont été audités, corrigés et vérifiés en conditions réelles.
