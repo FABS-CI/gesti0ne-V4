@@ -183,6 +183,13 @@
       "when": 1789644305134,
       "tag": "0025_payment_allocations_rpc",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1789644343721,
+      "tag": "0026_paiements_single_source_allocations",
+      "breakpoints": true
     }
   ]
 }
