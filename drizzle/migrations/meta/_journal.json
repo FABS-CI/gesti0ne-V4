@@ -148,6 +148,13 @@
       "when": 1789641449772,
       "tag": "0020_has_role_compat_app_role_overload",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1789641759788,
+      "tag": "0021_fix_has_role_compat_ambiguity",
+      "breakpoints": true
     }
   ]
 }
