@@ -71,6 +71,13 @@
       "when": 1789635418917,
       "tag": "0009_add_tournees_cloture_tracking",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1789635456556,
+      "tag": "0010_tournee_cloture_auto_tracking",
+      "breakpoints": true
     }
   ]
 }
