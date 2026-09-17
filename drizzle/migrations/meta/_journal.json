@@ -85,6 +85,13 @@
       "when": 1789636456848,
       "tag": "0011_achats_auto_reference",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1789636811462,
+      "tag": "0012_fix_achat_reference_trigger_args",
+      "breakpoints": true
     }
   ]
 }
