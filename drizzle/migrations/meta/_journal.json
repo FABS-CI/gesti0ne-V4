@@ -162,6 +162,13 @@
       "when": 1789642736719,
       "tag": "0022_fix_audit_events_list_real_columns",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1789643996788,
+      "tag": "0023_sync_produits_stock_and_fix_audit_duplicates",
+      "breakpoints": true
     }
   ]
 }
