@@ -55,7 +55,7 @@ type Bulletin = {
   statut: string;
 };
 type Contrat = {
-  type_contrat: string;
+  type: string;
   date_debut: string;
   date_fin: string | null;
   salaire: number;
@@ -142,7 +142,7 @@ function EmployeDetailPage() {
         <Kpi
           icon={FileText}
           label="Contrat actif"
-          value={contratActif ? contratActif.type_contrat : "—"}
+          value={contratActif ? contratActif.type : "—"}
         />
         <Kpi icon={Wallet2} label="Total payé" value={formatFCFA(totalPaye)} />
         <Kpi icon={Mail} label="Email" value={employe.email ?? "—"} />
@@ -234,7 +234,7 @@ function EmployeDetailPage() {
               <SimpleTable
                 headers={["Type", "Début", "Fin", "Salaire", "Statut"]}
                 rows={(contrats as Contrat[]).map((c) => [
-                  <span className="uppercase">{c.type_contrat}</span>,
+                  <span className="uppercase">{c.type}</span>,
                   frDate(c.date_debut),
                   frDate(c.date_fin),
                   formatFCFA(c.salaire),

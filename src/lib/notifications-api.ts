@@ -160,7 +160,7 @@ async function computeAlertes(): Promise<AlerteCandidate[]> {
   const limit = in30.toISOString().slice(0, 10);
   const { data: contrats } = await supabase
     .from("contrats")
-    .select("employe_nom, type_contrat, date_fin, statut")
+    .select("employe_nom, type, date_fin, statut")
     .not("date_fin", "is", null)
     .gte("date_fin", today)
     .lte("date_fin", limit);
@@ -168,7 +168,7 @@ async function computeAlertes(): Promise<AlerteCandidate[]> {
     if (c.statut && c.statut !== "actif") continue;
     alertes.push({
       titre: `Contrat expirant — ${c.employe_nom ?? ""}`,
-      message: `${c.type_contrat ?? "Contrat"} se termine le ${formatDate(c.date_fin)}`,
+      message: `${c.type ?? "Contrat"} se termine le ${formatDate(c.date_fin)}`,
       type_notification: "alerte",
     });
   }

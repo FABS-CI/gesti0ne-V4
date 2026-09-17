@@ -28,7 +28,9 @@ function renderCell(col: ColumnDef, row: Row): ReactNode {
       </Badge>
     );
   }
-  if (col.type === "date") return v ? formatDate(String(v)) : "—";
+  // Les colonnes de date sont affichées en JJ/MM/AAAA, même sans type explicite.
+  const isDateCol = col.type === "date" || /date|echeance|échéance|validite|validité/i.test(col.name);
+  if (isDateCol) return v ? formatDate(String(v)) : "—";
   return v ?? "—";
 }
 

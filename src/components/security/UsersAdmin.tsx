@@ -23,7 +23,8 @@ import {
   secSetUserStatut,
   secUpdateUser,
 } from "@/lib/security-users.functions";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { StorageAvatarImage } from "@/components/common/StorageAvatarImage";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -329,7 +330,7 @@ export function UsersAdmin() {
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <Avatar className="h-8 w-8">
-                          <AvatarImage src={u.avatar_url ?? undefined} alt="" />
+                          <StorageAvatarImage path={u.avatar_url} />
                           <AvatarFallback className="text-xs">{initials(u)}</AvatarFallback>
                         </Avatar>
                         <div className="min-w-0">
