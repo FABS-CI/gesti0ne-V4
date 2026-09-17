@@ -144,3 +144,18 @@ erreurs console et des appels base de données en échec, puis scénario de bout
 
 ## Modules restants (à auditer)
 8. Administration — 9. Transverse.
+
+
+## Module 8 — Administration (rôles, sécurité, sauvegardes, paramètres)
+
+### CRITIQUE
+1. **Sauvegarde manuelle sans aucun effet** — le bouton « BACKUP ERPSI » / « SAUVEGARDE GLOBALE » se terminait sans créer de ligne : la table `backups` n'avait pas les colonnes `user_id`, `message`, `completed_at` écrites par l'orchestrateur, et l'erreur d'insertion était ignorée silencieusement. Migration `0019_backups_missing_columns.sql` + remontée de l'erreur dans `src/lib/backup-orchestrator.server.ts`.
+2. **Archives de sauvegarde vides de données métier** — `export_config_snapshot()` appelait `has_role_compat(uuid, app_role)` qui n'existe pas (signature réelle : `uuid, text`) ; l'erreur était avalée, la liste des tables restait vide et l'archive ne contenait aucune donnée (0 table, 0 enregistrement). Migration `0021_fix_has_role_compat_ambiguity.sql`. Sauvegarde vérifiée : 129 tables, 22 167 enregistrements, 33,5 Mo, envoyée sur Drive, statut succès.
+
+### MAJEUR (corrigé)
+- Écrans Erreurs techniques, Performance, Santé système, Journal d'audit : requêtes sur des colonnes inexistantes (400). Colonnes réelles rétablies.
+- Qualité des données : rapports doublons/BL orphelins/écarts stock incomplets, fusion de clients impossible. Nouvelles fonctions `_v2` + `merge_clients` (migration 0016), fusion testée E2E.
+- SLO : métriques factices et « Invalid Date ». Métriques réelles + horodatage ISO (migrations 0017, 0018).
+
+### Vérifié E2E
+Paramètres système (création/suppression), rôles (création, validation, suppression), qualité des données (fusion de doublons), SLO, sauvegarde globale réelle. Toutes les pages d'administration s'ouvrent sans erreur 400 ni erreur console.

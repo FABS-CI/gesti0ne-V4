@@ -113,6 +113,48 @@
       "when": 1789637788632,
       "tag": "0015_employes_matricule_auto",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1789640310529,
+      "tag": "0016_data_quality_reports_v2",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1789640579454,
+      "tag": "0017_slo_metrics_real",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1789640615358,
+      "tag": "0018_slo_metrics_generated_at_iso",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1789641193098,
+      "tag": "0019_backups_missing_columns",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1789641449772,
+      "tag": "0020_has_role_compat_app_role_overload",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1789641759788,
+      "tag": "0021_fix_has_role_compat_ambiguity",
+      "breakpoints": true
     }
   ]
 }

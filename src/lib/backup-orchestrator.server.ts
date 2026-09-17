@@ -21,7 +21,7 @@ export async function orchestrateBackup(opts: {
   const scopeType = opts.scope || (opts.projectId ? "PROJECT" : "GLOBAL");
   
   // 1. Initialisation du log
-  const { data: row } = await (supabaseAdmin.from("backups") as any)
+  const { data: row, error: insertError } = await (supabaseAdmin.from("backups") as any)
     .insert({
       user_id: opts.userId,
       user_email: opts.author,
@@ -38,8 +38,13 @@ export async function orchestrateBackup(opts: {
     })
     .select("backup_id")
     .single();
-  
+
+  if (insertError) {
+    throw new Error(`Impossible d'enregistrer la sauvegarde : ${insertError.message}`);
+  }
+
   const backupId = row?.backup_id;
+
 
   try {
     // 2. Génération de l'archive (Données + Auth + Storage)

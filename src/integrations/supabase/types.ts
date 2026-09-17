@@ -564,6 +564,7 @@ export type Database = {
       backups: {
         Row: {
           backup_id: string
+          completed_at: string | null
           created_at: string
           destination: string
           destination_ref: string | null
@@ -573,6 +574,7 @@ export type Database = {
           error_message: string | null
           fichier_nom: string | null
           finished_at: string | null
+          message: string | null
           nb_enregistrements: number | null
           nb_tables: number | null
           project_id: string | null
@@ -590,12 +592,14 @@ export type Database = {
           type: string
           updated_at: string
           user_email: string | null
+          user_id: string | null
           verifie: boolean | null
           verifie_at: string | null
           verifie_methode: string | null
         }
         Insert: {
           backup_id?: string
+          completed_at?: string | null
           created_at?: string
           destination?: string
           destination_ref?: string | null
@@ -605,6 +609,7 @@ export type Database = {
           error_message?: string | null
           fichier_nom?: string | null
           finished_at?: string | null
+          message?: string | null
           nb_enregistrements?: number | null
           nb_tables?: number | null
           project_id?: string | null
@@ -622,12 +627,14 @@ export type Database = {
           type?: string
           updated_at?: string
           user_email?: string | null
+          user_id?: string | null
           verifie?: boolean | null
           verifie_at?: string | null
           verifie_methode?: string | null
         }
         Update: {
           backup_id?: string
+          completed_at?: string | null
           created_at?: string
           destination?: string
           destination_ref?: string | null
@@ -637,6 +644,7 @@ export type Database = {
           error_message?: string | null
           fichier_nom?: string | null
           finished_at?: string | null
+          message?: string | null
           nb_enregistrements?: number | null
           nb_tables?: number | null
           project_id?: string | null
@@ -654,6 +662,7 @@ export type Database = {
           type?: string
           updated_at?: string
           user_email?: string | null
+          user_id?: string | null
           verifie?: boolean | null
           verifie_at?: string | null
           verifie_methode?: string | null
@@ -8478,6 +8487,10 @@ export type Database = {
         Args: { _email?: string; _ip?: string; _ua?: string }
         Returns: undefined
       }
+      merge_clients: {
+        Args: { _dup_ids: string[]; _keep_id: string }
+        Returns: Json
+      }
       modifier_approvisionnement: {
         Args: { _achat_id: string; _payload: Json }
         Returns: {
@@ -8851,6 +8864,17 @@ export type Database = {
           reference: string
         }[]
       }
+      report_bl_orphelins_v2: {
+        Args: never
+        Returns: {
+          bl_id: string
+          client_id: string
+          cree_le: string
+          montant: number
+          reference: string
+          statut: string
+        }[]
+      }
       report_client_duplicates: {
         Args: never
         Returns: {
@@ -8859,12 +8883,31 @@ export type Database = {
           telephone: string
         }[]
       }
+      report_client_duplicates_v2: {
+        Args: never
+        Returns: {
+          client_ids: string[]
+          nb: number
+          nom_normalise: string
+          noms: string[]
+        }[]
+      }
       report_stock_ecarts: {
         Args: never
         Returns: {
           designation: string
           ecart: number
           produit_id: string
+        }[]
+      }
+      report_stock_ecarts_v2: {
+        Args: never
+        Returns: {
+          ecart: number
+          produit_id: string
+          stock_actuel: number
+          stock_calcule: number
+          titre: string
         }[]
       }
       restore_employe: { Args: { _employe_id: string }; Returns: undefined }

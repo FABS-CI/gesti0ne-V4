@@ -89,8 +89,8 @@ export function useAuditEventsPaginated(params: {
         p_user_email: userFilter || undefined,
         p_action: actionFilter || undefined,
         p_search: search.trim() || undefined,
-        p_limit: pageSize,
-        p_offset: (page - 1) * pageSize,
+        p_page: page,
+        p_page_size: pageSize,
       });
       if (error) throw error;
       const rows = (data ?? []) as (AuditRow & { total_count: number })[];

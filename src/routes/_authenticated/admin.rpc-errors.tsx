@@ -49,13 +49,11 @@ export const Route = createFileRoute("/_authenticated/admin/rpc-errors")({
 
 type RpcErrorRow = {
   id: string;
-  occurred_at: string;
-  user_id: string | null;
-  action: string;
-  table_name: string | null;
-  record_id: string | null;
-  status: string;
-  error_message: string | null;
+  created_at: string;
+  query_key: string | null;
+  route: string | null;
+  status: string | null;
+  error: string | null;
   duration_ms: number | null;
   metadata: Record<string, unknown> | null;
 };
@@ -96,8 +94,8 @@ function RpcErrorsPage() {
       )
         .from("v_rpc_errors_recent")
         .select("*")
-        .gte("occurred_at", since)
-        .order("occurred_at", { ascending: false })
+        .gte("created_at", since)
+        .order("created_at", { ascending: false })
         .limit(500);
       if (error) throw new Error(error.message);
       return data ?? [];
@@ -110,8 +108,8 @@ function RpcErrorsPage() {
     const rpcNorm = rpc.trim().toLowerCase();
     const userNorm = user.trim().toLowerCase();
     return allRows.filter((r) => {
-      if (rpcNorm && !(r.table_name ?? "").toLowerCase().includes(rpcNorm)) return false;
-      if (userNorm && !(r.user_id ?? "").toLowerCase().includes(userNorm)) return false;
+      if (rpcNorm && !(r.query_key ?? "").toLowerCase().includes(rpcNorm)) return false;
+      if (userNorm && !(r.route ?? "").toLowerCase().includes(userNorm)) return false;
       return true;
     });
   }, [allRows, rpc, user]);
@@ -128,7 +126,7 @@ function RpcErrorsPage() {
   }, [rows.length, seuil, periode]);
 
   const byRpc = rows.reduce<Record<string, number>>((acc, r) => {
-    const key = r.table_name ?? "?";
+    const key = r.query_key ?? "?";
     acc[key] = (acc[key] ?? 0) + 1;
     return acc;
   }, {});
@@ -152,7 +150,7 @@ function RpcErrorsPage() {
             Erreurs RPC — 7 derniers jours
           </h1>
           <p className="text-sm text-muted-foreground">
-            Journal des échecs de RPC / actions (audit_events, statut ≠ success). Réservé aux
+            Journal des échecs de requêtes critiques instrumentées. Réservé aux
             super-admins.
           </p>
         </div>
@@ -177,11 +175,11 @@ function RpcErrorsPage() {
           </div>
           <div className="space-y-1">
             <Label htmlFor="f-user" className="text-xs">
-              Utilisateur (uuid)
+              Route
             </Label>
             <Input
               id="f-user"
-              placeholder="ex. a1b2c3…"
+              placeholder="ex. /commandes"
               value={user}
               onChange={(e) => setSearch({ user: e.target.value })}
             />
@@ -260,7 +258,7 @@ function RpcErrorsPage() {
                 <TableRow>
                   <TableHead>Quand</TableHead>
                   <TableHead>RPC / table</TableHead>
-                  <TableHead>Action</TableHead>
+                  <TableHead>Route</TableHead>
                   <TableHead>Durée</TableHead>
                   <TableHead>Message</TableHead>
                 </TableRow>
@@ -269,20 +267,20 @@ function RpcErrorsPage() {
                 {rows.map((r) => (
                   <TableRow key={r.id}>
                     <TableCell className="whitespace-nowrap text-xs">
-                      {new Date(r.occurred_at).toLocaleString("fr-FR")}
+                      {new Date(r.created_at).toLocaleString("fr-FR")}
                     </TableCell>
-                    <TableCell className="font-mono text-xs">{r.table_name ?? "—"}</TableCell>
+                    <TableCell className="font-mono text-xs">{r.query_key ?? "—"}</TableCell>
                     <TableCell>
-                      <Badge variant="outline">{r.action}</Badge>
+                      <Badge variant="outline">{r.route ?? r.status ?? "—"}</Badge>
                     </TableCell>
                     <TableCell className="text-xs">
                       {r.duration_ms != null ? `${r.duration_ms} ms` : "—"}
                     </TableCell>
                     <TableCell
                       className="max-w-md truncate text-xs text-destructive"
-                      title={r.error_message ?? ""}
+                      title={r.error ?? ""}
                     >
-                      {r.error_message ?? "—"}
+                      {r.error ?? "—"}
                     </TableCell>
                   </TableRow>
                 ))}
