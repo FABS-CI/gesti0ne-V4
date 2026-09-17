@@ -22,7 +22,7 @@ export const employeSchema = z
     // Identité
     nom_complet: z.string().trim().min(1, "Le nom est requis").max(150),
     matricule: optStr,
-    prenom: optStr,
+    prenoms: optStr,
     sexe: z.enum(["M", "F", "autre"]).nullable().optional(),
     date_naissance: optDate,
     lieu_naissance: optStr,
