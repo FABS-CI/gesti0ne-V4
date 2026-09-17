@@ -105,5 +105,23 @@ erreurs console et des appels base de données en échec, puis scénario de bout
 - Listes tournées, expéditions, flotte, livreurs, retours, dépôts, bons de livraison, dashboard logistique : contenu réel, dates au format français, aucune erreur réseau ni console — vérifié sur ordinateur et sur smartphone.
 - Compilation TypeScript : aucune erreur.
 
+## Module 6 — Achats & fournisseurs
+
+| Domaine | Problème constaté | Gravité | Cause | Correction |
+|---|---|---|---|---|
+| Enregistrement d'un approvisionnement | L'enregistrement échouait à chaque tentative : aucune entrée de stock, aucun achat créé | 🔴 Critique | La numérotation automatique de l'approvisionnement n'existait pas côté base | Numérotation automatique APP-AAAA-00000 ajoutée (unicité garantie) ; l'enregistrement fonctionne et met le stock à jour |
+| Numéro d'approvisionnement | La colonne « NUMÉRO » était vide dans la liste, et les mouvements de stock portaient la mention « Approvisionnement » sans numéro | 🔴 Critique | Aucune référence n'était générée ni enregistrée | Références générées ; les approvisionnements existants ont été renumérotés (APP-2026-00001, APP-2026-00002) |
+| Fiche fournisseur | La fiche détaillée d'un fournisseur (coordonnées, total achats, historique) était inaccessible depuis la liste | 🟠 Important | Aucun bouton « Consulter » sur les lignes | Bouton « Consulter » ajouté ; la fiche s'ouvre avec ses onglets Informations et Achats |
+| Écran de confirmation d'approvisionnement | La date s'affichait en format brut « 2026-09-17 » | 🟡 Moyen | Format non appliqué dans la fenêtre de confirmation | Date au format JJ/MM/AAAA |
+| Traçabilité des entrées de stock | Le mouvement de stock d'un approvisionnement est enregistré en « ajustement » et n'est pas rattaché au document | 🟡 Moyen (non corrigé) | Fonction d'ajustement de stock commune sans lien document | À traiter avec le module Stock : le numéro d'approvisionnement figure déjà dans le motif du mouvement |
+
+### Vérifications après correction (navigateur, session réelle)
+- Création complète d'un approvisionnement depuis l'écran : fournisseur, dépôt, produit, quantité 5, prix 1 000 FCFA → fenêtre de confirmation (date 17/09/2026) → enregistré sous APP-2026-00003, stock du produit augmenté de 5, mouvement tracé « Approvisionnement APP-2026-00003 » (données de test supprimées et stock remis à son état initial).
+- Liste des approvisionnements : numéros, dates françaises, fournisseur, articles, quantités, montants, utilisateur et statut affichés.
+- Fiche approvisionnement APP-2026-00002 : montant, fournisseur, date, lignes avec remise et totaux, boutons Aperçu PDF / Imprimer / Modifier.
+- Fiche fournisseur Éditions SuperNova : coordonnées, total achats 13 770 000 FCFA, onglet « Achats (2) ».
+- Listes Fournisseurs, Nouveau fournisseur, Workflow & Approbations : contenu réel, aucune erreur réseau ni console.
+- Compilation TypeScript : aucune erreur.
+
 ## Modules restants (à auditer)
-6. Achats — 7. RH & paie — 8. Administration — 9. Transverse.
+7. RH & paie — 8. Administration — 9. Transverse.
