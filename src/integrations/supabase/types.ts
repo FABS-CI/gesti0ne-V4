@@ -869,9 +869,12 @@ export type Database = {
           created_at: string
           date_bulletin: string | null
           employe_id: string | null
+          employe_nom: string | null
+          exercice_id: string | null
           pdf_url: string | null
           periode: string | null
           reference: string | null
+          retenues: number | null
           salaire_brut: number | null
           salaire_net: number | null
           statut: string | null
@@ -883,9 +886,12 @@ export type Database = {
           created_at?: string
           date_bulletin?: string | null
           employe_id?: string | null
+          employe_nom?: string | null
+          exercice_id?: string | null
           pdf_url?: string | null
           periode?: string | null
           reference?: string | null
+          retenues?: number | null
           salaire_brut?: number | null
           salaire_net?: number | null
           statut?: string | null
@@ -897,9 +903,12 @@ export type Database = {
           created_at?: string
           date_bulletin?: string | null
           employe_id?: string | null
+          employe_nom?: string | null
+          exercice_id?: string | null
           pdf_url?: string | null
           periode?: string | null
           reference?: string | null
+          retenues?: number | null
           salaire_brut?: number | null
           salaire_net?: number | null
           statut?: string | null
@@ -4242,26 +4251,41 @@ export type Database = {
       }
       parametres_paie: {
         Row: {
+          actif: boolean | null
+          categorie: string | null
           cle: string
+          code: string | null
           created_at: string
           description: string | null
+          libelle: string | null
           parametre_id: string
+          unite: string | null
           updated_at: string
           valeur: string | null
         }
         Insert: {
+          actif?: boolean | null
+          categorie?: string | null
           cle: string
+          code?: string | null
           created_at?: string
           description?: string | null
+          libelle?: string | null
           parametre_id?: string
+          unite?: string | null
           updated_at?: string
           valeur?: string | null
         }
         Update: {
+          actif?: boolean | null
+          categorie?: string | null
           cle?: string
+          code?: string | null
           created_at?: string
           description?: string | null
+          libelle?: string | null
           parametre_id?: string
+          unite?: string | null
           updated_at?: string
           valeur?: string | null
         }
@@ -5749,33 +5773,57 @@ export type Database = {
       rubriques_paie: {
         Row: {
           actif: boolean
+          base: string | null
           code: string | null
           created_at: string
+          description: string | null
           formule: string | null
           libelle: string
+          mode_calcul: string | null
+          montant_fixe: number | null
+          ordre: number | null
           rubrique_id: string
+          soumis_cnps: boolean | null
+          soumis_igr: boolean | null
+          soumis_its: boolean | null
           taux: number | null
           type: string | null
           updated_at: string
         }
         Insert: {
           actif?: boolean
+          base?: string | null
           code?: string | null
           created_at?: string
+          description?: string | null
           formule?: string | null
           libelle: string
+          mode_calcul?: string | null
+          montant_fixe?: number | null
+          ordre?: number | null
           rubrique_id?: string
+          soumis_cnps?: boolean | null
+          soumis_igr?: boolean | null
+          soumis_its?: boolean | null
           taux?: number | null
           type?: string | null
           updated_at?: string
         }
         Update: {
           actif?: boolean
+          base?: string | null
           code?: string | null
           created_at?: string
+          description?: string | null
           formule?: string | null
           libelle?: string
+          mode_calcul?: string | null
+          montant_fixe?: number | null
+          ordre?: number | null
           rubrique_id?: string
+          soumis_cnps?: boolean | null
+          soumis_igr?: boolean | null
+          soumis_its?: boolean | null
           taux?: number | null
           type?: string | null
           updated_at?: string
@@ -7064,26 +7112,41 @@ export type Database = {
       }
       paie_parametres: {
         Row: {
+          actif: boolean | null
+          categorie: string | null
           cle: string | null
+          code: string | null
           created_at: string | null
           description: string | null
+          libelle: string | null
           parametre_id: string | null
+          unite: string | null
           updated_at: string | null
           valeur: string | null
         }
         Insert: {
+          actif?: boolean | null
+          categorie?: string | null
           cle?: string | null
+          code?: string | null
           created_at?: string | null
           description?: string | null
+          libelle?: string | null
           parametre_id?: string | null
+          unite?: string | null
           updated_at?: string | null
           valeur?: string | null
         }
         Update: {
+          actif?: boolean | null
+          categorie?: string | null
           cle?: string | null
+          code?: string | null
           created_at?: string | null
           description?: string | null
+          libelle?: string | null
           parametre_id?: string | null
+          unite?: string | null
           updated_at?: string | null
           valeur?: string | null
         }
@@ -7092,33 +7155,57 @@ export type Database = {
       paie_rubriques: {
         Row: {
           actif: boolean | null
+          base: string | null
           code: string | null
           created_at: string | null
+          description: string | null
           formule: string | null
           libelle: string | null
+          mode_calcul: string | null
+          montant_fixe: number | null
+          ordre: number | null
           rubrique_id: string | null
+          soumis_cnps: boolean | null
+          soumis_igr: boolean | null
+          soumis_its: boolean | null
           taux: number | null
           type: string | null
           updated_at: string | null
         }
         Insert: {
           actif?: boolean | null
+          base?: string | null
           code?: string | null
           created_at?: string | null
+          description?: string | null
           formule?: string | null
           libelle?: string | null
+          mode_calcul?: string | null
+          montant_fixe?: number | null
+          ordre?: number | null
           rubrique_id?: string | null
+          soumis_cnps?: boolean | null
+          soumis_igr?: boolean | null
+          soumis_its?: boolean | null
           taux?: number | null
           type?: string | null
           updated_at?: string | null
         }
         Update: {
           actif?: boolean | null
+          base?: string | null
           code?: string | null
           created_at?: string | null
+          description?: string | null
           formule?: string | null
           libelle?: string | null
+          mode_calcul?: string | null
+          montant_fixe?: number | null
+          ordre?: number | null
           rubrique_id?: string | null
+          soumis_cnps?: boolean | null
+          soumis_igr?: boolean | null
+          soumis_its?: boolean | null
           taux?: number | null
           type?: string | null
           updated_at?: string | null

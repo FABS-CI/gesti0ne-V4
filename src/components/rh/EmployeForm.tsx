@@ -63,7 +63,7 @@ function buildInitial(employe?: Employe): EmployeFormValues {
   const base: EmployeFormValues = {
     nom_complet: "",
     matricule: null,
-    prenom: null,
+    prenoms: null,
     sexe: null,
     date_naissance: null,
     lieu_naissance: null,
@@ -235,8 +235,8 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
               </Field>
               <Field label="Prénoms">
                 <Input
-                  value={form.prenom ?? ""}
-                  onChange={(e) => set("prenom", e.target.value)}
+                  value={form.prenoms ?? ""}
+                  onChange={(e) => set("prenoms", e.target.value)}
                 />
               </Field>
               <Field label="Sexe">

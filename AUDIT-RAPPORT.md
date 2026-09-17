@@ -123,5 +123,24 @@ erreurs console et des appels base de données en échec, puis scénario de bout
 - Listes Fournisseurs, Nouveau fournisseur, Workflow & Approbations : contenu réel, aucune erreur réseau ni console.
 - Compilation TypeScript : aucune erreur.
 
+## Module 7 — RH & paie
+
+| Domaine | Problème constaté | Gravité | Cause | Correction |
+|---|---|---|---|---|
+| Création d'un employé | Impossible de créer un employé : l'enregistrement échouait à chaque tentative | 🔴 Critique | Le champ « Prénoms » envoyé sous un nom différent de celui de la base | Champ aligné ; la création fonctionne (nom, prénoms, tous les onglets) |
+| Matricule employé | Aucun matricule n'était attribué : colonne vide dans la liste | 🔴 Critique | La génération automatique n'était plus active en base | Matricule automatique EMP-00000 rétabli (unique) ; l'employé existant a été renuméroté |
+| Écrans de paie (nouveau bulletin, tableau de bord, déclarations) | Pages en erreur : aucune donnée lisible ni enregistrable | 🔴 Critique | Colonnes manquantes en base (paramètres, rubriques, bulletins) | Structure alignée ; les trois écrans fonctionnent |
+| Paramètres de paie | Aucun barème enregistré : calculs impossibles | 🟠 Important | Table vide | Barèmes Côte d'Ivoire saisis : SMIG, CNPS (retraite, prestations familiales, accident), CMU, ITS (5 tranches), Contribution Nationale |
+| Rattachement comptable des bulletins | Bulletins non rattachés à l'exercice | 🟡 Moyen | Aucun rattachement automatique | Rattachement automatique à l'exercice en cours |
+
+### Vérifications après correction (navigateur, session réelle)
+- Création d'un employé depuis l'écran → EMP-00001 enregistré et affiché dans la liste.
+- Nouveau bulletin de paie : salaire de base 300 000 FCFA → brut 300 000, base imposable 221 100, CNPS salarié 18 900, CMU 1 000, ITS 2 192, CN 3 317, total retenues 25 409, net à payer 274 591, charges patronales 47 350, coût employeur 347 350 — détail par rubrique affiché, bulletin enregistré et visible dans la liste et le tableau de bord (masse salariale 300 000 FCFA).
+- Fiche du bulletin : ouverture correcte, téléchargement du PDF du bulletin réussi.
+- Congés : création d'une demande (dates 01/10/2026 → 05/10/2026), approbation, refus et suppression testés — tous effectifs en base.
+- Pages RH et paie ouvertes sans erreur : tableau de bord RH, employés, contrats, congés, absences, évaluations, missions, départements, fonctions, paie, historique, déclarations, exports, rapports, paramètres, rubriques.
+- Données de test supprimées (employé, bulletin, congés).
+- Compilation TypeScript : aucune erreur.
+
 ## Modules restants (à auditer)
-7. RH & paie — 8. Administration — 9. Transverse.
+8. Administration — 9. Transverse.

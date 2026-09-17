@@ -39,7 +39,7 @@ export async function generateEmployeFichePDF(emp: Employe): Promise<void> {
       [
         ["Matricule", fmt(emp.matricule)],
         ["Nom", fmt(emp.nom_complet)],
-        ["Prénom", fmt(emp.prenom)],
+        ["Prénom", fmt(emp.prenoms)],
         ["Sexe", fmt(emp.sexe)],
         ["Date de naissance", fmt(emp.date_naissance)],
         ["Lieu de naissance", fmt(emp.lieu_naissance)],

@@ -146,7 +146,7 @@ function EmployesPage() {
       employes.map((e) => [
         e.matricule,
         e.nom_complet,
-        e.prenom ?? "",
+        e.prenoms ?? "",
         e.poste ?? "",
         DEPARTEMENT_LABEL[e.departement] ?? e.departement,
         e.email ?? "",
@@ -275,7 +275,7 @@ function EmployesPage() {
                     {emp.matricule}
                   </TableCell>
                   <TableCell className="font-medium">{emp.nom_complet}</TableCell>
-                  <TableCell>{emp.prenom ?? "—"}</TableCell>
+                  <TableCell>{emp.prenoms ?? "—"}</TableCell>
                   <TableCell>{emp.poste ?? "—"}</TableCell>
                   <TableCell>{DEPARTEMENT_LABEL[emp.departement] ?? emp.departement}</TableCell>
                   <TableCell className="text-right">{formatFCFA(Number(emp.salaire))}</TableCell>
