@@ -49,6 +49,15 @@ export function detectMode(
       raison: `Ville « ${villeEff} » listée en livraison directe`,
     };
   }
+  // Certains clients saisissent une commune d'Abidjan (ex. « Yopougon ») dans le champ Ville.
+  if (v && communesDir.includes(v)) {
+    return {
+      autoMode: "livraison",
+      villeEff,
+      communeEff,
+      raison: `Commune « ${villeEff} » listée en livraison directe`,
+    };
+  }
   if (c && communesDir.includes(c)) {
     return {
       autoMode: "livraison",

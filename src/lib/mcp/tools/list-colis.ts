@@ -19,7 +19,7 @@ export default defineTool({
     let q = supabase
       .from("colis")
       .select(
-        "colis_id, reference, destinataire, statut, statut_logistique, ville_destination, commune, date_envoi, date_arrivee_estimee, nb_cartons, mode_acheminement, transporteur",
+        "colis_id, reference, destinataire, statut, ville_destination, commune, date_envoi, nb_cartons, mode_acheminement, transporteur",
       )
       .order("date_envoi", { ascending: false, nullsFirst: false })
       .range(offset, offset + limit - 1);

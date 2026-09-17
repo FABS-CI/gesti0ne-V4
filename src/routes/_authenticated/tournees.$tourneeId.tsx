@@ -94,7 +94,7 @@ function EditTourneePage() {
           "colis_id,reference,nb_cartons,commande_id,destinataire,ville_livraison,quartier,livreur_nom",
         )
         .is("tournee_id", null)
-        .eq("statut_logistique", "prepare")
+        .neq("statut", "annule")
         .eq("date_colisage", dateDispo)
         .order("date_colisage", { ascending: false })
         .limit(500);
