@@ -169,6 +169,27 @@
       "when": 1789643996788,
       "tag": "0023_sync_produits_stock_and_fix_audit_duplicates",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1789644235277,
+      "tag": "0024_payment_allocations_foundation",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1789644305134,
+      "tag": "0025_payment_allocations_rpc",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1789644343721,
+      "tag": "0026_paiements_single_source_allocations",
+      "breakpoints": true
     }
   ]
 }
