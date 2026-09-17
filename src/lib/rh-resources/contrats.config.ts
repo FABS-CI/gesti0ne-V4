@@ -29,7 +29,7 @@ export const contratsConfig: ResourceConfig = {
   editHref: (row) => `/contrats/${row.contrat_id}/modifier`,
   columns: [
     { name: "employe_nom", label: "Employé" },
-    { name: "type_contrat", label: "Type", type: "badge", options: types },
+    { name: "type", label: "Type", type: "badge", options: types },
     { name: "date_debut", label: "Début" },
     { name: "date_fin", label: "Fin" },
     { name: "salaire", label: "Salaire", type: "money", align: "right" },
@@ -45,7 +45,7 @@ export const contratsConfig: ResourceConfig = {
       onSelectPatch: (e) => ({ employe_id: e.employe_id, employe_nom: e.nom_complet }),
     },
     { name: "employe_nom", label: "Employé", required: true, colSpan: 2 },
-    { name: "type_contrat", label: "Type", type: "select", options: types, default: "cdi" },
+    { name: "type", label: "Type", type: "select", options: types, default: "cdi" },
     { name: "statut", label: "Statut", type: "select", options: statuts, default: "actif" },
     { name: "date_debut", label: "Date début", type: "date" },
     { name: "date_fin", label: "Date fin", type: "date" },

@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_authenticated/contrats/$contratId/")({
 type Contrat = {
   contrat_id: string;
   employe_nom: string;
-  type_contrat: string;
+  type: string;
   date_debut: string;
   date_fin: string | null;
   salaire: number;
@@ -80,7 +80,7 @@ function ContratDetailPage() {
     <div className="space-y-6">
       <RhPageHeader
         title={contrat.employe_nom}
-        subtitle={`Contrat ${TYPES[contrat.type_contrat] ?? contrat.type_contrat}`}
+        subtitle={`Contrat ${TYPES[contrat.type] ?? contrat.type}`}
         backTo="/contrats"
         crumbs={[{ label: "Contrats", to: "/contrats" }, { label: contrat.employe_nom }]}
         actions={
@@ -108,7 +108,7 @@ function ContratDetailPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">
-            {TYPES[contrat.type_contrat] ?? contrat.type_contrat}
+            {TYPES[contrat.type] ?? contrat.type}
           </CardContent>
         </Card>
         <Card>

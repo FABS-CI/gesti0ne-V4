@@ -7660,12 +7660,37 @@ export type Database = {
         }
         Returns: {
           action: string
-          created_at: string
-          details: Json
-          entity_id: string
-          entity_type: string
+          browser: string
+          browser_version: string
+          changes: Json
+          city: string
+          correlation_id: string
+          country: string
+          country_code: string
+          criticite: string
+          device: string
+          duration_ms: number
+          error_message: string
+          http_method: string
           id: string
+          ip_address: string
           module: string
+          new_values: Json
+          occurred_at: string
+          old_values: Json
+          os: string
+          record_id: string
+          record_ref: string
+          screen_resolution: string
+          session_id: string
+          status: string
+          status_code: number
+          table_name: string
+          timezone: string
+          total_count: number
+          url: string
+          user_agent: string
+          user_email: string
           user_id: string
         }[]
       }
