@@ -8355,6 +8355,41 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      enregistrer_paiement_multi: {
+        Args: { _payload: Json }
+        Returns: {
+          banque: string | null
+          client_nom: string | null
+          commentaire_validation: string | null
+          created_at: string
+          cree_par: string | null
+          date_paiement: string
+          exercice_id: string | null
+          facture_id: string | null
+          idempotency_key: string | null
+          mode_paiement: string
+          montant: number
+          motif_rejet: string | null
+          notes: string | null
+          num_transaction: string | null
+          observations: string | null
+          paiement_id: string
+          reference: string
+          reference_paiement: string | null
+          rejete_le: string | null
+          rejete_par: string | null
+          statut: string
+          updated_at: string
+          valide_le: string | null
+          valide_par: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "paiements"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       executer_cloture_exercice: {
         Args: { _activer_suivant?: boolean; _exercice_id: string }
         Returns: Json
@@ -8454,6 +8489,7 @@ export type Database = {
         }[]
       }
       get_next_backup_run: { Args: never; Returns: string }
+      get_payment_allocations: { Args: { _paiement_id: string }; Returns: Json }
       get_slo_metrics: { Args: never; Returns: Json }
       global_search: { Args: { _q: string }; Returns: Json }
       has_any_role: {
@@ -8734,6 +8770,10 @@ export type Database = {
       norm_key: { Args: { _v: string }; Returns: string }
       norm_txt: { Args: { _v: string }; Returns: string }
       normalize_phone: { Args: { phone: string }; Returns: string }
+      override_payment_product_allocation: {
+        Args: { _allocation_id: string; _lignes: Json; _raison: string }
+        Returns: Json
+      }
       payer_achat: { Args: { _achat_id: string }; Returns: undefined }
       preview_cloture_exercice: {
         Args: { _exercice_id: string }
@@ -8785,6 +8825,17 @@ export type Database = {
           _tri?: string
         }
         Returns: Json
+      }
+      rapport_produits_encaissement: {
+        Args: { _date_debut?: string; _date_fin?: string }
+        Returns: {
+          ca_encaisse: number
+          designation: string
+          nb_factures: number
+          nb_paiements: number
+          produit_id: string
+          reference_produit: string
+        }[]
       }
       rapport_top_produits: {
         Args: { _filtres?: Json; _limit?: number }
