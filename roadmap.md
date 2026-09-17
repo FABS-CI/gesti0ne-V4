@@ -10,7 +10,7 @@ Livrable par module : rapport (gravité) + correction des problèmes critiques.
 - [x] 5. Logistique (colisage, tournées, livraison-suivi, retours, incidents) — voir AUDIT-RAPPORT.md
 - [x] 6. Achats & fournisseurs — voir AUDIT-RAPPORT.md
 - [x] 7. RH & paie — voir AUDIT-RAPPORT.md
-- [ ] 8. Administration (rôles/permissions, sécurité, backup, paramètres)
+- [x] 8. Administration (rôles/permissions, sécurité, backup, paramètres) — voir AUDIT-RAPPORT.md
 - [ ] 9. Transverse : navigation/routes, recherche/filtres, responsive, notifications
 
 Rapport cumulatif : AUDIT-RAPPORT.md
