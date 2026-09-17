@@ -141,6 +141,13 @@
       "when": 1789641193098,
       "tag": "0019_backups_missing_columns",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1789641449772,
+      "tag": "0020_has_role_compat_app_role_overload",
+      "breakpoints": true
     }
   ]
 }
