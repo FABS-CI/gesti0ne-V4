@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Truck, Search, Plus, Download, Pencil, Trash2 } from "lucide-react";
+import { Truck, Search, Plus, Download, Pencil, Trash2, Eye } from "lucide-react";
 import { Can } from "@/components/rbac/Can";
 import { toast } from "sonner";
 
@@ -241,7 +241,21 @@ function FournisseursPage() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" asChild>
+                      <Button
+                        aria-label="Consulter"
+                        title="Consulter"
+                        variant="ghost"
+                        size="icon"
+                        asChild
+                      >
+                        <Link
+                          to="/fournisseurs/$fournisseurId"
+                          params={{ fournisseurId: f.fournisseur_id }}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button aria-label="Modifier" title="Modifier" variant="ghost" size="icon" asChild>
                         <Link
                           to="/fournisseurs/$fournisseurId/modifier"
                           params={{ fournisseurId: f.fournisseur_id }}

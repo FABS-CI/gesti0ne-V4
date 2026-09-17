@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { formatFCFA } from "@/lib/format";
+import { formatDate, formatFCFA } from "@/lib/format";
 import { listFournisseurs } from "@/lib/fournisseurs-api";
 import { type Produit } from "@/lib/produits-api";
 import { listDepots } from "@/lib/depots-api";
@@ -357,7 +357,7 @@ function NouvelApprovisionnementPage() {
               </div>
               <div>
                 <div className="text-muted-foreground">Date</div>
-                <div className="font-medium">{date}</div>
+                <div className="font-medium">{formatDate(date)}</div>
               </div>
               <div>
                 <div className="text-muted-foreground">Référence fournisseur</div>

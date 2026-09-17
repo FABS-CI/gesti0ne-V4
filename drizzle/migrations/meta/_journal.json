@@ -78,6 +78,13 @@
       "when": 1789635456556,
       "tag": "0010_tournee_cloture_auto_tracking",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1789636456848,
+      "tag": "0011_achats_auto_reference",
+      "breakpoints": true
     }
   ]
 }
