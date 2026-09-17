@@ -4330,6 +4330,131 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_allocations: {
+        Row: {
+          allocation_id: string
+          created_at: string
+          created_by: string | null
+          facture_id: string
+          methode: string
+          montant: number
+          paiement_id: string
+        }
+        Insert: {
+          allocation_id?: string
+          created_at?: string
+          created_by?: string | null
+          facture_id: string
+          methode?: string
+          montant: number
+          paiement_id: string
+        }
+        Update: {
+          allocation_id?: string
+          created_at?: string
+          created_by?: string | null
+          facture_id?: string
+          methode?: string
+          montant?: number
+          paiement_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_allocations_facture_id_fkey"
+            columns: ["facture_id"]
+            isOneToOne: false
+            referencedRelation: "factures"
+            referencedColumns: ["facture_id"]
+          },
+          {
+            foreignKeyName: "payment_allocations_paiement_id_fkey"
+            columns: ["paiement_id"]
+            isOneToOne: false
+            referencedRelation: "paiements"
+            referencedColumns: ["paiement_id"]
+          },
+        ]
+      }
+      payment_line_allocation_audit: {
+        Row: {
+          allocation_id: string | null
+          ancien_montant: number | null
+          id: string
+          line_allocation_id: string | null
+          modifie_le: string
+          modifie_par: string | null
+          nouveau_montant: number | null
+          produit_id: string | null
+          raison: string
+        }
+        Insert: {
+          allocation_id?: string | null
+          ancien_montant?: number | null
+          id?: string
+          line_allocation_id?: string | null
+          modifie_le?: string
+          modifie_par?: string | null
+          nouveau_montant?: number | null
+          produit_id?: string | null
+          raison: string
+        }
+        Update: {
+          allocation_id?: string | null
+          ancien_montant?: number | null
+          id?: string
+          line_allocation_id?: string | null
+          modifie_le?: string
+          modifie_par?: string | null
+          nouveau_montant?: number | null
+          produit_id?: string | null
+          raison?: string
+        }
+        Relationships: []
+      }
+      payment_line_allocations: {
+        Row: {
+          allocation_id: string
+          created_at: string
+          designation: string | null
+          ligne_id: string
+          line_allocation_id: string
+          methode: string
+          montant: number
+          produit_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          allocation_id: string
+          created_at?: string
+          designation?: string | null
+          ligne_id: string
+          line_allocation_id?: string
+          methode?: string
+          montant?: number
+          produit_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          allocation_id?: string
+          created_at?: string
+          designation?: string | null
+          ligne_id?: string
+          line_allocation_id?: string
+          methode?: string
+          montant?: number
+          produit_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_line_allocations_allocation_id_fkey"
+            columns: ["allocation_id"]
+            isOneToOne: false
+            referencedRelation: "payment_allocations"
+            referencedColumns: ["allocation_id"]
+          },
+        ]
+      }
       perf_query_log: {
         Row: {
           created_at: string
@@ -7483,6 +7608,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      allocate_payment_to_invoice_lines: {
+        Args: { _allocation_id: string }
+        Returns: undefined
+      }
       annuler_colisage: {
         Args: { _bl_id: string; _motif: string }
         Returns: undefined
@@ -8814,6 +8943,10 @@ export type Database = {
       }
       rbac3_user_role_set: {
         Args: { _granted: boolean; _role_code: string; _user_id: string }
+        Returns: undefined
+      }
+      recalc_facture_from_payment_allocations: {
+        Args: { _facture_id: string }
         Returns: undefined
       }
       recalculer_sla_approbations: {

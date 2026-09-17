@@ -169,6 +169,13 @@
       "when": 1789643996788,
       "tag": "0023_sync_produits_stock_and_fix_audit_duplicates",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1789644235277,
+      "tag": "0024_payment_allocations_foundation",
+      "breakpoints": true
     }
   ]
 }
