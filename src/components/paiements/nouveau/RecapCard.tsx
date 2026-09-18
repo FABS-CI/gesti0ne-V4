@@ -8,17 +8,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatFCFA } from "@/lib/format";
-import { computeRecap } from "@/lib/paiement-recap";
+import type { RecapLine } from "@/lib/paiement-recap";
 
 type Props = {
-  reference: string;
-  solde: number;
-  montant: number;
+  lignes: RecapLine[];
   mode: "draft" | "confirm";
 };
 
-export function RecapCard({ reference, solde, montant, mode }: Props) {
-  const rec = computeRecap(reference, solde, montant);
+export function RecapCard({ lignes, mode }: Props) {
+  const totalImpute = lignes.reduce((s, l) => s + l.montant_impute, 0);
   return (
     <Card>
       <CardHeader>
@@ -37,16 +35,28 @@ export function RecapCard({ reference, solde, montant, mode }: Props) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell className="font-mono text-xs">{rec.reference}</TableCell>
-              <TableCell className="text-right">{formatFCFA(rec.reste_avant)}</TableCell>
-              <TableCell className="text-right font-semibold text-primary">
-                {formatFCFA(rec.montant_impute)}
-              </TableCell>
-              <TableCell className="text-right font-semibold">
-                {formatFCFA(rec.reste_apres)}
-              </TableCell>
-            </TableRow>
+            {lignes.map((rec) => (
+              <TableRow key={rec.reference}>
+                <TableCell className="font-mono text-xs">{rec.reference}</TableCell>
+                <TableCell className="text-right">{formatFCFA(rec.reste_avant)}</TableCell>
+                <TableCell className="text-right font-semibold text-primary">
+                  {formatFCFA(rec.montant_impute)}
+                </TableCell>
+                <TableCell className="text-right font-semibold">
+                  {formatFCFA(rec.reste_apres)}
+                </TableCell>
+              </TableRow>
+            ))}
+            {lignes.length > 1 && (
+              <TableRow className="border-t-2 font-semibold">
+                <TableCell>Total</TableCell>
+                <TableCell />
+                <TableCell className="text-right text-primary">
+                  {formatFCFA(totalImpute)}
+                </TableCell>
+                <TableCell />
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </CardContent>

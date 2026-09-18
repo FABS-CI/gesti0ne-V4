@@ -21,20 +21,24 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ClientSearchSelect } from "@/components/search/ClientSearchSelect";
-import { FacturesImpayeesCard } from "@/components/paiements/nouveau/FacturesImpayeesCard";
+import {
+  FacturesImpayeesCard,
+  type FactureImpayeeRow,
+} from "@/components/paiements/nouveau/FacturesImpayeesCard";
 import { PaiementFormCard, type FormState } from "@/components/paiements/nouveau/PaiementFormCard";
 import { RecapCard } from "@/components/paiements/nouveau/RecapCard";
 import { formatFCFA, formatDate } from "@/lib/format";
-import { computeRecap } from "@/lib/paiement-recap";
+import { computeRecap, type RecapLine } from "@/lib/paiement-recap";
 
 import { newIdempotencyKey } from "@/lib/idempotency";
 import {
-  enregistrerPaiement,
+  enregistrerPaiementMulti,
   listFacturesImpayeesClient,
-  type EnregistrerPaiementInput,
+  type AllocationInput,
+  type EnregistrerPaiementMultiInput,
 } from "@/lib/paiements-api";
 import { getClient } from "@/lib/clients-api";
-import { validatePaiement } from "@/lib/paiement-recap";
+import { paiementSchema } from "@/lib/paiement-recap";
 import { invalidatePaiement } from "@/lib/cache-invalidation";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 import { friendlyError } from "@/lib/friendly-error";
@@ -60,7 +64,8 @@ function NouveauPaiementPage() {
   const [clientId, setClientId] = useState<string | null>(presetClientId ?? null);
   const [clientNom, setClientNom] = useState<string>("");
   const [clientError, setClientError] = useState<string | null>(null);
-  const [factureId, setFactureId] = useState<string | null>(null);
+  /** facture_id -> montant affecté */
+  const [allocs, setAllocs] = useState<Record<string, number>>({});
   const [mode, setMode] = useState<"draft" | "confirm">("draft");
   const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -91,42 +96,64 @@ function NouveauPaiementPage() {
     };
   });
 
-
   const { data: factures = [], isLoading: facLoading } = useQuery({
     queryKey: ["factures-impayees", clientId],
     queryFn: () => (clientId ? listFacturesImpayeesClient(clientId) : Promise.resolve([])),
     enabled: !!clientId,
   });
 
-  const selectedFacture = useMemo(
-    () => factures.find((f) => f.facture_id === factureId) ?? null,
-    [factures, factureId],
+  const totalAffecte = useMemo(
+    () => Object.values(allocs).reduce((s, m) => s + (Number(m) || 0), 0),
+    [allocs],
   );
 
+  const syncMontant = (next: Record<string, number>) => {
+    const total = Object.values(next).reduce((s, m) => s + (Number(m) || 0), 0);
+    setForm((s) => ({ ...s, montant: total }));
+  };
+
+  const toggleFacture = (f: FactureImpayeeRow, checked: boolean) => {
+    setAllocs((prev) => {
+      const next = { ...prev };
+      if (checked) next[f.facture_id] = Number(f.solde);
+      else delete next[f.facture_id];
+      syncMontant(next);
+      return next;
+    });
+  };
+
+  const changeMontant = (factureId: string, montant: number) => {
+    setAllocs((prev) => {
+      const next = { ...prev, [factureId]: montant };
+      syncMontant(next);
+      return next;
+    });
+  };
+
+  // Une seule facture impayée : présélection automatique
   useEffect(() => {
-    if (!factureId && factures.length === 1) {
+    if (factures.length === 1 && Object.keys(allocs).length === 0) {
       const f = factures[0];
-      setFactureId(f.facture_id);
+      const next = { [f.facture_id]: Number(f.solde) };
+      setAllocs(next);
       setForm((s) => ({ ...s, montant: Number(f.solde) }));
     }
-  }, [factures, factureId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [factures]);
 
   // Clé d'idempotence stable pour toute la saisie (anti-doublon)
   const idempotencyKey = useMemo(() => newIdempotencyKey("pai"), []);
 
   const mutation = useMutation({
-    mutationFn: (payload: EnregistrerPaiementInput) =>
-      enregistrerPaiement({ ...payload, idempotency_key: idempotencyKey }),
+    mutationFn: (payload: EnregistrerPaiementMultiInput) =>
+      enregistrerPaiementMulti({ ...payload, idempotency_key: idempotencyKey }),
     onSuccess: () => {
       toast.success(
         canValider
           ? "Paiement enregistré et validé"
           : "Paiement enregistré, en attente de validation comptable",
       );
-      invalidatePaiement(queryClient, {
-        factureId: factureId ?? undefined,
-        clientId: clientId ?? undefined,
-      });
+      invalidatePaiement(queryClient, { clientId: clientId ?? undefined });
       if (presetClientId)
         navigate({ to: "/clients/$clientId", params: { clientId: presetClientId } });
       else navigate({ to: "/paiements" });
@@ -134,43 +161,70 @@ function NouveauPaiementPage() {
     onError: (e: unknown) => toast.error(friendlyError(e, "Erreur")),
   });
 
-  function validate() {
-    if (!factureId) {
-      toast.error("Veuillez sélectionner une facture");
+  const selectedFactures = useMemo(
+    () => factures.filter((f) => f.facture_id in allocs),
+    [factures, allocs],
+  );
+
+  const recapLignes: RecapLine[] = useMemo(
+    () =>
+      selectedFactures
+        .filter((f) => Number(allocs[f.facture_id]) > 0)
+        .map((f) => computeRecap(f.reference, Number(f.solde), Number(allocs[f.facture_id]))),
+    [selectedFactures, allocs],
+  );
+
+  function validate(): boolean {
+    const entries = Object.entries(allocs).filter(([, m]) => Number(m) > 0);
+    if (!entries.length) {
+      toast.error("Veuillez sélectionner au moins une facture");
       return false;
     }
-    const r = validatePaiement({
+    for (const [fid, m] of entries) {
+      const f = factures.find((x) => x.facture_id === fid);
+      if (!f) continue;
+      if (Number(m) > Number(f.solde) + 0.01) {
+        toast.error(`Le montant affecté dépasse le solde de la facture ${f.reference}`);
+        return false;
+      }
+    }
+    const parsed = paiementSchema.safeParse({
       montant: Number(form.montant),
       mode_paiement: form.mode_paiement,
-      reference_paiement: form.reference_paiement ?? "",
-      solde: selectedFacture ? Number(selectedFacture.solde) : undefined,
+      reference_paiement: (form.reference_paiement ?? "").trim(),
     });
-    if (!r.ok) {
-      toast.error(friendlyError(r));
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0].message);
+      return false;
+    }
+    if (totalAffecte > Number(form.montant) + 0.01) {
+      toast.error("Le total affecté aux factures dépasse le montant reçu");
       return false;
     }
     return true;
   }
 
   const submit = () => {
-    if (!validate() || !factureId) return;
+    if (!validate()) return;
     setConfirmOpen(true);
   };
 
   const doSave = () => {
-    if (!factureId) return;
     setConfirmOpen(false);
-    mutation.mutate({ ...form, facture_id: factureId });
+    const allocations: AllocationInput[] = Object.entries(allocs)
+      .filter(([, m]) => Number(m) > 0)
+      .map(([facture_id, montant]) => ({ facture_id, montant: Number(montant) }));
+    if (!allocations.length) return;
+    mutation.mutate({ ...form, client_id: clientId, allocations });
   };
 
   const preview = () => {
     if (validate()) setMode("confirm");
   };
 
-  const recap =
-    selectedFacture && form.montant > 0
-      ? computeRecap(selectedFacture.reference, Number(selectedFacture.solde), Number(form.montant))
-      : null;
+  const hasSelection = selectedFactures.length > 0;
+  const soldeRestant =
+    selectedFactures.length === 1 ? Number(selectedFactures[0].solde) : undefined;
 
   if (clientError) {
     return (
@@ -204,7 +258,7 @@ function NouveauPaiementPage() {
         <div>
           <h1 className="text-2xl font-bold">Nouveau paiement</h1>
           <p className="text-sm text-muted-foreground">
-            Enregistrement d'un règlement client à imputer sur une facture
+            Enregistrement d'un règlement client à imputer sur une ou plusieurs factures
           </p>
         </div>
       </div>
@@ -219,7 +273,8 @@ function NouveauPaiementPage() {
             onChange={(id, client) => {
               setClientId(id);
               setClientNom(client?.nom ?? "");
-              setFactureId(null);
+              setAllocs({});
+              setForm((s) => ({ ...s, montant: 0 }));
             }}
           />
         </CardContent>
@@ -230,20 +285,18 @@ function NouveauPaiementPage() {
           clientNom={clientNom}
           factures={factures}
           loading={facLoading}
-          factureId={factureId}
-          onSelect={(f) => {
-            setFactureId(f.facture_id);
-            setForm((s) => ({ ...s, montant: Number(f.solde) }));
-          }}
+          selected={allocs}
+          onToggle={toggleFacture}
+          onMontantChange={changeMontant}
         />
       )}
 
-      {factureId && (
+      {hasSelection && (
         <PaiementFormCard
           form={form}
           setForm={setForm}
           mode={mode}
-          soldeRestant={selectedFacture ? Number(selectedFacture.solde) : undefined}
+          soldeRestant={soldeRestant}
           onPreview={preview}
           onSubmit={submit}
           onEdit={() => setMode("draft")}
@@ -251,14 +304,7 @@ function NouveauPaiementPage() {
         />
       )}
 
-      {factureId && selectedFacture && form.montant > 0 && (
-        <RecapCard
-          reference={selectedFacture.reference}
-          solde={Number(selectedFacture.solde)}
-          montant={Number(form.montant)}
-          mode={mode}
-        />
-      )}
+      {hasSelection && recapLignes.length > 0 && <RecapCard lignes={recapLignes} mode={mode} />}
 
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <AlertDialogContent>
@@ -268,17 +314,46 @@ function NouveauPaiementPage() {
               Vérifiez le récapitulatif ci-dessous avant d'enregistrer définitivement le paiement.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          {recap && selectedFacture && (
+          {recapLignes.length > 0 && (
             <div className="space-y-2 rounded-md border p-3 text-sm">
-              <div className="flex justify-between"><span className="text-muted-foreground">Client</span><span className="font-medium">{clientNom || "—"}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Facture</span><span className="font-mono text-xs">{recap.reference}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Date paiement</span><span>{formatDate(form.date_paiement)}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Mode</span><span className="capitalize">{form.mode_paiement}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Référence</span><span className="font-mono text-xs">{form.reference_paiement}</span></div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Client</span>
+                <span className="font-medium">{clientNom || "—"}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Date paiement</span>
+                <span>{formatDate(form.date_paiement)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Mode</span>
+                <span className="capitalize">{form.mode_paiement}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Référence</span>
+                <span className="font-mono text-xs">{form.reference_paiement}</span>
+              </div>
               <div className="my-2 border-t" />
-              <div className="flex justify-between"><span className="text-muted-foreground">Reste avant</span><span>{formatFCFA(recap.reste_avant)}</span></div>
-              <div className="flex justify-between text-primary"><span>Montant imputé</span><span className="font-semibold">{formatFCFA(recap.montant_impute)}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Reste après</span><span className="font-semibold">{formatFCFA(recap.reste_apres)}</span></div>
+              {recapLignes.map((rec) => (
+                <div key={rec.reference} className="space-y-1">
+                  <div className="flex justify-between">
+                    <span className="font-mono text-xs">{rec.reference}</span>
+                    <span className="font-semibold text-primary">
+                      {formatFCFA(rec.montant_impute)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>
+                      Reste avant : {formatFCFA(rec.reste_avant)}
+                    </span>
+                    <span>Reste après : {formatFCFA(rec.reste_apres)}</span>
+                  </div>
+                </div>
+              ))}
+              <div className="my-2 border-t" />
+              <div className="flex justify-between font-semibold text-primary">
+                <span>Montant total imputé</span>
+                <span>{formatFCFA(recapLignes.reduce((s, l) => s + l.montant_impute, 0))}</span>
+              </div>
             </div>
           )}
           <AlertDialogFooter>

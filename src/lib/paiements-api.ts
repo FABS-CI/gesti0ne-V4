@@ -129,6 +129,57 @@ export async function enregistrerPaiement(input: EnregistrerPaiementInput) {
   return data as unknown as Paiement;
 }
 
+// ===== Paiement multi-factures (affectations) =====
+
+export type AllocationInput = { facture_id: string; montant: number };
+
+export type EnregistrerPaiementMultiInput = Omit<EnregistrerPaiementInput, "facture_id"> & {
+  client_id?: string | null;
+  allocations: AllocationInput[];
+};
+
+/**
+ * Enregistre un paiement réparti sur une ou plusieurs factures du même client.
+ * Contrôles côté serveur : même client, montants ≤ soldes, total affecté ≤ montant reçu,
+ * idempotence stricte, soldes recalculés par facture.
+ */
+export async function enregistrerPaiementMulti(input: EnregistrerPaiementMultiInput) {
+  const { assertPermission } = await import("@/lib/rbac-api");
+  await assertPermission("paiements.creer");
+  const { data, error } = await callRpc("enregistrer_paiement_multi", {
+    _payload: input as never,
+  });
+  if (error) throw new Error(error.message);
+  const rows = (data ?? []) as Paiement[];
+  return rows[0] ?? null;
+}
+
+export type PaiementAllocation = {
+  allocation_id: string;
+  paiement_id: string;
+  facture_id: string;
+  montant: number;
+  facture_reference?: string | null;
+};
+
+/** Liste les factures auxquelles un paiement a été affecté (multi-factures). */
+export async function listPaiementAllocations(paiementId: string) {
+  const { data, error } = await supabase
+    .from("payment_allocations")
+    .select("allocation_id, paiement_id, facture_id, montant")
+    .eq("paiement_id", paiementId);
+  if (error) throw error;
+  const rows = (data ?? []) as PaiementAllocation[];
+  if (!rows.length) return rows;
+  const factureIds = [...new Set(rows.map((r) => r.facture_id))];
+  const { data: factures } = await supabase
+    .from("factures")
+    .select("facture_id, reference")
+    .in("facture_id", factureIds);
+  const refs = new Map((factures ?? []).map((f) => [f.facture_id, f.reference as string]));
+  return rows.map((r) => ({ ...r, facture_reference: refs.get(r.facture_id) ?? null }));
+}
+
 export async function annulerPaiement(paiementId: string, raison: string, notes?: string | null) {
   if (!raison || !raison.trim()) {
     throw new Error("Raison d'annulation obligatoire");
