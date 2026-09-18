@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import {
   annulerPaiement,
   getPaiement,
+  listPaiementAllocations,
   MODE_PAIEMENT_LABEL,
   STATUT_PAIEMENT_LABEL,
   supprimerPaiementDefinitif,
@@ -58,7 +59,12 @@ function PaiementDetailPage() {
   const [deleteMotif, setDeleteMotif] = useState("");
   const { data: paiement, isLoading } = useQuery({
     queryKey: ["paiement", paiementId],
-    queryFn: () => getPaiement(paiementId),
+      queryFn: () => getPaiement(paiementId),
+  });
+
+  const { data: allocations = [] } = useQuery({
+    queryKey: ["paiement-allocations", paiementId],
+    queryFn: () => listPaiementAllocations(paiementId),
   });
 
   const cancelMutation = useMutation({
@@ -310,19 +316,51 @@ function PaiementDetailPage() {
         </Card>
       </div>
 
-      {paiement.facture_id && (
+      {allocations.length > 0 ? (
         <Card>
           <CardHeader>
-            <CardTitle>Facture liée</CardTitle>
+            <CardTitle>
+              {allocations.length > 1
+                ? `Factures réglées (${allocations.length})`
+                : "Facture liée"}
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <Button asChild variant="outline" size="sm">
-              <Link to="/factures/$factureId" params={{ factureId: paiement.facture_id }}>
-                Voir la facture
-              </Link>
-            </Button>
+          <CardContent className="space-y-2">
+            {allocations.map((a) => (
+              <div
+                key={a.allocation_id}
+                className="flex items-center justify-between gap-3 rounded-md border p-2 text-sm"
+              >
+                <span className="font-mono text-xs">
+                  {a.facture_reference ?? a.facture_id}
+                </span>
+                <div className="flex items-center gap-3">
+                  <span className="font-semibold text-primary">{formatFCFA(a.montant)}</span>
+                  <Button asChild variant="outline" size="sm">
+                    <Link to="/factures/$factureId" params={{ factureId: a.facture_id }}>
+                      Voir la facture
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
+      ) : (
+        paiement.facture_id && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Facture liée</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Button asChild variant="outline" size="sm">
+                <Link to="/factures/$factureId" params={{ factureId: paiement.facture_id }}>
+                  Voir la facture
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        )
       )}
 
       {paiement.notes && (
