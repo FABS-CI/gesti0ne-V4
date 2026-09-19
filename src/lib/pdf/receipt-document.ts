@@ -19,6 +19,8 @@ export type ReceiptData = {
   paymentReference?: string;
   notes?: string;
   isReprint?: boolean;
+  /** Règlement réparti sur plusieurs factures (affectations réelles du paiement). */
+  invoices?: { reference: string; invoiceTotal: number; amountPaid: number }[];
 };
 
 export class ReceiptDocument extends BaseDocument {
