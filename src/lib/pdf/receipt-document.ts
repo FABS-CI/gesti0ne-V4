@@ -106,9 +106,17 @@ export class ReceiptDocument extends BaseDocument {
     return y - boxH - 20;
   }
 
+  /** Factures réellement réglées par ce paiement (≥ 2 = reçu multi-factures). */
+  get multiInvoices() {
+    const inv = this.receiptData.invoices ?? [];
+    return inv.length > 1 ? inv : null;
+  }
+
   drawPaymentDetails(y: number): number {
-    const boxH = 160;
+    const multi = this.multiInvoices;
+    const boxH = multi ? 135 + multi.length * 16 : 160;
     const boxW = CONTENT_W;
+
 
     this.page.drawText("DÉTAIL DU RÈGLEMENT", { 
       x: MARGINS.x, 
