@@ -19,6 +19,8 @@ export type ReceiptData = {
   paymentReference?: string;
   notes?: string;
   isReprint?: boolean;
+  /** Règlement réparti sur plusieurs factures (affectations réelles du paiement). */
+  invoices?: { reference: string; invoiceTotal: number; amountPaid: number }[];
 };
 
 export class ReceiptDocument extends BaseDocument {
@@ -104,9 +106,17 @@ export class ReceiptDocument extends BaseDocument {
     return y - boxH - 20;
   }
 
+  /** Factures réellement réglées par ce paiement (≥ 2 = reçu multi-factures). */
+  get multiInvoices() {
+    const inv = this.receiptData.invoices ?? [];
+    return inv.length > 1 ? inv : null;
+  }
+
   drawPaymentDetails(y: number): number {
-    const boxH = 160;
+    const multi = this.multiInvoices;
+    const boxH = multi ? 135 + multi.length * 16 : 160;
     const boxW = CONTENT_W;
+
 
     this.page.drawText("DÉTAIL DU RÈGLEMENT", { 
       x: MARGINS.x, 
@@ -127,18 +137,73 @@ export class ReceiptDocument extends BaseDocument {
     });
 
     let curY = y - 25;
-    const items = [
-      { l: "Facture réglée", v: this.receiptData.invoiceNumber },
-      { l: "Montant facture", v: formatFCFA(this.receiptData.invoiceTotal) },
-      { l: "Solde avant paiement", v: formatFCFA(this.receiptData.balanceBefore) },
-    ];
 
-    items.forEach(item => {
-      this.page.drawText(item.l, { x: MARGINS.x + 15, y: curY, size: 10, font: this.fonts.regular });
-      const valW = this.fonts.bold.widthOfTextAtSize(item.v, 10);
-      this.page.drawText(item.v, { x: PAGE.w - MARGINS.x - valW - 15, y: curY, size: 10, font: this.fonts.bold });
-      curY -= 20;
-    });
+    if (multi) {
+      const colImpute = PAGE.w - MARGINS.x - 15;
+      const colTotal = colImpute - 120;
+      this.page.drawText("Factures réglées", {
+        x: MARGINS.x + 15,
+        y: curY,
+        size: 9,
+        font: this.fonts.bold,
+        color: COLORS.bleuFabs,
+      });
+      const hTotal = "Montant facture";
+      const hImpute = "Imputé";
+      this.page.drawText(hTotal, {
+        x: colTotal - this.fonts.bold.widthOfTextAtSize(hTotal, 8),
+        y: curY,
+        size: 8,
+        font: this.fonts.bold,
+        color: COLORS.bleuFabs,
+      });
+      this.page.drawText(hImpute, {
+        x: colImpute - this.fonts.bold.widthOfTextAtSize(hImpute, 8),
+        y: curY,
+        size: 8,
+        font: this.fonts.bold,
+        color: COLORS.bleuFabs,
+      });
+      curY -= 14;
+
+      multi.forEach((inv) => {
+        this.page.drawText(inv.reference, {
+          x: MARGINS.x + 15,
+          y: curY,
+          size: 9,
+          font: this.fonts.regular,
+        });
+        const tot = formatFCFA(inv.invoiceTotal);
+        this.page.drawText(tot, {
+          x: colTotal - this.fonts.regular.widthOfTextAtSize(tot, 9),
+          y: curY,
+          size: 9,
+          font: this.fonts.regular,
+        });
+        const imp = formatFCFA(inv.amountPaid);
+        this.page.drawText(imp, {
+          x: colImpute - this.fonts.bold.widthOfTextAtSize(imp, 9),
+          y: curY,
+          size: 9,
+          font: this.fonts.bold,
+        });
+        curY -= 16;
+      });
+      curY -= 4;
+    } else {
+      const items = [
+        { l: "Facture réglée", v: this.receiptData.invoiceNumber },
+        { l: "Montant facture", v: formatFCFA(this.receiptData.invoiceTotal) },
+        { l: "Solde avant paiement", v: formatFCFA(this.receiptData.balanceBefore) },
+      ];
+
+      items.forEach(item => {
+        this.page.drawText(item.l, { x: MARGINS.x + 15, y: curY, size: 10, font: this.fonts.regular });
+        const valW = this.fonts.bold.widthOfTextAtSize(item.v, 10);
+        this.page.drawText(item.v, { x: PAGE.w - MARGINS.x - valW - 15, y: curY, size: 10, font: this.fonts.bold });
+        curY -= 20;
+      });
+    }
 
     // Separator
     this.page.drawLine({
