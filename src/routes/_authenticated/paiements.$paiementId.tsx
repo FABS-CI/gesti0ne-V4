@@ -33,6 +33,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { PaiementVentilationCard } from "@/components/paiements/PaiementVentilationCard";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 import { friendlyError } from "@/lib/friendly-error";
 
@@ -317,35 +318,7 @@ function PaiementDetailPage() {
       </div>
 
       {allocations.length > 0 ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              {allocations.length > 1
-                ? `Factures réglées (${allocations.length})`
-                : "Facture liée"}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {allocations.map((a) => (
-              <div
-                key={a.allocation_id}
-                className="flex items-center justify-between gap-3 rounded-md border p-2 text-sm"
-              >
-                <span className="font-mono text-xs">
-                  {a.facture_reference ?? a.facture_id}
-                </span>
-                <div className="flex items-center gap-3">
-                  <span className="font-semibold text-primary">{formatFCFA(a.montant)}</span>
-                  <Button asChild variant="outline" size="sm">
-                    <Link to="/factures/$factureId" params={{ factureId: a.facture_id }}>
-                      Voir la facture
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+        <PaiementVentilationCard paiementId={paiementId} />
       ) : (
         paiement.facture_id && (
           <Card>

@@ -180,6 +180,69 @@ export async function listPaiementAllocations(paiementId: string) {
   return rows.map((r) => ({ ...r, facture_reference: refs.get(r.facture_id) ?? null }));
 }
 
+// ===== Ventilation par produit =====
+
+export type PaiementLigneAllocation = {
+  line_allocation_id: string;
+  ligne_id: string;
+  produit_id: string | null;
+  designation: string | null;
+  reference_produit: string | null;
+  total_ligne: number;
+  montant: number;
+  methode: string;
+};
+
+export type PaiementAllocationDetail = {
+  allocation_id: string;
+  facture_id: string;
+  reference: string | null;
+  date_facture: string | null;
+  montant_facture: number;
+  montant_affecte: number;
+  methode: string;
+  lignes: PaiementLigneAllocation[];
+};
+
+/** Détail complet : factures affectées + ventilation produit par produit. */
+export async function getPaiementAllocationsDetail(paiementId: string) {
+  const { data, error } = await callRpc("get_payment_allocations", {
+    _paiement_id: paiementId,
+  });
+  if (error) throw new Error(error.message);
+  return ((data ?? []) as PaiementAllocationDetail[]).map((a) => ({
+    ...a,
+    montant_affecte: Number(a.montant_affecte),
+    montant_facture: Number(a.montant_facture),
+    lignes: (a.lignes ?? []).map((l) => ({
+      ...l,
+      montant: Number(l.montant),
+      total_ligne: Number(l.total_ligne),
+    })),
+  }));
+}
+
+/**
+ * Correction manuelle de la ventilation d'une facture sur ses produits.
+ * Le serveur exige une raison et un total strictement égal au montant affecté.
+ */
+export async function overrideProductAllocation(
+  allocationId: string,
+  lignes: { ligne_id: string; montant: number }[],
+  raison: string,
+) {
+  if (!raison.trim()) throw new Error("Raison obligatoire");
+  const { assertPermission } = await import("@/lib/rbac-api");
+  await assertPermission("paiements.creer");
+  const { data, error } = await callRpc("override_payment_product_allocation", {
+    _allocation_id: allocationId,
+    _lignes: lignes as never,
+    _raison: raison.trim(),
+  });
+  if (error) throw new Error(error.message);
+  return (data ?? []) as PaiementAllocationDetail[];
+}
+
 export async function annulerPaiement(paiementId: string, raison: string, notes?: string | null) {
   if (!raison || !raison.trim()) {
     throw new Error("Raison d'annulation obligatoire");
