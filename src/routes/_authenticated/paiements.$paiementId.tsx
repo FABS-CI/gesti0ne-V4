@@ -136,10 +136,19 @@ function PaiementDetailPage() {
             size="sm"
             onClick={async () => {
               const { generateRecuPaiementPDF, downloadBlob, fileNameFor } = await import("@/lib/pdf/fabsTemplates");
-              const { getRecuContext, MODE_PAIEMENT_LABEL } = await import("@/lib/paiements-api");
-              
+              const { getRecuContext, MODE_PAIEMENT_LABEL, getPaiementAllocationsDetail } =
+                await import("@/lib/paiements-api");
+
               try {
                 const ctx = await getRecuContext(paiement.paiement_id);
+                const allocs = await getPaiementAllocationsDetail(paiement.paiement_id).catch(
+                  () => [],
+                );
+                const invoices = allocs.map((a) => ({
+                  reference: a.reference ?? "—",
+                  invoiceTotal: a.montant_facture,
+                  amountPaid: a.montant_affecte,
+                }));
                 const montant = Number(ctx.paiement.montant);
                 const totalFacture = ctx.facture?.montant_total ?? null;
                 
@@ -166,6 +175,7 @@ function PaiementDetailPage() {
                   balanceBefore: balanceBefore,
                   observations: ctx.paiement.notes,
                   devise: "FCFA",
+                  invoices: invoices.length > 1 ? invoices : undefined,
                 } as any);
 
                 downloadBlob(blob, fileNameFor(paiement.reference, paiement.client_nom));

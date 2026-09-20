@@ -178,6 +178,13 @@ export async function generateUnifiedReceiptPDF(data: DataBase): Promise<Blob> {
     paymentMethod: data.modePaiement || "Espèces",
     paymentReference: (data as any).num_transaction || (data as any).paymentReference || undefined,
     notes: data.notes || undefined,
+    invoices: Array.isArray((data as any).invoices)
+      ? ((data as any).invoices as any[]).map((i) => ({
+          reference: String(i.reference ?? "—"),
+          invoiceTotal: Number(i.invoiceTotal ?? 0),
+          amountPaid: Number(i.amountPaid ?? 0),
+        }))
+      : undefined,
   };
 
   // Re-calculate balance after based on balance before and amount paid

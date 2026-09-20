@@ -114,7 +114,7 @@ export class ReceiptDocument extends BaseDocument {
 
   drawPaymentDetails(y: number): number {
     const multi = this.multiInvoices;
-    const boxH = multi ? 135 + multi.length * 16 : 160;
+    const boxH = multi ? 115 + multi.length * 16 : 160;
     const boxW = CONTENT_W;
 
 
@@ -233,12 +233,14 @@ export class ReceiptDocument extends BaseDocument {
     });
     curY -= 25;
 
-    // Balance After
-    this.page.drawText("Solde après paiement", { x: MARGINS.x + 15, y: curY, size: 10, font: this.fonts.regular });
-    const balanceAfterStr = formatFCFA(this.receiptData.balanceAfter);
-    const balanceAfterW = this.fonts.bold.widthOfTextAtSize(balanceAfterStr, 10);
-    this.page.drawText(balanceAfterStr, { x: PAGE.w - MARGINS.x - balanceAfterW - 15, y: curY, size: 10, font: this.fonts.bold });
-    curY -= 20;
+    // Solde après paiement (mono-facture uniquement : n'a pas de sens en multi-factures)
+    if (!multi) {
+      this.page.drawText("Solde après paiement", { x: MARGINS.x + 15, y: curY, size: 10, font: this.fonts.regular });
+      const balanceAfterStr = formatFCFA(this.receiptData.balanceAfter);
+      const balanceAfterW = this.fonts.bold.widthOfTextAtSize(balanceAfterStr, 10);
+      this.page.drawText(balanceAfterStr, { x: PAGE.w - MARGINS.x - balanceAfterW - 15, y: curY, size: 10, font: this.fonts.bold });
+      curY -= 20;
+    }
 
     // Payment Info
     this.page.drawText(`Mode : ${this.receiptData.paymentMethod}`, { x: MARGINS.x + 15, y: curY, size: 9, font: this.fonts.italic });
@@ -249,8 +251,13 @@ export class ReceiptDocument extends BaseDocument {
   }
 
   drawStatusAndLetters(y: number): number {
+    const multi = this.multiInvoices;
     const isSolded = this.receiptData.balanceAfter <= 0;
-    const statusText = isSolded ? "PAIEMENT COMPLET" : "PAIEMENT PARTIEL";
+    const statusText = multi
+      ? `RÈGLEMENT RÉPARTI SUR ${multi.length} FACTURES`
+      : isSolded
+        ? "PAIEMENT COMPLET"
+        : "PAIEMENT PARTIEL";
     
     this.page.drawText("STATUT", { x: MARGINS.x, y: y, size: 9, font: this.fonts.bold, color: COLORS.bleuFabs });
     y -= 15;
@@ -268,7 +275,7 @@ export class ReceiptDocument extends BaseDocument {
     y -= 15;
     
     const letters = numberToLetters(this.receiptData.amountPaid);
-    const wrappedLetters = this.wrapText(`${letters} francs CFA.`, CONTENT_W - 20, 10);
+    const wrappedLetters = this.wrapText(`${letters}.`, CONTENT_W - 20, 10);
     
     wrappedLetters.forEach(line => {
       this.page.drawText(line, { x: MARGINS.x + 10, y: y, size: 10, font: this.fonts.italic });
@@ -279,8 +286,19 @@ export class ReceiptDocument extends BaseDocument {
   }
 
   drawRecognition(y: number): number {
+    const multi = this.multiInvoices;
     const isSolded = this.receiptData.balanceAfter <= 0;
-    const recognitionText = `Nous reconnaissons avoir reçu de ${this.receiptData.customerName.toUpperCase()} la somme de ${numberToLetters(this.receiptData.amountPaid)} francs CFA au titre du règlement de la facture ${this.receiptData.invoiceNumber}. ${isSolded ? "Ce règlement solde intégralement la facture." : "Ce règlement constitue un paiement partiel de la facture."}`;
+    const objet = multi
+      ? `du règlement des factures ${multi.map((i) => i.reference).join(", ")}`
+      : `du règlement de la facture ${this.receiptData.invoiceNumber}`;
+    const conclusion = multi
+      ? "Ce règlement a été imputé sur chacune des factures listées ci-dessus."
+      : isSolded
+        ? "Ce règlement solde intégralement la facture."
+        : "Ce règlement constitue un paiement partiel de la facture.";
+    const lettres = numberToLetters(this.receiptData.amountPaid);
+    const somme = lettres.charAt(0).toLowerCase() + lettres.slice(1);
+    const recognitionText = `Nous reconnaissons avoir reçu de ${this.receiptData.customerName.toUpperCase()} la somme de ${somme} au titre ${objet}. ${conclusion}`;
 
     const wrapped = this.wrapText(recognitionText, CONTENT_W, 9);
     wrapped.forEach(line => {
