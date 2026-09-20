@@ -284,8 +284,17 @@ export class ReceiptDocument extends BaseDocument {
   }
 
   drawRecognition(y: number): number {
+    const multi = this.multiInvoices;
     const isSolded = this.receiptData.balanceAfter <= 0;
-    const recognitionText = `Nous reconnaissons avoir reçu de ${this.receiptData.customerName.toUpperCase()} la somme de ${numberToLetters(this.receiptData.amountPaid)} francs CFA au titre du règlement de la facture ${this.receiptData.invoiceNumber}. ${isSolded ? "Ce règlement solde intégralement la facture." : "Ce règlement constitue un paiement partiel de la facture."}`;
+    const objet = multi
+      ? `du règlement des factures ${multi.map((i) => i.reference).join(", ")}`
+      : `du règlement de la facture ${this.receiptData.invoiceNumber}`;
+    const conclusion = multi
+      ? "Ce règlement a été imputé sur chacune des factures listées ci-dessus."
+      : isSolded
+        ? "Ce règlement solde intégralement la facture."
+        : "Ce règlement constitue un paiement partiel de la facture.";
+    const recognitionText = `Nous reconnaissons avoir reçu de ${this.receiptData.customerName.toUpperCase()} la somme de ${numberToLetters(this.receiptData.amountPaid)} francs CFA au titre ${objet}. ${conclusion}`;
 
     const wrapped = this.wrapText(recognitionText, CONTENT_W, 9);
     wrapped.forEach(line => {
