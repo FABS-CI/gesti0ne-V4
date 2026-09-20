@@ -233,12 +233,14 @@ export class ReceiptDocument extends BaseDocument {
     });
     curY -= 25;
 
-    // Balance After
-    this.page.drawText("Solde après paiement", { x: MARGINS.x + 15, y: curY, size: 10, font: this.fonts.regular });
-    const balanceAfterStr = formatFCFA(this.receiptData.balanceAfter);
-    const balanceAfterW = this.fonts.bold.widthOfTextAtSize(balanceAfterStr, 10);
-    this.page.drawText(balanceAfterStr, { x: PAGE.w - MARGINS.x - balanceAfterW - 15, y: curY, size: 10, font: this.fonts.bold });
-    curY -= 20;
+    // Solde après paiement (mono-facture uniquement : n'a pas de sens en multi-factures)
+    if (!multi) {
+      this.page.drawText("Solde après paiement", { x: MARGINS.x + 15, y: curY, size: 10, font: this.fonts.regular });
+      const balanceAfterStr = formatFCFA(this.receiptData.balanceAfter);
+      const balanceAfterW = this.fonts.bold.widthOfTextAtSize(balanceAfterStr, 10);
+      this.page.drawText(balanceAfterStr, { x: PAGE.w - MARGINS.x - balanceAfterW - 15, y: curY, size: 10, font: this.fonts.bold });
+      curY -= 20;
+    }
 
     // Payment Info
     this.page.drawText(`Mode : ${this.receiptData.paymentMethod}`, { x: MARGINS.x + 15, y: curY, size: 9, font: this.fonts.italic });
@@ -294,7 +296,9 @@ export class ReceiptDocument extends BaseDocument {
       : isSolded
         ? "Ce règlement solde intégralement la facture."
         : "Ce règlement constitue un paiement partiel de la facture.";
-    const recognitionText = `Nous reconnaissons avoir reçu de ${this.receiptData.customerName.toUpperCase()} la somme de ${numberToLetters(this.receiptData.amountPaid).toLowerCase()} au titre ${objet}. ${conclusion}`;
+    const lettres = numberToLetters(this.receiptData.amountPaid);
+    const somme = lettres.charAt(0).toLowerCase() + lettres.slice(1);
+    const recognitionText = `Nous reconnaissons avoir reçu de ${this.receiptData.customerName.toUpperCase()} la somme de ${somme} au titre ${objet}. ${conclusion}`;
 
     const wrapped = this.wrapText(recognitionText, CONTENT_W, 9);
     wrapped.forEach(line => {
