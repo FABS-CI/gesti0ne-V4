@@ -114,7 +114,7 @@ export class ReceiptDocument extends BaseDocument {
 
   drawPaymentDetails(y: number): number {
     const multi = this.multiInvoices;
-    const boxH = multi ? 135 + multi.length * 16 : 160;
+    const boxH = multi ? 115 + multi.length * 16 : 160;
     const boxW = CONTENT_W;
 
 
