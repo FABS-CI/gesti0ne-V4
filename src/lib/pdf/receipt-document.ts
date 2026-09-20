@@ -273,7 +273,7 @@ export class ReceiptDocument extends BaseDocument {
     y -= 15;
     
     const letters = numberToLetters(this.receiptData.amountPaid);
-    const wrappedLetters = this.wrapText(`${letters} francs CFA.`, CONTENT_W - 20, 10);
+    const wrappedLetters = this.wrapText(`${letters}.`, CONTENT_W - 20, 10);
     
     wrappedLetters.forEach(line => {
       this.page.drawText(line, { x: MARGINS.x + 10, y: y, size: 10, font: this.fonts.italic });
@@ -294,7 +294,7 @@ export class ReceiptDocument extends BaseDocument {
       : isSolded
         ? "Ce règlement solde intégralement la facture."
         : "Ce règlement constitue un paiement partiel de la facture.";
-    const recognitionText = `Nous reconnaissons avoir reçu de ${this.receiptData.customerName.toUpperCase()} la somme de ${numberToLetters(this.receiptData.amountPaid)} francs CFA au titre ${objet}. ${conclusion}`;
+    const recognitionText = `Nous reconnaissons avoir reçu de ${this.receiptData.customerName.toUpperCase()} la somme de ${numberToLetters(this.receiptData.amountPaid).toLowerCase()} au titre ${objet}. ${conclusion}`;
 
     const wrapped = this.wrapText(recognitionText, CONTENT_W, 9);
     wrapped.forEach(line => {
