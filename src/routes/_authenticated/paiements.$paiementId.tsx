@@ -175,6 +175,7 @@ function PaiementDetailPage() {
                   balanceBefore: balanceBefore,
                   observations: ctx.paiement.notes,
                   devise: "FCFA",
+                  invoices: invoices.length > 1 ? invoices : undefined,
                 } as any);
 
                 downloadBlob(blob, fileNameFor(paiement.reference, paiement.client_nom));
