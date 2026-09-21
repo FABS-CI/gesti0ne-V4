@@ -137,7 +137,7 @@ function CartonPublicPage() {
         </Card>
 
         {/* Client */}
-        <Card title="Client">
+        <Card>
           <div className="space-y-4 px-4 py-4">
             <div>
               <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">
