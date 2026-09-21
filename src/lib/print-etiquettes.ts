@@ -63,17 +63,19 @@ export function printEtiquettes(
   .label-half {
     height: 148.5mm;
     width: 210mm;
-    padding: 10mm;
+    padding: 6mm 10mm;
     position: relative;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: center;
-    overflow: hidden;
+    overflow: visible;
   }
-  
+
   .label-half .etiquette-carton {
     width: 190mm !important;
-    height: 128mm !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: visible !important;
   }
 
   /* Repères de découpe et ciseaux pour le mode double */
