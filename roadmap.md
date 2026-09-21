@@ -14,3 +14,10 @@ Livrable par module : rapport (gravité) + correction des problèmes critiques.
 - [x] 9. Transverse : navigation/routes, recherche/filtres, responsive, notifications
 
 Rapport cumulatif : AUDIT-RAPPORT.md
+
+## Paiement multi-factures & Analyse des ventes
+- [x] Socle base : payment_allocations / payment_line_allocations + RPC (source unique)
+- [x] Interface paiement multi-factures (sélection, montants, récapitulatif, détail)
+- [x] Reçu PDF multi-factures
+- [x] Analyse des ventes : CA facturé / CA encaissé / Reste à encaisser (KPI, tableau produits, export Excel)
+- [ ] Tests E2E navigateur du parcours complet (en attente d'autorisation de session de test)
