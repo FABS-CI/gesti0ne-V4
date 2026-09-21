@@ -265,46 +265,4 @@ a[href*="lovable.dev"][target="_blank"],
     padding: 0 !important;
     overflow: visible !important;
   }
-
-  /* 2 étiquettes par page A4 Portrait */
-  .a4-page {
-    width: 210mm;
-    height: 297mm;
-    page-break-after: always;
-    overflow: hidden;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .label-half {
-    height: 148.5mm;
-    width: 210mm;
-    overflow: hidden;
-    padding: 10mm;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  /* Repères de découpe */
-  .crop-marks-v {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    border-top: 1px dashed #ccc;
-    z-index: 10;
-  }
-
-  .cut-icon {
-    position: absolute;
-    top: 50%;
-    left: 5mm;
-    transform: translateY(-50%);
-    font-size: 16pt;
-    z-index: 11;
-  }
-  .cut-icon::before { content: "✂"; }
 }
