@@ -685,11 +685,13 @@ export class BaseDocument {
       color: COLORS.blanc,
     });
 
-    curY -= 40;
-    
+    curY -= 34;
+
     const fullText = `Arrêté le présent document à la somme de : ${this.totals.montantLettres}`;
-    const fontSize = 10;
-    const wrappedLines = this.wrapText(fullText, CONTENT_W, fontSize);
+    const fontSize = 9.5;
+    // Mesure avec la police réellement utilisée (gras) : évite tout débordement
+    const wrappedLines = this.wrapText(fullText, CONTENT_W - 4, fontSize, this.fonts.bold);
+    
     
     wrappedLines.forEach((line, idx) => {
       this.page.drawText(line, {
