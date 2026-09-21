@@ -322,7 +322,7 @@ export class BaseDocument {
       this.data.type === "Proforma" ||
       this.data.type === "Commande" ||
       this.data.type === "Bon de Livraison";
-    const boxH = grandBloc ? 110 : 90;
+    const boxH = grandBloc ? 118 : 90;
     const boxW = (CONTENT_W - 15) / 2;
     
     this.page.drawRectangle({
@@ -339,8 +339,28 @@ export class BaseDocument {
     if (!isCommande) {
       this.page.drawText(isBR ? "FOURNISSEUR" : isBL ? "CLIENT" : "FACTURÉ À", { x: MARGINS.x + 10, y: y - 18, size: grandBloc ? 9 : 7, font: this.fonts.bold, color: COLORS.bleuFabs });
     }
-    this.page.drawText(this.data.client.nom.toUpperCase(), { x: MARGINS.x + 10, y: y - (isCommande ? 28 : 38), size: grandBloc ? 14 : 12, font: this.fonts.bold, color: COLORS.bleuFabs });
-    
+    // Nom du client : retour à la ligne propre + réduction automatique si très long,
+    // toujours contenu dans la moitié gauche (jamais de chevauchement avec le QR).
+    const nomMaxW = boxW - 20;
+    const nomTexte = this.data.client.nom.toUpperCase();
+    let nomSize = grandBloc ? 14 : 12;
+    let nomLignes = this.wrapText(nomTexte, nomMaxW, nomSize, this.fonts.bold);
+    while (nomLignes.length > 2 && nomSize > 9) {
+      nomSize -= 1;
+      nomLignes = this.wrapText(nomTexte, nomMaxW, nomSize, this.fonts.bold);
+    }
+    nomLignes = nomLignes.slice(0, 2);
+    const nomY = y - (isCommande ? 28 : 38);
+    nomLignes.forEach((ligne, i) => {
+      this.page.drawText(ligne, {
+        x: MARGINS.x + 10,
+        y: nomY - i * (nomSize + 2),
+        size: nomSize,
+        font: this.fonts.bold,
+        color: COLORS.bleuFabs,
+      });
+    });
+
     const kv = [
       { l: "Ville", v: this.data.client.ville ?? "—" },
       { l: "Représentant", v: this.data.client.representant ?? "—" },
@@ -350,14 +370,26 @@ export class BaseDocument {
       kv.push({ l: "Paiement", v: this.data.client.modePaiement });
     }
     const grandTexte = grandBloc;
-    const labelSize = grandTexte ? 10 : 8;
-    const valueSize = grandTexte ? 11 : 8;
-    const lineGap = grandTexte ? 16 : 11;
-    const valueX = MARGINS.x + (grandTexte ? 100 : 80);
-    kv.forEach((item, i) => {
-      const lineY = y - (grandTexte ? 58 : 48) - i * lineGap;
+    const labelSize = grandTexte ? 9 : 8;
+    const valueSize = grandTexte ? 10 : 8;
+    const valueX = MARGINS.x + (grandTexte ? 92 : 80);
+    const valueMaxW = MARGINS.x + boxW - 10 - valueX;
+    const extraNom = (nomLignes.length - 1) * (nomSize + 2);
+    let lineY = y - (grandTexte ? 58 : 48) - extraNom;
+    const minY = y - boxH + 8;
+    kv.forEach((item) => {
+      const valeurs = this.wrapText(item.v || "—", valueMaxW, valueSize, this.fonts.bold).slice(0, 2);
+      if (lineY < minY) return;
       this.page.drawText(`${item.l} :`, { x: MARGINS.x + 10, y: lineY, size: labelSize, font: this.fonts.regular });
-      this.page.drawText(item.v, { x: valueX, y: lineY, size: valueSize, font: this.fonts.bold });
+      valeurs.forEach((v, j) => {
+        this.page.drawText(v, {
+          x: valueX,
+          y: lineY - j * (valueSize + 2),
+          size: valueSize,
+          font: this.fonts.bold,
+        });
+      });
+      lineY -= (grandTexte ? 15 : 11) + (valeurs.length - 1) * (valueSize + 2);
     });
 
 
@@ -398,24 +430,25 @@ export class BaseDocument {
           color: QR_COLOR_OPTS,
         });
         const qrImage = await this.doc.embedPng(qrDataUrl);
-        const qrSize = 72;
+        const qrSize = 80;
         // Zone blanche autour du QR pour garantir la lecture au scan
         this.page.drawRectangle({
           x: qrX + 8,
-          y: y - boxH + 12,
+          y: y - boxH + 14,
           width: qrSize + 8,
           height: qrSize + 8,
           color: COLORS.blanc,
         });
-        this.page.drawImage(qrImage, { x: qrX + 12, y: y - boxH + 16, width: qrSize, height: qrSize });
+        this.page.drawImage(qrImage, { x: qrX + 12, y: y - boxH + 18, width: qrSize, height: qrSize });
 
         // --- Bloc « Certification numérique » (certification automatique idempotente) ---
-        const textX = qrX + 95;
+        const textX = qrX + qrSize + 24;
+        const textMaxW = qrX + boxW - 10 - textX;
 
-        this.page.drawText("CERTIFICATION NUMÉRIQUE", {
+        this.page.drawText("CERTIFICATION", {
           x: textX,
           y: y - 22,
-          size: 7,
+          size: 7.5,
           font: this.fonts.bold,
           color: COLORS.bleuFabs,
         });
@@ -427,7 +460,28 @@ export class BaseDocument {
           this.data.type === "Proforma" ||
           this.data.type === "Commande";
 
+        const mentionScan = (yScan: number, texte: string) => {
+          this.wrapText(texte, textMaxW, 6.5).forEach((ligne, i) => {
+            this.page.drawText(ligne, {
+              x: textX,
+              y: yScan - i * 9,
+              size: 6.5,
+              font: this.fonts.regular,
+              color: COLORS.grisTexte,
+            });
+          });
+        };
+
         if (cert && isCertificationActive(cert.statut)) {
+          if (masquerDetailsCert) {
+            this.page.drawText("DOCUMENT AUTHENTIQUE", {
+              x: textX,
+              y: y - 36,
+              size: 8,
+              font: this.fonts.bold,
+              color: COLORS.bleuFabs,
+            });
+          }
           if (!masquerDetailsCert) {
             const dateFr = cert.certified_at
               ? new Date(cert.certified_at).toLocaleDateString("fr-FR")
@@ -450,27 +504,21 @@ export class BaseDocument {
               });
             });
           }
-          this.page.drawText(
-            isCommande ? "Scanner pour authentifier" : "Scanner pour vérifier l'authenticité",
-            { x: textX, y: y - boxH + 14, size: 6, font: this.fonts.regular, color: COLORS.grisTexte },
+          mentionScan(
+            masquerDetailsCert ? y - 54 : y - 78,
+            isCommande ? "Scanner pour authentifier ce document" : "Scanner pour vérifier ce document",
           );
         } else {
           if (!masquerDetailsCert) {
             this.page.drawText("Certification en attente", {
               x: textX,
-              y: y - 34,
+              y: y - 36,
               size: 6.5,
               font: this.fonts.regular,
               color: COLORS.grisTexte,
             });
           }
-          this.page.drawText("Scanner pour vérifier l'authenticité", {
-            x: textX,
-            y: masquerDetailsCert ? y - 34 : y - 44,
-            size: 6,
-            font: this.fonts.regular,
-            color: COLORS.grisTexte,
-          });
+          mentionScan(masquerDetailsCert ? y - 36 : y - 50, "Scanner pour vérifier ce document");
         }
       } catch (e) {
         console.error("QR Error", e);
@@ -591,8 +639,9 @@ export class BaseDocument {
     return curY;
   }
 
-  wrapText(text: string, width: number, fontSize: number): string[] {
+  wrapText(text: string, width: number, fontSize: number, font?: PDFFont): string[] {
     if (!text) return [""];
+    const f = font ?? this.fonts.regular;
     const words = text.split(/\s+/);
     const lines: string[] = [];
     let currentLine = words[0];
@@ -600,7 +649,7 @@ export class BaseDocument {
     for (let i = 1; i < words.length; i++) {
       const word = words[i];
       const testLine = currentLine + " " + word;
-      const testW = this.fonts.regular.widthOfTextAtSize(testLine, fontSize);
+      const testW = f.widthOfTextAtSize(testLine, fontSize);
       if (testW <= width) {
         currentLine = testLine;
       } else {
@@ -684,11 +733,13 @@ export class BaseDocument {
       color: COLORS.blanc,
     });
 
-    curY -= 40;
-    
+    curY -= 34;
+
     const fullText = `Arrêté le présent document à la somme de : ${this.totals.montantLettres}`;
-    const fontSize = 10;
-    const wrappedLines = this.wrapText(fullText, CONTENT_W, fontSize);
+    const fontSize = 9.5;
+    // Mesure avec la police réellement utilisée (gras) : évite tout débordement
+    const wrappedLines = this.wrapText(fullText, CONTENT_W - 4, fontSize, this.fonts.bold);
+    
     
     wrappedLines.forEach((line, idx) => {
       this.page.drawText(line, {
