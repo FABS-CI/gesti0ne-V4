@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Loader2, Package, Phone, MapPin, Truck, FileDown, Globe, ShieldCheck } from "lucide-react";
+import { Loader2, Package, Truck, FileDown, Globe, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import fabsLogoUrl from "@/assets/fabs-logo.png";
 
