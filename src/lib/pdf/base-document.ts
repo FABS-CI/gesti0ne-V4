@@ -591,8 +591,9 @@ export class BaseDocument {
     return curY;
   }
 
-  wrapText(text: string, width: number, fontSize: number): string[] {
+  wrapText(text: string, width: number, fontSize: number, font?: PDFFont): string[] {
     if (!text) return [""];
+    const f = font ?? this.fonts.regular;
     const words = text.split(/\s+/);
     const lines: string[] = [];
     let currentLine = words[0];
@@ -600,7 +601,7 @@ export class BaseDocument {
     for (let i = 1; i < words.length; i++) {
       const word = words[i];
       const testLine = currentLine + " " + word;
-      const testW = this.fonts.regular.widthOfTextAtSize(testLine, fontSize);
+      const testW = f.widthOfTextAtSize(testLine, fontSize);
       if (testW <= width) {
         currentLine = testLine;
       } else {
