@@ -194,7 +194,8 @@ export class CommercialDocument extends BaseDocument {
   async drawTamponComptabilite(curY: number, boxW: number, boxH: number) {
     const size = 95;
     const x = PAGE.w - MARGINS.x - size;
-    const yBottom = Math.max(curY - boxH - 20, 60);
+    // Le tampon suit immédiatement le montant en lettres (pas de vide au milieu de la page)
+    const yBottom = Math.max(curY - size + 8, 72);
     try {
       const res = await fetch(tamponUrl);
       const bytes = new Uint8Array(await res.arrayBuffer());
