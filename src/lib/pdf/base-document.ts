@@ -460,7 +460,28 @@ export class BaseDocument {
           this.data.type === "Proforma" ||
           this.data.type === "Commande";
 
+        const mentionScan = (yScan: number, texte: string) => {
+          this.wrapText(texte, textMaxW, 6.5).forEach((ligne, i) => {
+            this.page.drawText(ligne, {
+              x: textX,
+              y: yScan - i * 9,
+              size: 6.5,
+              font: this.fonts.regular,
+              color: COLORS.grisTexte,
+            });
+          });
+        };
+
         if (cert && isCertificationActive(cert.statut)) {
+          if (masquerDetailsCert) {
+            this.page.drawText("DOCUMENT AUTHENTIQUE", {
+              x: textX,
+              y: y - 36,
+              size: 8,
+              font: this.fonts.bold,
+              color: COLORS.bleuFabs,
+            });
+          }
           if (!masquerDetailsCert) {
             const dateFr = cert.certified_at
               ? new Date(cert.certified_at).toLocaleDateString("fr-FR")
