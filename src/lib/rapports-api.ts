@@ -27,6 +27,8 @@ export type ProduitLigneRapport = {
   nb_clients: number;
   ca: number;
   remises: number;
+  ca_encaisse: number;
+  reste_a_encaisser: number;
   qte_retournee: number;
   stock_actuel: number;
   stock_initial: number;
