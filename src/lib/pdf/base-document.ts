@@ -26,6 +26,7 @@ export const COLORS = {
   bleuFabs: rgb(0.106, 0.165, 0.341), // #1B2A57
   rougeFabs: rgb(0.827, 0.184, 0.184), // #D32F2F (Couleur pour Remises)
   orangeFabs: rgb(0.96, 0.486, 0.0), // #F57C00
+  orangeStatut: rgb(0.961, 0.620, 0.043), // #F59E0B (statut de paiement)
   grisClair: rgb(0.968, 0.968, 0.968), // #F7F7F7
   orangeZebra: rgb(1, 0.953, 0.878), // #FFF3E0 (Orange très clair pour zebra)
   noir: rgb(0, 0, 0),
@@ -204,6 +205,22 @@ export class BaseDocument {
       font: this.fonts.bold,
       color: COLORS.bleuFabs,
     });
+
+    // Statut de paiement (factures) : calculé, jamais saisi. Sous le titre.
+    const paiement = (this.data as any).paiement as
+      | { statut: string; montantPaye: number; resteAPayer: number }
+      | undefined;
+    if (this.data.type === "Facture" && paiement?.statut) {
+      const stSize = 11;
+      const stW = this.fonts.boldItalic.widthOfTextAtSize(paiement.statut, stSize);
+      this.page.drawText(paiement.statut, {
+        x: (PAGE.w - stW) / 2,
+        y: yTop - 44,
+        size: stSize,
+        font: this.fonts.boldItalic,
+        color: COLORS.orangeStatut,
+      });
+    }
 
     // Cartouche (D)
     const cartX = PAGE.w - MARGINS.x - 110;
@@ -669,7 +686,11 @@ export class BaseDocument {
     const x = PAGE.w - MARGINS.x - boxW;
     let curY = y - 10;
 
-    const rows = [
+    const paiement = (this.data as any).paiement as
+      | { montantPaye: number; resteAPayer: number }
+      | undefined;
+
+    const rows: Array<{ label: string; value: number; color?: typeof COLORS.noir }> = [
       { label: "SOUS-TOTAL HT", value: this.totals.sousTotal },
     ];
 
@@ -686,9 +707,14 @@ export class BaseDocument {
       rows.push({ label: "FRAIS", value: this.totals.frais });
     }
 
+    if (this.data.type === "Facture" && paiement) {
+      rows.push({ label: "MONTANT PAYÉ", value: paiement.montantPaye, color: COLORS.orangeStatut });
+      rows.push({ label: "RESTE À PAYER", value: paiement.resteAPayer, color: COLORS.orangeStatut });
+    }
+
     rows.forEach(row => {
       let labelX = x + 5;
-      this.page.drawText(row.label, { x: labelX, y: curY - 13, size: 8, font: this.fonts.regular });
+      this.page.drawText(row.label, { x: labelX, y: curY - 13, size: 8, font: this.fonts.regular, color: row.color ?? COLORS.noir });
       // Remise globale : afficher le pourcentage en rouge après le libellé
       if (row.label === "REMISE GLOBALE" && this.totals.sousTotal > 0 && this.totals.remiseGlobale) {
         const rawPct = this.totals.remiseGlobalePct ?? (this.totals.remiseGlobale / this.totals.sousTotal) * 100;
@@ -704,7 +730,7 @@ export class BaseDocument {
         y: curY - 13,
         size: 9,
         font: this.fonts.bold,
-        color: row.label.toLowerCase().includes('remise') ? COLORS.rougeFabs : COLORS.noir
+        color: row.color ?? (row.label.toLowerCase().includes('remise') ? COLORS.rougeFabs : COLORS.noir)
       });
       curY -= 20;
     });

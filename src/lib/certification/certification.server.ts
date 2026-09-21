@@ -7,6 +7,8 @@
 import { createHash, createPrivateKey, createPublicKey, randomBytes, sign, verify } from "crypto";
 import { canonicalString, toCanonical, type CanonicalDocument } from "./canonical";
 
+import { calculateInvoicePaymentStatus } from "@/lib/factures/payment-status";
+
 export type DocType = "FACTURE" | "PROFORMA" | "COMMANDE" | "BL";
 
 export type CertStatut = "AUTHENTIC" | "REVOKED" | "CANCELLED";
@@ -30,6 +32,13 @@ export type PublicDocument = {
   certified_at?: string | null;
   canonical_hash?: string | null;
   signature_algorithm?: string | null;
+  /** Factures uniquement : état de paiement recalculé à chaque lecture. */
+  paiement?: {
+    totalAPayer: number;
+    montantPaye: number;
+    resteAPayer: number;
+    statut: string;
+  } | null;
 };
 
 export function sha256Hex(value: string): string {
@@ -139,6 +148,12 @@ export async function loadDocumentData(
 
     const montant = Number(row[t.montantCol] ?? row.montant_total ?? row.montant_ttc ?? row.montant ?? 0);
 
+    // Statut de paiement (factures) : source unique de vérité, jamais mis en cache.
+    let paiement = null as Awaited<ReturnType<typeof calculateInvoicePaymentStatus>>;
+    if (t.type === "FACTURE") {
+      paiement = await calculateInvoicePaymentStatus(docId, supabaseAdmin as never);
+    }
+
     return {
       type: t.type,
       id: docId,
@@ -150,6 +165,7 @@ export async function loadDocumentData(
         representant_nom: row.representant_nom ?? null,
         montant,
         statut_document: row.statut ?? null,
+        paiement,
       },
       canonicalInput: {
         type: t.type,

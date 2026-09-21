@@ -206,6 +206,7 @@ export async function loadPublicPdfPayload(
       clientNom: doc.data.client_nom,
       totalVente: doc.data.montant,
       montantHT: doc.data.montant,
+      paiement: doc.data.paiement ?? undefined,
       ...clientInfo,
       ...totals,
       lignes: toDocLignes(rawLignes, produits),

@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { formatFCFA, formatDate } from '@/lib/format';
 import { Button } from '@/components/ui/button';
+import { PAYMENT_STATUS_COLOR } from '@/lib/factures/payment-status';
 
 /** Site officiel vers lequel pointe le bouton « Site officiel » de la page de vérification. */
 const OFFICIAL_SITE_URL = 'https://editions-fabsci.lovable.app/';
@@ -65,6 +66,12 @@ type VerifyResponse = {
   client_nom?: string | null;
   representant_nom?: string | null;
   montant?: number | null;
+  paiement?: {
+    totalAPayer: number;
+    montantPaye: number;
+    resteAPayer: number;
+    statut: string;
+  } | null;
   statut_document?: string | null;
   certification_id?: string | null;
   certified_at?: string | null;
@@ -388,6 +395,34 @@ function VerificationPage() {
                       <p className="text-xl font-black text-blue-900">
                         {formatFCFA(data.montant)}
                       </p>
+                    </div>
+                  )}
+
+                  {data.paiement && (
+                    <div className="pt-3 border-t border-slate-200 space-y-2">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
+                          Statut de paiement
+                        </p>
+                        <span
+                          className="text-sm font-black uppercase text-right break-words"
+                          style={{ color: PAYMENT_STATUS_COLOR }}
+                        >
+                          {data.paiement.statut}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-[11px] font-medium text-slate-500">Montant payé</p>
+                        <p className="text-sm font-bold" style={{ color: PAYMENT_STATUS_COLOR }}>
+                          {formatFCFA(data.paiement.montantPaye)}
+                        </p>
+                      </div>
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-[11px] font-medium text-slate-500">Reste à payer</p>
+                        <p className="text-sm font-bold" style={{ color: PAYMENT_STATUS_COLOR }}>
+                          {formatFCFA(data.paiement.resteAPayer)}
+                        </p>
+                      </div>
                     </div>
                   )}
 

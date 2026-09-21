@@ -5,6 +5,40 @@ import { RetourDocument } from "./retour-document";
 import { resolveDiscountMode, type DocTotals as DataTotals } from "./enrich-lignes";
 import type { DocBase as DataBase } from "./fabsTemplates";
 import { numberToLetters } from "./number-to-letters";
+import {
+  calculateInvoicePaymentStatus,
+  computeInvoicePaymentStatus,
+  type InvoicePaymentStatus,
+} from "@/lib/factures/payment-status";
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * État de paiement à imprimer sur une facture.
+ * 1) charge utile déjà calculée côté serveur (page publique de scan QR) ;
+ * 2) sinon calcul direct depuis la base via la fonction centrale unique.
+ */
+async function resolveInvoicePayment(
+  id: string,
+  data: DataBase,
+  totalAPayer: number,
+): Promise<InvoicePaymentStatus | null> {
+  const fourni = (data as any).paiement;
+  if (fourni && typeof fourni === "object") {
+    return computeInvoicePaymentStatus(
+      fourni.totalAPayer ?? totalAPayer,
+      fourni.montantPaye,
+    );
+  }
+  if (!UUID_RE.test(id)) return null;
+  try {
+    const { supabase } = await import("@/integrations/supabase/client");
+    return await calculateInvoicePaymentStatus(id, supabase as never);
+  } catch {
+    return null;
+  }
+}
+
 
 
 /**
@@ -58,6 +92,11 @@ export async function generateUnifiedCommercialPDF(
     remiseGlobale: totals.remiseGlobale
   } as any);
   doc.setDiscountMode(discountMode);
+
+  // Statut de paiement : source unique de vérité (paiements réellement affectés).
+  if (type === "Facture") {
+    (doc.data as any).paiement = await resolveInvoicePayment(docBase.id, data, totals.totalAPayer);
+  }
 
   await doc.drawContent();
   return await doc.getBlob();
