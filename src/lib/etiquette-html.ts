@@ -40,19 +40,87 @@ function qrUrlFor(e: EtiquettePayload): string {
       });
 }
 
-function infoRow(label: string, value: string, strong = false): string {
-  return `<div style="display:grid;grid-template-columns:35mm 1fr;gap:2mm;border-bottom:1px solid #ddd;padding:1.5mm 0">
-    <div style="color:#555">${esc(label)}</div>
-    <div style="font-weight:${strong ? 800 : 600}">${esc(value)}</div>
+/** Bleu électrique FABS-CI — teinte unique, identique à celle des QR codes. */
+const BLUE = QR_COLOR_OPTS.dark;
+
+export type LabelMode = "full" | "compact";
+
+function infoRow(label: string, value: string, s: Scale, strong = false): string {
+  return `<div style="display:grid;grid-template-columns:${s.labelW} 1fr;gap:2mm;border-bottom:1px solid #ddd;padding:${s.rowPad} 0;align-items:baseline">
+    <div style="color:#555;font-size:${s.small}">${esc(label)}</div>
+    <div style="font-weight:${strong ? 800 : 700};font-size:${s.base};color:${strong ? BLUE : "#000"};word-break:break-word;overflow-wrap:anywhere">${esc(value)}</div>
   </div>`;
 }
+
+type Scale = {
+  padding: string;
+  logoH: string;
+  titleSize: string;
+  cartonLabel: string;
+  cartonNum: string;
+  modeSize: string;
+  modePad: string;
+  clientSize: string;
+  base: string;
+  small: string;
+  rowPad: string;
+  gap: string;
+  qr: string;
+  produitName: string;
+  produitQte: string;
+  labelW: string;
+  showCover: boolean;
+};
+
+const SCALES: Record<LabelMode, Scale> = {
+  full: {
+    padding: "8mm",
+    logoH: "18mm",
+    titleSize: "20pt",
+    cartonLabel: "13pt",
+    cartonNum: "38pt",
+    modeSize: "15pt",
+    modePad: "4mm",
+    clientSize: "20pt",
+    base: "12pt",
+    small: "10pt",
+    rowPad: "1.6mm",
+    gap: "5mm",
+    qr: "34mm",
+    produitName: "12pt",
+    produitQte: "15pt",
+    labelW: "33mm",
+    showCover: true,
+  },
+  compact: {
+    padding: "5mm",
+    logoH: "11mm",
+    titleSize: "12pt",
+    cartonLabel: "8pt",
+    cartonNum: "20pt",
+    modeSize: "10pt",
+    modePad: "1.6mm",
+    clientSize: "13pt",
+    base: "9pt",
+    small: "7.5pt",
+    rowPad: "0.7mm",
+    gap: "2.5mm",
+    qr: "24mm",
+    produitName: "9pt",
+    produitQte: "10pt",
+    labelW: "26mm",
+    showCover: false,
+  },
+};
 
 function labelHtml(
   e: EtiquettePayload,
   qr: string,
   logo: string,
   images: Record<string, string>,
+  mode: LabelMode = "full",
 ): string {
+  const s = SCALES[mode];
   const isExpedition = e.mode_acheminement === "expedition";
   const telephone = isExpedition ? e.gare_telephone || e.telephone : e.telephone;
   const modeLabel = e.mode_acheminement === "direct" ? "LIVRAISON DIRECTE" : 
@@ -62,55 +130,67 @@ function labelHtml(
   const produits = (e.produits ?? [])
     .map((p) => {
       const img =
-        p.cover_path && images[p.cover_path]
-          ? `<img src="${images[p.cover_path]}" alt="" style="width:22mm;height:28mm;object-fit:contain;border:1px solid #ddd" />`
+        s.showCover && p.cover_path && images[p.cover_path]
+          ? `<img src="${images[p.cover_path]}" alt="" style="width:20mm;height:26mm;object-fit:contain;border:1px solid #ddd;flex:0 0 auto" />`
           : "";
-      return `<div style="display:flex;gap:6mm;align-items:flex-start">
+      return `<div style="display:flex;gap:4mm;align-items:flex-start">
         ${img}
-        <div style="flex:1">
-          <div style="font-size:12pt;font-weight:700">${esc(p.nom || p.designation || "—")}</div>
-          <div style="font-size:16pt;font-weight:900;margin-top:1mm">QUANTITÉ : ${esc(p.quantite)} EXEMPLAIRES</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:${s.produitName};font-weight:700;word-break:break-word;overflow-wrap:anywhere">${esc(p.nom || p.designation || "—")}</div>
+          <div style="font-size:${s.produitQte};font-weight:900;margin-top:0.5mm">QUANTITÉ : ${esc(p.quantite)} EXEMPLAIRES</div>
         </div>
       </div>`;
     })
     .join("");
 
-  return `<div class="etiquette-carton" data-colis-id="${esc(e.colis_id ?? "")}" style="width:100%;min-height:148.5mm;font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;padding:8mm;border:1px solid #000;background:#fff;color:#000;display:flex;flex-direction:column;position:relative;box-sizing:border-box">
-    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #000;padding-bottom:4mm;margin-bottom:6mm">
-      <img src="${logo}" alt="FABS-CI" style="height:18mm;width:auto" />
+  return `<div class="etiquette-carton etiquette-${mode}" data-colis-id="${esc(e.colis_id ?? "")}" style="width:100%;font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;padding:${s.padding};border:1px solid #000;background:#fff;color:#000;display:flex;flex-direction:column;position:relative;box-sizing:border-box;overflow:visible">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:4mm;border-bottom:2px solid #000;padding-bottom:${s.gap};margin-bottom:${s.gap}">
+      <img src="${logo}" alt="FABS-CI" style="height:${s.logoH};width:auto" />
+      <div style="text-align:center;border:2px solid #000;padding:1mm 4mm;line-height:1.05">
+        <div style="font-size:${s.cartonLabel};font-weight:700;letter-spacing:0.12em">CARTON</div>
+        <div style="font-size:${s.cartonNum};font-weight:900">${esc(e.numero_carton)} / ${esc(e.nb_cartons)}</div>
+      </div>
       <div style="text-align:right">
-        <div style="font-size:20pt;font-weight:900;letter-spacing:0.1em">ÉTIQUETAGE</div>
-        <div style="font-size:10pt;color:#555;margin-top:1mm">Fiche carton — FABS-CI Éditions</div>
+        <div style="font-size:${s.titleSize};font-weight:900;letter-spacing:0.08em">ÉTIQUETAGE</div>
+        <div style="font-size:${s.small};color:#555">FABS-CI Éditions</div>
       </div>
     </div>
 
-    <div style="text-align:center;border:2.5px solid #000;padding:5mm;margin-bottom:6mm">
-      <div style="font-size:14pt;font-weight:700;letter-spacing:0.15em">CARTON</div>
-      <div style="font-size:40pt;font-weight:900;line-height:1">${esc(e.numero_carton)} / ${esc(e.nb_cartons)}</div>
+    <div style="background:#1B2A57;color:#fff;padding:${s.modePad};margin-bottom:${s.gap};text-align:center;font-weight:900;font-size:${s.modeSize};-webkit-print-color-adjust:exact;print-color-adjust:exact">
+      MODE DE LIVRAISON : ${esc(modeLabel)}
     </div>
 
-    <div style="font-size:12pt;line-height:1.5">
-      <div style="background:#1B2A57;color:#fff;padding:4mm;margin-bottom:5mm;text-align:center;font-weight:900;font-size:16pt;-webkit-print-color-adjust:exact;print-color-adjust:exact">
-        MODE DE LIVRAISON : ${esc(modeLabel)}
+    <div style="display:flex;gap:${s.gap};align-items:flex-start">
+      <div style="flex:1;min-width:0">
+        <div style="color:#555;font-size:${s.small};letter-spacing:0.1em">CLIENT</div>
+        <div style="font-size:${s.clientSize};font-weight:900;line-height:1.1;word-break:break-word;overflow-wrap:anywhere">${esc(e.client ?? "—")}</div>
+
+        <div style="margin-top:${s.gap}">
+          <div style="color:#555;font-size:${s.small};letter-spacing:0.1em">DESTINATION</div>
+          <div style="font-size:${s.clientSize};font-weight:900;color:${BLUE};text-transform:uppercase;line-height:1.1;word-break:break-word;overflow-wrap:anywhere">${esc(e.ville || "—")}</div>
+        </div>
+
+        <div style="margin-top:${s.gap}">
+          <div style="color:#555;font-size:${s.small};letter-spacing:0.1em">RESPONSABLE / CONTACT</div>
+          <div style="font-weight:800;font-size:${s.base};word-break:break-word;overflow-wrap:anywhere">${esc(e.representant ?? "—")}</div>
+          ${telephone ? `<div style="font-weight:800;font-size:${s.base}">${esc(telephone)}</div>` : ""}
+        </div>
       </div>
-      ${infoRow("N° BL", e.bl)}
-      ${e.colis_id ? infoRow("N° Colisage", e.colis_id.slice(0, 8).toUpperCase()) : ""}
-      ${infoRow("N° Commande", e.commande ?? "—")}
-      ${infoRow("Client", e.client ?? "—", true)}
-      <div style="padding:3mm 0;border-bottom:1px solid #ddd">
-        <div style="color:#555;font-size:10pt;margin-bottom:1mm">Responsable Achat / Contact</div>
-        <div style="font-weight:800;font-size:12pt">${esc(e.representant ?? "—")}${telephone ? ` · ${esc(telephone)}` : ""}</div>
-        <div style="margin-top:1mm;font-size:12pt;font-weight:700;text-transform:uppercase">${esc(e.ville || "—")}</div>
+
+      <div style="flex:0 0 auto;width:${s.qr};text-align:center">
+        ${qr ? `<img src="${qr}" alt="QR" style="width:${s.qr};height:${s.qr};display:block" />` : `<div style="width:${s.qr};height:${s.qr};border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;font-size:7pt;color:#999">QR CODE</div>`}
       </div>
     </div>
 
-    <div style="margin-top:4mm;flex:1">
-      <div style="font-size:12pt;font-weight:700;border-bottom:1.5px solid #000;padding-bottom:1.5mm;margin-bottom:3mm">PRODUITS &amp; QUANTITÉS</div>
-      <div style="display:flex;flex-direction:column;gap:4mm">${produits}</div>
+    <div style="margin-top:${s.gap}">
+      ${infoRow("N° BL", e.bl ?? "—", s, true)}
+      ${infoRow("N° Commande", e.commande ?? "—", s)}
+      ${e.colis_id ? infoRow("N° Colisage", e.colis_id.slice(0, 8).toUpperCase(), s) : ""}
     </div>
 
-    <div style="margin-top:auto;padding-top:5mm;text-align:center">
-      ${qr ? `<img src="${qr}" alt="QR" style="width:35mm;height:35mm;margin:0 auto;display:block" />` : `<div style="width:35mm;height:35mm;border:1px dashed #ccc;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:8pt;color:#999">QR CODE</div>`}
+    <div style="margin-top:${s.gap};flex:1 1 auto;min-height:0">
+      <div style="font-size:${s.base};font-weight:700;border-bottom:1.5px solid #000;padding-bottom:1mm;margin-bottom:1.5mm;letter-spacing:0.05em">PRODUITS &amp; QUANTITÉS</div>
+      <div style="display:flex;flex-direction:column;gap:${s.gap}">${produits || `<div style="font-size:${s.small};color:#555">—</div>`}</div>
     </div>
   </div>`;
 }
@@ -156,7 +236,7 @@ export async function buildEtiquettesPrintHtml(etiquettes: EtiquettePayload[]): 
   );
 
   if (etiquettes.length === 1) {
-    return `<div class="a4-page single-label-page">${labelHtml(etiquettes[0], qrs[0], logo, images)}</div>`;
+    return `<div class="a4-page single-label-page">${labelHtml(etiquettes[0], qrs[0], logo, images, "full")}</div>`;
   }
 
   let html = "";
@@ -164,8 +244,8 @@ export async function buildEtiquettesPrintHtml(etiquettes: EtiquettePayload[]): 
     const e1 = etiquettes[i];
     const e2 = etiquettes[i + 1];
     html += `<div class="a4-page double-label-page">
-      <div class="label-half">${labelHtml(e1, qrs[i], logo, images)}</div>
-      ${e2 ? `<div class="crop-marks-v"></div><div class="cut-icon"></div><div class="label-half">${labelHtml(e2, qrs[i + 1], logo, images)}</div>` : ""}
+      <div class="label-half">${labelHtml(e1, qrs[i], logo, images, "compact")}</div>
+      ${e2 ? `<div class="crop-marks-v"></div><div class="cut-icon"></div><div class="label-half">${labelHtml(e2, qrs[i + 1], logo, images, "compact")}</div>` : ""}
     </div>`;
   }
   return html;
