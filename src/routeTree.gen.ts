@@ -213,6 +213,7 @@ import { Route as AuthenticatedClientsClientIdModifierRouteImport } from './rout
 import { Route as AuthenticatedAdminAuditPaiementsAuditIdRouteImport } from './routes/_authenticated/admin.audit-paiements.$auditId'
 import { Route as AuthenticatedAbsencesAbsenceIdModifierRouteImport } from './routes/_authenticated/absences.$absenceId.modifier'
 import { Route as ApiPublicVerifyDocUuidDocumentRouteImport } from './routes/api/public/verify-doc.$uuid.document'
+import { Route as ApiPublicCartonColisIdBlRouteImport } from './routes/api/public/carton.$colisId.bl'
 
 const PresentationRoute = PresentationRouteImport.update({
   id: '/presentation',
@@ -1392,6 +1393,12 @@ const ApiPublicVerifyDocUuidDocumentRoute =
     path: '/document',
     getParentRoute: () => ApiPublicVerifyDocUuidRoute,
   } as any)
+const ApiPublicCartonColisIdBlRoute =
+  ApiPublicCartonColisIdBlRouteImport.update({
+    id: '/api/public/carton/$colisId/bl',
+    path: '/api/public/carton/$colisId/bl',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -1596,6 +1603,7 @@ export interface FileRoutesByFullPath {
   '/employes/$employeId/': typeof AuthenticatedEmployesEmployeIdIndexRoute
   '/livraison-suivi/$commandeRef/': typeof AuthenticatedLivraisonSuiviCommandeRefIndexRoute
   '/livraison-suivi/tournees/': typeof AuthenticatedLivraisonSuiviTourneesIndexRoute
+  '/api/public/carton/$colisId/bl': typeof ApiPublicCartonColisIdBlRoute
   '/api/public/verify-doc/$uuid/document': typeof ApiPublicVerifyDocUuidDocumentRoute
 }
 export interface FileRoutesByTo {
@@ -1779,6 +1787,7 @@ export interface FileRoutesByTo {
   '/employes/$employeId': typeof AuthenticatedEmployesEmployeIdIndexRoute
   '/livraison-suivi/$commandeRef': typeof AuthenticatedLivraisonSuiviCommandeRefIndexRoute
   '/livraison-suivi/tournees': typeof AuthenticatedLivraisonSuiviTourneesIndexRoute
+  '/api/public/carton/$colisId/bl': typeof ApiPublicCartonColisIdBlRoute
   '/api/public/verify-doc/$uuid/document': typeof ApiPublicVerifyDocUuidDocumentRoute
 }
 export interface FileRoutesById {
@@ -1986,6 +1995,7 @@ export interface FileRoutesById {
   '/_authenticated/employes/$employeId/': typeof AuthenticatedEmployesEmployeIdIndexRoute
   '/_authenticated/livraison-suivi/$commandeRef/': typeof AuthenticatedLivraisonSuiviCommandeRefIndexRoute
   '/_authenticated/livraison-suivi/tournees/': typeof AuthenticatedLivraisonSuiviTourneesIndexRoute
+  '/api/public/carton/$colisId/bl': typeof ApiPublicCartonColisIdBlRoute
   '/api/public/verify-doc/$uuid/document': typeof ApiPublicVerifyDocUuidDocumentRoute
 }
 export interface FileRouteTypes {
@@ -2193,6 +2203,7 @@ export interface FileRouteTypes {
     | '/employes/$employeId/'
     | '/livraison-suivi/$commandeRef/'
     | '/livraison-suivi/tournees/'
+    | '/api/public/carton/$colisId/bl'
     | '/api/public/verify-doc/$uuid/document'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -2376,6 +2387,7 @@ export interface FileRouteTypes {
     | '/employes/$employeId'
     | '/livraison-suivi/$commandeRef'
     | '/livraison-suivi/tournees'
+    | '/api/public/carton/$colisId/bl'
     | '/api/public/verify-doc/$uuid/document'
   id:
     | '__root__'
@@ -2582,6 +2594,7 @@ export interface FileRouteTypes {
     | '/_authenticated/employes/$employeId/'
     | '/_authenticated/livraison-suivi/$commandeRef/'
     | '/_authenticated/livraison-suivi/tournees/'
+    | '/api/public/carton/$colisId/bl'
     | '/api/public/verify-doc/$uuid/document'
   fileRoutesById: FileRoutesById
 }
@@ -2602,6 +2615,7 @@ export interface RootRouteChildren {
   ApiPublicHooksGlobalBackupRoute: typeof ApiPublicHooksGlobalBackupRoute
   ApiPublicHooksRunSchedulesRoute: typeof ApiPublicHooksRunSchedulesRoute
   ApiPublicVerifyDocUuidRoute: typeof ApiPublicVerifyDocUuidRouteWithChildren
+  ApiPublicCartonColisIdBlRoute: typeof ApiPublicCartonColisIdBlRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -4034,6 +4048,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicVerifyDocUuidDocumentRouteImport
       parentRoute: typeof ApiPublicVerifyDocUuidRoute
     }
+    '/api/public/carton/$colisId/bl': {
+      id: '/api/public/carton/$colisId/bl'
+      path: '/api/public/carton/$colisId/bl'
+      fullPath: '/api/public/carton/$colisId/bl'
+      preLoaderRoute: typeof ApiPublicCartonColisIdBlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -4736,6 +4757,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksGlobalBackupRoute: ApiPublicHooksGlobalBackupRoute,
   ApiPublicHooksRunSchedulesRoute: ApiPublicHooksRunSchedulesRoute,
   ApiPublicVerifyDocUuidRoute: ApiPublicVerifyDocUuidRouteWithChildren,
+  ApiPublicCartonColisIdBlRoute: ApiPublicCartonColisIdBlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
