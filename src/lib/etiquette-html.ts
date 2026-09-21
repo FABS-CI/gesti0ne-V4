@@ -236,7 +236,7 @@ export async function buildEtiquettesPrintHtml(etiquettes: EtiquettePayload[]): 
   );
 
   if (etiquettes.length === 1) {
-    return `<div class="a4-page single-label-page">${labelHtml(etiquettes[0], qrs[0], logo, images)}</div>`;
+    return `<div class="a4-page single-label-page">${labelHtml(etiquettes[0], qrs[0], logo, images, "full")}</div>`;
   }
 
   let html = "";
