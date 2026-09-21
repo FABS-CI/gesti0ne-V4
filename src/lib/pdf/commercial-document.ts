@@ -36,17 +36,25 @@ export class CommercialDocument extends BaseDocument {
     
     // Tableau
     const isBL = this.data.type === 'Bon de Livraison';
+    // Répartition A4 : N° 5% · Code 13% · Désignation 42% · Qté 8% · P.U. 10% · Remise 10% · Montant 12%
+    const pct = (p: number) => Math.round(CONTENT_W * p) / 100;
+    const avecRemise = !isBL && this.discountMode === 'A';
+    const designationW = isBL
+      ? CONTENT_W - pct(5) - pct(13) - pct(8)
+      : avecRemise
+        ? pct(42)
+        : pct(52);
     const colonnes = [
-      { label: "N°", key: "num", width: 20 },
-      { label: "Code", key: "code", width: 55 },
-      { label: "Désignation", key: "designation", width: isBL ? 415 : 180 },
-      { label: "Qté", key: "qte", width: 30 },
+      { label: "N°", key: "num", width: pct(5) },
+      { label: "Code", key: "code", width: pct(13) },
+      { label: "Désignation", key: "designation", width: designationW },
+      { label: "Qté", key: "qte", width: pct(8) },
     ];
-    
+
     if (!isBL) {
-      colonnes.push({ label: "P.U.", key: "pu", width: 75 });
-      if (this.discountMode === 'A') {
-        colonnes.push({ label: "Remise (%)", key: "remisePct", width: 55 });
+      colonnes.push({ label: "P.U.", key: "pu", width: pct(10) });
+      if (avecRemise) {
+        colonnes.push({ label: "Remise (%)", key: "remisePct", width: pct(10) });
       }
       // Le montant prend le reste exact de l'espace disponible (CONTENT_W)
       const currentWidth = colonnes.reduce((acc, c) => acc + c.width, 0);
