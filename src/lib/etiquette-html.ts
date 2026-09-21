@@ -244,8 +244,8 @@ export async function buildEtiquettesPrintHtml(etiquettes: EtiquettePayload[]): 
     const e1 = etiquettes[i];
     const e2 = etiquettes[i + 1];
     html += `<div class="a4-page double-label-page">
-      <div class="label-half">${labelHtml(e1, qrs[i], logo, images)}</div>
-      ${e2 ? `<div class="crop-marks-v"></div><div class="cut-icon"></div><div class="label-half">${labelHtml(e2, qrs[i + 1], logo, images)}</div>` : ""}
+      <div class="label-half">${labelHtml(e1, qrs[i], logo, images, "compact")}</div>
+      ${e2 ? `<div class="crop-marks-v"></div><div class="cut-icon"></div><div class="label-half">${labelHtml(e2, qrs[i + 1], logo, images, "compact")}</div>` : ""}
     </div>`;
   }
   return html;
