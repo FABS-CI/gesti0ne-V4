@@ -190,6 +190,13 @@
       "when": 1789644343721,
       "tag": "0026_paiements_single_source_allocations",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1789979959444,
+      "tag": "0027_rapports_encaissement_source_unique",
+      "breakpoints": true
     }
   ]
 }

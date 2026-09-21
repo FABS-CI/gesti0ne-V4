@@ -76,13 +76,13 @@ export function ProduitsTab({ rows, total, isLoading, tri, sens, onSort, page, o
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={17} className="py-6 text-center">
+                  <TableCell colSpan={19} className="py-6 text-center">
                     Chargement…
                   </TableCell>
                 </TableRow>
               ) : rows.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={17} className="py-6 text-center text-muted-foreground">
+                  <TableCell colSpan={19} className="py-6 text-center text-muted-foreground">
                     Aucune donnée
                   </TableCell>
                 </TableRow>
@@ -101,6 +101,12 @@ export function ProduitsTab({ rows, total, isLoading, tri, sens, onSort, page, o
                     <TableCell className="text-right">{r.nb_factures}</TableCell>
                     <TableCell className="text-right">{r.nb_clients}</TableCell>
                     <TableCell className="text-right font-medium">{formatFCFA(r.ca)}</TableCell>
+                    <TableCell className="text-right font-medium text-emerald-600">
+                      {formatFCFA(r.ca_encaisse ?? 0)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {formatFCFA(r.reste_a_encaisser ?? 0)}
+                    </TableCell>
                     <TableCell className="text-right">{formatFCFA(r.remises)}</TableCell>
                     <TableCell className="text-right">{r.qte_retournee}</TableCell>
                     <TableCell className="text-right">{r.stock_actuel}</TableCell>
