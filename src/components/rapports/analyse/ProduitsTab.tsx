@@ -76,13 +76,13 @@ export function ProduitsTab({ rows, total, isLoading, tri, sens, onSort, page, o
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={17} className="py-6 text-center">
+                  <TableCell colSpan={19} className="py-6 text-center">
                     Chargement…
                   </TableCell>
                 </TableRow>
               ) : rows.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={17} className="py-6 text-center text-muted-foreground">
+                  <TableCell colSpan={19} className="py-6 text-center text-muted-foreground">
                     Aucune donnée
                   </TableCell>
                 </TableRow>
