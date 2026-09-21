@@ -430,24 +430,25 @@ export class BaseDocument {
           color: QR_COLOR_OPTS,
         });
         const qrImage = await this.doc.embedPng(qrDataUrl);
-        const qrSize = 72;
+        const qrSize = 80;
         // Zone blanche autour du QR pour garantir la lecture au scan
         this.page.drawRectangle({
           x: qrX + 8,
-          y: y - boxH + 12,
+          y: y - boxH + 14,
           width: qrSize + 8,
           height: qrSize + 8,
           color: COLORS.blanc,
         });
-        this.page.drawImage(qrImage, { x: qrX + 12, y: y - boxH + 16, width: qrSize, height: qrSize });
+        this.page.drawImage(qrImage, { x: qrX + 12, y: y - boxH + 18, width: qrSize, height: qrSize });
 
         // --- Bloc « Certification numérique » (certification automatique idempotente) ---
-        const textX = qrX + 95;
+        const textX = qrX + qrSize + 24;
+        const textMaxW = qrX + boxW - 10 - textX;
 
-        this.page.drawText("CERTIFICATION NUMÉRIQUE", {
+        this.page.drawText("CERTIFICATION", {
           x: textX,
           y: y - 22,
-          size: 7,
+          size: 7.5,
           font: this.fonts.bold,
           color: COLORS.bleuFabs,
         });
