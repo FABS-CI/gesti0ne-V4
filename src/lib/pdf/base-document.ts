@@ -322,7 +322,7 @@ export class BaseDocument {
       this.data.type === "Proforma" ||
       this.data.type === "Commande" ||
       this.data.type === "Bon de Livraison";
-    const boxH = grandBloc ? 110 : 90;
+    const boxH = grandBloc ? 118 : 90;
     const boxW = (CONTENT_W - 15) / 2;
     
     this.page.drawRectangle({
