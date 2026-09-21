@@ -339,8 +339,28 @@ export class BaseDocument {
     if (!isCommande) {
       this.page.drawText(isBR ? "FOURNISSEUR" : isBL ? "CLIENT" : "FACTURÉ À", { x: MARGINS.x + 10, y: y - 18, size: grandBloc ? 9 : 7, font: this.fonts.bold, color: COLORS.bleuFabs });
     }
-    this.page.drawText(this.data.client.nom.toUpperCase(), { x: MARGINS.x + 10, y: y - (isCommande ? 28 : 38), size: grandBloc ? 14 : 12, font: this.fonts.bold, color: COLORS.bleuFabs });
-    
+    // Nom du client : retour à la ligne propre + réduction automatique si très long,
+    // toujours contenu dans la moitié gauche (jamais de chevauchement avec le QR).
+    const nomMaxW = boxW - 20;
+    const nomTexte = this.data.client.nom.toUpperCase();
+    let nomSize = grandBloc ? 14 : 12;
+    let nomLignes = this.wrapText(nomTexte, nomMaxW, nomSize, this.fonts.bold);
+    while (nomLignes.length > 2 && nomSize > 9) {
+      nomSize -= 1;
+      nomLignes = this.wrapText(nomTexte, nomMaxW, nomSize, this.fonts.bold);
+    }
+    nomLignes = nomLignes.slice(0, 2);
+    const nomY = y - (isCommande ? 28 : 38);
+    nomLignes.forEach((ligne, i) => {
+      this.page.drawText(ligne, {
+        x: MARGINS.x + 10,
+        y: nomY - i * (nomSize + 2),
+        size: nomSize,
+        font: this.fonts.bold,
+        color: COLORS.bleuFabs,
+      });
+    });
+
     const kv = [
       { l: "Ville", v: this.data.client.ville ?? "—" },
       { l: "Représentant", v: this.data.client.representant ?? "—" },
@@ -350,14 +370,26 @@ export class BaseDocument {
       kv.push({ l: "Paiement", v: this.data.client.modePaiement });
     }
     const grandTexte = grandBloc;
-    const labelSize = grandTexte ? 10 : 8;
-    const valueSize = grandTexte ? 11 : 8;
-    const lineGap = grandTexte ? 16 : 11;
-    const valueX = MARGINS.x + (grandTexte ? 100 : 80);
-    kv.forEach((item, i) => {
-      const lineY = y - (grandTexte ? 58 : 48) - i * lineGap;
+    const labelSize = grandTexte ? 9 : 8;
+    const valueSize = grandTexte ? 10 : 8;
+    const valueX = MARGINS.x + (grandTexte ? 92 : 80);
+    const valueMaxW = MARGINS.x + boxW - 10 - valueX;
+    const extraNom = (nomLignes.length - 1) * (nomSize + 2);
+    let lineY = y - (grandTexte ? 58 : 48) - extraNom;
+    const minY = y - boxH + 8;
+    kv.forEach((item) => {
+      const valeurs = this.wrapText(item.v || "—", valueMaxW, valueSize, this.fonts.bold).slice(0, 2);
+      if (lineY < minY) return;
       this.page.drawText(`${item.l} :`, { x: MARGINS.x + 10, y: lineY, size: labelSize, font: this.fonts.regular });
-      this.page.drawText(item.v, { x: valueX, y: lineY, size: valueSize, font: this.fonts.bold });
+      valeurs.forEach((v, j) => {
+        this.page.drawText(v, {
+          x: valueX,
+          y: lineY - j * (valueSize + 2),
+          size: valueSize,
+          font: this.fonts.bold,
+        });
+      });
+      lineY -= (grandTexte ? 15 : 11) + (valeurs.length - 1) * (valueSize + 2);
     });
 
 
