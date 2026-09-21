@@ -177,3 +177,10 @@ Paramètres système (création/suppression), rôles (création, validation, sup
 
 ## Audit terminé
 Les 9 modules ont été audités, corrigés et vérifiés en conditions réelles.
+
+## Analyse des ventes & produits — encaissement (source unique)
+
+- `rapport_kpi` calculait l'encaissé depuis `paiements.facture_id` (mono-facture) : les règlements répartis sur plusieurs factures étaient ignorés. Il s'appuie désormais sur `payment_allocations`.
+- `rapport_produits` expose par produit `ca_encaisse` et `reste_a_encaisser`, calculés depuis `payment_line_allocations` (ventilation réelle, corrections manuelles incluses).
+- Écran : KPI « CA facturé » / « CA encaissé » / « Reste à encaisser » ; tableau produits et export Excel enrichis des deux colonnes ; tri possible sur le CA encaissé.
+- Contrôle de cohérence : paiements validés 5 644 500 FCFA = somme des affectations factures = somme des ventilations produits (écart nul).
