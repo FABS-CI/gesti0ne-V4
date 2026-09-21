@@ -59,6 +59,11 @@ export async function generateUnifiedCommercialPDF(
   } as any);
   doc.setDiscountMode(discountMode);
 
+  // Statut de paiement : source unique de vérité (paiements réellement affectés).
+  if (type === "Facture") {
+    (doc.data as any).paiement = await resolveInvoicePayment(docBase.id, data, totals.totalAPayer);
+  }
+
   await doc.drawContent();
   return await doc.getBlob();
 }
