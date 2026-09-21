@@ -143,7 +143,8 @@ export class CommercialDocument extends BaseDocument {
   async drawSignatures(y: number) {
     const boxW = (CONTENT_W - 20) / 2;
     const boxH = 60;
-    const curY = Math.max(y - 80, 150);
+    // Continuité visuelle TOTAL → MONTANT EN LETTRES → TAMPON (pas de grand vide)
+    const curY = Math.max(y - 28, 150);
     
     // Zone signatures conditionnelle
     if (this.data.type === 'Bon de Livraison') {
