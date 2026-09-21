@@ -75,6 +75,7 @@ export const Route = createFileRoute('/api/public/verify-doc/$uuid')({
               representant_nom: doc.representant_nom ?? null,
               montant: doc.montant,
               statut_document: doc.statut_document ?? null,
+              paiement: doc.paiement ?? null,
               certification_id: doc.certification_id ?? null,
               certified_at: doc.certified_at ?? null,
               canonical_hash: doc.canonical_hash ?? null,
