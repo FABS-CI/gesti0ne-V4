@@ -19,6 +19,31 @@ export type RecapLine = {
   reste_apres: number;
 };
 
+export type FactureARepartir = {
+  facture_id: string;
+  solde: number | string;
+};
+
+/**
+ * Répartit le montant réellement reçu sur les factures sélectionnées, dans
+ * leur ordre d'affichage, sans jamais dépasser le solde de chaque facture.
+ */
+export function repartirMontantRecu(
+  montantRecu: number,
+  factures: FactureARepartir[],
+): Record<string, number> {
+  let restant = Math.max(0, Number(montantRecu) || 0);
+
+  return Object.fromEntries(
+    factures.map((facture) => {
+      const solde = Math.max(0, Number(facture.solde) || 0);
+      const montant = Math.min(solde, restant);
+      restant = Math.max(0, restant - montant);
+      return [facture.facture_id, montant];
+    }),
+  );
+}
+
 /** Répartit un montant reçu sur une facture donnée. Un paiement ne peut jamais
  *  imputer plus que le solde restant. */
 export function computeRecap(

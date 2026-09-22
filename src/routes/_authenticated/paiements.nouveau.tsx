@@ -28,7 +28,7 @@ import {
 import { PaiementFormCard, type FormState } from "@/components/paiements/nouveau/PaiementFormCard";
 import { RecapCard } from "@/components/paiements/nouveau/RecapCard";
 import { formatFCFA, formatDate } from "@/lib/format";
-import { computeRecap, type RecapLine } from "@/lib/paiement-recap";
+import { computeRecap, repartirMontantRecu, type RecapLine } from "@/lib/paiement-recap";
 
 import { newIdempotencyKey } from "@/lib/idempotency";
 import {
@@ -124,9 +124,16 @@ function NouveauPaiementPage() {
 
   const changeMontant = (factureId: string, montant: number) => {
     setAllocs((prev) => {
-      const next = { ...prev, [factureId]: montant };
-      syncMontant(next);
-      return next;
+      return { ...prev, [factureId]: montant };
+    });
+  };
+
+  const changeMontantRecu = (montant: number) => {
+    const montantValide = Math.max(0, Number(montant) || 0);
+    setForm((s) => ({ ...s, montant: montantValide }));
+    setAllocs((prev) => {
+      const selection = factures.filter((f) => f.facture_id in prev);
+      return repartirMontantRecu(montantValide, selection);
     });
   };
 
@@ -300,6 +307,7 @@ function NouveauPaiementPage() {
           onPreview={preview}
           onSubmit={submit}
           onEdit={() => setMode("draft")}
+          onMontantChange={changeMontantRecu}
           submitting={mutation.isPending}
         />
       )}

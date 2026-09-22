@@ -3,6 +3,7 @@ import {
   COMPARATIF_LS_KEY,
   computeRecap,
   loadComparatifState,
+  repartirMontantRecu,
   saveComparatifState,
   validatePaiement,
 } from "./paiement-recap";
@@ -25,6 +26,29 @@ describe("computeRecap", () => {
   });
   it("solde nul → aucune imputation", () => {
     expect(computeRecap("F1", 0, 10_000).reste_apres).toBe(0);
+  });
+});
+
+describe("repartirMontantRecu", () => {
+  const factures = [
+    { facture_id: "F1", solde: 70_000 },
+    { facture_id: "F2", solde: 100_000 },
+  ];
+
+  it("réajuste une facture au montant partiel reçu", () => {
+    expect(repartirMontantRecu(30_000, [factures[0]])).toEqual({ F1: 30_000 });
+  });
+
+  it("répartit le paiement sur plusieurs factures sans dépasser leurs soldes", () => {
+    expect(repartirMontantRecu(120_000, factures)).toEqual({ F1: 70_000, F2: 50_000 });
+  });
+
+  it("laisse le surplus non affecté quand le montant dépasse tous les soldes", () => {
+    expect(repartirMontantRecu(200_000, factures)).toEqual({ F1: 70_000, F2: 100_000 });
+  });
+
+  it("ramène toutes les affectations à zéro pour un montant nul", () => {
+    expect(repartirMontantRecu(0, factures)).toEqual({ F1: 0, F2: 0 });
   });
 });
 
