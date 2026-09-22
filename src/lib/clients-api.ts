@@ -234,7 +234,7 @@ export async function getClientRelations(
       .order("date_proforma", { ascending: false }),
     supabase
       .from("bons_livraison")
-      .select("bl_id,reference,statut,date_emission,date_livraison,montant_total,commande_id")
+      .select("bl_id,reference,statut,date_emission,date_livraison,montant,commande_id")
       .eq("client_id", clientId)
       .order("date_emission", { ascending: false }),
     supabase
