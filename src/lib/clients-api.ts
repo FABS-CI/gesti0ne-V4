@@ -287,7 +287,9 @@ export async function getClientRelations(
     paiements,
     livraisons,
     proformas: (pro.data ?? []) as ClientRelations["proformas"],
-    bons_livraison: (bl.data ?? []) as ClientRelations["bons_livraison"],
+    bons_livraison: ((bl.data ?? []) as Array<Record<string, unknown>>).map(
+      ({ montant, ...b }) => ({ ...b, montant_total: Number(montant ?? 0) }),
+    ) as ClientRelations["bons_livraison"],
     avoirs: (av.data ?? []) as ClientRelations["avoirs"],
   };
 }
