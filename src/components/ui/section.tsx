@@ -2,6 +2,7 @@ import { Suspense, type ComponentType, type ReactNode } from "react";
 import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
 import { AlertTriangle, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { friendlyError } from "@/lib/friendly-error";
 
 /**
  * Section — enveloppe standard pour un bloc de page qui charge ses
