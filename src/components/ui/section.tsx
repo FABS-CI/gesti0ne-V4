@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
  */
 
 function DefaultErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
-  const message = error instanceof Error ? error.message : String(error ?? "");
+  const message = friendlyError(error, "");
   return (
     <div
       role="alert"
