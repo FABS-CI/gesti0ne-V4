@@ -115,8 +115,8 @@ async function fetchRows(kind: DocKind): Promise<Row[]> {
       id: r.bl_id,
       reference: r.reference,
       date: r.date_livraison,
-      client: r.signataire ?? "—",
-      montant: r.montant_total,
+      client: r.client_nom ?? "—",
+      montant: r.montant,
       statut: r.statut,
       version: (r as { updated_at?: string }).updated_at ?? r.date_livraison,
     }));
