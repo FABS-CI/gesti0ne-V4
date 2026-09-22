@@ -1,6 +1,7 @@
 
 import {
   PDFDocument,
+  degrees,
   rgb,
   StandardFonts,
   type PDFPage,
@@ -145,6 +146,7 @@ export class BaseDocument {
   drawChrome() {
     this.drawFrame();
     this.drawWatermark();
+    this.drawPaidStamp();
     this.drawHeader();
     this.drawFooter();
   }
@@ -169,6 +171,25 @@ export class BaseDocument {
       width: size,
       height: size,
       opacity: 0.05,
+    });
+  }
+
+  /** Tampon financier visible uniquement sur les factures entièrement réglées. */
+  drawPaidStamp() {
+    const paiement = (this.data as any).paiement as { statut?: string } | undefined;
+    if (this.data.type !== "Facture" || paiement?.statut !== "PAYÉE") return;
+
+    const label = "PAYÉ";
+    const size = 58;
+    const labelW = this.fonts.bold.widthOfTextAtSize(label, size);
+    this.page.drawText(label, {
+      x: (PAGE.w - labelW) / 2 - 12,
+      y: PAGE.h / 2 - 20,
+      size,
+      font: this.fonts.bold,
+      color: COLORS.orangeStatut,
+      opacity: 0.14,
+      rotate: degrees(28),
     });
   }
 

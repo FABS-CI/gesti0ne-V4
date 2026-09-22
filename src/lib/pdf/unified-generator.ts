@@ -52,7 +52,7 @@ export async function generateUnifiedCommercialPDF(
     return generateUnifiedRetourPDF(data);
   }
 
-  const docBase = {
+  const docBase: any = {
     id: (data as any).id || (data as any).facture_id || (data as any).commande_id || (data as any).proforma_id || (data as any).bl_id || (data as any).br_id || "verification-only",
     type: type,
     reference: data.reference,
@@ -79,6 +79,12 @@ export async function generateUnifiedCommercialPDF(
     montantLettres: (data as any).montantLettres || (data as any).montantEnLettres || numberToLetters(data.totalTTC || data.montantHT || 0),
   };
 
+  // Résoudre le paiement avant l'initialisation : l'en-tête et le tampon sont
+  // dessinés dès la création de la première page.
+  if (type === "Facture") {
+    docBase.paiement = await resolveInvoicePayment(docBase.id, data, totals.totalAPayer);
+  }
+
   const doc = new CommercialDocument(docBase, totals);
   await doc.init();
   
@@ -92,11 +98,6 @@ export async function generateUnifiedCommercialPDF(
     remiseGlobale: totals.remiseGlobale
   } as any);
   doc.setDiscountMode(discountMode);
-
-  // Statut de paiement : source unique de vérité (paiements réellement affectés).
-  if (type === "Facture") {
-    (doc.data as any).paiement = await resolveInvoicePayment(docBase.id, data, totals.totalAPayer);
-  }
 
   await doc.drawContent();
   return await doc.getBlob();
