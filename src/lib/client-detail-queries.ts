@@ -70,11 +70,14 @@ export const clientBLQO = (clientId: string) =>
     queryFn: async () => {
       const { data, error } = await supabase
         .from("bons_livraison")
-        .select("bl_id,reference,statut,date_emission,date_livraison,montant_total,commande_id")
+        .select("bl_id,reference,statut,date_emission,date_livraison,montant,commande_id")
         .eq("client_id", clientId)
         .order("date_emission", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as ClientRelations["bons_livraison"];
+      return ((data ?? []) as Array<Record<string, unknown>>).map(({ montant, ...b }) => ({
+        ...b,
+        montant_total: Number(montant ?? 0),
+      })) as ClientRelations["bons_livraison"];
     },
     staleTime: SLICE_STALE,
   });
