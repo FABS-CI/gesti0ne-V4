@@ -28,6 +28,7 @@ export const COLORS = {
   rougeFabs: rgb(0.827, 0.184, 0.184), // #D32F2F (Couleur pour Remises)
   orangeFabs: rgb(0.96, 0.486, 0.0), // #F57C00
   orangeStatut: rgb(0.961, 0.620, 0.043), // #F59E0B (statut de paiement)
+  bleuTampon: rgb(0, 0.141, 0.753), // #0024C0 (bleu du tampon Comptabilité)
   grisClair: rgb(0.968, 0.968, 0.968), // #F7F7F7
   orangeZebra: rgb(1, 0.953, 0.878), // #FFF3E0 (Orange très clair pour zebra)
   noir: rgb(0, 0, 0),
@@ -187,7 +188,7 @@ export class BaseDocument {
       y: PAGE.h / 2 - 20,
       size,
       font: this.fonts.bold,
-      color: COLORS.orangeStatut,
+      color: COLORS.bleuTampon,
       opacity: 0.14,
       rotate: degrees(28),
     });
@@ -227,21 +228,9 @@ export class BaseDocument {
       color: COLORS.bleuFabs,
     });
 
-    // Statut de paiement (factures) : calculé, jamais saisi. Sous le titre.
-    const paiement = (this.data as any).paiement as
-      | { statut: string; montantPaye: number; resteAPayer: number }
-      | undefined;
-    if (this.data.type === "Facture" && paiement?.statut) {
-      const stSize = 11;
-      const stW = this.fonts.boldItalic.widthOfTextAtSize(paiement.statut, stSize);
-      this.page.drawText(paiement.statut, {
-        x: (PAGE.w - stW) / 2,
-        y: yTop - 44,
-        size: stSize,
-        font: this.fonts.boldItalic,
-        color: COLORS.orangeStatut,
-      });
-    }
+    // Le statut de paiement n'est plus affiché sous le titre (mention retirée
+    // à la demande de l'utilisateur) : il reste visible dans le tableau des
+    // totaux et sur la page publique de vérification.
 
     // Cartouche (D)
     const cartX = PAGE.w - MARGINS.x - 110;
