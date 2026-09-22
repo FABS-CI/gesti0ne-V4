@@ -108,20 +108,18 @@ function NouveauPaiementPage() {
   );
 
   const toggleFacture = (f: FactureImpayeeRow, checked: boolean) => {
-    setAllocs((prev) => {
-      const ids = new Set(Object.keys(prev));
-      if (checked) ids.add(f.facture_id);
-      else ids.delete(f.facture_id);
+    const ids = new Set(Object.keys(allocs));
+    if (checked) ids.add(f.facture_id);
+    else ids.delete(f.facture_id);
 
-      const selection = factures.filter((facture) => ids.has(facture.facture_id));
-      const premierMontant = checked && Object.keys(prev).length === 0 && form.montant <= 0
-        ? Number(f.solde)
-        : Number(form.montant);
-      if (premierMontant !== form.montant) {
-        setForm((s) => ({ ...s, montant: premierMontant }));
-      }
-      return repartirMontantRecu(premierMontant, selection);
-    });
+    const selection = factures.filter((facture) => ids.has(facture.facture_id));
+    const premierMontant = checked && Object.keys(allocs).length === 0 && form.montant <= 0
+      ? Number(f.solde)
+      : Number(form.montant);
+    if (premierMontant !== form.montant) {
+      setForm((s) => ({ ...s, montant: premierMontant }));
+    }
+    setAllocs(repartirMontantRecu(premierMontant, selection));
   };
 
   const changeMontant = (factureId: string, montant: number) => {
