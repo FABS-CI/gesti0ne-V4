@@ -107,18 +107,20 @@ function NouveauPaiementPage() {
     [allocs],
   );
 
-  const syncMontant = (next: Record<string, number>) => {
-    const total = Object.values(next).reduce((s, m) => s + (Number(m) || 0), 0);
-    setForm((s) => ({ ...s, montant: total }));
-  };
-
   const toggleFacture = (f: FactureImpayeeRow, checked: boolean) => {
     setAllocs((prev) => {
-      const next = { ...prev };
-      if (checked) next[f.facture_id] = Number(f.solde);
-      else delete next[f.facture_id];
-      syncMontant(next);
-      return next;
+      const ids = new Set(Object.keys(prev));
+      if (checked) ids.add(f.facture_id);
+      else ids.delete(f.facture_id);
+
+      const selection = factures.filter((facture) => ids.has(facture.facture_id));
+      const premierMontant = checked && Object.keys(prev).length === 0 && form.montant <= 0
+        ? Number(f.solde)
+        : Number(form.montant);
+      if (premierMontant !== form.montant) {
+        setForm((s) => ({ ...s, montant: premierMontant }));
+      }
+      return repartirMontantRecu(premierMontant, selection);
     });
   };
 
