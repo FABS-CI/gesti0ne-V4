@@ -27,6 +27,7 @@ type Props = {
   onPreview: () => void;
   onSubmit: () => void;
   onEdit: () => void;
+  onMontantChange: (montant: number) => void;
   submitting: boolean;
 };
 
@@ -38,6 +39,7 @@ export function PaiementFormCard({
   onPreview,
   onSubmit,
   onEdit,
+  onMontantChange,
   submitting,
 }: Props) {
   const disabled = mode === "confirm";
@@ -72,7 +74,7 @@ export function PaiementFormCard({
             type="number"
             min={0}
             value={form.montant}
-            onChange={(e) => setForm((s) => ({ ...s, montant: Number(e.target.value) }))}
+            onChange={(e) => onMontantChange(Number(e.target.value) || 0)}
             disabled={disabled}
           />
           {soldeRestant != null && (
