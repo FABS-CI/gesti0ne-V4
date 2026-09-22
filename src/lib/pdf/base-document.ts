@@ -1,6 +1,7 @@
 
 import {
   PDFDocument,
+  degrees,
   rgb,
   StandardFonts,
   type PDFPage,
@@ -188,7 +189,7 @@ export class BaseDocument {
       font: this.fonts.bold,
       color: COLORS.orangeStatut,
       opacity: 0.14,
-      rotate: { type: "degrees", angle: 28 },
+      rotate: degrees(28),
     });
   }
 
