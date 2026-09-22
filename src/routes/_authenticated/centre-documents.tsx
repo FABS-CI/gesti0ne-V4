@@ -107,7 +107,7 @@ async function fetchRows(kind: DocKind): Promise<Row[]> {
   if (kind === "bons_livraison") {
     const { data, error } = await supabase
       .from("bons_livraison")
-      .select("bl_id, reference, date_livraison, signataire, montant_total, statut, updated_at")
+      .select("bl_id, reference, date_livraison, client_nom, montant, statut, updated_at")
       .order("date_livraison", { ascending: false })
       .limit(200);
     if (error) throw error;
@@ -115,8 +115,8 @@ async function fetchRows(kind: DocKind): Promise<Row[]> {
       id: r.bl_id,
       reference: r.reference,
       date: r.date_livraison,
-      client: r.signataire ?? "—",
-      montant: r.montant_total,
+      client: r.client_nom ?? "—",
+      montant: r.montant,
       statut: r.statut,
       version: (r as { updated_at?: string }).updated_at ?? r.date_livraison,
     }));
