@@ -69,6 +69,8 @@ function CommandesPage() {
   const canModifier = hasPermission("commandes.modifier");
   const readOnly = !canModifier && !hasPermission("commandes.creer");
   const [commandeToDelete, setCommandeToDelete] = useState<Commande | null>(null);
+  // Commande en attente de confirmation dans la fenêtre « Frais de transport ».
+  const [commandeAValider, setCommandeAValider] = useState<string | null>(null);
 
   useEffect(() => {
     if (q !== sp.q) {
@@ -225,7 +227,7 @@ function CommandesPage() {
           isSuperAdmin={isSuperAdmin}
           canModifier={canModifier}
           canValider={canValider}
-          onValider={(id) => validerMutation.mutate(id)}
+          onValider={(id) => setCommandeAValider(id)}
           validerPending={validerMutation.isPending}
           onDelete={setCommandeToDelete}
         />
