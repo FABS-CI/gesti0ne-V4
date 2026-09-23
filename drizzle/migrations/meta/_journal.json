@@ -211,6 +211,13 @@
       "when": 1790153548062,
       "tag": "0029_drop_valider_commande_ancienne_signature",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1790159325816,
+      "tag": "0030_propagate_transport_fees_on_immediate_order_validation",
+      "breakpoints": true
     }
   ]
 }
