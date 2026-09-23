@@ -81,6 +81,8 @@ export async function loadPublicPdfPayload(
   // Résolution de la commande source (factures / proformas s'y rattachent)
   let commandeId: string | null = null;
   let clientId: string | null = null;
+  let fraisTransportType: "livraison" | "expedition" | null = null;
+  let fraisTransportMontant = 0;
   if (doc.type === "COMMANDE") {
     commandeId = doc.id;
     const { data } = await supabaseAdmin
@@ -92,11 +94,13 @@ export async function loadPublicPdfPayload(
   } else if (doc.type === "FACTURE") {
     const { data } = await supabaseAdmin
       .from("factures")
-      .select("commande_id, client_id")
+      .select("commande_id, client_id, type_frais_transport, montant_frais_transport")
       .eq("facture_id", doc.id)
       .maybeSingle();
     commandeId = (data as any)?.commande_id ?? null;
     clientId = (data as any)?.client_id ?? null;
+    fraisTransportType = ((data as any)?.type_frais_transport ?? null) as typeof fraisTransportType;
+    fraisTransportMontant = Number((data as any)?.montant_frais_transport ?? 0);
   } else {
     const { data } = await supabaseAdmin
       .from("proformas")
@@ -188,13 +192,19 @@ export async function loadPublicPdfPayload(
       const remiseLigne = Number(t.total_remises_lignes ?? 0);
       const remiseGlobale = Number(t.remise_globale_montant ?? 0);
       const ht = Number(t.total_ht_net ?? brut - remiseLigne - remiseGlobale);
+      // Facture : le total à payer inclut les frais de transport (source unique
+      // de vérité = factures.montant_total = total produits après remises + frais).
+      const frais = fraisTransportType && fraisTransportMontant > 0 ? fraisTransportMontant : 0;
       totals = {
         totalVente: brut || undefined,
         remiseLigneTotal: remiseLigne || undefined,
         remiseGlobalePct: Number(t.remise_globale_pct ?? 0) || undefined,
         remiseGlobale: remiseGlobale || undefined,
         montantHT: ht || undefined,
-        totalTTC: ht || undefined,
+        totalTTC: (ht + frais) || undefined,
+        ...(frais > 0
+          ? { fraisTransportType, fraisTransportMontant: frais }
+          : {}),
       };
     }
   }
