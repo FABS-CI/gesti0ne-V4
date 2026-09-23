@@ -81,6 +81,8 @@ export async function loadPublicPdfPayload(
   // Résolution de la commande source (factures / proformas s'y rattachent)
   let commandeId: string | null = null;
   let clientId: string | null = null;
+  let fraisTransportType: "livraison" | "expedition" | null = null;
+  let fraisTransportMontant = 0;
   if (doc.type === "COMMANDE") {
     commandeId = doc.id;
     const { data } = await supabaseAdmin
