@@ -9256,25 +9256,17 @@ export type Database = {
       user_departement_id: { Args: { _user_id: string }; Returns: string }
       user_depot_ids: { Args: { _user_id: string }; Returns: string[] }
       user_service_id: { Args: { _user_id: string }; Returns: string }
-      valider_commande:
-        | {
-            Args: { _commande_id: string }
-            Returns: {
-              bl_reference: string
-              facture_reference: string
-            }[]
-          }
-        | {
-            Args: {
-              _commande_id: string
-              _montant_frais_transport?: number
-              _type_frais_transport?: string
-            }
-            Returns: {
-              bl_reference: string
-              facture_reference: string
-            }[]
-          }
+      valider_commande: {
+        Args: {
+          _commande_id: string
+          _montant_frais_transport?: number
+          _type_frais_transport?: string
+        }
+        Returns: {
+          bl_reference: string
+          facture_reference: string
+        }[]
+      }
       valider_decaissement_tournee: {
         Args: {
           _commentaire?: string

@@ -204,6 +204,13 @@
       "when": 1790153525244,
       "tag": "0028_frais_transport_commandes_factures",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1790153548062,
+      "tag": "0029_drop_valider_commande_ancienne_signature",
+      "breakpoints": true
     }
   ]
 }
