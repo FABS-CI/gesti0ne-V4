@@ -191,8 +191,11 @@ export class BaseDocument {
     const color = COLORS.bleuTampon;
 
     // Repère local du tampon (origine = coin bas-gauche du cadre), pivoté de `angle`.
-    const cx = PAGE.w / 2;
-    const cy = PAGE.h / 2 + 10;
+    // Positionné sous le bloc des totaux : ne recouvre ni le tableau des
+    // articles, ni les montants, ni le QR code.
+    const cx = PAGE.w / 2 - 55;
+    const cy = 290;
+
     const ox = cx - (side / 2) * cos + (side / 2) * sin;
     const oy = cy - (side / 2) * sin - (side / 2) * cos;
     const toPage = (lx: number, ly: number) => ({
