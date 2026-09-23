@@ -183,18 +183,70 @@ export class BaseDocument {
     if (this.data.type !== "Facture" || paiement?.statut !== "PAYÉE") return;
 
     const label = "PAYÉ";
-    const size = 58;
+    const angle = 16;
+    const rad = (angle * Math.PI) / 180;
+    const cos = Math.cos(rad);
+    const sin = Math.sin(rad);
+    const side = 200;
+    const color = COLORS.bleuTampon;
+
+    // Repère local du tampon (origine = coin bas-gauche du cadre), pivoté de `angle`.
+    // Positionné sous le bloc des totaux : ne recouvre ni le tableau des
+    // articles, ni les montants, ni le QR code.
+    const cx = PAGE.w / 2 - 55;
+    const cy = 290;
+
+    const ox = cx - (side / 2) * cos + (side / 2) * sin;
+    const oy = cy - (side / 2) * sin - (side / 2) * cos;
+    const toPage = (lx: number, ly: number) => ({
+      x: ox + lx * cos - ly * sin,
+      y: oy + lx * sin + ly * cos,
+    });
+
+    // Double liseré : cadre extérieur épais + cadre intérieur fin.
+    const frames: Array<{ inset: number; thickness: number; opacity: number }> = [
+      { inset: 0, thickness: 5, opacity: 0.2 },
+      { inset: 9, thickness: 1.6, opacity: 0.16 },
+    ];
+    frames.forEach((f) => {
+      const p = toPage(f.inset, f.inset);
+      this.page.drawRectangle({
+        x: p.x,
+        y: p.y,
+        width: side - f.inset * 2,
+        height: side - f.inset * 2,
+        borderColor: color,
+        borderWidth: f.thickness,
+        borderOpacity: f.opacity,
+        opacity: 0,
+        rotate: degrees(angle),
+      });
+    });
+
+    // Texte : plusieurs passes très légèrement décalées pour un rendu d'encre irrégulier.
+    const size = 62;
     const labelW = this.fonts.bold.widthOfTextAtSize(label, size);
-    this.page.drawText(label, {
-      x: (PAGE.w - labelW) / 2 - 12,
-      y: PAGE.h / 2 - 20,
-      size,
-      font: this.fonts.bold,
-      color: COLORS.bleuTampon,
-      opacity: 0.14,
-      rotate: degrees(28),
+    const lx = (side - labelW) / 2;
+    const ly = (side - size * 0.72) / 2;
+    const passes = [
+      { dx: 0, dy: 0, opacity: 0.2 },
+      { dx: 0.9, dy: 0.7, opacity: 0.09 },
+      { dx: -0.8, dy: -0.6, opacity: 0.07 },
+    ];
+    passes.forEach((p) => {
+      const pt = toPage(lx + p.dx, ly + p.dy);
+      this.page.drawText(label, {
+        x: pt.x,
+        y: pt.y,
+        size,
+        font: this.fonts.bold,
+        color,
+        opacity: p.opacity,
+        rotate: degrees(angle),
+      });
     });
   }
+
 
   drawHeader() {
     const yTop = PAGE.h - 25;
@@ -317,19 +369,6 @@ export class BaseDocument {
     this.page.drawText("BANQUES", { x: MARGINS.x + colW * 2, y: yBot, size: footerTextSize + 1, font: this.fonts.bold });
     this.page.drawText("CORIS BANK: 01011 007630824101 34", { x: MARGINS.x + colW * 2, y: yBot - 10, size: footerTextSize, font: this.fonts.regular });
     this.page.drawText("SGBCI: 01123012343259990 95", { x: MARGINS.x + colW * 2, y: yBot - 19, size: footerTextSize, font: this.fonts.regular });
-
-    if (this.data.type === "Facture") {
-      const warningText = "IMPORTANT : Seuls les paiements effectués sur les numéros officiels indiqués au bloc CONTACT sont valables.";
-      const warnY = 75;
-      const warnW1 = this.fonts.bold.widthOfTextAtSize(warningText, 8);
-      this.page.drawText(warningText, {
-        x: MARGINS.x + (CONTENT_W - warnW1) / 2,
-        y: warnY + 5,
-        size: 8,
-        font: this.fonts.bold,
-        color: COLORS.rougeFabs,
-      });
-    }
 
     const pageCount = this.doc.getPageCount();
     const currPage = this.doc.getPages().indexOf(this.page) + 1;
