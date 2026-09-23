@@ -162,17 +162,9 @@ export async function generateUnifiedAchatPDF(
     remiseGlobale: data.remiseGlobale || 0,
     remiseGlobalePct: data.remiseGlobalePct || 0,
     tva: data.tva || 0,
-    totalAPayer: 0,
-    montantLettres: "",
+    totalAPayer: data.totalTTC || data.montantHT || data.totalVente || 0,
+    montantLettres: (data as any).montantLettres || (data as any).montantEnLettres || numberToLetters(data.totalTTC || data.montantHT || 0),
   };
-  // Source de vérité unique : SOUS-TOTAL − remises + frais + TVA = TOTAL À PAYER.
-  const computedTotal = Math.round(
-    totals.sousTotal - totals.remiseLignes - totals.remiseGlobale + (Number((totals as any).frais) || 0) + totals.tva,
-  );
-  totals.totalAPayer = totals.sousTotal > 0
-    ? Math.max(0, computedTotal)
-    : (data.totalTTC || data.montantHT || 0);
-  totals.montantLettres = numberToLetters(totals.totalAPayer);
 
   const doc = new CommercialDocument(docBase, totals);
   await doc.init();
