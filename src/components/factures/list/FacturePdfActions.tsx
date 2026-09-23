@@ -37,6 +37,8 @@ export function FacturePdfActions({ facture: f, pdfState: st }: Props) {
     return generateFacturePDF({
       ...clientInfo,
       ...totals,
+      id: f.facture_id,
+      facture_id: f.facture_id,
       reference: f.reference,
       date: f.date_facture,
       clientNom: clientInfo.clientNom ?? f.client_nom,

@@ -21,3 +21,8 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Reçu PDF multi-factures
 - [x] Analyse des ventes : CA facturé / CA encaissé / Reste à encaisser (KPI, tableau produits, export Excel)
 - [ ] Tests E2E navigateur du parcours complet (en attente d'autorisation de session de test)
+
+## Correctifs PDF facture & validation transport
+- [ ] PDF depuis Commandes et Factures : identifiant facture transmis, paiement affiché
+- [ ] Validation immédiate : fenêtre transport et transmission atomique des frais
+- [ ] Vérifications ciblées sur FAC-2026-00024 et création de commande

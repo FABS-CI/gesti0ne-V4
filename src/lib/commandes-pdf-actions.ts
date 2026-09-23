@@ -142,7 +142,7 @@ export async function viewBonCommande(c: Commande) {
 export async function buildFactureBlob(c: Commande) {
   const { data: fac } = await supabase
     .from("factures")
-    .select("reference, date_facture")
+    .select("facture_id, reference, date_facture")
     .eq("commande_id", c.commande_id)
     .maybeSingle();
   if (!fac) {
@@ -157,6 +157,8 @@ export async function buildFactureBlob(c: Commande) {
   const blob = await generateFacturePDF({
     ...clientInfo,
     ...totals,
+    id: fac.facture_id,
+    facture_id: fac.facture_id,
     reference: fac.reference,
     date: fac.date_facture,
     clientNom: clientInfo.clientNom ?? c.client_nom,
