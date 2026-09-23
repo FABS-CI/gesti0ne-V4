@@ -367,19 +367,6 @@ export class BaseDocument {
     this.page.drawText("CORIS BANK: 01011 007630824101 34", { x: MARGINS.x + colW * 2, y: yBot - 10, size: footerTextSize, font: this.fonts.regular });
     this.page.drawText("SGBCI: 01123012343259990 95", { x: MARGINS.x + colW * 2, y: yBot - 19, size: footerTextSize, font: this.fonts.regular });
 
-    if (this.data.type === "Facture") {
-      const warningText = "IMPORTANT : Seuls les paiements effectués sur les numéros officiels indiqués au bloc CONTACT sont valables.";
-      const warnY = 75;
-      const warnW1 = this.fonts.bold.widthOfTextAtSize(warningText, 8);
-      this.page.drawText(warningText, {
-        x: MARGINS.x + (CONTENT_W - warnW1) / 2,
-        y: warnY + 5,
-        size: 8,
-        font: this.fonts.bold,
-        color: COLORS.rougeFabs,
-      });
-    }
-
     const pageCount = this.doc.getPageCount();
     const currPage = this.doc.getPages().indexOf(this.page) + 1;
     const paginText = `Page ${currPage} / ${pageCount}`;
