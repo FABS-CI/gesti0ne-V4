@@ -39,6 +39,8 @@ import { NumberField } from "./form/NumberField";
 import { InfoCell, SummaryCard } from "./form/SummaryCard";
 import { LignesSection, computeLigne } from "./form/LignesSection";
 import { friendlyError } from "@/lib/friendly-error";
+import { FraisTransportDialog } from "@/components/commandes/FraisTransportDialog";
+import type { FraisTransport } from "@/lib/cycle-vente";
 
 const ligneSchema = z.object({
   produit_id: z.string().min(1, "Sélectionnez un produit"),
@@ -100,6 +102,7 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
   const canValiderCommande = has("commandes.valider");
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [immediateConfirmOpen, setImmediateConfirmOpen] = useState(false);
+  const [fraisTransportOpen, setFraisTransportOpen] = useState(false);
   const [pendingValues, setPendingValues] = useState<CommandeFormValues | null>(null);
   const [recap, setRecap] = useState<{
     commandeId: string;
@@ -209,7 +212,12 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
   const idempotencyKey = useMemo(() => newIdempotencyKey("cmd"), []);
 
   const mutation = useMutation({
-    mutationFn: (values: CommandeFormValues & { auto_validate?: boolean }) => {
+    mutationFn: (
+      values: CommandeFormValues & {
+        auto_validate?: boolean;
+        frais_transport?: FraisTransport;
+      },
+    ) => {
       if (mode === "create" && typeof values.auto_validate !== "boolean") {
         throw new Error("Choisissez « Valider la facture » ou « Mettre en attente »");
       }
@@ -226,6 +234,10 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
         remise_globale_pct: values.remise_globale_pct || 0,
         taux_tva: values.appliquer_tva ? (values.taux_tva || 0) : 0,
         auto_validate: values.auto_validate,
+        type_frais_transport: values.frais_transport?.type ?? null,
+        montant_frais_transport: values.frais_transport?.type
+          ? values.frais_transport.montant
+          : null,
         depot_id: values.depot_id || null,
         lignes: values.lignes.map((l) => ({
           produit_id: l.produit_id,
@@ -317,7 +329,7 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
     () => toast.error("Veuillez corriger les erreurs du formulaire"),
   );
 
-  const confirmSubmit = (validate: boolean = false) => {
+  const confirmSubmit = (validate: boolean = false, frais?: FraisTransport) => {
     if (!pendingValues) return;
     console.info("[commande.workflow] Choix utilisateur confirmé", {
       decision: validate ? "valider_facture" : "mettre_en_attente",
@@ -326,6 +338,7 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
     mutation.mutate({ 
       ...pendingValues, 
       auto_validate: validate,
+      frais_transport: validate ? frais : undefined,
       client_nom: selectedClient?.nom || pendingValues.etablissement || null
     } as any);
   };
@@ -840,7 +853,7 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
               className="justify-start h-auto py-3 px-4 flex-col items-start gap-1"
               onClick={() => {
                 setImmediateConfirmOpen(false);
-                confirmSubmit(true);
+                setFraisTransportOpen(true);
               }}
             >
               <span className="font-semibold text-base">Option 1 : Valider la facture</span>
@@ -854,6 +867,16 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <FraisTransportDialog
+        open={fraisTransportOpen}
+        pending={mutation.isPending}
+        onOpenChange={setFraisTransportOpen}
+        onConfirm={(frais) => {
+          if (mutation.isPending) return;
+          setFraisTransportOpen(false);
+          confirmSubmit(true, frais);
+        }}
+      />
     </form>
   );
 }

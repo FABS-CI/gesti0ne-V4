@@ -93,6 +93,8 @@ export type CreerCommandePayload = {
   depot_id?: string | null;
   idempotency_key?: string | null;
   auto_validate: boolean;
+  type_frais_transport?: "livraison" | "expedition" | null;
+  montant_frais_transport?: number | null;
   lignes: CreerCommandeLignePayload[];
 };
 
