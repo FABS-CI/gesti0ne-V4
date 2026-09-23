@@ -91,14 +91,28 @@ export async function generateUnifiedCommercialPDF(
         ? "FRAIS DE LIVRAISON"
         : "FRAIS D'EXPÉDITION"
       : undefined,
-    totalAPayer: data.totalTTC || data.montantHT || data.totalVente || 0,
-    montantLettres: (data as any).montantLettres || (data as any).montantEnLettres || numberToLetters(data.totalTTC || data.montantHT || 0),
+    totalAPayer: 0,
+    montantLettres: "",
   };
+  // Source de vérité unique : SOUS-TOTAL − remises + frais + TVA = TOTAL À PAYER.
+  const computedTotal = Math.round(
+    totals.sousTotal - totals.remiseLignes - totals.remiseGlobale + totals.frais + totals.tva,
+  );
+  totals.totalAPayer = totals.sousTotal > 0
+    ? Math.max(0, computedTotal)
+    : (data.totalTTC || data.montantHT || 0);
+  totals.montantLettres = numberToLetters(totals.totalAPayer);
 
   // Résoudre le paiement avant l'initialisation : l'en-tête et le tampon sont
   // dessinés dès la création de la première page.
   if (type === "Facture") {
     docBase.paiement = await resolveInvoicePayment(docBase.id, data, totals.totalAPayer);
+    // Contrôle de cohérence : RESTE = TOTAL − PAYÉ, toujours.
+    if (docBase.paiement) {
+      const paye = Math.max(0, Number(docBase.paiement.montantPaye) || 0);
+      docBase.paiement.montantPaye = paye;
+      docBase.paiement.resteAPayer = Math.max(0, totals.totalAPayer - paye);
+    }
   }
 
   const doc = new CommercialDocument(docBase, totals);
@@ -148,9 +162,17 @@ export async function generateUnifiedAchatPDF(
     remiseGlobale: data.remiseGlobale || 0,
     remiseGlobalePct: data.remiseGlobalePct || 0,
     tva: data.tva || 0,
-    totalAPayer: data.totalTTC || data.montantHT || data.totalVente || 0,
-    montantLettres: (data as any).montantLettres || (data as any).montantEnLettres || numberToLetters(data.totalTTC || data.montantHT || 0),
+    totalAPayer: 0,
+    montantLettres: "",
   };
+  // Source de vérité unique : SOUS-TOTAL − remises + frais + TVA = TOTAL À PAYER.
+  const computedTotal = Math.round(
+    totals.sousTotal - totals.remiseLignes - totals.remiseGlobale + totals.frais + totals.tva,
+  );
+  totals.totalAPayer = totals.sousTotal > 0
+    ? Math.max(0, computedTotal)
+    : (data.totalTTC || data.montantHT || 0);
+  totals.montantLettres = numberToLetters(totals.totalAPayer);
 
   const doc = new CommercialDocument(docBase, totals);
   await doc.init();
