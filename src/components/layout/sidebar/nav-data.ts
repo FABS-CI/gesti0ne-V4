@@ -89,6 +89,7 @@ export const groups: Group[] = [
       { title: "Business Intelligence", url: "/bi-analytics", icon: BarChart3, ready: true },
       { title: "Rapports", url: "/rapports", icon: BarChart3, ready: true },
       { title: "Analyse des ventes", url: "/rapports/analyse", icon: BarChart3, ready: true },
+      { title: "Frais de transport", url: "/rapports/transport", icon: BarChart3, ready: true },
     ],
   },
   {

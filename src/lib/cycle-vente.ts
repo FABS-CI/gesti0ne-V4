@@ -99,17 +99,31 @@ export async function createFactureFromCommande(commande: Commande) {
   return { reference };
 }
 
+export type FraisTransport = {
+  /** null = aucun frais de transport (cas par défaut). */
+  type: "livraison" | "expedition" | null;
+  montant: number | null;
+};
+
 /**
  * Valide une commande (rôle requis) :
  * - passe la commande au statut "validee"
+ * - enregistre les frais de transport éventuels (un seul type, ou aucun)
  * - crée la facture définitive
  * - crée le bon de livraison
  * Tout est fait de manière atomique côté DB via la fonction `valider_commande`.
  */
-export async function validerCommande(commandeId: string) {
+export async function validerCommande(commandeId: string, frais?: FraisTransport) {
+  const type = frais?.type ?? null;
+  const montant = type ? Number(frais?.montant ?? 0) : null;
+  if (type && (montant === null || Number.isNaN(montant) || montant < 0)) {
+    throw new Error("Montant des frais de transport invalide");
+  }
   const { data, error } = await supabase.rpc("valider_commande", {
     _commande_id: commandeId,
-  });
+    _type_frais_transport: type,
+    _montant_frais_transport: montant,
+  } as never);
   if (error) throw error;
   const row = Array.isArray(data) ? data[0] : data;
   const res = row as { facture_reference: string; bl_reference: string };

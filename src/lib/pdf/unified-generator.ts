@@ -69,12 +69,27 @@ export async function generateUnifiedCommercialPDF(
     }
   };
 
+  // Frais de transport : une seule ligne possible (livraison OU expédition), ou aucune.
+  const fraisTransportType = (data as any).fraisTransportType as
+    | "livraison"
+    | "expedition"
+    | null
+    | undefined;
+  const fraisTransportMontant = Number((data as any).fraisTransportMontant ?? 0);
+  const hasFraisTransport = Boolean(fraisTransportType) && fraisTransportMontant > 0;
+
   const totals = {
     sousTotal: data.totalVente || 0,
     remiseLignes: data.remiseLigneTotal || 0,
     remiseGlobale: data.remiseGlobale || data.remise || 0,
     remiseGlobalePct: data.remiseGlobalePct || data.remisePct || 0,
     tva: data.tva || 0,
+    frais: hasFraisTransport ? fraisTransportMontant : 0,
+    fraisLabel: hasFraisTransport
+      ? fraisTransportType === "livraison"
+        ? "FRAIS DE LIVRAISON"
+        : "FRAIS D'EXPÉDITION"
+      : undefined,
     totalAPayer: data.totalTTC || data.montantHT || data.totalVente || 0,
     montantLettres: (data as any).montantLettres || (data as any).montantEnLettres || numberToLetters(data.totalTTC || data.montantHT || 0),
   };

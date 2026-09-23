@@ -372,6 +372,38 @@ function FactureDetailPage() {
               )}
             </TableBody>
           </Table>
+
+          {(() => {
+            const typeTransport = (facture as any).type_frais_transport as
+              | "livraison"
+              | "expedition"
+              | null;
+            const fraisTransport = Number((facture as any).montant_frais_transport ?? 0);
+            const total = Number(facture.montant_total ?? 0);
+            const sousTotal = total - (typeTransport ? fraisTransport : 0);
+            return (
+              <div className="mt-4 space-y-1 border-t pt-3 text-sm sm:ml-auto sm:max-w-xs">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Sous-total produits</span>
+                  <span>{formatFCFA(sousTotal)}</span>
+                </div>
+                {typeTransport && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">
+                      {typeTransport === "livraison"
+                        ? "Frais de livraison"
+                        : "Frais d'expédition"}
+                    </span>
+                    <span>{formatFCFA(fraisTransport)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between border-t pt-1 font-bold">
+                  <span>TOTAL</span>
+                  <span>{formatFCFA(total)}</span>
+                </div>
+              </div>
+            );
+          })()}
         </CardContent>
       </Card>
 

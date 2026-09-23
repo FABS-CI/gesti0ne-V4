@@ -1399,6 +1399,7 @@ export type Database = {
           etablissement: string | null
           exercice_id: string | null
           idempotency_key: string | null
+          montant_frais_transport: number | null
           montant_total: number
           montant_ttc: number
           montant_tva: number
@@ -1422,6 +1423,7 @@ export type Database = {
           total_ht_net: number
           total_quantite: number
           total_remises_lignes: number
+          type_frais_transport: string | null
           updated_at: string
           valide_le: string | null
           valide_par: string | null
@@ -1443,6 +1445,7 @@ export type Database = {
           etablissement?: string | null
           exercice_id?: string | null
           idempotency_key?: string | null
+          montant_frais_transport?: number | null
           montant_total?: number
           montant_ttc?: number
           montant_tva?: number
@@ -1466,6 +1469,7 @@ export type Database = {
           total_ht_net?: number
           total_quantite?: number
           total_remises_lignes?: number
+          type_frais_transport?: string | null
           updated_at?: string
           valide_le?: string | null
           valide_par?: string | null
@@ -1487,6 +1491,7 @@ export type Database = {
           etablissement?: string | null
           exercice_id?: string | null
           idempotency_key?: string | null
+          montant_frais_transport?: number | null
           montant_total?: number
           montant_ttc?: number
           montant_tva?: number
@@ -1510,6 +1515,7 @@ export type Database = {
           total_ht_net?: number
           total_quantite?: number
           total_remises_lignes?: number
+          type_frais_transport?: string | null
           updated_at?: string
           valide_le?: string | null
           valide_par?: string | null
@@ -2711,11 +2717,13 @@ export type Database = {
           date_facture: string
           exercice_id: string | null
           facture_id: string
+          montant_frais_transport: number | null
           montant_paye: number
           montant_total: number
           notes: string | null
           reference: string
           statut: string
+          type_frais_transport: string | null
           updated_at: string
         }
         Insert: {
@@ -2727,11 +2735,13 @@ export type Database = {
           date_facture?: string
           exercice_id?: string | null
           facture_id?: string
+          montant_frais_transport?: number | null
           montant_paye?: number
           montant_total?: number
           notes?: string | null
           reference?: string
           statut?: string
+          type_frais_transport?: string | null
           updated_at?: string
         }
         Update: {
@@ -2743,11 +2753,13 @@ export type Database = {
           date_facture?: string
           exercice_id?: string | null
           facture_id?: string
+          montant_frais_transport?: number | null
           montant_paye?: number
           montant_total?: number
           notes?: string | null
           reference?: string
           statut?: string
+          type_frais_transport?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -8018,6 +8030,7 @@ export type Database = {
           etablissement: string | null
           exercice_id: string | null
           idempotency_key: string | null
+          montant_frais_transport: number | null
           montant_total: number
           montant_ttc: number
           montant_tva: number
@@ -8041,6 +8054,7 @@ export type Database = {
           total_ht_net: number
           total_quantite: number
           total_remises_lignes: number
+          type_frais_transport: string | null
           updated_at: string
           valide_le: string | null
           valide_par: string | null
@@ -8732,6 +8746,7 @@ export type Database = {
           etablissement: string | null
           exercice_id: string | null
           idempotency_key: string | null
+          montant_frais_transport: number | null
           montant_total: number
           montant_ttc: number
           montant_tva: number
@@ -8755,6 +8770,7 @@ export type Database = {
           total_ht_net: number
           total_quantite: number
           total_remises_lignes: number
+          type_frais_transport: string | null
           updated_at: string
           valide_le: string | null
           valide_par: string | null
@@ -8797,6 +8813,18 @@ export type Database = {
         Returns: Json
       }
       rapport_flop_produits: { Args: { _filtres?: Json }; Returns: Json }
+      rapport_frais_transport: {
+        Args: {
+          _client_id?: string
+          _date_au?: string
+          _date_du?: string
+          _exercice_id?: string
+          _granularite?: string
+          _statut?: string
+          _type?: string
+        }
+        Returns: Json
+      }
       rapport_kpi: { Args: { _filtres?: Json }; Returns: Json }
       rapport_lignes_filtrees: {
         Args: { _filtres?: Json }
@@ -9229,7 +9257,11 @@ export type Database = {
       user_depot_ids: { Args: { _user_id: string }; Returns: string[] }
       user_service_id: { Args: { _user_id: string }; Returns: string }
       valider_commande: {
-        Args: { _commande_id: string }
+        Args: {
+          _commande_id: string
+          _montant_frais_transport?: number
+          _type_frais_transport?: string
+        }
         Returns: {
           bl_reference: string
           facture_reference: string

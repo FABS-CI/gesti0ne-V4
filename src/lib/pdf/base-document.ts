@@ -91,6 +91,8 @@ export type DocTotals = {
   remiseGlobalePct?: number;
   tva?: number;
   frais?: number;
+  /** Libellé de la ligne de frais (ex. « FRAIS DE LIVRAISON »). Défaut : « FRAIS ». */
+  fraisLabel?: string;
   totalAPayer: number;
   montantLettres: string;
 };
@@ -714,7 +716,7 @@ export class BaseDocument {
       rows.push({ label: "TVA", value: this.totals.tva });
     }
     if (this.totals.frais && this.totals.frais > 0) {
-      rows.push({ label: "FRAIS", value: this.totals.frais });
+      rows.push({ label: this.totals.fraisLabel || "FRAIS", value: this.totals.frais });
     }
 
     if (this.data.type === "Facture" && paiement) {

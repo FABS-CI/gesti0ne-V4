@@ -77,6 +77,9 @@ export type DocBase = {
   tvaPct?: number;
   tva?: number;
   totalTTC?: number;
+  /** Frais de transport : « livraison » OU « expedition », jamais les deux. */
+  fraisTransportType?: "livraison" | "expedition" | null;
+  fraisTransportMontant?: number;
   paye?: number;
   soldeDu?: number;
   livreurNom?: string | null;
