@@ -99,14 +99,7 @@ export function CommandeActions({
           variant="ghost"
           size="icon"
           title="Valider la commande (génère facture + BL)"
-          onClick={() => {
-            if (
-              confirm(
-                `Valider la commande ${c.reference} ? Cela génère la facture définitive et le bon de livraison.`,
-              )
-            )
-              onValider(c.commande_id);
-          }}
+          onClick={() => onValider(c.commande_id)}
           disabled={validerPending}
         >
           <CheckCircle className="h-4 w-4 text-emerald-600" />
