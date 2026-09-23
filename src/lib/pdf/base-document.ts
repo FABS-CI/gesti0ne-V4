@@ -60,6 +60,14 @@ export type DocBase = {
   valide_compta_par_nom?: string | null;
   valide_compta_at?: string | null;
   lignes?: any[];
+  certification?: {
+    statut: string | null;
+    verification_url: string | null;
+    token?: string | null;
+    canonical_hash?: string | null;
+    version?: number | null;
+    certified_at?: string | null;
+  } | null;
   client: {
     nom: string;
     ville?: string;
@@ -488,7 +496,10 @@ export class BaseDocument {
         const { ensureVerificationSafe, isCertificationActive } = await import(
           "@/lib/certification/auto-certify"
         );
-        const cert = await ensureVerificationSafe(this.data.reference);
+        // La page publique fournit une certification déjà contrôlée côté serveur.
+        // Elle ne possède volontairement aucune session ERP et ne doit donc jamais
+        // rappeler la fonction de certification authentifiée.
+        const cert = this.data.certification ?? await ensureVerificationSafe(this.data.reference);
         const url =
           cert?.verification_url ??
           (cert?.token ? buildQrUrl(cert.token) : buildQrUrl(this.data.reference));

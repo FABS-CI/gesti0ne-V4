@@ -7,7 +7,13 @@
  * fournit jamais l'identifiant du document : il est résolu côté serveur à
  * partir du jeton vérifié.
  */
-import { verifyByReference, verifyByToken, loadDocumentData, type DocType } from "./certification.server";
+import {
+  buildVerificationUrl,
+  verifyByReference,
+  verifyByToken,
+  loadDocumentData,
+  type DocType,
+} from "./certification.server";
 
 const DOWNLOADABLE: DocType[] = ["FACTURE", "PROFORMA", "COMMANDE"];
 
@@ -64,6 +70,8 @@ export async function loadPublicPdfPayload(
     result = await verifyByReference(segment);
   }
   if (result.status !== "AUTHENTIC") return null;
+
+  const verifiedToken = tokenParam ?? segment;
 
   const doc = await loadDocumentData(result.document.reference);
   if (!doc || !DOWNLOADABLE.includes(doc.type)) return null;
@@ -207,6 +215,12 @@ export async function loadPublicPdfPayload(
       totalVente: doc.data.montant,
       montantHT: doc.data.montant,
       paiement: doc.data.paiement ?? undefined,
+      certification: {
+        statut: "AUTHENTIC",
+        verification_url: buildVerificationUrl(verifiedToken),
+        canonical_hash: result.document.canonical_hash ?? null,
+        certified_at: result.document.certified_at ?? null,
+      },
       ...clientInfo,
       ...totals,
       lignes: toDocLignes(rawLignes, produits),

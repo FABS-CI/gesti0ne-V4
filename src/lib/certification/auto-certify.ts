@@ -1,4 +1,7 @@
-import { ensureCertificationFn } from "./certification.functions";
+import {
+  ensureCertificationFn,
+  ensureVerificationTokenFn,
+} from "./certification.functions";
 
 export type AutoCertification = {
   certified: boolean;
@@ -52,7 +55,6 @@ export async function ensureVerificationSafe(
 ): Promise<VerificationToken | null> {
   if (!reference || !isCertifiable(reference)) return null;
   try {
-    const { ensureVerificationTokenFn } = await import("./certification.functions");
     return (await ensureVerificationTokenFn({ data: { reference } })) as VerificationToken;
   } catch (e) {
     console.error("Jeton de vérification indisponible", e);

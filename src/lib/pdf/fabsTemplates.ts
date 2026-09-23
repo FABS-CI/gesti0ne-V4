@@ -80,6 +80,15 @@ export type DocBase = {
   /** Frais de transport : « livraison » OU « expedition », jamais les deux. */
   fraisTransportType?: "livraison" | "expedition" | null;
   fraisTransportMontant?: number;
+  /** Certification déjà vérifiée côté serveur, notamment pour un téléchargement public. */
+  certification?: {
+    statut: string | null;
+    verification_url: string | null;
+    token?: string | null;
+    canonical_hash?: string | null;
+    version?: number | null;
+    certified_at?: string | null;
+  } | null;
   paye?: number;
   soldeDu?: number;
   livreurNom?: string | null;

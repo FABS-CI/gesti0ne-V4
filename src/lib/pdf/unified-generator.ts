@@ -58,6 +58,7 @@ export async function generateUnifiedCommercialPDF(
     reference: data.reference,
     date: data.date,
     commercial: (data as any).commercialNom || (data as any).representant || "",
+    certification: data.certification ?? null,
     client: {
       nom: data.clientNom || "",
       ville: data.villeClient || "",
