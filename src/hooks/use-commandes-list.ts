@@ -7,6 +7,7 @@ import {
   createFactureFromCommande,
   validerCommande,
   type ColisageInput,
+  type FraisTransport,
 } from "@/lib/cycle-vente";
 import type { AdvancedFilters } from "@/components/search/AdvancedSearchBar";
 import {
