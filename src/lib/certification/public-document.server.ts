@@ -92,11 +92,13 @@ export async function loadPublicPdfPayload(
   } else if (doc.type === "FACTURE") {
     const { data } = await supabaseAdmin
       .from("factures")
-      .select("commande_id, client_id")
+      .select("commande_id, client_id, type_frais_transport, montant_frais_transport")
       .eq("facture_id", doc.id)
       .maybeSingle();
     commandeId = (data as any)?.commande_id ?? null;
     clientId = (data as any)?.client_id ?? null;
+    fraisTransportType = ((data as any)?.type_frais_transport ?? null) as typeof fraisTransportType;
+    fraisTransportMontant = Number((data as any)?.montant_frais_transport ?? 0);
   } else {
     const { data } = await supabaseAdmin
       .from("proformas")
