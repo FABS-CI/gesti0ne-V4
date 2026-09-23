@@ -16,6 +16,7 @@ import { CommandesKpis } from "@/components/commandes/list/CommandesKpis";
 import { CommandesToolbar } from "@/components/commandes/list/CommandesToolbar";
 import { CommandesTable } from "@/components/commandes/list/CommandesTable";
 import { DeleteCommandeDialog } from "@/components/commandes/list/DeleteCommandeDialog";
+import { FraisTransportDialog } from "@/components/commandes/FraisTransportDialog";
 import { exportCommandesCsv, exportCommandesPdf } from "@/lib/commandes-list-export";
 import { TablePagination } from "@/components/layout/TablePagination";
 import { RenderProfiler } from "@/hooks/use-render-profiler";
@@ -251,6 +252,21 @@ function CommandesPage() {
             );
           }}
         />
+
+        <FraisTransportDialog
+          open={commandeAValider !== null}
+          reference={items.find((c) => c.commande_id === commandeAValider)?.reference}
+          pending={validerMutation.isPending}
+          onOpenChange={(o) => !o && !validerMutation.isPending && setCommandeAValider(null)}
+          onConfirm={(frais) => {
+            if (!commandeAValider || validerMutation.isPending) return;
+            validerMutation.mutate(
+              { id: commandeAValider, frais },
+              { onSuccess: () => setCommandeAValider(null) },
+            );
+          }}
+        />
+
       </div>
     </RenderProfiler>
   );
