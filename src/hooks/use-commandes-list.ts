@@ -120,7 +120,8 @@ export function useCommandesList({
   });
 
   const validerMutation = useMutation({
-    mutationFn: (id: string) => validerCommande(id),
+    mutationFn: (v: string | { id: string; frais?: FraisTransport }) =>
+      typeof v === "string" ? validerCommande(v) : validerCommande(v.id, v.frais),
     onSuccess: (res) => {
       toast.success(
         `Commande validée — Facture ${res.facture_reference} et BL ${res.bl_reference} créés`,
