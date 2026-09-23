@@ -28,6 +28,7 @@ export const COLORS = {
   rougeFabs: rgb(0.827, 0.184, 0.184), // #D32F2F (Couleur pour Remises)
   orangeFabs: rgb(0.96, 0.486, 0.0), // #F57C00
   orangeStatut: rgb(0.961, 0.620, 0.043), // #F59E0B (statut de paiement)
+  bleuElectrique: rgb(0, 0.341, 1), // #0057FF (séparation TOTAL À PAYER)
   bleuTampon: rgb(0, 0.141, 0.753), // #0024C0 (bleu du tampon Comptabilité)
   grisClair: rgb(0.968, 0.968, 0.968), // #F7F7F7
   orangeZebra: rgb(1, 0.953, 0.878), // #FFF3E0 (Orange très clair pour zebra)
@@ -762,19 +763,28 @@ export class BaseDocument {
     if (this.totals.remiseGlobale && this.totals.remiseGlobale > 0) {
       rows.push({ label: "REMISE GLOBALE", value: -this.totals.remiseGlobale });
     }
-    if (this.totals.tva && this.totals.tva > 0) {
-      rows.push({ label: "TVA", value: this.totals.tva });
-    }
     if (this.totals.frais && this.totals.frais > 0) {
       rows.push({ label: this.totals.fraisLabel || "FRAIS", value: this.totals.frais });
     }
-
-    if (this.data.type === "Facture" && paiement) {
-      rows.push({ label: "MONTANT PAYÉ", value: paiement.montantPaye, color: COLORS.orangeStatut });
-      rows.push({ label: "RESTE À PAYER", value: paiement.resteAPayer, color: COLORS.orangeStatut });
+    if (this.totals.tva && this.totals.tva > 0) {
+      rows.push({ label: "TVA", value: this.totals.tva });
     }
 
-    rows.forEach(row => {
+    const payRows: typeof rows = [];
+    if (this.data.type === "Facture" && paiement) {
+      const paye = Math.max(0, paiement.montantPaye || 0);
+      payRows.push({ label: "MONTANT PAYÉ", value: paye, color: COLORS.orangeStatut });
+      payRows.push({ label: "RESTE À PAYER", value: Math.max(0, this.totals.totalAPayer - paye), color: COLORS.orangeStatut });
+    }
+
+    // Aucun saut de page au milieu du bloc
+    const blockH = (rows.length + payRows.length) * 20 + 40 + 60;
+    if (curY - blockH < MARGINS.bottom) {
+      this.addNewPage();
+      curY = PAGE.h - 120;
+    }
+
+    const drawRow = (row: (typeof rows)[number]) => {
       let labelX = x + 5;
       this.page.drawText(row.label, { x: labelX, y: curY - 13, size: 8, font: this.fonts.regular, color: row.color ?? COLORS.noir });
       // Remise globale : afficher le pourcentage en rouge après le libellé
@@ -795,7 +805,12 @@ export class BaseDocument {
         color: row.color ?? (row.label.toLowerCase().includes('remise') ? COLORS.rougeFabs : COLORS.noir)
       });
       curY -= 20;
-    });
+    };
+    rows.forEach(drawRow);
+
+    // Barre de séparation bleu électrique avant TOTAL À PAYER
+    this.page.drawRectangle({ x, y: curY - 3, width: boxW, height: 2, color: COLORS.bleuElectrique });
+    curY -= 6;
 
     this.page.drawRectangle({
       x,
@@ -821,7 +836,12 @@ export class BaseDocument {
       color: COLORS.blanc,
     });
 
-    curY -= 34;
+    curY -= 22;
+    if (payRows.length) {
+      curY -= 4;
+      payRows.forEach(drawRow);
+    }
+    curY -= 12;
 
     const fullText = `Arrêté le présent document à la somme de : ${this.totals.montantLettres}`;
     const fontSize = 9.5;
