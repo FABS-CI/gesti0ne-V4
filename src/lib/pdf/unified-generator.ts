@@ -96,7 +96,7 @@ export async function generateUnifiedCommercialPDF(
   };
   // Source de vérité unique : SOUS-TOTAL − remises + frais + TVA = TOTAL À PAYER.
   const computedTotal = Math.round(
-    totals.sousTotal - totals.remiseLignes - totals.remiseGlobale + totals.frais + totals.tva,
+    totals.sousTotal - totals.remiseLignes - totals.remiseGlobale + (Number((totals as any).frais) || 0) + totals.tva,
   );
   totals.totalAPayer = totals.sousTotal > 0
     ? Math.max(0, computedTotal)
@@ -167,7 +167,7 @@ export async function generateUnifiedAchatPDF(
   };
   // Source de vérité unique : SOUS-TOTAL − remises + frais + TVA = TOTAL À PAYER.
   const computedTotal = Math.round(
-    totals.sousTotal - totals.remiseLignes - totals.remiseGlobale + totals.frais + totals.tva,
+    totals.sousTotal - totals.remiseLignes - totals.remiseGlobale + (Number((totals as any).frais) || 0) + totals.tva,
   );
   totals.totalAPayer = totals.sousTotal > 0
     ? Math.max(0, computedTotal)

@@ -28,6 +28,7 @@ export const COLORS = {
   rougeFabs: rgb(0.827, 0.184, 0.184), // #D32F2F (Couleur pour Remises)
   orangeFabs: rgb(0.96, 0.486, 0.0), // #F57C00
   orangeStatut: rgb(0.961, 0.620, 0.043), // #F59E0B (statut de paiement)
+  bleuElectrique: rgb(0, 0.341, 1), // #0057FF (séparation TOTAL À PAYER)
   bleuTampon: rgb(0, 0.141, 0.753), // #0024C0 (bleu du tampon Comptabilité)
   grisClair: rgb(0.968, 0.968, 0.968), // #F7F7F7
   orangeZebra: rgb(1, 0.953, 0.878), // #FFF3E0 (Orange très clair pour zebra)
@@ -808,7 +809,7 @@ export class BaseDocument {
     rows.forEach(drawRow);
 
     // Barre de séparation bleu électrique avant TOTAL À PAYER
-    this.page.drawRectangle({ x, y: curY - 3, width: boxW, height: 2, color: COLORS.bleuFabs });
+    this.page.drawRectangle({ x, y: curY - 3, width: boxW, height: 2, color: COLORS.bleuElectrique });
     curY -= 6;
 
     this.page.drawRectangle({
