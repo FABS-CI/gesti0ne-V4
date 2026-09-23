@@ -34,7 +34,7 @@ import {
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 import { formatFCFA } from "@/lib/format";
 import { exportCsv } from "@/lib/export-csv";
-import { useExerciceConsulteId } from "@/hooks/use-exercice-consulte";
+import { useExerciceConsulteId } from "@/contexts/ExerciceContext";
 import {
   getRapportFraisTransport,
   type FraisTransportFilters,

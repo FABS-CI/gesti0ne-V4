@@ -137,6 +137,7 @@ import { Route as AuthenticatedSpecimensNouveauRouteImport } from './routes/_aut
 import { Route as AuthenticatedSpecimensSpecimenIdRouteImport } from './routes/_authenticated/specimens.$specimenId'
 import { Route as AuthenticatedRetoursNouveauRouteImport } from './routes/_authenticated/retours.nouveau'
 import { Route as AuthenticatedRetoursRetourIdRouteImport } from './routes/_authenticated/retours.$retourId'
+import { Route as AuthenticatedRapportsTransportRouteImport } from './routes/_authenticated/rapports.transport'
 import { Route as AuthenticatedRapportsAnalyseRouteImport } from './routes/_authenticated/rapports.analyse'
 import { Route as AuthenticatedProformasProformaIdRouteImport } from './routes/_authenticated/proformas.$proformaId'
 import { Route as AuthenticatedProduitsAlertesRouteImport } from './routes/_authenticated/produits.alertes'
@@ -942,6 +943,12 @@ const AuthenticatedRetoursRetourIdRoute =
     path: '/$retourId',
     getParentRoute: () => AuthenticatedRetoursRoute,
   } as any)
+const AuthenticatedRapportsTransportRoute =
+  AuthenticatedRapportsTransportRouteImport.update({
+    id: '/transport',
+    path: '/transport',
+    getParentRoute: () => AuthenticatedRapportsRoute,
+  } as any)
 const AuthenticatedRapportsAnalyseRoute =
   AuthenticatedRapportsAnalyseRouteImport.update({
     id: '/analyse',
@@ -1536,6 +1543,7 @@ export interface FileRoutesByFullPath {
   '/produits/alertes': typeof AuthenticatedProduitsAlertesRoute
   '/proformas/$proformaId': typeof AuthenticatedProformasProformaIdRoute
   '/rapports/analyse': typeof AuthenticatedRapportsAnalyseRoute
+  '/rapports/transport': typeof AuthenticatedRapportsTransportRoute
   '/retours/$retourId': typeof AuthenticatedRetoursRetourIdRoute
   '/retours/nouveau': typeof AuthenticatedRetoursNouveauRoute
   '/specimens/$specimenId': typeof AuthenticatedSpecimensSpecimenIdRoute
@@ -1720,6 +1728,7 @@ export interface FileRoutesByTo {
   '/produits/alertes': typeof AuthenticatedProduitsAlertesRoute
   '/proformas/$proformaId': typeof AuthenticatedProformasProformaIdRoute
   '/rapports/analyse': typeof AuthenticatedRapportsAnalyseRoute
+  '/rapports/transport': typeof AuthenticatedRapportsTransportRoute
   '/retours/$retourId': typeof AuthenticatedRetoursRetourIdRoute
   '/retours/nouveau': typeof AuthenticatedRetoursNouveauRoute
   '/specimens/$specimenId': typeof AuthenticatedSpecimensSpecimenIdRoute
@@ -1928,6 +1937,7 @@ export interface FileRoutesById {
   '/_authenticated/produits/alertes': typeof AuthenticatedProduitsAlertesRoute
   '/_authenticated/proformas/$proformaId': typeof AuthenticatedProformasProformaIdRoute
   '/_authenticated/rapports/analyse': typeof AuthenticatedRapportsAnalyseRoute
+  '/_authenticated/rapports/transport': typeof AuthenticatedRapportsTransportRoute
   '/_authenticated/retours/$retourId': typeof AuthenticatedRetoursRetourIdRoute
   '/_authenticated/retours/nouveau': typeof AuthenticatedRetoursNouveauRoute
   '/_authenticated/specimens/$specimenId': typeof AuthenticatedSpecimensSpecimenIdRoute
@@ -2136,6 +2146,7 @@ export interface FileRouteTypes {
     | '/produits/alertes'
     | '/proformas/$proformaId'
     | '/rapports/analyse'
+    | '/rapports/transport'
     | '/retours/$retourId'
     | '/retours/nouveau'
     | '/specimens/$specimenId'
@@ -2320,6 +2331,7 @@ export interface FileRouteTypes {
     | '/produits/alertes'
     | '/proformas/$proformaId'
     | '/rapports/analyse'
+    | '/rapports/transport'
     | '/retours/$retourId'
     | '/retours/nouveau'
     | '/specimens/$specimenId'
@@ -2527,6 +2539,7 @@ export interface FileRouteTypes {
     | '/_authenticated/produits/alertes'
     | '/_authenticated/proformas/$proformaId'
     | '/_authenticated/rapports/analyse'
+    | '/_authenticated/rapports/transport'
     | '/_authenticated/retours/$retourId'
     | '/_authenticated/retours/nouveau'
     | '/_authenticated/specimens/$specimenId'
@@ -3516,6 +3529,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRetoursRetourIdRouteImport
       parentRoute: typeof AuthenticatedRetoursRoute
     }
+    '/_authenticated/rapports/transport': {
+      id: '/_authenticated/rapports/transport'
+      path: '/transport'
+      fullPath: '/rapports/transport'
+      preLoaderRoute: typeof AuthenticatedRapportsTransportRouteImport
+      parentRoute: typeof AuthenticatedRapportsRoute
+    }
     '/_authenticated/rapports/analyse': {
       id: '/_authenticated/rapports/analyse'
       path: '/analyse'
@@ -4426,11 +4446,13 @@ const AuthenticatedProformasRouteWithChildren =
 
 interface AuthenticatedRapportsRouteChildren {
   AuthenticatedRapportsAnalyseRoute: typeof AuthenticatedRapportsAnalyseRoute
+  AuthenticatedRapportsTransportRoute: typeof AuthenticatedRapportsTransportRoute
   AuthenticatedRapportsIndexRoute: typeof AuthenticatedRapportsIndexRoute
 }
 
 const AuthenticatedRapportsRouteChildren: AuthenticatedRapportsRouteChildren = {
   AuthenticatedRapportsAnalyseRoute: AuthenticatedRapportsAnalyseRoute,
+  AuthenticatedRapportsTransportRoute: AuthenticatedRapportsTransportRoute,
   AuthenticatedRapportsIndexRoute: AuthenticatedRapportsIndexRoute,
 }
 
