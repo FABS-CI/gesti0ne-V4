@@ -189,10 +189,14 @@ export class CommercialDocument extends BaseDocument {
       this.page.drawText("RÉCEPTION CLIENT", { x: PAGE.w - MARGINS.x - boxW + 5, y: curY - 15, size: 8, font: this.fonts.bold });
       this.page.drawText("Nom : ....................................", { x: PAGE.w - MARGINS.x - boxW + 5, y: curY - 30, size: 7, font: this.fonts.regular });
       this.page.drawText("Signature & Cachet :", { x: PAGE.w - MARGINS.x - boxW + 5, y: curY - 50, size: 7, font: this.fonts.italic });
-    } else if (this.data.type === 'Facture' || this.data.type === 'Proforma') {
-      // FACTURE & PROFORMA : tampon officiel de comptabilité (remplace le bloc texte)
-      await this.drawTamponComptabilite(curY, boxW, boxH);
-    } else if (this.data.type === 'Commande' || this.data.type === 'Bon de Réception') {
+    } else if (
+      this.data.type === 'Facture' ||
+      this.data.type === 'Proforma' ||
+      this.data.type === 'Commande'
+    ) {
+      // Documents de vente validés : véritable cachet de la comptabilité.
+      await this.drawTamponComptabilite(curY);
+    } else if (this.data.type === 'Bon de Réception') {
       // Bloc signature classique (sans tampon)
       this.page.drawRectangle({
         x: PAGE.w - MARGINS.x - boxW,
@@ -206,12 +210,12 @@ export class CommercialDocument extends BaseDocument {
     }
   }
 
-  /** Tampon circulaire bleu « EDITIONS FABS-CI / Comptabilité » — factures seulement. */
-  async drawTamponComptabilite(curY: number, boxW: number, boxH: number) {
-    const size = 95;
-    const x = PAGE.w - MARGINS.x - size;
-    // Le tampon suit immédiatement le montant en lettres (pas de vide au milieu de la page)
-    const yBottom = Math.max(curY - size + 8, 72);
+  /** Véritable cachet haute définition des documents de vente. */
+  async drawTamponComptabilite(curY: number) {
+    const size = 125;
+    const x = PAGE.w - MARGINS.x - size - 10;
+    // Le cachet reste dans la zone de validation et au-dessus du pied de page.
+    const yBottom = Math.max(curY - size + 10, 78);
     try {
       const res = await fetch(tamponUrl);
       const bytes = new Uint8Array(await res.arrayBuffer());
@@ -221,17 +225,11 @@ export class CommercialDocument extends BaseDocument {
         y: yBottom,
         width: size,
         height: size,
-        opacity: 0.85,
-        rotate: degrees(-8),
+        opacity: 0.92,
+        rotate: degrees(-4),
       });
     } catch {
-      // Si l'image n'est pas disponible, on retombe sur le libellé texte
-      this.page.drawText("LA COMPTABILITÉ", {
-        x: PAGE.w - MARGINS.x - boxW + 5,
-        y: curY - 15,
-        size: 8,
-        font: this.fonts.bold,
-      });
+      // Aucun ancien bloc texte ne doit réapparaître si l'image est indisponible.
     }
   }
 }
