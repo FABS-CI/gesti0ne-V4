@@ -23,8 +23,8 @@ export class CommercialDocument extends BaseDocument {
     this.page.drawLine({
       start: { x: MARGINS.x, y: sepY },
       end: { x: PAGE.w - MARGINS.x, y: sepY },
-      thickness: 1.5,
-      color: COLORS.orangeFabs,
+      thickness: 0.8,
+      color: COLORS.bleuElectrique,
     });
   }
 
@@ -170,8 +170,8 @@ export class CommercialDocument extends BaseDocument {
         y: curY - boxH,
         width: boxW,
         height: boxH,
-        borderColor: COLORS.grisLigne,
-        borderWidth: 0.5,
+        borderColor: COLORS.bleuElectrique,
+        borderWidth: 0.8,
       });
       this.page.drawText("LE LIVREUR", { x: MARGINS.x + 5, y: curY - 15, size: 8, font: this.fonts.bold });
       this.page.drawText("Nom : ....................................", { x: MARGINS.x + 5, y: curY - 30, size: 7, font: this.fonts.regular });
@@ -183,8 +183,8 @@ export class CommercialDocument extends BaseDocument {
         y: curY - boxH,
         width: boxW,
         height: boxH,
-        borderColor: COLORS.grisLigne,
-        borderWidth: 0.5,
+        borderColor: COLORS.bleuElectrique,
+        borderWidth: 0.8,
       });
       this.page.drawText("RÉCEPTION CLIENT", { x: PAGE.w - MARGINS.x - boxW + 5, y: curY - 15, size: 8, font: this.fonts.bold });
       this.page.drawText("Nom : ....................................", { x: PAGE.w - MARGINS.x - boxW + 5, y: curY - 30, size: 7, font: this.fonts.regular });
@@ -199,8 +199,8 @@ export class CommercialDocument extends BaseDocument {
         y: curY - boxH,
         width: boxW,
         height: boxH,
-        borderColor: COLORS.grisLigne,
-        borderWidth: 0.5,
+        borderColor: COLORS.bleuElectrique,
+        borderWidth: 0.8,
       });
       this.page.drawText("LA COMPTABILITÉ", { x: PAGE.w - MARGINS.x - boxW + 5, y: curY - 15, size: 8, font: this.fonts.bold });
     }
