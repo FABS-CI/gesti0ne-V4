@@ -28,5 +28,5 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [ ] Vérifications ciblées sur FAC-2026-00024 et création de commande
 
 ## Cachet comptabilité des documents de vente
-- [ ] Remplacer le bloc texte du bon de commande par le véritable cachet
-- [ ] Agrandir et contrôler visuellement le cachet sur facture, bon de commande et proforma
+- [x] Remplacer le bloc texte du bon de commande par le véritable cachet
+- [x] Agrandir et contrôler visuellement le cachet sur facture, bon de commande et proforma
