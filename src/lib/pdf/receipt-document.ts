@@ -72,7 +72,7 @@ export class ReceiptDocument extends BaseDocument {
       y: y - boxH,
       width: boxW,
       height: boxH,
-      color: COLORS.grisClair,
+      borderColor: COLORS.bleuElectrique, borderWidth: 0.8,
       opacity: 0.5,
     });
 
@@ -81,7 +81,7 @@ export class ReceiptDocument extends BaseDocument {
       y: y - 15, 
       size: 7, 
       font: this.fonts.bold, 
-      color: COLORS.bleuFabs 
+      color: COLORS.noir 
     });
 
     this.page.drawText(this.receiptData.customerName.toUpperCase(), { 
@@ -89,7 +89,7 @@ export class ReceiptDocument extends BaseDocument {
       y: y - 35, 
       size: 14, 
       font: this.fonts.bold, 
-      color: COLORS.bleuFabs 
+      color: COLORS.noir 
     });
     
     const kv = [
@@ -123,7 +123,7 @@ export class ReceiptDocument extends BaseDocument {
       y: y, 
       size: 10, 
       font: this.fonts.bold, 
-      color: COLORS.bleuFabs 
+      color: COLORS.noir 
     });
     y -= 20;
 
@@ -132,7 +132,7 @@ export class ReceiptDocument extends BaseDocument {
       y: y - boxH,
       width: boxW,
       height: boxH,
-      borderColor: COLORS.grisLigne,
+      borderColor: COLORS.bleuElectrique,
       borderWidth: 0.5,
     });
 
@@ -146,7 +146,7 @@ export class ReceiptDocument extends BaseDocument {
         y: curY,
         size: 9,
         font: this.fonts.bold,
-        color: COLORS.bleuFabs,
+        color: COLORS.noir,
       });
       const hTotal = "Montant facture";
       const hImpute = "Imputé";
@@ -155,14 +155,14 @@ export class ReceiptDocument extends BaseDocument {
         y: curY,
         size: 8,
         font: this.fonts.bold,
-        color: COLORS.bleuFabs,
+        color: COLORS.noir,
       });
       this.page.drawText(hImpute, {
         x: colImpute - this.fonts.bold.widthOfTextAtSize(hImpute, 8),
         y: curY,
         size: 8,
         font: this.fonts.bold,
-        color: COLORS.bleuFabs,
+        color: COLORS.noir,
       });
       curY -= 14;
 
@@ -209,7 +209,7 @@ export class ReceiptDocument extends BaseDocument {
     this.page.drawLine({
       start: { x: MARGINS.x + 10, y: curY + 5 },
       end: { x: PAGE.w - MARGINS.x - 10, y: curY + 5 },
-      color: COLORS.orangeFabs,
+      color: COLORS.bleuElectrique,
       thickness: 1,
     });
     curY -= 10;
@@ -220,7 +220,7 @@ export class ReceiptDocument extends BaseDocument {
       y: curY, 
       size: 12, 
       font: this.fonts.bold, 
-      color: COLORS.bleuFabs 
+      color: COLORS.noir 
     });
     const paidStr = formatFCFA(this.receiptData.amountPaid);
     const paidW = this.fonts.bold.widthOfTextAtSize(paidStr, 14);
@@ -229,7 +229,7 @@ export class ReceiptDocument extends BaseDocument {
       y: curY, 
       size: 14, 
       font: this.fonts.bold, 
-      color: COLORS.bleuFabs 
+      color: COLORS.noir 
     });
     curY -= 25;
 
@@ -259,7 +259,7 @@ export class ReceiptDocument extends BaseDocument {
         ? "PAIEMENT COMPLET"
         : "PAIEMENT PARTIEL";
     
-    this.page.drawText("STATUT", { x: MARGINS.x, y: y, size: 9, font: this.fonts.bold, color: COLORS.bleuFabs });
+    this.page.drawText("STATUT", { x: MARGINS.x, y: y, size: 9, font: this.fonts.bold, color: COLORS.noir });
     y -= 15;
     
     this.page.drawText(statusText, { 
@@ -321,7 +321,7 @@ export class ReceiptDocument extends BaseDocument {
       y: curY - boxH,
       width: boxW,
       height: boxH,
-      borderColor: COLORS.grisLigne,
+      borderColor: COLORS.bleuElectrique,
       borderWidth: 0.5,
     });
     this.page.drawText("LA COMPTABILITÉ", { x: PAGE.w - MARGINS.x - boxW + 5, y: curY - 15, size: 9, font: this.fonts.bold });
@@ -339,7 +339,7 @@ export class ReceiptDocument extends BaseDocument {
       start: { x: MARGINS.x, y: sepY },
       end: { x: PAGE.w - MARGINS.x, y: sepY },
       thickness: 1.5,
-      color: COLORS.orangeFabs,
+      color: COLORS.bleuElectrique,
     });
   }
 }

@@ -47,8 +47,7 @@ export class RetourDocument extends BaseDocument {
       y: y - 20,
       width: badgeW,
       height: 18,
-      color: COLORS.grisClair,
-      borderColor: COLORS.bleuFabs,
+      borderColor: COLORS.bleuElectrique,
       borderWidth: 0.5
     });
     this.page.drawText(label.toUpperCase(), {
@@ -56,7 +55,7 @@ export class RetourDocument extends BaseDocument {
       y: y - 13,
       size: 8,
       font: this.fonts.bold,
-      color: COLORS.bleuFabs
+      color: COLORS.noir
     });
 
     // Documents d'origine
@@ -90,12 +89,12 @@ export class RetourDocument extends BaseDocument {
       y: y - boxH,
       width: boxW,
       height: boxH,
-      color: COLORS.grisClair,
+      borderColor: COLORS.bleuElectrique, borderWidth: 0.8,
       opacity: 0.5,
     });
 
-    this.page.drawText("IDENTIFICATION CLIENT", { x: MARGINS.x + 10, y: y - 15, size: 7, font: this.fonts.bold, color: COLORS.bleuFabs });
-    this.page.drawText(String(this.data.clientNom || "CLIENT INCONNU").toUpperCase(), { x: MARGINS.x + 10, y: y - 30, size: 11, font: this.fonts.bold, color: COLORS.bleuFabs });
+    this.page.drawText("IDENTIFICATION CLIENT", { x: MARGINS.x + 10, y: y - 15, size: 7, font: this.fonts.bold, color: COLORS.noir });
+    this.page.drawText(String(this.data.clientNom || "CLIENT INCONNU").toUpperCase(), { x: MARGINS.x + 10, y: y - 30, size: 11, font: this.fonts.bold, color: COLORS.noir });
     
     const leftCol: any[] = [
       { l: "Code Client", v: (this.data as any).codeClient || "—" },
@@ -133,12 +132,12 @@ export class RetourDocument extends BaseDocument {
       y: y - boxH,
       width: CONTENT_W,
       height: boxH,
-      borderColor: COLORS.bleuFabs,
+      borderColor: COLORS.bleuElectrique,
       borderWidth: 0.5,
       opacity: 0.1
     });
 
-    this.page.drawText("DÉPÔT DE RÉCEPTION", { x: MARGINS.x + 10, y: y - 15, size: 7, font: this.fonts.bold, color: COLORS.bleuFabs });
+    this.page.drawText("DÉPÔT DE RÉCEPTION", { x: MARGINS.x + 10, y: y - 15, size: 7, font: this.fonts.bold, color: COLORS.noir });
     
     const info = [
       { l: "Dépôt", v: `${depot.nom} (${depot.code})` },
@@ -188,8 +187,8 @@ export class RetourDocument extends BaseDocument {
     const boxH = 85;
 
     // 1. Synthèse Stock
-    this.page.drawRectangle({ x: MARGINS.x, y: y - boxH, width: boxW, height: boxH, borderColor: COLORS.grisLigne, borderWidth: 0.5 });
-    this.page.drawText("SYNTHÈSE STOCK", { x: MARGINS.x + 5, y: y - 12, size: 8, font: this.fonts.bold, color: COLORS.bleuFabs });
+    this.page.drawRectangle({ x: MARGINS.x, y: y - boxH, width: boxW, height: boxH, borderColor: COLORS.bleuElectrique, borderWidth: 0.5 });
+    this.page.drawText("SYNTHÈSE STOCK", { x: MARGINS.x + 5, y: y - 12, size: 8, font: this.fonts.bold, color: COLORS.noir });
     
     const stockItems = [
       { l: "Unités demandées", v: (this.data as any).totalQteDem || this.data.lignes?.reduce((a, b) => a + (b as any).qteDemandee, 0) || 0 },
@@ -204,8 +203,8 @@ export class RetourDocument extends BaseDocument {
 
     // 2. Synthèse Financière
     const finX = MARGINS.x + boxW + 15;
-    this.page.drawRectangle({ x: finX, y: y - boxH, width: boxW, height: boxH, color: COLORS.bleuFabs, opacity: 0.05 });
-    this.page.drawText("SYNTHÈSE FINANCIÈRE (FCFA)", { x: finX + 5, y: y - 12, size: 8, font: this.fonts.bold, color: COLORS.bleuFabs });
+    this.page.drawRectangle({ x: finX, y: y - boxH, width: boxW, height: boxH, color: COLORS.noir, opacity: 0.05 });
+    this.page.drawText("SYNTHÈSE FINANCIÈRE (FCFA)", { x: finX + 5, y: y - 12, size: 8, font: this.fonts.bold, color: COLORS.noir });
     
     const finItems = [
       { l: "Total Brut HT", v: (this.data as any).totalVente || 0 },
@@ -236,8 +235,8 @@ export class RetourDocument extends BaseDocument {
 
     steps.forEach((s, i) => {
       const x = MARGINS.x + i * (boxW + 10);
-      this.page.drawRectangle({ x, y: curY - boxH, width: boxW, height: boxH, borderColor: COLORS.grisLigne, borderWidth: 0.5 });
-      this.page.drawText(s.l, { x: x + 5, y: curY - 12, size: 7, font: this.fonts.bold, color: COLORS.bleuFabs });
+      this.page.drawRectangle({ x, y: curY - boxH, width: boxW, height: boxH, borderColor: COLORS.bleuElectrique, borderWidth: 0.5 });
+      this.page.drawText(s.l, { x: x + 5, y: curY - 12, size: 7, font: this.fonts.bold, color: COLORS.noir });
       this.page.drawText(s.v, { x: x + 5, y: curY - 25, size: 8, font: this.fonts.regular });
       if (s.date) {
         this.page.drawText(`Le ${this.formatDate(s.date)}`, { x: x + 5, y: curY - 35, size: 7, font: this.fonts.italic, color: COLORS.grisTexte });
@@ -254,7 +253,7 @@ export class RetourDocument extends BaseDocument {
   }
 
   drawSectionTitle(y: number, title: string): number {
-    this.page.drawText(title, { x: MARGINS.x, y: y - 10, size: 8, font: this.fonts.bold, color: COLORS.bleuFabs });
+    this.page.drawText(title, { x: MARGINS.x, y: y - 10, size: 8, font: this.fonts.bold, color: COLORS.noir });
     return y - 22;
   }
 
