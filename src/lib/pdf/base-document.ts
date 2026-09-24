@@ -610,14 +610,6 @@ export class BaseDocument {
   }
 
   drawTable(y: number, colonnes: { label: string, key: string, width: number }[], lignes: DocLigne[], options?: { showClientReception?: boolean }): number {
-    this.page.drawRectangle({
-      x: MARGINS.x,
-      y: y - 20,
-      width: CONTENT_W,
-      height: 20,
-      borderColor: COLORS.bleuElectrique,
-      borderWidth: 0.8,
-    });
     const drawColLines = (top: number, bottom: number, w = 0.5) => {
       let vx = MARGINS.x;
       [0, ...colonnes.map((c) => c.width)].forEach((cw, idx) => {
@@ -626,28 +618,22 @@ export class BaseDocument {
         this.page.drawLine({ start: { x: vx, y: top }, end: { x: vx, y: bottom }, color: COLORS.bleuElectrique, thickness: edge ? 0.8 : w });
       });
     };
-    drawColLines(y, y - 20);
-
-    let x = MARGINS.x;
-    colonnes.forEach(col => {
-      const txt = col.label.toUpperCase();
-      const txtW = this.fonts.bold.widthOfTextAtSize(txt, 8);
-      let headerX = x + (col.width - txtW) / 2;
-      if (col.key === 'designation' || col.key === 'code') {
-        headerX = x + 5;
-      } else if (col.key !== 'num' && col.key !== 'qte' && col.key !== 'remisePct') {
-        headerX = x + col.width - txtW - 5;
-      }
-      
-      this.page.drawText(txt, {
-        x: headerX,
-        y: y - 13,
-        size: 8.5,
-        font: this.fonts.bold,
-        color: COLORS.noir,
+    // En-tête : unique aplat bleu électrique du document, titres blancs gras.
+    const drawTableHeader = (hy: number) => {
+      this.page.drawRectangle({ x: MARGINS.x, y: hy - 20, width: CONTENT_W, height: 20, color: COLORS.bleuElectrique });
+      let hx = MARGINS.x;
+      colonnes.forEach((col, idx) => {
+        if (idx > 0) this.page.drawLine({ start: { x: hx, y: hy }, end: { x: hx, y: hy - 20 }, color: COLORS.blanc, thickness: 0.5, opacity: 0.5 });
+        const txt = col.label.toUpperCase();
+        const txtW = this.fonts.bold.widthOfTextAtSize(txt, 8.5);
+        let headerX = hx + (col.width - txtW) / 2;
+        if (col.key === 'designation' || col.key === 'code') headerX = hx + 5;
+        else if (col.key !== 'num' && col.key !== 'qte' && col.key !== 'remisePct') headerX = hx + col.width - txtW - 5;
+        this.page.drawText(txt, { x: headerX, y: hy - 13.5, size: 8.5, font: this.fonts.bold, color: COLORS.blanc });
+        hx += col.width;
       });
-      x += col.width;
-    });
+    };
+    drawTableHeader(y);
 
     let curY = y - 20;
     const fontSize = 10;
@@ -679,14 +665,17 @@ export class BaseDocument {
       if (curY - maxRowH < MARGINS.bottom + 20) {
         this.addNewPage();
         curY = PAGE.h - 120;
+        drawTableHeader(curY);
+        curY -= 20;
       }
       
       const rowH = maxRowH;
 
-      drawColLines(curY, curY - rowH);
-      if (i === 0 || curY > PAGE.h - 130) {
-        this.page.drawLine({ start: { x: MARGINS.x, y: curY }, end: { x: MARGINS.x + CONTENT_W, y: curY }, color: COLORS.bleuElectrique, thickness: 0.8 });
+      // Zébrage bleu électrique très léger (~5 %), continu d'une page à l'autre.
+      if (i % 2 === 1) {
+        this.page.drawRectangle({ x: MARGINS.x, y: curY - rowH, width: CONTENT_W, height: rowH, color: COLORS.bleuElectrique, opacity: 0.05 });
       }
+      drawColLines(curY, curY - rowH);
 
       let curX = MARGINS.x;
       colonnes.forEach(col => {
