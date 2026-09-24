@@ -169,8 +169,8 @@ export class BaseDocument {
       y: 10,
       width: PAGE.w - 20,
       height: PAGE.h - 20,
-      borderColor: COLORS.bleuFabs,
-      borderWidth: 0.5,
+      borderColor: COLORS.bleuElectrique,
+      borderWidth: 0.8,
     });
   }
 
@@ -288,7 +288,7 @@ export class BaseDocument {
       y: yTop - 28,
       size: titleSize,
       font: this.fonts.bold,
-      color: COLORS.bleuFabs,
+      color: COLORS.noir,
     });
 
     // Le statut de paiement n'est plus affiché sous le titre (mention retirée
@@ -313,7 +313,8 @@ export class BaseDocument {
         y: cartY - 18,
         width: 110,
         height: 18,
-        color: COLORS.bleuFabs,
+        borderColor: COLORS.bleuElectrique,
+        borderWidth: 0.8,
       });
       const refW = this.fonts.bold.widthOfTextAtSize(refText, 9);
       this.page.drawText(refText, {
@@ -321,7 +322,7 @@ export class BaseDocument {
         y: cartY - 12,
         size: 9,
         font: this.fonts.bold,
-        color: COLORS.blanc,
+        color: COLORS.noir,
       });
     }
 
@@ -346,8 +347,8 @@ export class BaseDocument {
     this.page.drawLine({
       start: { x: MARGINS.x, y: yTop - 70 },
       end: { x: PAGE.w - MARGINS.x, y: yTop - 70 },
-      color: COLORS.grisLigne,
-      thickness: 0.5,
+      color: COLORS.bleuElectrique,
+      thickness: 0.8,
     });
   }
 
@@ -357,8 +358,8 @@ export class BaseDocument {
     this.page.drawLine({
       start: { x: MARGINS.x, y: 70 },
       end: { x: PAGE.w - MARGINS.x, y: 70 },
-      thickness: 1,
-      color: COLORS.orangeFabs,
+      thickness: 0.8,
+      color: COLORS.bleuElectrique,
     });
     
     const colW = CONTENT_W / 3;
@@ -407,14 +408,14 @@ export class BaseDocument {
       y: y - boxH,
       width: boxW,
       height: boxH,
-      color: COLORS.grisClair,
-      opacity: 0.5,
+      borderColor: COLORS.bleuElectrique,
+      borderWidth: 0.8,
     });
     const isBL = this.data.type === "Bon de Livraison";
     const isCommande = this.data.type === "Commande";
     // Bon de commande : pas d'entête "FACTURÉ À", le bloc démarre par le client
     if (!isCommande) {
-      this.page.drawText(isBR ? "FOURNISSEUR" : isBL ? "CLIENT" : "FACTURÉ À", { x: MARGINS.x + 10, y: y - 18, size: grandBloc ? 9 : 7, font: this.fonts.bold, color: COLORS.bleuFabs });
+      this.page.drawText(isBR ? "FOURNISSEUR" : isBL ? "CLIENT" : "FACTURÉ À", { x: MARGINS.x + 10, y: y - 18, size: grandBloc ? 9 : 7, font: this.fonts.bold, color: COLORS.noir });
     }
     // Nom du client : retour à la ligne propre + réduction automatique si très long,
     // toujours contenu dans la moitié gauche (jamais de chevauchement avec le QR).
@@ -434,7 +435,7 @@ export class BaseDocument {
         y: nomY - i * (nomSize + 2),
         size: nomSize,
         font: this.fonts.bold,
-        color: COLORS.bleuFabs,
+        color: COLORS.noir,
       });
     });
 
@@ -486,8 +487,8 @@ export class BaseDocument {
         y: y - boxH,
         width: boxW,
         height: boxH,
-        color: COLORS.grisClair,
-        opacity: 0.5,
+        borderColor: COLORS.bleuElectrique,
+        borderWidth: 0.8,
       });
 
       try {
@@ -530,7 +531,7 @@ export class BaseDocument {
           y: y - 22,
           size: 7.5,
           font: this.fonts.bold,
-          color: COLORS.bleuFabs,
+          color: COLORS.noir,
         });
 
         // Factures, Proformas et Bons de commande : QR + mention seulement
@@ -559,7 +560,7 @@ export class BaseDocument {
               y: y - 36,
               size: 8,
               font: this.fonts.bold,
-              color: COLORS.bleuFabs,
+              color: COLORS.noir,
             });
           }
           if (!masquerDetailsCert) {
@@ -614,8 +615,18 @@ export class BaseDocument {
       y: y - 20,
       width: CONTENT_W,
       height: 20,
-      color: COLORS.bleuFabs,
+      borderColor: COLORS.bleuElectrique,
+      borderWidth: 0.8,
     });
+    const drawColLines = (top: number, bottom: number, w = 0.5) => {
+      let vx = MARGINS.x;
+      [0, ...colonnes.map((c) => c.width)].forEach((cw, idx) => {
+        vx += cw;
+        const edge = idx === 0 || idx === colonnes.length;
+        this.page.drawLine({ start: { x: vx, y: top }, end: { x: vx, y: bottom }, color: COLORS.bleuElectrique, thickness: edge ? 0.8 : w });
+      });
+    };
+    drawColLines(y, y - 20);
 
     let x = MARGINS.x;
     colonnes.forEach(col => {
@@ -631,9 +642,9 @@ export class BaseDocument {
       this.page.drawText(txt, {
         x: headerX,
         y: y - 13,
-        size: 8,
+        size: 8.5,
         font: this.fonts.bold,
-        color: COLORS.blanc,
+        color: COLORS.noir,
       });
       x += col.width;
     });
@@ -672,14 +683,9 @@ export class BaseDocument {
       
       const rowH = maxRowH;
 
-      if (i % 2 === 1) {
-        this.page.drawRectangle({ 
-          x: MARGINS.x, 
-          y: curY - rowH, 
-          width: CONTENT_W, 
-          height: rowH, 
-          color: COLORS.orangeZebra
-        });
+      drawColLines(curY, curY - rowH);
+      if (i === 0 || curY > PAGE.h - 130) {
+        this.page.drawLine({ start: { x: MARGINS.x, y: curY }, end: { x: MARGINS.x + CONTENT_W, y: curY }, color: COLORS.bleuElectrique, thickness: 0.8 });
       }
 
       let curX = MARGINS.x;
@@ -709,8 +715,8 @@ export class BaseDocument {
       this.page.drawLine({
         start: { x: MARGINS.x, y: curY - rowH },
         end: { x: MARGINS.x + CONTENT_W, y: curY - rowH },
-        color: COLORS.grisLigne,
-        thickness: 0.5,
+        color: COLORS.bleuElectrique,
+        thickness: i === lignes.length - 1 ? 0.8 : 0.5,
       });
 
       curY -= rowH;
@@ -773,8 +779,8 @@ export class BaseDocument {
     const payRows: typeof rows = [];
     if (this.data.type === "Facture" && paiement) {
       const paye = Math.max(0, paiement.montantPaye || 0);
-      payRows.push({ label: "MONTANT PAYÉ", value: paye, color: COLORS.orangeStatut });
-      payRows.push({ label: "RESTE À PAYER", value: Math.max(0, this.totals.totalAPayer - paye), color: COLORS.orangeStatut });
+      payRows.push({ label: "MONTANT PAYÉ", value: paye });
+      payRows.push({ label: "RESTE À PAYER", value: Math.max(0, this.totals.totalAPayer - paye) });
     }
 
     // Aucun saut de page au milieu du bloc
@@ -784,7 +790,10 @@ export class BaseDocument {
       curY = PAGE.h - 120;
     }
 
-    const drawRow = (row: (typeof rows)[number]) => {
+    const boxTop = curY;
+    const sep = () => this.page.drawLine({ start: { x, y: curY }, end: { x: x + boxW, y: curY }, color: COLORS.bleuElectrique, thickness: 0.5 });
+    const drawRow = (row: (typeof rows)[number], idx = 0) => {
+      if (idx > 0) sep();
       let labelX = x + 5;
       this.page.drawText(row.label, { x: labelX, y: curY - 13, size: 8, font: this.fonts.regular, color: row.color ?? COLORS.noir });
       // Remise globale : afficher le pourcentage en rouge après le libellé
@@ -806,42 +815,36 @@ export class BaseDocument {
       });
       curY -= 20;
     };
-    rows.forEach(drawRow);
+    rows.forEach((r, i) => drawRow(r, i));
 
     // Barre de séparation bleu électrique avant TOTAL À PAYER
-    this.page.drawRectangle({ x, y: curY - 3, width: boxW, height: 2, color: COLORS.bleuElectrique });
-    curY -= 6;
+    this.page.drawRectangle({ x, y: curY - 1.5, width: boxW, height: 1.5, color: COLORS.bleuElectrique });
+    curY -= 2;
 
-    this.page.drawRectangle({
-      x,
-      y: curY - 20,
-      width: boxW,
-      height: 20,
-      color: COLORS.bleuFabs,
-    });
     this.page.drawText("TOTAL À PAYER (FCFA)", {
       x: x + 5,
-      y: curY - 13,
-      size: 9,
-      font: this.fonts.bold,
-      color: COLORS.blanc,
-    });
-    const totalVal = formatFCFA(this.totals.totalAPayer, false);
-    const totalW = this.fonts.bold.widthOfTextAtSize(totalVal, 10);
-    this.page.drawText(totalVal, {
-      x: PAGE.w - MARGINS.x - totalW - 5,
-      y: curY - 13,
+      y: curY - 15,
       size: 10,
       font: this.fonts.bold,
-      color: COLORS.blanc,
+      color: COLORS.noir,
     });
-
+    const totalVal = formatFCFA(this.totals.totalAPayer, false);
+    const totalW = this.fonts.bold.widthOfTextAtSize(totalVal, 12);
+    this.page.drawText(totalVal, {
+      x: PAGE.w - MARGINS.x - totalW - 5,
+      y: curY - 15,
+      size: 12,
+      font: this.fonts.bold,
+      color: COLORS.noir,
+    });
     curY -= 22;
     if (payRows.length) {
-      curY -= 4;
-      payRows.forEach(drawRow);
+      this.page.drawRectangle({ x, y: curY - 1.5, width: boxW, height: 1.5, color: COLORS.bleuElectrique });
+      curY -= 2;
+      payRows.forEach((r, i) => drawRow(r, i));
     }
-    curY -= 12;
+    this.page.drawRectangle({ x, y: curY, width: boxW, height: boxTop - curY, borderColor: COLORS.bleuElectrique, borderWidth: 0.8 });
+    curY -= 16;
 
     const fullText = `Arrêté le présent document à la somme de : ${this.totals.montantLettres}`;
     const fontSize = 9.5;
@@ -879,7 +882,7 @@ export class BaseDocument {
       y: curY,
       size: 8,
       font: this.fonts.bold,
-      color: COLORS.bleuFabs
+      color: COLORS.noir
     });
     curY -= 15;
 
@@ -911,8 +914,8 @@ export class BaseDocument {
       y: curY - 60,
       width: boxW,
       height: 60,
-      borderColor: COLORS.grisLigne,
-      borderWidth: 0.5,
+      borderColor: COLORS.bleuElectrique,
+      borderWidth: 0.8,
     });
     this.page.drawText("LA COMPTABILITÉ", { x: MARGINS.x + 5, y: curY - 12, size: 8, font: this.fonts.bold });
   }
