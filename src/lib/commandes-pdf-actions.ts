@@ -12,6 +12,7 @@ import {
   loadCommandeDocLignes,
   loadClientInfoForCommande,
   loadCommandeTotals,
+  loadFactureTotals,
 } from "@/lib/pdf/enrich-lignes";
 import { emailDoc, printBlobAsync, viewBlobAsync } from "@/lib/pdf/actions";
 import { getOrCreatePdf, pdfCacheKey } from "@/lib/pdf/pdfCache";
