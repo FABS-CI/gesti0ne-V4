@@ -218,6 +218,13 @@
       "when": 1790159325816,
       "tag": "0030_propagate_transport_fees_on_immediate_order_validation",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1790333699836,
+      "tag": "0031_fix_dashboard_widgets_stock_paiements",
+      "breakpoints": true
     }
   ]
 }
