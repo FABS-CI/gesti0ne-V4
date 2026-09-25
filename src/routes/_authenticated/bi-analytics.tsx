@@ -6,6 +6,7 @@ import { lazy, Suspense } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatFCFA } from "@/lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
@@ -43,7 +44,7 @@ const MONTHS = [
 ];
 
 function BiAnalytics() {
-  const { data } = useQuery({
+  const { data, isError, refetch } = useQuery({
     queryKey: ["bi-analytics"],
     queryFn: async () => {
       const year = new Date().getFullYear();
@@ -127,6 +128,17 @@ function BiAnalytics() {
         </h1>
         <p className="text-sm text-muted-foreground">Analyses et tendances de l'activité</p>
       </div>
+
+      {isError && (
+        <Card className="border-destructive">
+          <CardContent className="flex items-center justify-between gap-3 p-4">
+            <p className="text-sm text-destructive">
+              Impossible de charger les analyses. Les montants ci-dessous ne sont pas fiables.
+            </p>
+            <Button size="sm" variant="outline" onClick={() => refetch()}>Réessayer</Button>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
