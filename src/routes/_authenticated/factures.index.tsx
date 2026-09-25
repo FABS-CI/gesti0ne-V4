@@ -394,6 +394,16 @@ function FacturesPage() {
                       <TableCell className="font-medium">{f.client_nom}</TableCell>
                       <TableCell className="text-right">
                         {formatFCFA(Number(f.montant_total))}
+                        {(() => {
+                          const t = (f as any).type_frais_transport as string | null;
+                          const m = Number((f as any).montant_frais_transport ?? 0);
+                          if (!t || m <= 0) return null;
+                          return (
+                            <div className="text-[11px] text-muted-foreground whitespace-nowrap">
+                              dont {t === "expedition" ? "expédition" : "livraison"} {formatFCFA(m)}
+                            </div>
+                          );
+                        })()}
                       </TableCell>
                       <TableCell className="text-right text-emerald-600">
                         {formatFCFA(Number(f.montant_paye))}
