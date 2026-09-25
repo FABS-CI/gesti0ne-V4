@@ -52,11 +52,11 @@ export function useEtatCompteClients(q: string, exerciceId: string | null | unde
         montant_total: number | null;
         date_facture: string;
       };
+      type One<T> = T | T[] | null;
       type PaiementRow = {
         montant: number;
-        date_paiement: string;
-        statut: string | null;
-        factures: { client_id: string | null } | { client_id: string | null }[] | null;
+        factures: One<{ client_id: string | null }>;
+        paiements: One<{ date_paiement: string; statut: string | null }>;
       };
       type AvoirRow = {
         client_id: string | null;
@@ -75,10 +75,9 @@ export function useEtatCompteClients(q: string, exerciceId: string | null | unde
           .select("facture_id, client_id, montant_total, date_facture")
           .not("client_id", "is", null),
         supabase
-          .from("paiements")
-          .select("montant, date_paiement, statut, factures!inner(client_id)")
-          .not("factures.client_id", "is", null)
-          .eq("statut", "valide"), // Performance : on ne ramène que les paiements validés qui impactent le solde
+          .from("payment_allocations")
+          .select("montant, factures!inner(client_id), paiements!inner(date_paiement, statut)")
+          .eq("paiements.statut", "valide"),
         supabase
           .from("retours")
           .select("client_id, facture_id, montant, date_retour, statut")
@@ -129,19 +128,16 @@ export function useEtatCompteClients(q: string, exerciceId: string | null | unde
       }
       for (const p of paiementsData) {
         const cid = Array.isArray(p.factures) ? p.factures[0]?.client_id : p.factures?.client_id;
-        if (!cid) continue;
+        const pay = Array.isArray(p.paiements) ? p.paiements[0] : p.paiements;
+        if (!cid || !pay) continue;
         bucket(cid).paiements.push({
-          date_paiement: p.date_paiement,
+          date_paiement: pay.date_paiement,
           montant: Number(p.montant ?? 0),
-          statut: p.statut ?? null,
+          statut: pay.statut ?? null,
         });
       }
       for (const a of avoirsData) {
         if (!a.client_id) continue;
-        if (a.facture_id) {
-          const facture = bucket(a.client_id).factures.find((f) => f.facture_id === a.facture_id);
-          if (facture) facture.montant_total = Number(facture.montant_total ?? 0) + Number(a.montant ?? 0);
-        }
         bucket(a.client_id).avoirs.push({
           date_retour: a.date_retour,
           montant: Number(a.montant ?? 0),
