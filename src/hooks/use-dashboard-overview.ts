@@ -47,6 +47,7 @@ export function useDashboardOverview(periode: Periode, exerciceId: string | null
         supabase.from("v_produits").select("titre, stock, seuil_alerte").eq("actif", true),
       ]);
 
+      if (clientsStats.error) throw clientsStats.error;
       const cs = (clientsStats.data ?? { total: 0, actifs: 0, solde_total: 0 }) as {
         total: number | string;
         actifs: number | string;
