@@ -44,7 +44,7 @@ export function useDashboardOverview(periode: Periode, exerciceId: string | null
           .from("tournees")
           .select("cout_total")
           .gte("date_tournee", sinceIso),
-        supabase.from("stocks_depots").select("quantite, seuil_alerte"),
+        supabase.from("v_produits").select("titre, stock, seuil_alerte").eq("actif", true),
       ]);
 
       const cs = (clientsStats.data ?? { total: 0, actifs: 0, solde_total: 0 }) as {
@@ -82,12 +82,17 @@ export function useDashboardOverview(periode: Periode, exerciceId: string | null
         }
       }
 
-      // Aggregate alerts from all warehouses in real-time
-      const stockAlerts = (alertes.data ?? []).filter(s => {
-        const qty = Number(s.quantite || 0);
-        const seuil = Number(s.seuil_alerte || 0);
-        return seuil > 0 && qty <= seuil;
-      });
+      if (overview.error) throw overview.error;
+      if (alertes.error) throw alertes.error;
+      // Liste et compteur issus de la même source (stock réel agrégé des dépôts).
+      const stockBasList = (alertes.data ?? [])
+        .map((p) => ({
+          titre: p.titre ?? "",
+          stock: Number(p.stock ?? 0),
+          seuil_alerte: Number(p.seuil_alerte ?? 0),
+        }))
+        .filter((p) => p.seuil_alerte > 0 && p.stock <= p.seuil_alerte)
+        .sort((a, b) => a.stock - b.stock);
 
       return {
         clientsTotal: clientsTotalCount,
@@ -107,8 +112,8 @@ export function useDashboardOverview(periode: Periode, exerciceId: string | null
         recettes: Number(ov.recettes) || 0,
         depenses: Number(ov.depenses) || 0,
         solde: Number(ov.solde) || 0,
-        stockBas: ov.stockBas ?? [],
-        nbStockBas: stockAlerts.length,
+        stockBas: stockBasList,
+        nbStockBas: Math.max(Number(ov.nbStockBas) || 0, stockBasList.length),
         nbRetards: Number(ov.nbRetards) || 0,
         montantRetard: Number(ov.montantRetard) || 0,
         fraisTournees,

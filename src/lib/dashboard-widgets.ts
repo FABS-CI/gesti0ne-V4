@@ -103,11 +103,10 @@ export const WIDGETS: Record<WidgetId, WidgetDef> = {
     icon: AlertTriangle,
     accent: "text-rose-600",
     fetch: async () => {
-      const { count } = await supabase
-        .from("produits")
-        .select("*", { count: "exact", head: true })
-        .lte("stock", 5);
-      return { value: String(count ?? 0), sub: "≤ 5 unités" };
+      const { data, error } = await supabase.from("v_produits").select("stock").eq("actif", true);
+      if (error) throw error;
+      const count = (data ?? []).filter((p) => Number(p.stock ?? 0) <= 5).length;
+      return { value: String(count), sub: "≤ 5 unités" };
     },
   },
   commandes_ouvertes: {
@@ -129,10 +128,12 @@ export const WIDGETS: Record<WidgetId, WidgetDef> = {
     icon: BookOpenCheck,
     accent: "text-teal-600",
     fetch: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("paiements")
         .select("montant")
-        .gte("created_at", startOfMonthISO());
+        .eq("statut", "valide")
+        .gte("date_paiement", startOfMonthISO().slice(0, 10));
+      if (error) throw error;
       const sum = (data ?? []).reduce((s, r) => s + Number(r.montant ?? 0), 0);
       return { value: formatFCFA(sum), sub: "ce mois" };
     },

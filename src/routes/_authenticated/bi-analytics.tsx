@@ -46,11 +46,19 @@ function BiAnalytics() {
   const { data } = useQuery({
     queryKey: ["bi-analytics"],
     queryFn: async () => {
+      const year = new Date().getFullYear();
       const [transactions, commandes, produits] = await Promise.all([
-        supabase.from("transactions").select("type, montant, date_transaction, statut"),
+        supabase
+          .from("transactions")
+          .select("type, montant, date_transaction, statut")
+          .gte("date_transaction", `${year}-01-01`)
+          .lte("date_transaction", `${year}-12-31`),
         supabase.from("commandes").select("statut, montant_total"),
-        supabase.from("v_produits").select("titre, prix_vente, stocks_depots(quantite)").eq("actif", true),
+        supabase.from("v_produits").select("titre, prix_vente, stock").eq("actif", true),
       ]);
+      for (const r of [transactions, commandes, produits]) {
+        if (r.error) throw r.error;
+      }
 
       type Trx = {
         statut: string | null;
@@ -59,13 +67,15 @@ function BiAnalytics() {
         montant: number | null;
       };
       type Cmd = { statut: string | null };
-      type Prd = { titre: string | null; prix_vente: number | null; stocks_depots: { quantite: number }[] | null };
+      type Prd = { titre: string | null; prix_vente: number | null; stock: number | null };
 
       const monthly: Record<number, { recettes: number; depenses: number }> = {};
       for (let i = 0; i < 12; i++) monthly[i] = { recettes: 0, depenses: 0 };
       for (const t of (transactions.data ?? []) as Trx[]) {
         if (t.statut === "annule") continue;
-        const m = new Date(t.date_transaction).getMonth();
+        const d = new Date(t.date_transaction);
+        if (d.getFullYear() !== year) continue;
+        const m = d.getMonth();
         if (t.type === "recette") monthly[m].recettes += Number(t.montant);
         else monthly[m].depenses += Number(t.montant);
       }
@@ -85,13 +95,10 @@ function BiAnalytics() {
         value,
       }));
 
-      const prds = ((produits.data ?? []) as Prd[]).map((p) => {
-        const stock = (p.stocks_depots || []).reduce((s, sd) => s + Number(sd.quantite || 0), 0);
-        return {
-          titre: p.titre ?? "",
-          valeur: stock * Number(p.prix_vente || 0),
-        };
-      });
+      const prds = ((produits.data ?? []) as Prd[]).map((p) => ({
+        titre: p.titre ?? "",
+        valeur: Math.max(0, Number(p.stock || 0)) * Number(p.prix_vente || 0),
+      }));
 
       const topProduits = prds
         .sort((a, b) => b.valeur - a.valeur)
