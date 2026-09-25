@@ -12,6 +12,7 @@ import {
   loadCommandeDocLignes,
   loadClientInfoForCommande,
   loadCommandeTotals,
+  loadFactureTotals,
 } from "@/lib/pdf/enrich-lignes";
 import { emailDoc, printBlobAsync, viewBlobAsync } from "@/lib/pdf/actions";
 import { getOrCreatePdf, pdfCacheKey } from "@/lib/pdf/pdfCache";
@@ -152,7 +153,7 @@ export async function buildFactureBlob(c: Commande) {
   const [lignes, clientInfo, totals] = await Promise.all([
     loadCommandeDocLignes(c.commande_id),
     loadClientInfoForCommande(c.commande_id),
-    loadCommandeTotals(c.commande_id),
+    loadFactureTotals(fac.facture_id),
   ]);
   const blob = await generateFacturePDF({
     ...clientInfo,
