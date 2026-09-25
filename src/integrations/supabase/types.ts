@@ -516,6 +516,27 @@ export type Database = {
         }
         Relationships: []
       }
+      backup_cron_config: {
+        Row: {
+          created_at: string
+          id: number
+          job_name: string
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          job_name?: string
+          token?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          job_name?: string
+          token?: string
+        }
+        Relationships: []
+      }
       backup_schedules: {
         Row: {
           active: boolean
@@ -572,8 +593,10 @@ export type Database = {
           duree_ms: number | null
           error: string | null
           error_message: string | null
+          fichier_disponible: boolean
           fichier_nom: string | null
           finished_at: string | null
+          is_test: boolean
           message: string | null
           nb_enregistrements: number | null
           nb_tables: number | null
@@ -585,6 +608,7 @@ export type Database = {
           sha256: string | null
           started_at: string
           statut: string
+          storage_path: string | null
           taille_octets: number | null
           trigger_type:
             | Database["public"]["Enums"]["backup_trigger_type"]
@@ -593,6 +617,7 @@ export type Database = {
           updated_at: string
           user_email: string | null
           user_id: string | null
+          verification: Json | null
           verifie: boolean | null
           verifie_at: string | null
           verifie_methode: string | null
@@ -607,8 +632,10 @@ export type Database = {
           duree_ms?: number | null
           error?: string | null
           error_message?: string | null
+          fichier_disponible?: boolean
           fichier_nom?: string | null
           finished_at?: string | null
+          is_test?: boolean
           message?: string | null
           nb_enregistrements?: number | null
           nb_tables?: number | null
@@ -620,6 +647,7 @@ export type Database = {
           sha256?: string | null
           started_at?: string
           statut?: string
+          storage_path?: string | null
           taille_octets?: number | null
           trigger_type?:
             | Database["public"]["Enums"]["backup_trigger_type"]
@@ -628,6 +656,7 @@ export type Database = {
           updated_at?: string
           user_email?: string | null
           user_id?: string | null
+          verification?: Json | null
           verifie?: boolean | null
           verifie_at?: string | null
           verifie_methode?: string | null
@@ -642,8 +671,10 @@ export type Database = {
           duree_ms?: number | null
           error?: string | null
           error_message?: string | null
+          fichier_disponible?: boolean
           fichier_nom?: string | null
           finished_at?: string | null
+          is_test?: boolean
           message?: string | null
           nb_enregistrements?: number | null
           nb_tables?: number | null
@@ -655,6 +686,7 @@ export type Database = {
           sha256?: string | null
           started_at?: string
           statut?: string
+          storage_path?: string | null
           taille_octets?: number | null
           trigger_type?:
             | Database["public"]["Enums"]["backup_trigger_type"]
@@ -663,6 +695,7 @@ export type Database = {
           updated_at?: string
           user_email?: string | null
           user_id?: string | null
+          verification?: Json | null
           verifie?: boolean | null
           verifie_at?: string | null
           verifie_methode?: string | null
