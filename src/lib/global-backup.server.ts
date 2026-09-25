@@ -168,7 +168,17 @@ export async function buildGlobalArchive(
       objects = [];
     }
     const entries: any[] = [];
+    let excludedOriginalPng = 0;
     for (const obj of objects) {
+      // Exclusion permanente : les fichiers nommés exactement "original.png"
+      // (tous dossiers/sous-dossiers, ex. storage-product-covers-cover) ne sont
+      // jamais inclus dans l'archive de sauvegarde. Ils restent intacts dans
+      // le stockage source ; seuls le ZIP et le manifeste les ignorent.
+      const baseName = obj.path.split("/").pop();
+      if (baseName === "original.png") {
+        excludedOriginalPng += 1;
+        continue;
+      }
       filesCount += 1;
       const size = Number(obj.metadata?.size ?? 0);
       let embedded = false;
