@@ -21,10 +21,10 @@ export function DashboardStockAlerts({ data }: { data: DashboardOverview | undef
           <p className="text-sm text-muted-foreground">Aucun produit en stock bas.</p>
         ) : (
           <ul className="divide-y">
-            {data?.stockBas.map((p, i) => (
+            {data?.stockBas.slice(0, 10).map((p, i) => (
               <li key={i} className="flex items-center justify-between py-2">
                 <span className="truncate text-sm">{p.titre}</span>
-                <Badge variant="destructive">Stock bas (voir dépôts)</Badge>
+                <Badge variant="destructive">{p.stock} / seuil {p.seuil_alerte}</Badge>
               </li>
             ))}
           </ul>
