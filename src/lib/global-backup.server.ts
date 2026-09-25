@@ -168,7 +168,17 @@ export async function buildGlobalArchive(
       objects = [];
     }
     const entries: any[] = [];
+    let excludedOriginalPng = 0;
     for (const obj of objects) {
+      // Exclusion permanente : les fichiers nommés exactement "original.png"
+      // (tous dossiers/sous-dossiers, ex. storage-product-covers-cover) ne sont
+      // jamais inclus dans l'archive de sauvegarde. Ils restent intacts dans
+      // le stockage source ; seuls le ZIP et le manifeste les ignorent.
+      const baseName = obj.path.split("/").pop();
+      if (baseName === "original.png") {
+        excludedOriginalPng += 1;
+        continue;
+      }
       filesCount += 1;
       const size = Number(obj.metadata?.size ?? 0);
       let embedded = false;
@@ -202,6 +212,7 @@ export async function buildGlobalArchive(
       id: bucket.id,
       public: bucket.public,
       objects_count: entries.length,
+      excluded_original_png: excludedOriginalPng,
       objects: entries,
     });
   }
@@ -249,6 +260,18 @@ export async function buildGlobalArchive(
     compression: "DEFLATE",
     compressionOptions: { level: 6 },
   })) as Uint8Array;
+
+  // Vérification finale obligatoire : aucun fichier nommé exactement
+  // "original.png" ne doit figurer dans l'archive avant téléchargement/envoi.
+  const check = await JSZip.loadAsync(bytes);
+  const leaked = Object.keys(check.files).filter(
+    (p) => !check.files[p].dir && p.split("/").pop() === "original.png",
+  );
+  if (leaked.length > 0) {
+    throw new Error(
+      `Contrôle de sauvegarde échoué : ${leaked.length} fichier(s) original.png présent(s) dans l'archive (ex. ${leaked[0]})`,
+    );
+  }
 
   const startedAtStr = startedAt.toISOString().replace(/[-:T]/g, "").slice(0, 14);
   const slug = opts.projectId ? (opts.projectName || "projet").toLowerCase().replace(/[^a-z0-9]/g, "_") : "global";
