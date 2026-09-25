@@ -52,11 +52,11 @@ export function useEtatCompteClients(q: string, exerciceId: string | null | unde
         montant_total: number | null;
         date_facture: string;
       };
+      type One<T> = T | T[] | null;
       type PaiementRow = {
         montant: number;
-        date_paiement: string;
-        statut: string | null;
-        factures: { client_id: string | null } | { client_id: string | null }[] | null;
+        factures: One<{ client_id: string | null }>;
+        paiements: One<{ date_paiement: string; statut: string | null }>;
       };
       type AvoirRow = {
         client_id: string | null;
