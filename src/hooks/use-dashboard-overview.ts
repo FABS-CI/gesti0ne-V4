@@ -82,12 +82,10 @@ export function useDashboardOverview(periode: Periode, exerciceId: string | null
         }
       }
 
-      // Aggregate alerts from all warehouses in real-time
-      const stockAlerts = (alertes.data ?? []).filter(s => {
-        const qty = Number(s.quantite || 0);
-        const seuil = Number(s.seuil_alerte || 0);
-        return seuil > 0 && qty <= seuil;
-      });
+      if (overview.error) throw overview.error;
+      // Liste et compteur issus de la même source (RPC) pour rester cohérents.
+      const stockBasList = ov.stockBas ?? [];
+      void alertes;
 
       return {
         clientsTotal: clientsTotalCount,
@@ -107,8 +105,8 @@ export function useDashboardOverview(periode: Periode, exerciceId: string | null
         recettes: Number(ov.recettes) || 0,
         depenses: Number(ov.depenses) || 0,
         solde: Number(ov.solde) || 0,
-        stockBas: ov.stockBas ?? [],
-        nbStockBas: stockAlerts.length,
+        stockBas: stockBasList,
+        nbStockBas: Math.max(Number(ov.nbStockBas) || 0, stockBasList.length),
         nbRetards: Number(ov.nbRetards) || 0,
         montantRetard: Number(ov.montantRetard) || 0,
         fraisTournees,
