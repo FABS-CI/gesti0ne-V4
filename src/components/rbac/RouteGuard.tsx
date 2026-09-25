@@ -35,7 +35,7 @@ export function RouteGuard({ children }: { children: ReactNode }) {
   // Diagnostic logs in DEV mode
   useEffect(() => {
     if (import.meta.env.DEV && !isLoading) {
-      console.log("[Guard] Path:", pathname, "| Required:", required, "| Allowed:", allowed, "| isSuperAdmin:", isSuperAdmin, "| permsCount:", permissions.size);
+      console.log("[Guard] Path:", pathname, "| Required:", required, "| Allowed:", allowed, "| isSuperAdmin:", isSuperAdmin, "| permsCount:", permissions?.size ?? 0);
     }
   }, [pathname, required, allowed, isSuperAdmin, isLoading]);
 

@@ -35,6 +35,7 @@ export function EtiquetteCarton({ data }: { data: EtiquettePayload }) {
 
   return (
     <div 
+      data-colis-id={data.colis_id}
       className="etiquette-carton bg-white text-black flex flex-col p-[8mm] border-[2px] border-black h-full shadow-inner relative overflow-hidden"
       style={{ width: '100%', minHeight: '148.5mm', boxSizing: 'border-box' }}
     >
