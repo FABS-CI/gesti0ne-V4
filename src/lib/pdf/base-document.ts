@@ -747,7 +747,7 @@ export class BaseDocument {
     const isListeProduits = this.data.type === "LISTE DES PRODUITS";
     if (isListeProduits) return y;
 
-    const boxW = 200;
+    const boxW = 240;
     const x = PAGE.w - MARGINS.x - boxW;
     let curY = y - 10;
 
