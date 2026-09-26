@@ -1,4 +1,5 @@
 
+import { PDFString, PDFName, PDFArray } from "pdf-lib";
 import {
   PDFDocument,
   degrees,
@@ -372,16 +373,43 @@ export class BaseDocument {
       this.page.drawText("EDITIONS FABS-CI", { x: MARGINS.x, y: yBot, size: footerTextSize + 1, font: this.fonts.bold });
       this.page.drawText("BP 673 Bingerville - Côte d'Ivoire", { x: MARGINS.x, y: yBot - 10, size: footerTextSize, font: this.fonts.regular });
       this.page.drawText("RCCM : CI-ABJ-2020-B-12345", { x: MARGINS.x, y: yBot - 19, size: footerTextSize, font: this.fonts.regular });
+      this.page.drawText("NCC : 2302562N", { x: MARGINS.x, y: yBot - 28, size: footerTextSize, font: this.fonts.regular });
     }
 
-    this.page.drawText("CONTACT", { x: MARGINS.x + colW, y: yBot, size: footerTextSize + 1, font: this.fonts.bold });
-    this.page.drawText("Tél: +225 07 59 73 71 23 / 01 50 48 51 88", { x: MARGINS.x + colW, y: yBot - 10, size: footerTextSize, font: this.fonts.regular });
-    this.page.drawText("Email: edition693fabs@gmail.com", { x: MARGINS.x + colW, y: yBot - 19, size: footerTextSize, font: this.fonts.regular });
+    const cx = MARGINS.x + colW;
+    this.page.drawText("CONTACT", { x: cx, y: yBot, size: footerTextSize + 1, font: this.fonts.bold });
+    this.page.drawText("Tél : +225 07 59 73 71 23 / 01 50 48 51 88", { x: cx, y: yBot - 10, size: footerTextSize, font: this.fonts.regular });
+    const emailLabel = "Email : ";
+    const labelW = this.fonts.regular.widthOfTextAtSize(emailLabel, footerTextSize);
+    const mail1 = "edition693fabs@gmail.com /";
+    const mail2 = "info@editions-fabsci.net";
+    this.page.drawText(emailLabel, { x: cx, y: yBot - 19, size: footerTextSize, font: this.fonts.regular });
+    this.page.drawText(mail1, { x: cx + labelW, y: yBot - 19, size: footerTextSize, font: this.fonts.regular });
+    this.page.drawText(mail2, { x: cx + labelW, y: yBot - 28, size: footerTextSize, font: this.fonts.regular });
+    this.addMailtoLink("edition693fabs@gmail.com", cx + labelW, yBot - 19, footerTextSize);
+    this.addMailtoLink(mail2, cx + labelW, yBot - 28, footerTextSize);
 
     this.page.drawText("BANQUES", { x: MARGINS.x + colW * 2, y: yBot, size: footerTextSize + 1, font: this.fonts.bold });
     this.page.drawText("CORIS BANK: 01011 007630824101 34", { x: MARGINS.x + colW * 2, y: yBot - 10, size: footerTextSize, font: this.fonts.regular });
     this.page.drawText("SGBCI: 01123012343259990 95", { x: MARGINS.x + colW * 2, y: yBot - 19, size: footerTextSize, font: this.fonts.regular });
 
+  }
+
+  /** Rend une adresse cliquable (lien mailto) sans afficher « mailto: ». */
+  addMailtoLink(email: string, x: number, y: number, size: number) {
+    try {
+      const w = this.fonts.regular.widthOfTextAtSize(email, size);
+      const ctx = this.doc.context;
+      const annot = ctx.obj({
+        Type: "Annot", Subtype: "Link", Rect: [x, y - 2, x + w, y + size],
+        Border: [0, 0, 0],
+        A: { Type: "Action", S: "URI", URI: PDFString.of(`mailto:${email}`) },
+      });
+      const ref = ctx.register(annot);
+      const annots = this.page.node.lookup(PDFName.of("Annots"));
+      if (annots instanceof PDFArray) annots.push(ref);
+      else this.page.node.set(PDFName.of("Annots"), ctx.obj([ref]));
+    } catch { /* lien facultatif */ }
   }
 
   /** Numérotation « Page x / N » posée une fois toutes les pages créées. */
