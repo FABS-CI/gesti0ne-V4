@@ -372,11 +372,21 @@ export class BaseDocument {
       this.page.drawText("EDITIONS FABS-CI", { x: MARGINS.x, y: yBot, size: footerTextSize + 1, font: this.fonts.bold });
       this.page.drawText("BP 673 Bingerville - Côte d'Ivoire", { x: MARGINS.x, y: yBot - 10, size: footerTextSize, font: this.fonts.regular });
       this.page.drawText("RCCM : CI-ABJ-2020-B-12345", { x: MARGINS.x, y: yBot - 19, size: footerTextSize, font: this.fonts.regular });
+      this.page.drawText("NCC : 2302562N", { x: MARGINS.x, y: yBot - 28, size: footerTextSize, font: this.fonts.regular });
     }
 
-    this.page.drawText("CONTACT", { x: MARGINS.x + colW, y: yBot, size: footerTextSize + 1, font: this.fonts.bold });
-    this.page.drawText("Tél: +225 07 59 73 71 23 / 01 50 48 51 88", { x: MARGINS.x + colW, y: yBot - 10, size: footerTextSize, font: this.fonts.regular });
-    this.page.drawText("Email: edition693fabs@gmail.com", { x: MARGINS.x + colW, y: yBot - 19, size: footerTextSize, font: this.fonts.regular });
+    const cx = MARGINS.x + colW;
+    this.page.drawText("CONTACT", { x: cx, y: yBot, size: footerTextSize + 1, font: this.fonts.bold });
+    this.page.drawText("Tél : +225 07 59 73 71 23 / 01 50 48 51 88", { x: cx, y: yBot - 10, size: footerTextSize, font: this.fonts.regular });
+    const emailLabel = "Email : ";
+    const labelW = this.fonts.regular.widthOfTextAtSize(emailLabel, footerTextSize);
+    const mail1 = "edition693fabs@gmail.com /";
+    const mail2 = "info@editions-fabsci.net";
+    this.page.drawText(emailLabel, { x: cx, y: yBot - 19, size: footerTextSize, font: this.fonts.regular });
+    this.page.drawText(mail1, { x: cx + labelW, y: yBot - 19, size: footerTextSize, font: this.fonts.regular });
+    this.page.drawText(mail2, { x: cx + labelW, y: yBot - 28, size: footerTextSize, font: this.fonts.regular });
+    this.addMailtoLink("edition693fabs@gmail.com", cx + labelW, yBot - 19, footerTextSize);
+    this.addMailtoLink(mail2, cx + labelW, yBot - 28, footerTextSize);
 
     this.page.drawText("BANQUES", { x: MARGINS.x + colW * 2, y: yBot, size: footerTextSize + 1, font: this.fonts.bold });
     this.page.drawText("CORIS BANK: 01011 007630824101 34", { x: MARGINS.x + colW * 2, y: yBot - 10, size: footerTextSize, font: this.fonts.regular });
