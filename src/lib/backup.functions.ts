@@ -13,7 +13,8 @@ export const runFullBackup = createServerFn({ method: "POST" })
       trigger: z.enum(["manuel", "planifie"]).default("manuel"),
       projectId: z.string().optional(),
       projectName: z.string().optional(),
-      scope: z.enum(["GLOBAL", "PROJECT"]).optional()
+      scope: z.enum(["GLOBAL", "PROJECT"]).optional(),
+      isTest: z.boolean().optional()
     }).parse(data)
   )
   .handler(async ({ data, context }) => {
@@ -35,7 +36,8 @@ export const runFullBackup = createServerFn({ method: "POST" })
       userId: userId,
       projectId: data.projectId,
       projectName: data.projectName,
-      scope: data.scope
+      scope: data.scope,
+      isTest: data.isTest
     });
   });
 

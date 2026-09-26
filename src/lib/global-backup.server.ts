@@ -161,6 +161,8 @@ export async function buildGlobalArchive(
   let embeddedBytes = 0;
   const { data: buckets } = await supabaseAdmin.storage.listBuckets();
   for (const bucket of buckets ?? []) {
+    // Les archives de sauvegarde elles-mêmes ne sont jamais ré-archivées.
+    if (bucket.id === "erp-backups") continue;
     let objects: any[] = [];
     try {
       objects = await listAllObjects(supabaseAdmin, bucket.id);

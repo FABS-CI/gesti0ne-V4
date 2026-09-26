@@ -30,7 +30,13 @@ export async function orchestrateRestore(opts: {
     if (!backup) throw new Error("Sauvegarde introuvable dans l'historique");
     
     const localPath = path.join(LOCAL_BACKUP_DIR, backup.fichier_nom || "");
-    if (backup.fichier_nom && fs.existsSync(localPath)) {
+    const b = backup as any;
+    if (b.storage_path && b.fichier_disponible) {
+      const { data: blob, error } = await supabaseAdmin.storage.from("erp-backups").download(b.storage_path);
+      if (error || !blob) throw new Error(`Archive introuvable dans le stockage : ${error?.message ?? ""}`);
+      bytes = new Uint8Array(await blob.arrayBuffer());
+      fileName = backup.fichier_nom || "restoration.zip";
+    } else if (backup.fichier_nom && fs.existsSync(localPath)) {
       bytes = fs.readFileSync(localPath);
       fileName = backup.fichier_nom;
     } else if (backup.destination_ref && backup.destination_ref !== "local_only") {
