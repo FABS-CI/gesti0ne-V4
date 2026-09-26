@@ -1,9 +1,11 @@
 
-import { BaseDocument, COLORS, MARGINS, PAGE, CONTENT_W, type DocLigne } from "./base-document";
+import { BaseDocument, COLORS, MARGINS, PAGE, CONTENT_W, CONTENT_BOTTOM, type DocLigne } from "./base-document";
 import { formatFCFA } from "@/lib/format";
 import { rgb, degrees } from "pdf-lib";
 import tamponUrl from "@/assets/tampon-comptabilite.png";
 
+
+const TAMPON_SIZE = 125;
 
 export class CommercialDocument extends BaseDocument {
   discountMode: 'A' | 'B' | 'NONE' = 'NONE';
@@ -93,12 +95,7 @@ export class CommercialDocument extends BaseDocument {
     // Si des remises globales existent, on les affiche en rouge dans le tableau de totaux
     // (Déjà géré dans base-document.ts par la recherche du mot 'remise' dans le label)
     
-    // Vérifier si les totaux tiennent sur la page
-    if (y < 200) {
-      this.addNewPage();
-      y = PAGE.h - 110;
-    }
-    
+    // Le bloc des totaux mesure sa propre hauteur et change de page si besoin.
     // Totaux - Uniquement si ce n'est pas un BL
     if (!isBL) {
       y = this.drawTotals(y);
@@ -159,8 +156,14 @@ export class CommercialDocument extends BaseDocument {
   async drawSignatures(y: number) {
     const boxW = (CONTENT_W - 20) / 2;
     const boxH = 60;
-    // Continuité visuelle TOTAL → MONTANT EN LETTRES → TAMPON (pas de grand vide)
-    const curY = Math.max(y - 28, 150);
+    // Zone de validation positionnée sous le bloc précédent ; nouvelle page si elle ne tient pas.
+    const isVente = this.data.type === 'Facture' || this.data.type === 'Proforma' || this.data.type === 'Commande';
+    const needH = isVente ? TAMPON_SIZE - 10 : boxH;
+    let curY = y - 8;
+    if (curY - needH < CONTENT_BOTTOM) {
+      this.addNewPage();
+      curY = PAGE.h - 120;
+    }
     
     // Zone signatures conditionnelle
     if (this.data.type === 'Bon de Livraison') {
@@ -212,10 +215,10 @@ export class CommercialDocument extends BaseDocument {
 
   /** Véritable cachet haute définition des documents de vente. */
   async drawTamponComptabilite(curY: number) {
-    const size = 125;
+    const size = TAMPON_SIZE;
     const x = PAGE.w - MARGINS.x - size - 10;
-    // Le cachet reste dans la zone de validation et au-dessus du pied de page.
-    const yBottom = Math.max(curY - size + 10, 78);
+    // Sous la mention finale ; la place a été réservée par drawSignatures.
+    const yBottom = curY - size + 10;
     try {
       const res = await fetch(tamponUrl);
       const bytes = new Uint8Array(await res.arrayBuffer());

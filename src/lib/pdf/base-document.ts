@@ -39,7 +39,9 @@ export const COLORS = {
 };
 
 export const PAGE = { w: 595.28, h: 841.89 }; // A4
-export const MARGINS = { x: 34, top: 40, bottom: 65 }; // Marges internes du contenu
+export const MARGINS = { x: 34, top: 40, bottom: 65 };
+/** Plus bas point autorisé pour un bloc de contenu (au-dessus du trait du pied de page, y=70). */
+export const CONTENT_BOTTOM = 80; // Marges internes du contenu
 export const CONTENT_W = PAGE.w - MARGINS.x * 2;
 
 // --- Types ---
@@ -380,16 +382,18 @@ export class BaseDocument {
     this.page.drawText("CORIS BANK: 01011 007630824101 34", { x: MARGINS.x + colW * 2, y: yBot - 10, size: footerTextSize, font: this.fonts.regular });
     this.page.drawText("SGBCI: 01123012343259990 95", { x: MARGINS.x + colW * 2, y: yBot - 19, size: footerTextSize, font: this.fonts.regular });
 
-    const pageCount = this.doc.getPageCount();
-    const currPage = this.doc.getPages().indexOf(this.page) + 1;
-    const paginText = `Page ${currPage} / ${pageCount}`;
-    const paginW = this.fonts.regular.widthOfTextAtSize(paginText, 8);
-    this.page.drawText(paginText, {
-      x: PAGE.w - MARGINS.x - paginW,
-      y: 15,
-      size: 8,
-      font: this.fonts.regular,
-      color: COLORS.grisTexte,
+  }
+
+  /** Numérotation « Page x / N » posée une fois toutes les pages créées. */
+  private paginated = false;
+  drawPagination() {
+    if (this.paginated) return;
+    this.paginated = true;
+    const pages = this.doc.getPages();
+    pages.forEach((pg, i) => {
+      const paginText = `Page ${i + 1} / ${pages.length}`;
+      const paginW = this.fonts.regular.widthOfTextAtSize(paginText, 8);
+      pg.drawText(paginText, { x: PAGE.w - MARGINS.x - paginW, y: 15, size: 8, font: this.fonts.regular, color: COLORS.grisTexte });
     });
   }
 
@@ -772,9 +776,12 @@ export class BaseDocument {
       payRows.push({ label: "RESTE À PAYER", value: Math.max(0, this.totals.totalAPayer - paye) });
     }
 
-    // Aucun saut de page au milieu du bloc
-    const blockH = (rows.length + payRows.length) * 20 + 40 + 60;
-    if (curY - blockH < MARGINS.bottom) {
+    // Hauteur réelle : cadre des totaux + mention « Arrêté… » (aucun saut au milieu)
+    const mentionText = `Arrêté le présent document à la somme de : ${this.totals.montantLettres}`;
+    const mentionLines = this.wrapText(mentionText, CONTENT_W - 4, 9.5, this.fonts.bold);
+    const boxH = (rows.length + payRows.length) * 20 + 24 + (payRows.length ? 2 : 0);
+    const blockH = boxH + 16 + mentionLines.length * 9.5 * 1.3 + 4;
+    if (curY - blockH < CONTENT_BOTTOM) {
       this.addNewPage();
       curY = PAGE.h - 120;
     }
@@ -835,10 +842,8 @@ export class BaseDocument {
     this.page.drawRectangle({ x, y: curY, width: boxW, height: boxTop - curY, borderColor: COLORS.bleuElectrique, borderWidth: 0.8 });
     curY -= 16;
 
-    const fullText = `Arrêté le présent document à la somme de : ${this.totals.montantLettres}`;
     const fontSize = 9.5;
-    // Mesure avec la police réellement utilisée (gras) : évite tout débordement
-    const wrappedLines = this.wrapText(fullText, CONTENT_W - 4, fontSize, this.fonts.bold);
+    const wrappedLines = mentionLines;
     
     
     wrappedLines.forEach((line, idx) => {
@@ -910,6 +915,7 @@ export class BaseDocument {
   }
 
   async getBytes() {
+    this.drawPagination();
     return await this.doc.save();
   }
 
