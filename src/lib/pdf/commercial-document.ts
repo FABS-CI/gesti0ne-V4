@@ -98,6 +98,8 @@ export class CommercialDocument extends BaseDocument {
     // Le bloc des totaux mesure sa propre hauteur et change de page si besoin.
     // Totaux - Uniquement si ce n'est pas un BL
     if (!isBL) {
+      const t = this.data.type;
+      this.reserveAfterTotals = !(this.data as any).notes && !(this.data as any).observations && (t === 'Facture' || t === 'Proforma' || t === 'Commande') ? TAMPON_SIZE : 0;
       y = this.drawTotals(y);
     }
     

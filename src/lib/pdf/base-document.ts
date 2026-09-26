@@ -740,6 +740,9 @@ export class BaseDocument {
     return lines;
   }
 
+  /** Hauteur à garder sous la mention finale (ex. tampon) pour que récap + tampon restent sur la même page. */
+  reserveAfterTotals = 0;
+
   drawTotals(y: number): number {
     const isListeProduits = this.data.type === "LISTE DES PRODUITS";
     if (isListeProduits) return y;
@@ -780,7 +783,7 @@ export class BaseDocument {
     const mentionText = `Arrêté le présent document à la somme de : ${this.totals.montantLettres}`;
     const mentionLines = this.wrapText(mentionText, CONTENT_W - 4, 9.5, this.fonts.bold);
     const boxH = (rows.length + payRows.length) * 20 + 24 + (payRows.length ? 2 : 0);
-    const blockH = boxH + 16 + mentionLines.length * 9.5 * 1.3 + 4;
+    const blockH = boxH + 16 + mentionLines.length * 9.5 * 1.3 + 4 + this.reserveAfterTotals;
     if (curY - blockH < CONTENT_BOTTOM) {
       this.addNewPage();
       curY = PAGE.h - 120;
