@@ -779,10 +779,21 @@ export class BaseDocument {
       payRows.push({ label: "RESTE À PAYER", value: Math.max(0, this.totals.totalAPayer - paye) });
     }
 
+    // Palette premium du récapitulatif (présentation uniquement)
+    const R = {
+      nuit: rgb(0.039, 0.145, 0.251), // #0A2540
+      fond: rgb(0.957, 0.969, 0.980), // #F4F7FA
+      bord: rgb(0.843, 0.878, 0.910), // #D7E0E8
+      texte: rgb(0.2, 0.255, 0.333), // #334155
+      resteFond: rgb(1, 0.969, 0.929), // #FFF7ED
+      resteTexte: rgb(0.604, 0.204, 0.071), // #9A3412
+    };
+    const HEAD_H = 20, ROW_H = 18, TOTAL_H = 30, PAD = 4;
+
     // Hauteur réelle : cadre des totaux + mention « Arrêté… » (aucun saut au milieu)
     const mentionText = `Arrêté le présent document à la somme de : ${this.totals.montantLettres}`;
     const mentionLines = this.wrapText(mentionText, CONTENT_W - 4, 9.5, this.fonts.bold);
-    const boxH = (rows.length + payRows.length) * 20 + 24 + (payRows.length ? 2 : 0);
+    const boxH = HEAD_H + PAD + rows.length * ROW_H + PAD + TOTAL_H + payRows.length * ROW_H;
     const blockH = boxH + 16 + mentionLines.length * 9.5 * 1.3 + 4 + this.reserveAfterTotals;
     if (curY - blockH < CONTENT_BOTTOM) {
       this.addNewPage();
@@ -790,59 +801,60 @@ export class BaseDocument {
     }
 
     const boxTop = curY;
-    const sep = () => this.page.drawLine({ start: { x, y: curY }, end: { x: x + boxW, y: curY }, color: COLORS.bleuElectrique, thickness: 0.5 });
-    const drawRow = (row: (typeof rows)[number], idx = 0) => {
-      if (idx > 0) sep();
-      let labelX = x + 5;
-      this.page.drawText(row.label, { x: labelX, y: curY - 13, size: 8, font: this.fonts.regular, color: row.color ?? COLORS.noir });
-      // Remise globale : afficher le pourcentage en rouge après le libellé
+    // Fond général + bordure fine
+    this.page.drawRectangle({ x, y: boxTop - boxH, width: boxW, height: boxH, color: R.fond });
+    // En-tête RÉCAPITULATIF
+    this.page.drawRectangle({ x, y: boxTop - HEAD_H, width: boxW, height: HEAD_H, color: R.nuit });
+    const headTxt = "R É C A P I T U L A T I F";
+    const headW = this.fonts.bold.widthOfTextAtSize(headTxt, 8.5);
+    this.page.drawText(headTxt, { x: x + (boxW - headW) / 2, y: boxTop - 13.5, size: 8.5, font: this.fonts.bold, color: COLORS.blanc });
+    curY = boxTop - HEAD_H - PAD;
+
+    const drawRow = (row: (typeof rows)[number], idx = 0, style?: { labelColor: any; valueColor: any; bold?: boolean }) => {
+      if (idx > 0 && !style) {
+        this.page.drawLine({ start: { x: x + 8, y: curY }, end: { x: x + boxW - 8, y: curY }, color: R.bord, thickness: 0.5 });
+      }
+      const ty = curY - 12;
+      let labelX = x + 8;
+      const lblFont = style?.bold ? this.fonts.bold : this.fonts.regular;
+      this.page.drawText(row.label, { x: labelX, y: ty, size: 8, font: lblFont, color: style?.labelColor ?? R.texte });
       if (row.label === "REMISE GLOBALE" && this.totals.sousTotal > 0 && this.totals.remiseGlobale) {
         const rawPct = this.totals.remiseGlobalePct ?? (this.totals.remiseGlobale / this.totals.sousTotal) * 100;
         const pct = parseFloat(rawPct.toFixed(10));
-        const pctText = `(${pct} %)`;
-        labelX += this.fonts.regular.widthOfTextAtSize(row.label, 8) + 4;
-        this.page.drawText(pctText, { x: labelX, y: curY - 13, size: 8, font: this.fonts.bold, color: COLORS.rougeFabs });
+        labelX += lblFont.widthOfTextAtSize(row.label, 8) + 4;
+        this.page.drawText(`(${pct} %)`, { x: labelX, y: ty, size: 8, font: this.fonts.bold, color: COLORS.rougeFabs });
       }
-      const val = formatFCFA(row.value, false);
+      const val = `${formatFCFA(row.value, false)} FCFA`;
       const valW = this.fonts.bold.widthOfTextAtSize(val, 9);
       this.page.drawText(val, {
-        x: PAGE.w - MARGINS.x - valW - 5,
-        y: curY - 13,
+        x: x + boxW - valW - 8,
+        y: ty,
         size: 9,
         font: this.fonts.bold,
-        color: row.color ?? (row.label.toLowerCase().includes('remise') ? COLORS.rougeFabs : COLORS.noir)
+        color: style?.valueColor ?? (row.label.toLowerCase().includes("remise") ? COLORS.rougeFabs : R.nuit),
       });
-      curY -= 20;
+      curY -= ROW_H;
     };
     rows.forEach((r, i) => drawRow(r, i));
+    curY -= PAD;
 
-    // Barre de séparation bleu électrique avant TOTAL À PAYER
-    this.page.drawRectangle({ x, y: curY - 1.5, width: boxW, height: 1.5, color: COLORS.bleuElectrique });
-    curY -= 2;
-
-    this.page.drawText("TOTAL À PAYER (FCFA)", {
-      x: x + 5,
-      y: curY - 15,
-      size: 10,
-      font: this.fonts.bold,
-      color: COLORS.noir,
-    });
+    // TOTAL À PAYER : bande pleine bleu nuit
+    this.page.drawRectangle({ x, y: curY - TOTAL_H, width: boxW, height: TOTAL_H, color: R.nuit });
+    this.page.drawText("TOTAL À PAYER (FCFA)", { x: x + 8, y: curY - 19, size: 9, font: this.fonts.bold, color: COLORS.blanc });
     const totalVal = formatFCFA(this.totals.totalAPayer, false);
-    const totalW = this.fonts.bold.widthOfTextAtSize(totalVal, 12);
-    this.page.drawText(totalVal, {
-      x: PAGE.w - MARGINS.x - totalW - 5,
-      y: curY - 15,
-      size: 12,
-      font: this.fonts.bold,
-      color: COLORS.noir,
+    const totalW = this.fonts.bold.widthOfTextAtSize(totalVal, 15);
+    this.page.drawText(totalVal, { x: x + boxW - totalW - 8, y: curY - 20, size: 15, font: this.fonts.bold, color: COLORS.blanc });
+    curY -= TOTAL_H;
+
+    payRows.forEach((r) => {
+      const isReste = r.label === "RESTE À PAYER";
+      this.page.drawRectangle({ x, y: curY - ROW_H, width: boxW, height: ROW_H, color: isReste ? R.resteFond : COLORS.blanc });
+      drawRow(r, 1, isReste
+        ? { labelColor: R.resteTexte, valueColor: R.resteTexte, bold: true }
+        : { labelColor: R.texte, valueColor: R.nuit });
     });
-    curY -= 22;
-    if (payRows.length) {
-      this.page.drawRectangle({ x, y: curY - 1.5, width: boxW, height: 1.5, color: COLORS.bleuElectrique });
-      curY -= 2;
-      payRows.forEach((r, i) => drawRow(r, i));
-    }
-    this.page.drawRectangle({ x, y: curY, width: boxW, height: boxTop - curY, borderColor: COLORS.bleuElectrique, borderWidth: 0.8 });
+
+    this.page.drawRectangle({ x, y: curY, width: boxW, height: boxTop - curY, borderColor: R.bord, borderWidth: 0.8 });
     curY -= 16;
 
     const fontSize = 9.5;
