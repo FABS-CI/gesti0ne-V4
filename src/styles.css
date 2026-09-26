@@ -271,3 +271,14 @@ a[href*="lovable.dev"][target="_blank"],
     overflow: visible !important;
   }
 }
+
+/* Sidebar rétractable au survol (voir use-sidebar-auto-hide) */
+.app-shell-sidebar .group.peer > div {
+  transition-duration: 250ms;
+  transition-timing-function: ease-out;
+}
+.app-shell-sidebar[data-hover-open="true"] .app-sidebar-panel {
+  left: 0 !important;
+  z-index: 40;
+  box-shadow: 8px 0 24px -8px rgb(0 0 0 / 0.35);
+}
