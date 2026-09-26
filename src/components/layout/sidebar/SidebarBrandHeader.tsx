@@ -1,9 +1,11 @@
-import { X } from "lucide-react";
+import { Pin, X } from "lucide-react";
+import { useSidebarAutoHide } from "@/hooks/use-sidebar-auto-hide";
 import fabsLogo from "@/assets/fabs-logo.png";
 import { SidebarHeader, useSidebar } from "@/components/ui/sidebar";
 
 export function SidebarBrandHeader({ accentGrad }: { accentGrad: string | null }) {
   const { isMobile, setOpenMobile } = useSidebar();
+  const auto = useSidebarAutoHide();
   return (
     <SidebarHeader
       className="relative px-4 py-5"
@@ -18,6 +20,23 @@ export function SidebarBrandHeader({ accentGrad }: { accentGrad: string | null }
           style={{ background: "rgba(255,255,255,0.08)" }}
         >
           <X className="h-6 w-6" />
+        </button>
+      )}
+      {!isMobile && auto?.enabled && (
+        <button
+          type="button"
+          aria-label={auto.pinned ? "Désépingler le menu" : "Épingler le menu"}
+          aria-pressed={auto.pinned}
+          title={auto.pinned ? "Désépingler le menu" : "Épingler le menu"}
+          onClick={auto.togglePinned}
+          className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full text-white transition-all duration-200"
+          style={{ background: auto.pinned ? "rgba(255,255,255,0.18)" : "transparent", opacity: auto.pinned ? 1 : 0.6 }}
+        >
+          <Pin
+            className="h-4 w-4 transition-transform duration-200"
+            style={{ transform: auto.pinned ? "rotate(0deg)" : "rotate(45deg)" }}
+            fill={auto.pinned ? "currentColor" : "none"}
+          />
         </button>
       )}
       <div className="flex flex-1 flex-col items-center gap-2.5">

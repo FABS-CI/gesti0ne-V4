@@ -46,7 +46,7 @@ function AppSidebarImpl() {
   };
 
   return (
-    <Sidebar collapsible="offcanvas">
+    <Sidebar collapsible="offcanvas" className="app-sidebar-panel">
       <SidebarBrandHeader accentGrad={activeGroupCfg?.grad ?? null} />
       <SidebarContent
         className="px-3 py-4"
