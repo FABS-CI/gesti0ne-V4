@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ClientSearchSelect } from "@/components/search/ClientSearchSelect";
+import { ClientsDebiteursSelector } from "@/components/paiements/nouveau/ClientsDebiteursSelector";
 import {
   FacturesImpayeesCard,
   type FactureImpayeeRow,
@@ -270,22 +270,15 @@ function NouveauPaiementPage() {
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">1. Sélection du client</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ClientSearchSelect
-            value={clientId}
-            onChange={(id, client) => {
-              setClientId(id);
-              setClientNom(client?.nom ?? "");
-              setAllocs({});
-              setForm((s) => ({ ...s, montant: 0 }));
-            }}
-          />
-        </CardContent>
-      </Card>
+      <ClientsDebiteursSelector
+        value={clientId}
+        onSelect={(client) => {
+          setClientId(client.client_id);
+          setClientNom(client.nom);
+          setAllocs({});
+          setForm((s) => ({ ...s, montant: 0 }));
+        }}
+      />
 
       {clientId && (
         <FacturesImpayeesCard
