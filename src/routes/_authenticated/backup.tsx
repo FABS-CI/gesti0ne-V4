@@ -70,6 +70,8 @@ type BackupRow = {
   error_message: string | null;
   sha256: string | null;
   destination_url: string | null;
+  is_test?: boolean | null;
+  fichier_disponible?: boolean | null;
 };
 
 function formatSize(n: number | null) {
@@ -150,17 +152,18 @@ function BackupPage() {
     if (isAdmin) loadData();
   }, [isAdmin, filters]);
 
-  async function handleBackup(scope: "GLOBAL" | "PROJECT" = "GLOBAL", projectName?: string) {
+  async function handleBackup(scope: "GLOBAL" | "PROJECT" = "GLOBAL", projectName?: string, isTest = false) {
     setRunning(true);
     try {
       await startBackup({ 
         data: { 
           trigger: "manuel",
+          isTest,
           scope,
           projectName: projectName || (scope === "GLOBAL" ? "Tous les projets" : undefined)
         } 
       });
-      toast.success(`Sauvegarde ${scope === "GLOBAL" ? "intégrale" : "projet"} réussie`);
+      toast.success(isTest ? "Test réussi : archive générée, contrôlée et stockée" : `Sauvegarde ${scope === "GLOBAL" ? "intégrale" : "projet"} réussie`);
       loadData();
     } catch (e) {
       toast.error(friendlyError(e));
@@ -182,6 +185,8 @@ function BackupPage() {
       setRestoring(null);
     }
   }
+
+  const lastSuccess = history.find((h) => h.statut === "succes");
 
   if (isAdmin === false) {
     return (
@@ -205,7 +210,17 @@ function BackupPage() {
             Gestion intégrale de la sécurité de vos données (Données + Fichiers + Comptes).
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
+          <Button
+            variant="secondary"
+            size="lg"
+            onClick={() => handleBackup("GLOBAL", undefined, true)}
+            disabled={running}
+            className="font-bold"
+          >
+            {running ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Activity className="mr-2 h-4 w-4" />}
+            TESTER MAINTENANT
+          </Button>
           <Button 
             variant="outline"
             size="lg" 
@@ -257,7 +272,7 @@ function BackupPage() {
             <div className="text-xl font-bold text-orange-700">
               {stats.next_run_at ? new Date(stats.next_run_at).toLocaleString("fr-FR", { hour: '2-digit', minute: '2-digit' }) : "—"}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">Calcul dynamique</p>
+            <p className="text-xs text-muted-foreground mt-1">{stats.next_run_at ? "Tâche planifiée active" : "Tâche planifiée inactive"}</p>
           </CardContent>
         </Card>
 
@@ -270,9 +285,9 @@ function BackupPage() {
           </CardHeader>
           <CardContent>
             <div className="text-xl font-bold text-green-700">
-              {history[0] ? new Date(history[0].created_at).toLocaleString("fr-FR", { hour: '2-digit', minute: '2-digit' }) : "—"}
+              {lastSuccess ? new Date(lastSuccess.created_at).toLocaleString("fr-FR", { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : "—"}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">{history[0]?.statut === 'succes' ? 'Réussie' : '—'}</p>
+            <p className="text-xs text-muted-foreground mt-1">{lastSuccess ? `Réussie · ${lastSuccess.trigger_type === 'AUTOMATIC' ? 'automatique' : 'manuelle'}` : 'Aucune réussie'}</p>
           </CardContent>
         </Card>
 
@@ -387,8 +402,9 @@ function BackupPage() {
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className="text-[10px] uppercase font-bold">
-                          {row.scope_type === 'GLOBAL' ? 'Globale' : 'Projet'}
+                          {row.is_test ? 'Test' : row.trigger_type === 'AUTOMATIC' ? 'Auto' : 'Manuel'}
                         </Badge>
+                        {row.duree_ms != null && <div className="text-[10px] text-muted-foreground mt-1">{Math.round(row.duree_ms / 1000)} s</div>}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1.5">
@@ -400,7 +416,8 @@ function BackupPage() {
                           ) : row.statut === "echec" ? (
                             <div className="flex items-center gap-1 text-destructive" title={row.error_message || "Erreur"}>
                               <XCircle className="h-4 w-4" />
-                              <span className="text-[10px] font-bold uppercase">Fail</span>
+                              <span className="text-[10px] font-bold uppercase">Échec</span>
+                              {row.error_message && <span className="text-[10px] max-w-[160px] truncate">{row.error_message}</span>}
                             </div>
                           ) : (
                             <div className="flex items-center gap-1 text-primary">
