@@ -121,10 +121,10 @@ function RapportTransportPage() {
         columnStyles: {
           0: { cellWidth: 27 },
           1: { cellWidth: 19 },
-          2: { cellWidth: "auto", overflow: "linebreak" },
+          2: { cellWidth: 72, overflow: "linebreak" },
           3: { cellWidth: 22 },
           4: { cellWidth: 26, halign: "right" },
-          5: { cellWidth: 26, overflow: "linebreak" },
+          5: { cellWidth: 24, overflow: "linebreak" },
         },
         summary: [
           { label: "Total", value: formatFCFA(t.total) },
