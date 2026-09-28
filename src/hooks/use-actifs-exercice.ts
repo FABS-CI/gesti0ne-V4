@@ -22,8 +22,6 @@ export function useActifsExerciceIds(
           "factures",
           "commandes",
           "bons_livraison",
-          "proformas",
-          "avoirs",
           "retours",
           "bons_retour",
           "soldes_ouverture_clients",
@@ -35,6 +33,20 @@ export function useActifsExerciceIds(
         );
         for (const { data: rows } of results) {
           for (const r of rows ?? []) if (r.client_id) ids.add(r.client_id);
+        }
+        // Les proformas n'ont pas de colonne exercice_id : filtre par dates de l'exercice.
+        const { data: ex } = await supabase
+          .from("exercices")
+          .select("date_debut, date_fin")
+          .eq("exercice_id", exerciceId!)
+          .maybeSingle();
+        if (ex?.date_debut && ex?.date_fin) {
+          const { data: pf } = await supabase
+            .from("proformas")
+            .select("client_id")
+            .gte("date_proforma", ex.date_debut)
+            .lte("date_proforma", ex.date_fin);
+          for (const r of pf ?? []) if (r.client_id) ids.add(r.client_id);
         }
       } else {
         const [{ data: a }, { data: s }] = await Promise.all([

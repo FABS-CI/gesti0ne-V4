@@ -441,7 +441,16 @@ export const REPORTS: ReportDef[] = [
         .from("proformas")
         .select("reference, date_proforma, date_validite, client_nom, statut, montant_total")
         .order("date_proforma", { ascending: false });
-      if (exerciceId) q = q.eq("exercice_id", exerciceId);
+      // Pas de colonne exercice_id sur proformas : filtre par dates de l'exercice.
+      if (exerciceId) {
+        const { data: ex } = await supabase
+          .from("exercices")
+          .select("date_debut, date_fin")
+          .eq("exercice_id", exerciceId)
+          .maybeSingle();
+        if (ex?.date_debut) q = q.gte("date_proforma", ex.date_debut);
+        if (ex?.date_fin) q = q.lte("date_proforma", ex.date_fin);
+      }
       const { data, error } = await q;
       if (error) throw error;
       return (data ?? []) as Record<string, unknown>[];

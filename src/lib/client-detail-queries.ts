@@ -147,7 +147,10 @@ export const clientLivraisonsQO = (clientId: string) =>
     staleTime: SLICE_STALE,
   });
 
-async function headCount(table: string, clientId: string): Promise<number> {
+async function headCount(
+  table: "commandes" | "proformas" | "bons_livraison" | "retours" | "factures",
+  clientId: string,
+): Promise<number> {
   const { count, error } = await supabase
     .from(table)
     .select("*", { count: "exact", head: true })
