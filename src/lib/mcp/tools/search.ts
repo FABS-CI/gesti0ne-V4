@@ -1,3 +1,4 @@
+import { pgSafe } from "@/lib/postgrest-filter";
 // @ts-nocheck — schema temporarily reduced after reset; types.ts regenerates when tables come back.
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
@@ -14,7 +15,7 @@ export default defineTool({
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ query }) => {
     const supabase = await getAdmin();
-    const q = query.replace(/[,()]/g, " ").trim();
+    const q = pgSafe(query);
     const like = `%${q}%`;
     const [clients, produits, commandes, factures, colis] = await Promise.all([
       supabase
