@@ -229,14 +229,29 @@ export async function loadClientInfoForBL(blId: string): Promise<DocClientInfo> 
   return loadClientInfoForCommande(data.commande_id);
 }
 
-export async function loadClientInfoForBR(brId: string): Promise<DocClientInfo> {
-  const { data } = await supabase
+/**
+ * Un bon de retour n'a pas de facture_id : il est relié à son retour par la
+ * référence commune (bons_retour.reference = retours.reference).
+ */
+export async function loadFactureIdForBR(brId: string): Promise<string | null> {
+  const { data: br } = await supabase
     .from("bons_retour")
-    .select("facture_id")
-    .eq("br_id", brId)
+    .select("reference")
+    .eq("bon_retour_id", brId)
     .maybeSingle();
-  if (!data?.facture_id) return {};
-  return loadClientInfoForFacture(data.facture_id);
+  if (!br?.reference) return null;
+  const { data: ret } = await supabase
+    .from("retours")
+    .select("facture_id")
+    .eq("reference", br.reference)
+    .maybeSingle();
+  return ret?.facture_id ?? null;
+}
+
+export async function loadClientInfoForBR(brId: string): Promise<DocClientInfo> {
+  const factureId = await loadFactureIdForBR(brId);
+  if (!factureId) return {};
+  return loadClientInfoForFacture(factureId);
 }
 
 export type DocTotals = Pick<
@@ -330,12 +345,12 @@ export async function loadClientInfoForAchat(achatId: string): Promise<DocClient
   if (!data?.fournisseur_id) return {};
   const { data: fournisseur } = await supabase
     .from("fournisseurs")
-    .select("nom, reference, representant, telephone, email, adresse, ville")
+    .select("raison_sociale, reference, representant, telephone, email, adresse, ville")
     .eq("fournisseur_id", data.fournisseur_id)
     .maybeSingle();
   if (!fournisseur) return {};
   return {
-    clientNom: fournisseur.nom || "",
+    clientNom: fournisseur.raison_sociale || "",
     codeClient: fournisseur.reference,
     representant: fournisseur.representant,
     clientTel: fournisseur.telephone,
@@ -349,16 +364,17 @@ export async function loadClientInfoForAchat(achatId: string): Promise<DocClient
 export async function loadAchatTotals(achatId: string): Promise<DocTotals> {
   const { data } = await supabase
     .from("achats")
-    .select("montant_brut, total_remises_lignes, remise_globale_pct, remise_globale_montant, montant_ht_net, montant_ttc, montant")
+    .select("montant")
     .eq("achat_id", achatId)
     .maybeSingle();
   if (!data) return {};
-  
-  const brut = Number(data.montant_brut ?? data.montant ?? 0);
-  const remiseLigneTotal = Number(data.total_remises_lignes ?? 0);
-  const remiseGlobale = Number(data.remise_globale_montant ?? 0);
-  const remiseGlobalePct = Number(data.remise_globale_pct ?? 0);
-  const net = Number(data.montant_ht_net ?? data.montant_ttc ?? data.montant ?? (brut - remiseLigneTotal - remiseGlobale));
+
+  // La table achats ne stocke qu'un montant total (pas de remises séparées).
+  const brut = Number(data.montant ?? 0);
+  const remiseLigneTotal = 0;
+  const remiseGlobale = 0;
+  const remiseGlobalePct = 0;
+  const net = brut;
 
   return {
     totalVente: brut,
