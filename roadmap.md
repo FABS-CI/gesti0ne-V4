@@ -37,3 +37,9 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Centre de réconciliation (page Qualité des données)
 - [ ] Bon de retour, documents vides, 8 tests de non-régression, rapport final
 - [x] Relevé LIBRAIRIE BELLO : retours non validés compta exclus (33 190 000)
+
+## Lots file-23/24/25 (qualité & sécurité)
+- [x] Lot 1 : 7 bugs confirmés corrigés
+- [x] Lot 2.1 : garde super admin sur secListScopeRefs
+- [ ] Lot 2.2-2.3 : échappement filtres .or(), comparaison sécurisée des secrets webhooks
+- [ ] Lots 3, 4, 5, 6 (6A = audit seul, attendre réponse)
