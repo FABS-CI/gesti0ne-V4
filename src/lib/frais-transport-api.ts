@@ -29,6 +29,7 @@ export type FraisTransportRapport = {
     type_frais_transport: string | null;
     montant_frais_transport: number;
     statut: string | null;
+    ville: string | null;
   }[];
 };
 
@@ -53,11 +54,42 @@ export async function getRapportFraisTransport(
     _granularite: f.granularite ?? "mois",
   } as never);
   if (error) throw error;
-  const r = (data ?? {}) as Partial<FraisTransportRapport>;
+  // Le RPC renvoie les clés : facture, date_iso, client, type, transport, ville.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const r = (data ?? {}) as any;
+  const lignes: FraisTransportRapport["lignes"] = (r.lignes ?? []).map((l: any) => ({
+    facture_id: l.facture_id ?? null,
+    reference: l.facture ?? l.reference ?? null,
+    date_facture: l.date_iso ?? l.date_facture ?? null,
+    client_nom: l.client ?? l.client_nom ?? null,
+    type_frais_transport: l.type ?? l.type_frais_transport ?? null,
+    montant_frais_transport: Number(l.transport ?? l.montant_frais_transport ?? 0),
+    statut: l.statut ?? null,
+    ville: l.ville ?? null,
+  }));
+  const clients = (r.clients ?? []).map((c: any) => ({
+    client_id: c.client_id ?? null,
+    client_nom: c.client ?? c.client_nom ?? NON_RENSEIGNE,
+    total: Number(c.total ?? 0),
+    nb: Number(c.nb ?? 0),
+  }));
   return {
     kpi: { ...EMPTY.kpi, ...(r.kpi ?? {}) },
     periodes: r.periodes ?? [],
-    clients: r.clients ?? [],
-    lignes: r.lignes ?? [],
+    clients,
+    lignes,
   };
+}
+
+export const NON_RENSEIGNE = "Non renseigné";
+
+/** Totaux recalculés depuis les lignes affichées (Total = somme des lignes). */
+export function totauxDepuisLignes(lignes: FraisTransportRapport["lignes"]) {
+  let total = 0, livraison = 0, expedition = 0;
+  for (const l of lignes) {
+    total += l.montant_frais_transport;
+    if (l.type_frais_transport === "livraison") livraison += l.montant_frais_transport;
+    else if (l.type_frais_transport === "expedition") expedition += l.montant_frais_transport;
+  }
+  return { total, livraison, expedition, nb: lignes.length };
 }

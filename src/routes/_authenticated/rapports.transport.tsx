@@ -37,8 +37,12 @@ import { exportCsv } from "@/lib/export-csv";
 import { useExerciceConsulteId } from "@/contexts/ExerciceContext";
 import {
   getRapportFraisTransport,
+  NON_RENSEIGNE,
+  totauxDepuisLignes,
   type FraisTransportFilters,
 } from "@/lib/frais-transport-api";
+
+const TYPE_MAJ: Record<string, string> = { livraison: "LIVRAISON", expedition: "EXPÉDITION" };
 
 export const Route = createFileRoute("/_authenticated/rapports/transport")({
   component: RapportTransportPage,
@@ -99,24 +103,26 @@ function RapportTransportPage() {
 
   function exporter() {
     if (!d) return;
+    const nr = (v?: string | null) => (v && String(v).trim() ? String(v).trim() : NON_RENSEIGNE);
+    const t = totauxDepuisLignes(d.lignes);
     exportCsv(
       "Frais de transport",
-      ["Référence", "Date", "Client", "Type", "Montant", "Statut"],
+      ["Référence", "Date", "Client", "Type", "Montant", "Ville"],
       d.lignes.map((l) => [
-        l.reference ?? "",
-        frDate(l.date_facture),
-        l.client_nom ?? "",
-        LABEL_TYPE[l.type_frais_transport ?? ""] ?? "",
+        nr(l.reference),
+        l.date_facture ? frDate(l.date_facture) : NON_RENSEIGNE,
+        nr(l.client_nom),
+        TYPE_MAJ[l.type_frais_transport ?? ""] ?? NON_RENSEIGNE,
         formatFCFA(l.montant_frais_transport),
-        l.statut ?? "",
+        nr(l.ville),
       ]),
       {
         pageTitle: "Rapport des frais de transport",
         summary: [
-          { label: "Total", value: formatFCFA(d.kpi.total) },
-          { label: "Livraison", value: formatFCFA(d.kpi.livraison) },
-          { label: "Expédition", value: formatFCFA(d.kpi.expedition) },
-          { label: "Factures concernées", value: String(d.kpi.nb_factures) },
+          { label: "Total", value: formatFCFA(t.total) },
+          { label: "Livraison", value: formatFCFA(t.livraison) },
+          { label: "Expédition", value: formatFCFA(t.expedition) },
+          { label: "Factures concernées", value: String(t.nb) },
         ],
       },
     );
