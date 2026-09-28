@@ -1,4 +1,5 @@
 // @ts-nocheck — schema temporarily reduced after reset; types.ts regenerates when tables come back.
+import { pgSafe } from "@/lib/postgrest-filter";
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 import { getAdmin } from "../supabase";
@@ -28,7 +29,7 @@ export default defineTool({
     if (niveau) q = q.ilike("niveau", `%${niveau}%`);
     if (search) {
       const s = search.replace(/[,()]/g, " ").trim();
-      q = q.or(`titre.ilike.%${s}%,reference.ilike.%${s}%,isbn.ilike.%${s}%`);
+      q = q.or(`titre.ilike.%${pgSafe(s)}%,reference.ilike.%${pgSafe(s)}%,isbn.ilike.%${pgSafe(s)}%`);
     }
     const { data, error } = await q;
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };

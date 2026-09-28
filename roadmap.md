@@ -41,5 +41,5 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 ## Lots file-23/24/25 (qualité & sécurité)
 - [x] Lot 1 : 7 bugs confirmés corrigés
 - [x] Lot 2.1 : garde super admin sur secListScopeRefs
-- [ ] Lot 2.2-2.3 : échappement filtres .or(), comparaison sécurisée des secrets webhooks
+- [x] Lot 2.2-2.3 : filtres .or() neutralisés (pgSafe); secrets déjà comparés en temps constant
 - [ ] Lots 3, 4, 5, 6 (6A = audit seul, attendre réponse)

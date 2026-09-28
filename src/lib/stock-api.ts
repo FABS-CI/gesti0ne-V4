@@ -1,3 +1,4 @@
+import { pgSafe } from "@/lib/postgrest-filter";
 import { supabase } from "@/integrations/supabase/client";
 import type { Produit } from "@/lib/produits-api";
 
@@ -78,7 +79,7 @@ export type MouvementInput = {
 export async function listStockProduits(q?: string) {
   // Lit v_produits pour que `stock` soit toujours la somme réelle des dépôts.
   let query = supabase.from("v_produits").select("*").eq("actif", true);
-  if (q) query = query.or(`titre.ilike.%${q}%,reference.ilike.%${q}%,isbn.ilike.%${q}%`);
+  if (q) query = query.or(`titre.ilike.%${pgSafe(q)}%,reference.ilike.%${pgSafe(q)}%,isbn.ilike.%${pgSafe(q)}%`);
   query = query
     .order("pin_order", { ascending: true })
     .order("niveau_ordre", { ascending: true })

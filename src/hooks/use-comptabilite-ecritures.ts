@@ -1,3 +1,4 @@
+import { pgSafe } from "@/lib/postgrest-filter";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Ecriture, JournalFiltersState } from "@/lib/comptabilite-helpers";
@@ -18,7 +19,7 @@ export function useComptabiliteEcritures(
           "ecriture_id, reference, date_ecriture, journal, libelle, source_type, lettrage, montant_total, ecriture_lignes(ligne_id, compte, compte_libelle, debit, credit)",
         );
       if (exerciceId) query = query.eq("exercice_id", exerciceId);
-      if (q) query = query.or(`libelle.ilike.%${q}%,reference.ilike.%${q}%,lettrage.ilike.%${q}%`);
+      if (q) query = query.or(`libelle.ilike.%${pgSafe(q)}%,reference.ilike.%${pgSafe(q)}%,lettrage.ilike.%${pgSafe(q)}%`);
       if (dateFrom) query = query.gte("date_ecriture", dateFrom);
       if (dateTo) query = query.lte("date_ecriture", dateTo);
       if (journal !== "all") query = query.eq("journal", journal);

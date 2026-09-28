@@ -1,3 +1,4 @@
+import { pgSafe } from "@/lib/postgrest-filter";
 import { supabase } from "@/integrations/supabase/client";
 import { callRpc } from "@/lib/rpc";
 import { getDepotDefautId } from "@/lib/parametres-api";
@@ -191,7 +192,7 @@ export async function listCommandes(params: ListCommandesParams = {}) {
   let query = supabase.from("commandes").select(LIST_COLS, { count: "estimated" });
 
   if (exerciceId) query = query.eq("exercice_id", exerciceId);
-  if (q) query = query.or(`reference.ilike.%${q}%,client_nom.ilike.%${q}%`);
+  if (q) query = query.or(`reference.ilike.%${pgSafe(q)}%,client_nom.ilike.%${pgSafe(q)}%`);
   if (statut) query = query.eq("statut", statut);
   if (reference) query = query.ilike("reference", `%${reference}%`);
   if (client) query = query.ilike("client_nom", `%${client}%`);

@@ -1,3 +1,4 @@
+import { pgSafe } from "@/lib/postgrest-filter";
 import { supabase } from "@/integrations/supabase/client";
 
 export const DEPARTEMENTS = [
@@ -143,7 +144,7 @@ export type CongeInput = {
 
 export async function listEmployes(q?: string) {
   let query = supabase.from("employes").select("*").is("deleted_at", null);
-  if (q) query = query.or(`nom_complet.ilike.%${q}%,matricule.ilike.%${q}%,poste.ilike.%${q}%`);
+  if (q) query = query.or(`nom_complet.ilike.%${pgSafe(q)}%,matricule.ilike.%${pgSafe(q)}%,poste.ilike.%${pgSafe(q)}%`);
   query = query.order("nom_complet", { ascending: true });
   const { data, error } = await query;
   if (error) throw error;

@@ -1,4 +1,5 @@
 // @ts-nocheck — schema temporarily reduced after reset.
+import { pgSafe } from "@/lib/postgrest-filter";
 import { supabase } from "@/integrations/supabase/client";
 
 export const STATUTS_FACTURE = [
@@ -75,7 +76,7 @@ export async function listFactures(
 
   let query = supabase.from("factures").select("*");
   if (exerciceId) query = query.eq("exercice_id", exerciceId);
-  if (q) query = query.or(`reference.ilike.%${q}%,client_nom.ilike.%${q}%`);
+  if (q) query = query.or(`reference.ilike.%${pgSafe(q)}%,client_nom.ilike.%${pgSafe(q)}%`);
   if (statut) query = query.eq("statut", statut);
   if (adv.reference) query = query.ilike("reference", `%${adv.reference}%`);
   if (adv.client) query = query.ilike("client_nom", `%${adv.client}%`);
@@ -142,7 +143,7 @@ export async function listFacturesPaginated(params: {
   const applyFilters = (qb: any): any => {
     let query: any = qb;
     if (exerciceId) query = query.eq("exercice_id", exerciceId);
-    if (q) query = query.or(`reference.ilike.%${q}%,client_nom.ilike.%${q}%`);
+    if (q) query = query.or(`reference.ilike.%${pgSafe(q)}%,client_nom.ilike.%${pgSafe(q)}%`);
     if (statut) query = query.eq("statut", statut);
     if (adv.reference) query = query.ilike("reference", `%${adv.reference}%`);
     if (adv.client) query = query.ilike("client_nom", `%${adv.client}%`);

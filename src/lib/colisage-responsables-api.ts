@@ -1,3 +1,4 @@
+import { pgSafe } from "@/lib/postgrest-filter";
 import { getCurrentUser } from "@/lib/current-user";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -27,7 +28,7 @@ export async function listResponsables(params?: {
   const actif = params?.actif;
   if (actif === true || actif === false) query = query.eq("actif", actif);
   const s = (params?.search ?? "").trim();
-  if (s) query = query.or(`nom_complet.ilike.%${s}%,matricule.ilike.%${s}%`);
+  if (s) query = query.or(`nom_complet.ilike.%${pgSafe(s)}%,matricule.ilike.%${pgSafe(s)}%`);
   const { data, error } = await query;
   if (error) throw error;
   return (data ?? []) as ColisageResponsable[];
