@@ -232,6 +232,13 @@
       "when": 1790337370122,
       "tag": "0032_backup_automation",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1790585945887,
+      "tag": "0033_fix_supprimer_paiement_definitif_recalc",
+      "breakpoints": true
     }
   ]
 }
