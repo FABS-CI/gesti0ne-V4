@@ -42,5 +42,5 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Lot 1 : 7 bugs confirmés corrigés
 - [x] Lot 2.1 : garde super admin sur secListScopeRefs
 - [x] Lot 2.2-2.3 : filtres .or() neutralisés (pgSafe); secrets déjà comparés en temps constant
-- [ ] Lot 3 : A fait (types régénérés); C partiel (bons de retour, achats, état de compte, proformas par exercice); B annulé temporairement (shims remis); reste C, D, E
+- [ ] Lot 3 : A fait; C : 4 vrais bugs corrigés (perf_query_log, incident_alerts x2, expéditions de tournée, clé FNE); reste 40 erreurs de typage (valeurs vides) avant retrait des shims, puis D, E
 - [ ] Lots 4, 5, 6 (6A = audit seul, attendre réponse)
