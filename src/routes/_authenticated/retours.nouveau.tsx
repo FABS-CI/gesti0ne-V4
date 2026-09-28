@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { type Client } from "@/lib/clients-api";
 import { type Produit } from "@/lib/produits-api";
-import { creerRetourDemande } from "@/lib/retours-api";
+import { creerEtValiderRetour as creerRetourDemande } from "@/lib/retours-api";
 import { invalidateRetour } from "@/lib/cache-invalidation";
 import { usePermissions } from "@/hooks/use-permissions";
 import { listDepots } from "@/lib/depots-api";
@@ -132,7 +132,7 @@ function RetourNouveauPage() {
       }),
     onSuccess: (_data, values) => {
       void draft.markConverted();
-      toast.success("Demande de retour créée — En attente validation");
+      toast.success("Retour créé et validé avec succès.");
       invalidateRetour(qc, { clientId: values.client_id });
       navigate({ to: "/retours" });
     },
@@ -236,7 +236,7 @@ function RetourNouveauPage() {
             ) : (
               <Save className="h-4 w-4 mr-2" />
             )}
-            {mutation.isPending ? "Enregistrement…" : "Enregistrer"}
+            {mutation.isPending ? "Traitement du retour…" : "Enregistrer le retour"}
           </Button>
         </div>
       </form>

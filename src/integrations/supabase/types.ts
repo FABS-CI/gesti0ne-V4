@@ -7635,6 +7635,20 @@ export type Database = {
         Args: { p_retour_id: string }
         Returns: undefined
       }
+      _retour_receptionner_core: {
+        Args: { _lignes: Json; _retour_id: string }
+        Returns: undefined
+      }
+      _retour_traiter_auto: { Args: { _retour_id: string }; Returns: undefined }
+      _retour_valider_compta_core: {
+        Args: {
+          _commentaire?: string
+          _montants: Json
+          _option: string
+          _retour_id: string
+        }
+        Returns: undefined
+      }
       affecter_colis_tournee: {
         Args: { _colis_ids: string[]; _tournee_id: string }
         Returns: Json
@@ -9187,6 +9201,7 @@ export type Database = {
       }
       restore_employe: { Args: { _employe_id: string }; Returns: undefined }
       retour_creer_demande: { Args: { _payload: Json }; Returns: string }
+      retour_creer_et_valider: { Args: { _payload: Json }; Returns: string }
       retour_forcer_cloture: {
         Args: { _motif: string; _retour_id: string }
         Returns: undefined
