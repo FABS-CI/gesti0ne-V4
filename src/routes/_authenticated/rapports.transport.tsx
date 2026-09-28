@@ -303,27 +303,29 @@ function RapportTransportPage() {
                     <TableHead>Client</TableHead>
                     <TableHead>Type</TableHead>
                     <TableHead className="text-right">Montant</TableHead>
+                    <TableHead>Ville</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {d.lignes.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground">
+                      <TableCell colSpan={6} className="text-center text-muted-foreground">
                         Aucun frais de transport sur la période
                       </TableCell>
                     </TableRow>
                   ) : (
                     d.lignes.map((l, i) => (
                       <TableRow key={`${l.facture_id ?? i}`}>
-                        <TableCell className="font-medium">{l.reference}</TableCell>
-                        <TableCell>{frDate(l.date_facture)}</TableCell>
-                        <TableCell>{l.client_nom}</TableCell>
+                        <TableCell className="font-medium">{l.reference ?? NON_RENSEIGNE}</TableCell>
+                        <TableCell>{l.date_facture ? frDate(l.date_facture) : NON_RENSEIGNE}</TableCell>
+                        <TableCell>{l.client_nom ?? NON_RENSEIGNE}</TableCell>
                         <TableCell>
-                          {LABEL_TYPE[l.type_frais_transport ?? ""] ?? "—"}
+                          {TYPE_MAJ[l.type_frais_transport ?? ""] ?? NON_RENSEIGNE}
                         </TableCell>
                         <TableCell className="text-right font-medium">
                           {formatFCFA(l.montant_frais_transport)}
                         </TableCell>
+                        <TableCell>{l.ville ?? NON_RENSEIGNE}</TableCell>
                       </TableRow>
                     ))
                   )}
