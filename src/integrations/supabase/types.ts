@@ -9166,6 +9166,7 @@ export type Database = {
           noms: string[]
         }[]
       }
+      report_reconciliation_finance: { Args: never; Returns: Json }
       report_stock_ecarts: {
         Args: never
         Returns: {
