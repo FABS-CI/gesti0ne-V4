@@ -37,8 +37,12 @@ import { exportCsv } from "@/lib/export-csv";
 import { useExerciceConsulteId } from "@/contexts/ExerciceContext";
 import {
   getRapportFraisTransport,
+  NON_RENSEIGNE,
+  totauxDepuisLignes,
   type FraisTransportFilters,
 } from "@/lib/frais-transport-api";
+
+const TYPE_MAJ: Record<string, string> = { livraison: "LIVRAISON", expedition: "EXPÉDITION" };
 
 export const Route = createFileRoute("/_authenticated/rapports/transport")({
   component: RapportTransportPage,
@@ -99,24 +103,34 @@ function RapportTransportPage() {
 
   function exporter() {
     if (!d) return;
+    const nr = (v?: string | null) => (v && String(v).trim() ? String(v).trim() : NON_RENSEIGNE);
+    const t = totauxDepuisLignes(d.lignes);
     exportCsv(
       "Frais de transport",
-      ["Référence", "Date", "Client", "Type", "Montant", "Statut"],
+      ["Référence", "Date", "Client", "Type", "Montant", "Ville"],
       d.lignes.map((l) => [
-        l.reference ?? "",
-        frDate(l.date_facture),
-        l.client_nom ?? "",
-        LABEL_TYPE[l.type_frais_transport ?? ""] ?? "",
+        nr(l.reference),
+        l.date_facture ? frDate(l.date_facture) : NON_RENSEIGNE,
+        nr(l.client_nom),
+        TYPE_MAJ[l.type_frais_transport ?? ""] ?? NON_RENSEIGNE,
         formatFCFA(l.montant_frais_transport),
-        l.statut ?? "",
+        nr(l.ville),
       ]),
       {
         pageTitle: "Rapport des frais de transport",
+        columnStyles: {
+          0: { cellWidth: 30 },
+          1: { cellWidth: 22 },
+          2: { cellWidth: 57, overflow: "linebreak" },
+          3: { cellWidth: 24 },
+          4: { cellWidth: 28, halign: "right" },
+          5: { cellWidth: 29, overflow: "linebreak" },
+        },
         summary: [
-          { label: "Total", value: formatFCFA(d.kpi.total) },
-          { label: "Livraison", value: formatFCFA(d.kpi.livraison) },
-          { label: "Expédition", value: formatFCFA(d.kpi.expedition) },
-          { label: "Factures concernées", value: String(d.kpi.nb_factures) },
+          { label: "Total", value: formatFCFA(t.total) },
+          { label: "Livraison", value: formatFCFA(t.livraison) },
+          { label: "Expédition", value: formatFCFA(t.expedition) },
+          { label: "Factures concernées", value: String(t.nb) },
         ],
       },
     );
@@ -297,27 +311,29 @@ function RapportTransportPage() {
                     <TableHead>Client</TableHead>
                     <TableHead>Type</TableHead>
                     <TableHead className="text-right">Montant</TableHead>
+                    <TableHead>Ville</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {d.lignes.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground">
+                      <TableCell colSpan={6} className="text-center text-muted-foreground">
                         Aucun frais de transport sur la période
                       </TableCell>
                     </TableRow>
                   ) : (
                     d.lignes.map((l, i) => (
                       <TableRow key={`${l.facture_id ?? i}`}>
-                        <TableCell className="font-medium">{l.reference}</TableCell>
-                        <TableCell>{frDate(l.date_facture)}</TableCell>
-                        <TableCell>{l.client_nom}</TableCell>
+                        <TableCell className="font-medium">{l.reference ?? NON_RENSEIGNE}</TableCell>
+                        <TableCell>{l.date_facture ? frDate(l.date_facture) : NON_RENSEIGNE}</TableCell>
+                        <TableCell>{l.client_nom ?? NON_RENSEIGNE}</TableCell>
                         <TableCell>
-                          {LABEL_TYPE[l.type_frais_transport ?? ""] ?? "—"}
+                          {TYPE_MAJ[l.type_frais_transport ?? ""] ?? NON_RENSEIGNE}
                         </TableCell>
                         <TableCell className="text-right font-medium">
                           {formatFCFA(l.montant_frais_transport)}
                         </TableCell>
+                        <TableCell>{l.ville ?? NON_RENSEIGNE}</TableCell>
                       </TableRow>
                     ))
                   )}
