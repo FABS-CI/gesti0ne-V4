@@ -236,7 +236,7 @@ function RetourNouveauPage() {
             ) : (
               <Save className="h-4 w-4 mr-2" />
             )}
-            {mutation.isPending ? "Enregistrement…" : "Enregistrer"}
+            {mutation.isPending ? "Traitement du retour…" : "Enregistrer le retour"}
           </Button>
         </div>
       </form>
