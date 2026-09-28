@@ -33,7 +33,7 @@ jobs:
             sleep 2
           done
           echo "dev server failed to start" && exit 1
-      - name: Run QA suite (strict: 6/6 docs must pass)
+      - name: "Run QA suite (strict: 6/6 docs must pass)"
         run: |
           python scripts/qa-pdf-render.py | tee /tmp/qa.log
           # Seuil strict : un seul ✗ fait échouer le job

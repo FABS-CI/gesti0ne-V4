@@ -188,11 +188,11 @@ function AuthPage() {
           } catch {
             /* ignore */
           }
+          void device;
           const { error: logErr } = await supabase.rpc("log_user_login", {
-            _ip_address: ip,
-            _user_agent: ua,
-            _device: device,
-            _status: "success",
+            _email: who,
+            _ip: ip ?? null,
+            _ua: ua,
           });
           if (logErr) {
             try {

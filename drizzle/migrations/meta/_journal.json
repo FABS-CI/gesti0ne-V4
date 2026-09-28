@@ -281,6 +281,13 @@
       "when": 1790587860038,
       "tag": "0039_retour_auto_avoir_sans_depot",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1790590304290,
+      "tag": "0040_replace_user_roles_depots_atomic",
+      "breakpoints": true
     }
   ]
 }

@@ -94,7 +94,8 @@ export const secListUsers = createServerFn({ method: "POST" })
 // ------------------------------------------------------------ REFERENCES
 export const secListScopeRefs = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .handler(async () => {
+  .handler(async ({ context }) => {
+    await assertGlobalScope(context.userId);
     const db = await admin();
     const [{ data: services }, { data: departements }, { data: depots }, { data: roles }] =
       await Promise.all([
@@ -112,28 +113,23 @@ export const secListScopeRefs = createServerFn({ method: "POST" })
   });
 
 // -------------------------------------------------------------- HELPERS
-async function syncRoles(userId: string, codes: string[]) {
+/** Remplace rôles + dépôts dans une seule transaction SQL (tout ou rien). */
+async function syncScope(
+  actorId: string,
+  userId: string,
+  codes: string[],
+  depotIds: string[],
+  principal?: string | null,
+) {
   const db = await admin();
-  await db.from("rbac2_user_roles").delete().eq("user_id", userId);
-  if (codes.length > 0) {
-    const { error } = await db
-      .from("rbac2_user_roles")
-      .insert(codes.map((role_code) => ({ user_id: userId, role_code })));
-    if (error) throw new Error(error.message);
-  }
-}
-
-async function syncDepots(userId: string, depotIds: string[], principal?: string | null) {
-  const db = await admin();
-  await db.from("user_depots").delete().eq("user_id", userId);
-  if (depotIds.length > 0) {
-    const { error } = await db
-      .from("user_depots")
-      .insert(
-        depotIds.map((depot_id) => ({ user_id: userId, depot_id, principal: depot_id === principal })),
-      );
-    if (error) throw new Error(error.message);
-  }
+  const { error } = await db.rpc("sec_replace_user_scope", {
+    _actor_id: actorId,
+    _user_id: userId,
+    _role_codes: codes,
+    _depot_ids: depotIds,
+    _principal: principal ?? null,
+  });
+  if (error) throw new Error(error.message);
 }
 
 // ------------------------------------------------------------- CREATE
@@ -170,8 +166,13 @@ export const secCreateUser = createServerFn({ method: "POST" })
     });
     if (profErr) throw new Error(profErr.message);
 
-    await syncRoles(uid, data.scope.role_codes);
-    await syncDepots(uid, data.scope.depot_ids, data.profile.depot_principal_id ?? null);
+    await syncScope(
+      context.userId,
+      uid,
+      data.scope.role_codes,
+      data.scope.depot_ids,
+      data.profile.depot_principal_id ?? null,
+    );
     await audit(context.userId, "user.create", uid, null, {
       email: data.email,
       ...data.profile,
@@ -209,8 +210,13 @@ export const secUpdateUser = createServerFn({ method: "POST" })
       .eq("id", data.user_id);
     if (error) throw new Error(error.message);
 
-    await syncRoles(data.user_id, data.scope.role_codes);
-    await syncDepots(data.user_id, data.scope.depot_ids, data.profile.depot_principal_id ?? null);
+    await syncScope(
+      context.userId,
+      data.user_id,
+      data.scope.role_codes,
+      data.scope.depot_ids,
+      data.profile.depot_principal_id ?? null,
+    );
     await audit(context.userId, "user.update", data.user_id, before, {
       ...data.profile,
       ...data.scope,
