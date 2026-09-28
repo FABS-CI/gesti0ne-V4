@@ -253,6 +253,13 @@
       "when": 1790586296998,
       "tag": "0035_report_reconciliation_finance",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1790586595017,
+      "tag": "0036_fix_report_reconciliation_rights",
+      "breakpoints": true
     }
   ]
 }
