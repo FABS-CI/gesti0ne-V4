@@ -164,7 +164,6 @@ export type EmployeAuditEntry = {
   user_email: string | null;
   ip_address: string | null;
   changes: Json | null;
-  metadata: Json | null;
   error_message: string | null;
 };
 
@@ -189,7 +188,7 @@ export const getEmployeAuditHistory = createServerFn({ method: "POST" })
     const { data: rows, error } = await supabaseAdmin
       .from("audit_events")
       .select(
-        "id, occurred_at, action, status, module, table_name, user_email, ip_address, changes, metadata, error_message",
+        "id, occurred_at, action, status, module, table_name, user_email, ip_address, changes, error_message",
       )
       .or(orFilters.join(","))
       .order("occurred_at", { ascending: false })

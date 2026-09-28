@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -1265,8 +1265,6 @@ function HistoriqueTab({ employeId }: { employeId: string }) {
   );
 }
 
-// Unused, kept for potential future memoization needs
-export const __memoNoop = () => useMemo(() => null, []);
 
 type FonctionOption = { fonction_id: string; libelle: string; departement_id: string | null };
 

@@ -54,8 +54,6 @@ export type UserProfile = {
   fonction?: string | null;
   departement?: string | null;
   avatar_url?: string | null;
-  mfa_enrolled_at?: string | null;
-  mfa_required?: boolean | null;
 };
 
 export type UserRoleAssignment = {
@@ -234,7 +232,7 @@ export async function duplicateRole(
 export async function listUserProfiles(): Promise<UserProfile[]> {
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, email, nom_complet, actif, prenom, telephone, fonction, departement, avatar_url, mfa_enrolled_at, mfa_required")
+    .select("id, email, nom_complet, actif, prenom, telephone, fonction, departement, avatar_url")
     .order("nom_complet", { nullsFirst: false });
   if (error) throw error;
   return (data ?? []) as UserProfile[];

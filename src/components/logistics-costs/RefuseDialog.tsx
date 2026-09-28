@@ -36,7 +36,7 @@ export function RefuseDialog({
     setBusy(true);
     const { error } = await supabase.rpc("refuser_tournee_couts", {
       _tournee_id: row.tournee_id,
-      _commentaire: comment,
+      _motif: comment,
     });
     setBusy(false);
     if (error) {

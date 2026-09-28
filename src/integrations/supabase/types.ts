@@ -9236,6 +9236,16 @@ export type Database = {
         Args: { _filters?: Json; _limit?: number; _offset?: number }
         Returns: Json
       }
+      sec_replace_user_scope: {
+        Args: {
+          _actor_id: string
+          _depot_ids: string[]
+          _principal: string
+          _role_codes: string[]
+          _user_id: string
+        }
+        Returns: undefined
+      }
       security_admin_overview: { Args: never; Returns: Json }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
