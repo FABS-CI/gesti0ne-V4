@@ -1,5 +1,5 @@
-import { pgSafe } from "@/lib/postgrest-filter";
 // @ts-nocheck — schema temporarily reduced after reset; types.ts regenerates when tables come back.
+import { pgSafe } from "@/lib/postgrest-filter";
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 import { getAdmin } from "../supabase";

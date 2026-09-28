@@ -1,3 +1,4 @@
+import { pgSafe } from "@/lib/postgrest-filter";
 import { supabase } from "@/integrations/supabase/client";
 
 export const TYPES_TRANSACTION = [
@@ -74,7 +75,7 @@ export type TransactionInput = {
 export async function listTransactions(q?: string, type?: string, exerciceId?: string | null) {
   let query = supabase.from("transactions").select("*");
   if (exerciceId) query = query.eq("exercice_id", exerciceId);
-  if (q) query = query.or(`libelle.ilike.%${q}%,reference.ilike.%${q}%`);
+  if (q) query = query.or(`libelle.ilike.%${pgSafe(q)}%,reference.ilike.%${pgSafe(q)}%`);
   if (type) query = query.eq("type", type);
   query = query
     .order("date_transaction", { ascending: false })

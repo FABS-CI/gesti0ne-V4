@@ -1,3 +1,4 @@
+import { pgSafe } from "@/lib/postgrest-filter";
 import { supabase } from "@/integrations/supabase/client";
 import { callRpc } from "@/lib/rpc";
 
@@ -133,7 +134,7 @@ export async function listAchats(
 
   let query = supabase.from("achats").select("*, fournisseurs(raison_sociale, reference, representant, email, telephone, adresse, ville)");
   if (exerciceId) query = query.eq("exercice_id", exerciceId);
-  if (q) query = query.or(`libelle.ilike.%${q}%,reference.ilike.%${q}%`);
+  if (q) query = query.or(`libelle.ilike.%${pgSafe(q)}%,reference.ilike.%${pgSafe(q)}%`);
   if (statut) query = query.eq("statut", statut);
   if (achatIds) query = query.in("achat_id", achatIds);
   query = query.order("date_achat", { ascending: false });

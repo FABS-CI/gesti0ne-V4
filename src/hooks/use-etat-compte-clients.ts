@@ -1,3 +1,4 @@
+import { pgSafe } from "@/lib/postgrest-filter";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { computeSoldeClient, type SoldeDebug } from "@/lib/pdf/etat-compte-solde";
@@ -31,7 +32,7 @@ export function useEtatCompteClients(q: string, exerciceId: string | null | unde
         let query = supabase
           .from("clients")
           .select("client_id, reference, nom, telephone, representant, plafond_credit");
-        if (q) query = query.or(`nom.ilike.%${q}%,reference.ilike.%${q}%`);
+        if (q) query = query.or(`nom.ilike.%${pgSafe(q)}%,reference.ilike.%${pgSafe(q)}%`);
         const { data, error } = await query
           .order("nom", { ascending: true })
           .range(from, from + PAGE - 1);

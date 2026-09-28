@@ -1,3 +1,4 @@
+import { pgSafe } from "@/lib/postgrest-filter";
 import { supabase } from "@/integrations/supabase/client";
 import { callRpc } from "@/lib/rpc";
 
@@ -49,7 +50,7 @@ export type Paiement = {
 export async function listPaiements(q?: string, statut?: string, exerciceId?: string | null) {
   let query = supabase.from("paiements").select("*");
   if (exerciceId) query = query.eq("exercice_id", exerciceId);
-  if (q) query = query.or(`reference.ilike.%${q}%,client_nom.ilike.%${q}%`);
+  if (q) query = query.or(`reference.ilike.%${pgSafe(q)}%,client_nom.ilike.%${pgSafe(q)}%`);
   if (statut) query = query.eq("statut", statut);
   query = query.order("created_at", { ascending: false });
   const { data, error } = await query;
@@ -319,7 +320,7 @@ export async function listPaiementAnnulationsAudit(q?: string) {
     .select("*")
     .order("annule_le", { ascending: false });
   if (q && q.trim()) {
-    query = query.or(`raison.ilike.%${q}%,notes.ilike.%${q}%`);
+    query = query.or(`raison.ilike.%${pgSafe(q)}%,notes.ilike.%${pgSafe(q)}%`);
   }
   const { data, error } = await query;
   if (error) throw error;
