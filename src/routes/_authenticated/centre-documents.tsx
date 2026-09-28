@@ -21,6 +21,7 @@ import {
   loadClientInfoForProforma,
   loadClientInfoForBL,
   loadClientInfoForBR,
+  loadFactureIdForBR,
   loadCommandeTotals,
   loadFactureTotals,
   loadProformaTotals,
