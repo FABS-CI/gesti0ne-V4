@@ -119,12 +119,12 @@ function RapportTransportPage() {
       {
         pageTitle: "Rapport des frais de transport",
         columnStyles: {
-          0: { cellWidth: 27 },
-          1: { cellWidth: 19 },
-          2: { cellWidth: 72, overflow: "linebreak" },
-          3: { cellWidth: 22 },
-          4: { cellWidth: 26, halign: "right" },
-          5: { cellWidth: 24, overflow: "linebreak" },
+          0: { cellWidth: 30 },
+          1: { cellWidth: 22 },
+          2: { cellWidth: 57, overflow: "linebreak" },
+          3: { cellWidth: 24 },
+          4: { cellWidth: 28, halign: "right" },
+          5: { cellWidth: 29, overflow: "linebreak" },
         },
         summary: [
           { label: "Total", value: formatFCFA(t.total) },
