@@ -149,9 +149,7 @@ export function useClientsDebiteurs() {
         bucket(r.client_id).avoirs.push({
           date_retour: r.date_retour,
           montant: Number(r.montant ?? 0),
-          statut: ["annule", "refus_magasin", "refus_compta"].includes((r.statut || "").toLowerCase())
-            ? "annule"
-            : "valide",
+          statut: r.statut ?? null,
         });
       }
 

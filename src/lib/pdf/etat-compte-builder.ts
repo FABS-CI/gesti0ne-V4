@@ -4,7 +4,7 @@ import {
   generateEtatCompteClientPDF,
   type EtatCompteLigne,
 } from "@/lib/pdf/fabsTemplates";
-import { computeSoldeClient } from "@/lib/pdf/etat-compte-solde";
+import { retourFinancierValide, computeSoldeClient } from "@/lib/pdf/etat-compte-solde";
 
 export type EtatCompteClientArgs = {
   clientId: string;
@@ -127,7 +127,7 @@ export async function buildEtatCompteClientPDF(args: EtatCompteClientArgs): Prom
     (f) => !["annule", "annulee", "avoir"].includes((f.statut ?? "").toLowerCase()),
   );
   const retoursCompte = ((avoirs ?? []) as RetourCompteRow[]).filter((r) =>
-    ["valide", "accepte", "valide_compta", "cloture", "receptionne"].includes((r.statut ?? "").toLowerCase()),
+    retourFinancierValide(r.statut),
   );
   const retoursParFacture = new Map<string, number>();
   const factureRefParRetour = new Map<string, string>();
