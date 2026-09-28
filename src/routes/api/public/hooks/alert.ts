@@ -72,7 +72,7 @@ export const Route = createFileRoute("/api/public/hooks/alert")({
             severity,
             title: body.title.slice(0, 500),
             message: body.message?.slice(0, 5000) ?? null,
-            context: (body.context ?? {}) as never,
+            metadata: (body.context ?? {}) as never,
           })
           .select("id")
           .single();

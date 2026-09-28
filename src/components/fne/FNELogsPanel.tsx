@@ -151,7 +151,7 @@ export function FNELogsPanel() {
                   </TableRow>
                 )}
                 {filtered.map((r) => (
-                  <TableRow key={r.log_id}>
+                  <TableRow key={r.id}>
                     <TableCell className="text-xs whitespace-nowrap">
                       {r.created_at ? new Date(r.created_at).toLocaleString("fr-FR") : "—"}
                     </TableCell>

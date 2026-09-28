@@ -40,12 +40,15 @@ async function logPerf(entry: {
   try {
     const { data: userData } = await getCurrentUser();
     await supabase.from("perf_query_log").insert({
-      query_name: entry.queryName,
+      query_key: entry.queryName,
       duration_ms: Math.round(entry.duration * 100) / 100,
-      row_count: entry.rowCount,
       error: entry.error,
-      metadata: (entry.metadata ?? {}) as never,
-      user_id: userData.user?.id ?? null,
+      status: entry.error ? "error" : "ok",
+      metadata: {
+        ...(entry.metadata ?? {}),
+        row_count: entry.rowCount,
+        user_id: userData.user?.id ?? null,
+      } as never,
     });
   } catch {
     // silent — monitoring must never break the app

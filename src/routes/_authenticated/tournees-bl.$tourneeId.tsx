@@ -88,12 +88,21 @@ function BLPage() {
         .eq("tournee_id", tourneeId);
       if (cancelled) return;
       setLivraisons((lv ?? []) as Livraison[]);
-      const { data: ex } = await supabase
-        .from("expeditions")
-        .select("expedition_id, reference, transporteur, tracking, date_depart, statut")
-        .eq("tournee_id", tourneeId);
+      // Les expéditions n'ont pas de colonne tournee_id : on passe par les livraisons de la tournée.
+      const { data: lvExp } = await supabase
+        .from("livraisons")
+        .select("expedition_id")
+        .eq("tournee_id", tourneeId)
+        .not("expedition_id", "is", null);
+      const expIds = [...new Set((lvExp ?? []).map((r) => r.expedition_id as string))];
+      const { data: ex } = expIds.length
+        ? await supabase
+            .from("expeditions")
+            .select("expedition_id, reference, transporteur, date_depart, statut")
+            .in("expedition_id", expIds)
+        : { data: [] };
       if (cancelled) return;
-      setExpeditions((ex ?? []) as Expedition[]);
+      setExpeditions((ex ?? []).map((e) => ({ ...e, tracking: null })) as Expedition[]);
     })();
     return () => {
       cancelled = true;
