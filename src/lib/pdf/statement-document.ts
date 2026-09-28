@@ -21,7 +21,9 @@ export class StatementDocument extends BaseDocument {
     ];
     
     const lignes = data.lignes.map((l: any) => ({
-      date: l.date,
+      date: /^\d{4}-\d{2}-\d{2}/.test(String(l.date ?? ""))
+        ? String(l.date).slice(0, 10).split("-").reverse().join("/")
+        : l.date,
       reference: l.reference,
       libelle: l.libelle || l.designation || "",
       debit: l.debit || 0,
