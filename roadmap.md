@@ -36,3 +36,4 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Validation / rejet d'un paiement : recalcul de toutes les factures affectées
 - [ ] Centre de réconciliation / santé des données
 - [ ] Bon de retour, documents vides, 8 tests de non-régression, rapport final
+- [ ] Relevé LIBRAIRIE BELLO : solde -6 810 000 (file-21), relevé complet factures+paiements+avoirs
