@@ -21,6 +21,7 @@ import {
   loadClientInfoForProforma,
   loadClientInfoForBL,
   loadClientInfoForBR,
+  loadFactureIdForBR,
   loadCommandeTotals,
   loadFactureTotals,
   loadProformaTotals,
@@ -77,7 +78,7 @@ async function fetchRows(kind: DocKind): Promise<Row[]> {
     if (error) throw error;
     return (data ?? []).map((r) => ({
       id: r.facture_id,
-      reference: r.reference,
+      reference: r.reference ?? "—",
       date: r.date_facture,
       client: r.client_nom ?? "—",
       montant: r.montant_total,
@@ -96,7 +97,7 @@ async function fetchRows(kind: DocKind): Promise<Row[]> {
     if (error) throw error;
     return (data ?? []).map((r) => ({
       id: r.proforma_id,
-      reference: r.reference,
+      reference: r.reference ?? "—",
       date: r.date_proforma,
       client: r.client_nom ?? "—",
       montant: r.montant_total,
@@ -113,7 +114,7 @@ async function fetchRows(kind: DocKind): Promise<Row[]> {
     if (error) throw error;
     return (data ?? []).map((r) => ({
       id: r.bl_id,
-      reference: r.reference,
+      reference: r.reference ?? "—",
       date: r.date_livraison,
       client: r.client_nom ?? "—",
       montant: r.montant,
@@ -123,15 +124,15 @@ async function fetchRows(kind: DocKind): Promise<Row[]> {
   }
   const { data, error } = await supabase
     .from("bons_retour")
-    .select("br_id, reference, date_retour, motif, montant, statut, updated_at")
+    .select("bon_retour_id, reference, date_retour, client_nom, montant, statut, updated_at")
     .order("date_retour", { ascending: false })
     .limit(200);
   if (error) throw error;
   return (data ?? []).map((r) => ({
-    id: r.br_id,
-    reference: r.reference,
+    id: r.bon_retour_id,
+    reference: r.reference ?? "—",
     date: r.date_retour,
-    client: r.motif ?? "—",
+    client: r.client_nom ?? "—",
     montant: r.montant,
     statut: r.statut,
     version: (r as { updated_at?: string }).updated_at ?? r.date_retour,
@@ -206,15 +207,11 @@ function makeGenerator(kind: DocKind, row: Row): () => Promise<Blob> {
         clientNom: info.clientNom ?? doc.clientNom,
       });
     }
-    const { data: br } = await supabase
-      .from("bons_retour")
-      .select("facture_id")
-      .eq("br_id", row.id)
-      .maybeSingle();
+    const brFactureId = await loadFactureIdForBR(row.id);
     const [lignes, info, totals] = await Promise.all([
-      br?.facture_id ? loadFactureDocLignes(br.facture_id) : Promise.resolve([]),
+      brFactureId ? loadFactureDocLignes(brFactureId) : Promise.resolve([]),
       loadClientInfoForBR(row.id),
-      br?.facture_id ? loadFactureTotals(br.facture_id) : Promise.resolve({}),
+      brFactureId ? loadFactureTotals(brFactureId) : Promise.resolve({}),
     ]);
     doc.lignes = lignes;
       return generateUnifiedCommercialPDF("Bon de Retour", {

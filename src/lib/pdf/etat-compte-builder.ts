@@ -61,7 +61,7 @@ export async function buildEtatCompteClientPDF(args: EtatCompteClientArgs): Prom
       .maybeSingle(),
     supabase
       .from("bons_livraison")
-      .select("telephone, adresse, ville")
+      .select("adresse_livraison")
       .eq("client_id", args.clientId)
       .order("created_at", { ascending: false })
       .limit(1)
@@ -72,9 +72,9 @@ export async function buildEtatCompteClientPDF(args: EtatCompteClientArgs): Prom
   const clientBlock = {
     code: cli?.reference ?? null,
     nom: cli?.nom ?? args.clientNom,
-    adresse: cli?.adresse || lastBC.data?.adresse || lastBL.data?.adresse || null,
-    ville: cli?.ville || lastBC.data?.ville || lastBL.data?.ville || null,
-    telephone: cli?.telephone || lastBC.data?.telephone || lastBL.data?.telephone || args.clientTel || null,
+    adresse: cli?.adresse || lastBC.data?.adresse || lastBL.data?.adresse_livraison || null,
+    ville: cli?.ville || lastBC.data?.ville || null,
+    telephone: cli?.telephone || lastBC.data?.telephone || args.clientTel || null,
     email: cli?.email ?? null,
     representant: cli?.representant || lastBC.data?.representant_nom || args.representant || null,
     ncc: cli?.nif ?? null,
