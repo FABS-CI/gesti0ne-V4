@@ -154,10 +154,7 @@ export async function buildEtatCompteClientPDF(args: EtatCompteClientArgs): Prom
     ...f,
     montant_total: Number(f.montant_total ?? 0), // On ne reconstitue plus, on affiche les montants réels
   }));
-  const avoirsReleve = retoursCompte.map((r) => ({
-    ...r,
-    statut: "valide",
-  }));
+  const avoirsReleve = retoursCompte; // statut réel : seuls les retours validés compta comptent
 
   const res = computeSoldeClient({
     clientId: args.clientId,

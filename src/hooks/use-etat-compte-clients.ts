@@ -141,7 +141,7 @@ export function useEtatCompteClients(q: string, exerciceId: string | null | unde
         bucket(a.client_id).avoirs.push({
           date_retour: a.date_retour,
           montant: Number(a.montant ?? 0),
-          statut: ["annule", "refus_magasin", "refus_compta"].includes((a.statut || "").toLowerCase()) ? "annule" : "valide",
+          statut: a.statut ?? null,
         });
       }
 

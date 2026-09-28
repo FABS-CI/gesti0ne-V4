@@ -78,8 +78,13 @@ export type SoldeResultat = {
   debug: SoldeDebug;
 };
 
-const avoirEstValide = (statut?: string | null) =>
-  !statut || ["valide", "accepte", "valide_compta", "cloture", "receptionne"].includes(statut.toLowerCase());
+/**
+ * Un retour ne réduit le solde client qu'après validation financière
+ * (comptabilité). Une demande en attente ou seulement réceptionnée ne compte pas.
+ */
+export const retourFinancierValide = (statut?: string | null) =>
+  !!statut && ["valide", "accepte", "valide_compta", "cloture"].includes(statut.toLowerCase());
+const avoirEstValide = retourFinancierValide;
 
 const inRange = (iso: string, debut?: string | null, fin?: string | null) => {
   if (!iso) return false;
