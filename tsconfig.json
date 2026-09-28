@@ -22,6 +22,8 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "paths": {
+      "@/integrations/supabase/client": ["./src/integrations/supabase/client-shim.ts"],
+      "@/integrations/supabase/auth-middleware": ["./src/integrations/supabase/auth-middleware-shim.ts"],
       "@/*": ["./src/*"]
     }
   }
