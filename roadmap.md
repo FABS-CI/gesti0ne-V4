@@ -34,5 +34,6 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 ## Audit réconciliation (file-20)
 - [x] Suppression définitive d'un paiement : recalcul factures + solde client (LIBRAIRIE BELLO corrigé à 33 190 000)
 - [x] Validation / rejet d'un paiement : recalcul de toutes les factures affectées
-- [ ] Centre de réconciliation / santé des données
+- [x] Centre de réconciliation (page Qualité des données)
 - [ ] Bon de retour, documents vides, 8 tests de non-régression, rapport final
+- [x] Relevé LIBRAIRIE BELLO : retours non validés compta exclus (33 190 000)
