@@ -278,7 +278,7 @@ function SanteSystemePage() {
                 severity: "critical",
                 title: `Service "${s.label}" hors ligne`,
                 message: `Le service ${s.label} ne répond plus (${failCounts.current[key]} échecs consécutifs, latence ${s.ms ?? "?"}ms).`,
-                context: { key, ms: s.ms, checked_at: new Date().toISOString() } as any,
+                metadata: { key, ms: s.ms, checked_at: new Date().toISOString() } as any,
               })
               .select("id")
               .maybeSingle();
