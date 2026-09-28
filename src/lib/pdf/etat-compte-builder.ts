@@ -91,12 +91,13 @@ export async function buildEtatCompteClientPDF(args: EtatCompteClientArgs): Prom
         .eq("client_id", args.clientId)
         .order("date_facture", { ascending: true }),
       supabase
-        .from("paiements")
+        // Source de vérité : la part réellement imputée aux factures du client,
+        // jamais le montant brut du paiement (qui peut couvrir d'autres factures).
+        .from("payment_allocations")
         .select(
-          "facture_id, reference, date_paiement, montant, statut, factures!inner(client_id)",
+          "facture_id, montant, factures!inner(client_id), paiements!inner(reference, date_paiement, statut)",
         )
-        .eq("factures.client_id", args.clientId)
-        .order("date_paiement", { ascending: true }),
+        .eq("factures.client_id", args.clientId),
       supabase
         .from("retours")
         .select("reference, date_retour, montant, statut, facture_id")
@@ -107,11 +108,19 @@ export async function buildEtatCompteClientPDF(args: EtatCompteClientArgs): Prom
         .order("date_retour", { ascending: true }),
     ]);
 
-  const paiementsFlat = (paiements ?? []).map((p) => ({
-    reference: p.reference,
-    date_paiement: p.date_paiement,
-    montant: p.montant,
-    statut: p.statut ?? null,
+  type AllocRow = {
+    facture_id: string;
+    montant: number;
+    paiements: { reference: string | null; date_paiement: string; statut: string | null } | null;
+  };
+  const allocRows = ((paiements ?? []) as unknown as AllocRow[]).filter((a) => a.paiements);
+  // Regroupe par paiement + facture (un paiement multi-factures = une ligne par facture).
+  const paiementsFlat = allocRows.map((a) => ({
+    reference: a.paiements!.reference,
+    date_paiement: a.paiements!.date_paiement,
+    montant: Number(a.montant ?? 0),
+    statut: a.paiements!.statut ?? null,
+    facture_id: a.facture_id,
   }));
 
   const facturesCompte = ((factures ?? []) as FactureCompteRow[]).filter(
@@ -181,7 +190,7 @@ export async function buildEtatCompteClientPDF(args: EtatCompteClientArgs): Prom
         ? factureRefParRetour.get(l.reference)
         : l.type === "Paiement"
           ? factureRefParId.get(
-              String((paiements ?? []).find((p) => p.reference === l.reference)?.facture_id ?? ""),
+              String(paiementsFlat.find((p) => p.reference === l.reference)?.facture_id ?? ""),
             )
           : l.reference,
     libelle:
@@ -194,7 +203,7 @@ export async function buildEtatCompteClientPDF(args: EtatCompteClientArgs): Prom
           })()
         : l.type === "Paiement"
           ? `Paiement de la facture ${factureRefParId.get(
-              String((paiements ?? []).find((p) => p.reference === l.reference)?.facture_id ?? ""),
+              String(paiementsFlat.find((p) => p.reference === l.reference)?.facture_id ?? ""),
             ) ?? "—"}`
           : l.type === "Avoir"
             ? `Retour sur facture ${factureRefParRetour.get(l.reference) ?? "—"}`
