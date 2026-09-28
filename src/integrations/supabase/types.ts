@@ -7618,6 +7618,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      _recalc_factures_du_paiement: {
+        Args: { _paiement_id: string }
+        Returns: undefined
+      }
       _recalc_solde_client_internal: {
         Args: { _client_id: string }
         Returns: number
