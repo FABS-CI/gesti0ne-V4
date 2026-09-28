@@ -239,6 +239,13 @@
       "when": 1790585945887,
       "tag": "0033_fix_supprimer_paiement_definitif_recalc",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1790586103853,
+      "tag": "0034_fix_valider_rejeter_paiement_recalc",
+      "breakpoints": true
     }
   ]
 }
