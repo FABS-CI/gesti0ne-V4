@@ -164,6 +164,7 @@ export type EtatCompteData = {
   totalDebit?: number;
   totalPaiement?: number;
   totalRetours?: number;
+  totalTransport?: number;
   solde?: number;
   ageing?: EtatCompteAgeing | null;
 };
