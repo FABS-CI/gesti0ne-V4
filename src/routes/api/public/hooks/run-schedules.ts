@@ -1,5 +1,5 @@
-// @ts-nocheck
 import { createFileRoute } from "@tanstack/react-router";
+import { timingSafeEqual } from "crypto";
 import { getOrCreateBackupFolder } from "@/lib/gdrive-folder";
 
 const TABLES = [
@@ -103,7 +103,7 @@ export const Route = createFileRoute("/api/public/hooks/run-schedules")({
         const a = encoder.encode(provided || "");
         const b = encoder.encode(expected);
 
-        if (a.length !== b.length || !crypto.subtle.timingSafeEqual(a, b)) {
+        if (a.length !== b.length || !timingSafeEqual(a, b)) {
           return new Response(JSON.stringify({ error: "Unauthorized" }), {
             status: 401,
             headers: { "Content-Type": "application/json" },

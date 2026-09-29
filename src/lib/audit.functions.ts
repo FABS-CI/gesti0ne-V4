@@ -1,4 +1,3 @@
-// @ts-nocheck — schema temporarily reduced after reset; types.ts regenerates when tables come back.
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";

@@ -1,4 +1,3 @@
-// @ts-nocheck — schema temporarily reduced after reset.
 import { pgSafe } from "@/lib/postgrest-filter";
 import { supabase } from "@/integrations/supabase/client";
 

@@ -1,4 +1,3 @@
-// @ts-nocheck — schema temporarily reduced after reset.
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -66,14 +65,16 @@ export function RapportFiltersPanel({
     staleTime: 5 * 60_000,
   });
 
-  const toggle = (key: keyof RapportFilters, item: string) => {
-    const cur = (value[key] as string[] | undefined) ?? [];
+  type MultiValueKey = "niveaux" | "categories" | "types" | "villes" | "produits";
+
+  const toggle = (key: MultiValueKey, item: string) => {
+    const cur = value[key] ?? [];
     const next = cur.includes(item) ? cur.filter((x) => x !== item) : [...cur, item];
     onChange({ ...value, [key]: next.length ? next : undefined });
   };
 
   const activeChips = useMemo(() => {
-    const chips: { key: keyof RapportFilters; label: string; value: string }[] = [];
+    const chips: { key: MultiValueKey; label: string; value: string }[] = [];
     (["niveaux", "categories", "types", "villes", "produits"] as const).forEach((k) => {
       (value[k] ?? []).forEach((v) => chips.push({ key: k, label: `${k}: ${v}`, value: v }));
     });

@@ -1,4 +1,3 @@
-// @ts-nocheck — schema temporarily reduced after reset; types.ts regenerates when tables come back.
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 import { getAdmin } from "../supabase";
@@ -31,10 +30,16 @@ export default defineTool({
       if (!p) return { content: [{ type: "text", text: "Produit introuvable." }], isError: true };
       pid = p.produit_id;
     }
+    if (!pid) {
+      return {
+        content: [{ type: "text", text: "Produit introuvable." }],
+        isError: true,
+      };
+    }
     const { data, error } = await supabase
       .from("stocks_depots")
       .select("depot_id, quantite, seuil_alerte, depots(code, nom, ville)")
-      .eq("produit_id", pid!);
+      .eq("produit_id", pid);
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     return {
       content: [{ type: "text", text: JSON.stringify(data ?? [], null, 2) }],

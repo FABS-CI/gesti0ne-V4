@@ -11,3 +11,4 @@
 
 - Les relevés clients calculent séparément paiements affectés et retours validés, puis les combinent une seule fois dans le solde, afin d'éviter tout double comptage.
 - Un bon de retour dérivé d'une facture reprend les prix et remises effectifs de cette facture; le prix catalogue n'est qu'un secours pour les anciens retours sans facture.
+- `sec_replace_user_scope` accepte un dépôt principal nullable; conserver cette sémantique et ne pas remplacer `null` par un dépôt arbitraire pour satisfaire le type généré.

@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Sauvegarde globale ERP FABS-CI — archive ZIP unique contenant :
  *  A. données métier (toutes les tables publiques, JSON)
@@ -30,7 +29,8 @@ export type GlobalBackupResult = {
 };
 
 async function sha256Hex(bytes: Uint8Array): Promise<string> {
-  const buf = await crypto.subtle.digest("SHA-256", bytes);
+  const digestInput = Uint8Array.from(bytes);
+  const buf = await crypto.subtle.digest("SHA-256", digestInput);
   return Array.from(new Uint8Array(buf))
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");

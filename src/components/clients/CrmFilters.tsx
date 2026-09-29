@@ -1,4 +1,3 @@
-// @ts-nocheck — schema temporarily reduced after reset.
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Filter, X } from "lucide-react";
@@ -40,8 +39,11 @@ export function CrmFiltersPanel({ value, onChange }: Props) {
     return n;
   }, [value]);
 
-  const toggleIn = (key: keyof CrmFilters, v: string) => {
-    const arr = (value[key] as string[] | undefined) ?? [];
+  const toggleIn = (
+    key: "produits" | "niveaux" | "categories" | "types" | "villes",
+    v: string,
+  ) => {
+    const arr = value[key] ?? [];
     const next = arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
     onChange({ ...value, [key]: next.length ? next : undefined });
   };
