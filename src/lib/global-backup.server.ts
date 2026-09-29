@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Sauvegarde globale ERP FABS-CI — archive ZIP unique contenant :
  *  A. données métier (toutes les tables publiques, JSON)

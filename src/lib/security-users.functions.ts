@@ -1,4 +1,3 @@
-// @ts-nocheck — types.ts est régénéré après les migrations du chantier sécurité.
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
