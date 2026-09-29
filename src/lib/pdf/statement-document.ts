@@ -1,6 +1,11 @@
 
-import { BaseDocument, COLORS, MARGINS, PAGE, CONTENT_W } from "./base-document";
+import { BaseDocument, COLORS, MARGINS, PAGE, CONTENT_W, CONTENT_BOTTOM } from "./base-document";
 import { formatFCFA } from "@/lib/format";
+import tamponUrl from "@/assets/tampon-comptabilite.png";
+
+const ROW_H = 20;
+const TAMPON_TITLE_H = 18;
+const TAMPON_ZONE_H = 130;
 
 export class StatementDocument extends BaseDocument {
   async drawContent(data: any) {
@@ -35,11 +40,15 @@ export class StatementDocument extends BaseDocument {
 
     y = this.drawTable(y, colonnes, lignes);
     
-    // Récapitulatif
-    y = this.drawSummary(y, data);
-    
-    // Signature
-    this.drawSignatures(y);
+    // Récapitulatif + zone COMPTABILITÉ : gardés ensemble sur la même page.
+    const rows = this.summaryRows(data);
+    const needed = rows.length * ROW_H + 20 + TAMPON_TITLE_H + TAMPON_ZONE_H;
+    if (y - needed < CONTENT_BOTTOM) {
+      this.addNewPage();
+      y = PAGE.h - 110;
+    }
+    y = this.drawSummary(y, rows);
+    await this.drawZoneComptabilite(y);
   }
 
   async drawClientInfo(y: number, data: any): Promise<number> {
@@ -92,24 +101,8 @@ export class StatementDocument extends BaseDocument {
     return y - boxH - 20;
   }
 
-  drawSummary(y: number, data: any): number {
-    const boxW = 260;
-    const x = PAGE.w - MARGINS.x - boxW;
-    let curY = y;
-
-    const row = (label: string, value: number, isTotal = false) => {
-      const color = isTotal ? COLORS.rougeFabs : COLORS.noir;
-      const font = isTotal ? this.fonts.bold : this.fonts.regular;
-      
-      this.page.drawText(label, { x: x + 5, y: curY - 13, size: 8, font, color });
-      const valText = formatFCFA(value);
-      const valW = font.widthOfTextAtSize(valText, 9);
-      this.page.drawText(valText, { x: PAGE.w - MARGINS.x - valW - 5, y: curY - 13, size: 9, font, color });
-      
-      this.page.drawLine({ start: { x, y: curY - 20 }, end: { x: PAGE.w - MARGINS.x, y: curY - 20 }, color: COLORS.grisLigne, thickness: 0.5 });
-      curY -= 20;
-    };
-
+  /** Lignes du récapitulatif : les montants à 0 sont omis, le solde toujours affiché. */
+  summaryRows(data: any): Array<{ label: string; value: number; total?: boolean }> {
     const totalDebit = Number(data.totalDebit ?? data.lignes.reduce((a: number, l: any) => a + (l.debit || 0), 0));
     const totalPaiement = Number(data.totalPaiement ?? data.lignes
       .filter((l: any) => l.type === "Paiement")
@@ -120,30 +113,67 @@ export class StatementDocument extends BaseDocument {
     const solde = Number(
       data.solde ?? Number(data.soldeOuverture ?? 0) + totalDebit - totalPaiement - totalRetours,
     );
-
-    row("Total Débit", totalDebit);
-    row("Total Paiement", totalPaiement);
-    row("Total Retours", totalRetours);
+    const transport = Number(data.totalTransport ?? 0);
+    const rows: Array<{ label: string; value: number; total?: boolean }> = [];
+    if (totalDebit !== 0) rows.push({ label: "Total Débit", value: totalDebit });
+    if (totalPaiement > 0) rows.push({ label: "Total Paiement", value: totalPaiement });
+    if (totalRetours > 0) rows.push({ label: "Total Retours", value: totalRetours });
     // Information seule : déjà comprise dans les factures, jamais ajoutée au solde.
-    if (data.totalTransport != null) {
-      row("Frais de transport compris dans les factures", Number(data.totalTransport));
-    }
-    row(solde >= 0 ? "SOLDE DÉBITEUR (IMPAYÉ)" : "SOLDE CRÉDITEUR", Math.abs(solde), true);
+    if (transport > 0) rows.push({ label: "Frais de transport compris dans les factures", value: transport });
+    rows.push({
+      label: solde >= 0 ? "SOLDE DÉBITEUR (IMPAYÉ)" : "SOLDE CRÉDITEUR",
+      value: Math.abs(solde),
+      total: true,
+    });
+    return rows;
+  }
 
+  drawSummary(y: number, rows: Array<{ label: string; value: number; total?: boolean }>): number {
+    const boxW = 260;
+    const x = PAGE.w - MARGINS.x - boxW;
+    let curY = y;
+    for (const r of rows) {
+      const color = r.total ? COLORS.rougeFabs : COLORS.noir;
+      const font = r.total ? this.fonts.bold : this.fonts.regular;
+      this.page.drawText(r.label, { x: x + 5, y: curY - 13, size: 8, font, color });
+      const valText = formatFCFA(r.value);
+      const valW = font.widthOfTextAtSize(valText, 9);
+      this.page.drawText(valText, { x: PAGE.w - MARGINS.x - valW - 5, y: curY - 13, size: 9, font, color });
+      this.page.drawLine({ start: { x, y: curY - 20 }, end: { x: PAGE.w - MARGINS.x, y: curY - 20 }, color: COLORS.grisLigne, thickness: 0.5 });
+      curY -= ROW_H;
+    }
     return curY - 20;
   }
 
-  drawSignatures(y: number) {
-    const boxW = 150;
-    const curY = Math.max(y - 40, 100);
+  /** Zone de validation COMPTABILITÉ avec le véritable tampon (proportions conservées). */
+  async drawZoneComptabilite(y: number) {
+    const boxW = 200;
+    const x = PAGE.w - MARGINS.x - boxW;
+    const title = "COMPTABILITÉ";
+    const tw = this.fonts.bold.widthOfTextAtSize(title, 9);
+    this.page.drawText(title, { x: x + (boxW - tw) / 2, y: y - 11, size: 9, font: this.fonts.bold, color: COLORS.bleuFabs });
+    const zoneTop = y - TAMPON_TITLE_H;
+    const zoneBottom = zoneTop - TAMPON_ZONE_H;
     this.page.drawRectangle({
-      x: PAGE.w - MARGINS.x - boxW,
-      y: curY - 60,
-      width: boxW,
-      height: 60,
-      borderColor: COLORS.grisLigne,
-      borderWidth: 0.5,
+      x, y: zoneBottom, width: boxW, height: TAMPON_ZONE_H,
+      borderColor: COLORS.grisLigne, borderWidth: 0.5,
     });
-    this.page.drawText("LA COMPTABILITÉ", { x: PAGE.w - MARGINS.x - boxW + 5, y: curY - 12, size: 8, font: this.fonts.bold });
+    try {
+      const res = await fetch(tamponUrl);
+      if (!res.ok) return;
+      const img = await this.doc.embedPng(new Uint8Array(await res.arrayBuffer()));
+      const pad = 8;
+      const scale = Math.min((boxW - pad * 2) / img.width, (TAMPON_ZONE_H - pad * 2) / img.height);
+      const w = img.width * scale;
+      const h = img.height * scale;
+      this.page.drawImage(img, {
+        x: x + (boxW - w) / 2,
+        y: zoneBottom + (TAMPON_ZONE_H - h) / 2,
+        width: w,
+        height: h,
+      });
+    } catch {
+      // Tampon indisponible : la zone réservée reste propre, sans erreur PDF.
+    }
   }
 }
