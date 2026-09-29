@@ -133,6 +133,7 @@ export type EtatCompteLigne = {
   debit?: number;
   credit?: number;
   solde?: number;
+  soldeProgressif?: number;
   type?: string;
   factureReference?: string;
 };
