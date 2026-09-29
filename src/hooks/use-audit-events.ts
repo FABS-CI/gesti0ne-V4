@@ -48,7 +48,10 @@ export function useAuditEventsStats(params: {
         p_search: search.trim() || undefined,
       });
       if (error) throw error;
-      const row = (data ?? [])[0];
+      const first = Array.isArray(data) ? data[0] : data;
+      const row = first && typeof first === "object" && !Array.isArray(first)
+        ? first as Record<string, unknown>
+        : undefined;
       return {
         totalEvents: Number(row?.total_events ?? 0),
         uniqueUsers: Number(row?.unique_users ?? 0),
