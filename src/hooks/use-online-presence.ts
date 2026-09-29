@@ -1,4 +1,3 @@
-// @ts-nocheck — schema temporarily reduced after reset.
 import { useEffect, useState } from "react";
 import { subscribePresence } from "@/lib/presence-channel";
 
