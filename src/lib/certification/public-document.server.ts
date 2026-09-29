@@ -15,11 +15,11 @@ import {
   type DocType,
 } from "./certification.server";
 
-const DOWNLOADABLE: DocType[] = ["FACTURE", "PROFORMA", "COMMANDE"];
+const DOWNLOADABLE: DocType[] = ["FACTURE", "PROFORMA", "COMMANDE", "PAIEMENT"];
 
 export type PublicPdfPayload = {
   docType: DocType;
-  label: "Facture" | "Proforma" | "Commande";
+  label: "Facture" | "Proforma" | "Commande" | "Reçu";
   reference: string;
   date: string | null;
   data: Record<string, unknown>;
@@ -77,6 +77,10 @@ export async function loadPublicPdfPayload(
   if (!doc || !DOWNLOADABLE.includes(doc.type)) return null;
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+  if (doc.type === "PAIEMENT") {
+    return buildReceiptPayload(doc.id, verifiedToken, result.document, supabaseAdmin);
+  }
 
   // Résolution de la commande source (factures / proformas s'y rattachent)
   let commandeId: string | null = null;
@@ -234,6 +238,95 @@ export async function loadPublicPdfPayload(
       ...clientInfo,
       ...totals,
       lignes: toDocLignes(rawLignes, produits),
+    },
+  };
+}
+
+/** Données du reçu, construites comme dans l'application (mêmes règles de solde). */
+async function buildReceiptPayload(
+  paiementId: string,
+  verifiedToken: string,
+  cert: { canonical_hash?: string | null; certified_at?: string | null },
+  db: any,
+): Promise<PublicPdfPayload | null> {
+  const { data: p } = await db.from("paiements").select("*").eq("paiement_id", paiementId).maybeSingle();
+  if (!p) return null;
+  let facture: any = null;
+  let client: any = null;
+  let balanceBefore: number | null = null;
+  if (p.facture_id) {
+    const { data: f } = await db
+      .from("factures")
+      .select("reference, montant_total, montant_paye, client_id")
+      .eq("facture_id", p.facture_id)
+      .maybeSingle();
+    facture = f;
+    if (f) {
+      const { data: prev } = await db
+        .from("paiements")
+        .select("montant")
+        .eq("facture_id", p.facture_id)
+        .eq("statut", "valide")
+        .or(`date_paiement.lt.${p.date_paiement},and(date_paiement.eq.${p.date_paiement},created_at.lt.${p.created_at})`);
+      const sum = ((prev as any[]) ?? []).reduce((a, c) => a + Number(c.montant), 0);
+      balanceBefore = Number(f.montant_total) - sum;
+      if (f.client_id) {
+        const { data: c } = await db
+          .from("clients")
+          .select("reference, nom, telephone, adresse, ville, representant")
+          .eq("client_id", f.client_id)
+          .maybeSingle();
+        client = c;
+      }
+    }
+  }
+  if (!client && p.client_nom) {
+    const { data: c } = await db
+      .from("clients")
+      .select("reference, nom, telephone, adresse, ville, representant")
+      .eq("nom", p.client_nom)
+      .maybeSingle();
+    client = c;
+  }
+  const { data: allocs } = await db.rpc("get_payment_allocations", { _paiement_id: paiementId });
+  const invoices = ((allocs as any[]) ?? []).map((a) => ({
+    reference: a.reference ?? "—",
+    invoiceTotal: Number(a.montant_facture ?? 0),
+    amountPaid: Number(a.montant_affecte ?? 0),
+  }));
+  const { MODE_PAIEMENT_LABEL } = await import("@/lib/paiements-api");
+  const totalFacture = facture ? Number(facture.montant_total) : null;
+  return {
+    docType: "PAIEMENT",
+    label: "Reçu",
+    reference: p.reference,
+    date: p.date_paiement,
+    data: {
+      id: p.paiement_id,
+      reference: p.reference,
+      date: p.date_paiement,
+      clientNom: client?.nom ?? p.client_nom,
+      codeClient: client?.reference ?? null,
+      clientTel: client?.telephone ?? null,
+      adresseClient: client?.adresse ?? null,
+      villeClient: client?.ville ?? null,
+      representant: client?.representant ?? null,
+      modePaiement: MODE_PAIEMENT_LABEL[p.mode_paiement] ?? p.mode_paiement,
+      totalTTC: Number(p.montant),
+      factureReference: facture?.reference ?? undefined,
+      factureMontantTotal: totalFacture,
+      factureMontantPayeAvant:
+        totalFacture !== null && balanceBefore !== null ? totalFacture - balanceBefore : null,
+      balanceBefore,
+      observations: p.notes,
+      devise: "FCFA",
+      invoices: invoices.length > 1 ? invoices : undefined,
+      certification: {
+        statut: "AUTHENTIC",
+        verification_url: buildVerificationUrl(verifiedToken),
+        canonical_hash: cert.canonical_hash ?? null,
+        certified_at: cert.certified_at ?? null,
+      },
     },
   };
 }

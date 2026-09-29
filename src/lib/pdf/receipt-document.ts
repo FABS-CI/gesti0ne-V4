@@ -117,31 +117,20 @@ export class ReceiptDocument extends BaseDocument {
     return y - boxH - 16;
   }
 
-  /** Contenu du QR : propre à chaque reçu, à partir des données réelles. */
-  qrPayload(): string {
-    const r = this.receiptData;
-    const multi = this.multiInvoices;
-    const factures = multi ? multi.map((i) => i.reference).join(", ") : r.invoiceNumber;
-    const statut = multi
-      ? `RÈGLEMENT RÉPARTI SUR ${multi.length} FACTURES`
-      : r.balanceAfter <= 0 ? "PAIEMENT COMPLET" : "PAIEMENT PARTIEL";
-    const d = new Date(r.paymentDate);
-    const date = isNaN(d.getTime()) ? String(r.paymentDate) : d.toLocaleDateString("fr-FR");
-    return [
-      `Reçu : ${r.paymentNumber}`,
-      `Date : ${date}`,
-      `Client : ${r.customerName.toUpperCase()}`,
-      `Facture : ${factures}`,
-      `Montant reçu : ${formatFCFA(r.amountPaid)}`,
-      `Statut : ${statut}`,
-    ].join("\n");
-  }
-
   async drawReceiptQr(x: number, yBottom: number, w: number, h: number) {
     try {
       const { default: QRCode } = await import("qrcode");
-      const { QR_COLOR_OPTS } = await import("./qr-logic");
-      const url = await QRCode.toDataURL(this.qrPayload(), {
+      const { QR_COLOR_OPTS, buildQrUrl } = await import("./qr-logic");
+      // Même mécanisme que factures / BC / proformas : jeton stable → page /verify.
+      const pre = (this.data as any).certification;
+      let target: string | null = pre?.verification_url ?? null;
+      if (!target) {
+        const { ensureVerificationSafe } = await import("@/lib/certification/auto-certify");
+        const cert = await ensureVerificationSafe(this.receiptData.paymentNumber);
+        target = cert?.verification_url ?? (cert?.token ? buildQrUrl(cert.token) : null);
+      }
+      if (!target) return; // paiement non validé : pas de QR de vérification
+      const url = await QRCode.toDataURL(target, {
         margin: 2, width: 400, errorCorrectionLevel: "M", color: QR_COLOR_OPTS,
       });
       const img = await this.doc.embedPng(url);
