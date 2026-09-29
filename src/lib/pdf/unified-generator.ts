@@ -284,7 +284,13 @@ export async function generateUnifiedRetourPDF(data: DataBase): Promise<Blob> {
       telephone: data.clientTel || "",
       code: data.codeClient || "",
     },
+    clientNom: data.clientNom || "",
+    clientTel: data.clientTel || "",
+    codeClient: data.codeClient || "",
+    adresseClient: data.adresseClient || "",
+    villeClient: data.villeClient || "",
     emailClient: data.emailClient || undefined,
+    observations: data.observations || data.notes || undefined,
     origin: data.origin ?? null,
     lignes: data.lignes || [],
   };
