@@ -37,6 +37,9 @@ export type DocLigne = {
   remisePct?: number;
   remiseMontant?: number;
   tvaPct?: number;
+  etatProduit?: string;
+  etatReception?: string;
+  commentaireReception?: string;
 };
 
 export type DocStatut = {

@@ -1,7 +1,6 @@
 
 import { BaseDocument, COLORS, MARGINS, PAGE, CONTENT_W } from "./base-document";
 import { formatFCFA } from "@/lib/format";
-import { rgb } from "pdf-lib";
 
 export class StatementDocument extends BaseDocument {
   async drawContent(data: any) {
