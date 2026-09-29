@@ -112,7 +112,7 @@ export function ClientReleveDialog({ open, onOpenChange, client }: Props) {
               <Row label="Frais de transport compris dans les factures" value={data.totalTransport} />
               <div className="flex justify-between border-t pt-1.5 font-bold text-destructive">
                 <span>{data.solde >= 0 ? "SOLDE DÉBITEUR (IMPAYÉ)" : "SOLDE CRÉDITEUR"}</span>
-                <span>{formatFCFA(Math.abs(data.solde))} FCFA</span>
+                <span>{formatFCFA(Math.abs(data.solde))}</span>
               </div>
             </div>
 
@@ -133,7 +133,7 @@ function Row({ label, value }: { label: string; value: number }) {
   return (
     <div className="flex justify-between gap-4">
       <span className="text-muted-foreground">{label}</span>
-      <span className="font-medium whitespace-nowrap">{formatFCFA(value)} FCFA</span>
+      <span className="font-medium whitespace-nowrap">{formatFCFA(value)}</span>
     </div>
   );
 }
