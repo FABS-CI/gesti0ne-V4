@@ -417,6 +417,7 @@ export async function generateBonSortieCaissePDF(tourneeId: string): Promise<Blo
     .eq("tournee_id", tourneeId)
     .maybeSingle();
   if (!t) throw new Error("Tournée introuvable");
+  if (!t.reference) throw new Error("Tournée incomplète : référence absente");
   const vehicule = await fetchVehicule(t.vehicule_id);
 
   let comptableNom = "—";
