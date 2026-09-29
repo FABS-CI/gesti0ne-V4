@@ -95,7 +95,7 @@ export default function RolesAdmin() {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["sec-matrix"],
-    queryFn: () => getMatrix({ data: {} }),
+    queryFn: () => getMatrix(),
     staleTime: 30_000,
   });
 

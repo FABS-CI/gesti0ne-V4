@@ -122,7 +122,9 @@ function BackupPage() {
       let query = supabase.from("backups").select("*");
       
       if (filters.project !== "all") query = query.eq("project_name", filters.project);
-      if (filters.type !== "all") query = query.eq("scope_type", filters.type);
+      if (filters.type === "GLOBAL" || filters.type === "PROJECT") {
+        query = query.eq("scope_type", filters.type);
+      }
       if (filters.status !== "all") query = query.eq("statut", filters.status === "Réussie" ? "succes" : "echec");
 
       const { data: historyData, error: historyError } = await query

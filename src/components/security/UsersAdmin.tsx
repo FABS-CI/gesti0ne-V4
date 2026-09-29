@@ -135,8 +135,8 @@ export function UsersAdmin() {
   const setStatut = useServerFn(secSetUserStatut);
   const resetPwd = useServerFn(secResetPassword);
 
-  const users = useQuery({ queryKey: ["sec", "users"], queryFn: () => listUsers({ data: {} }) });
-  const refs = useQuery({ queryKey: ["sec", "refs"], queryFn: () => listRefs({ data: {} }) });
+  const users = useQuery({ queryKey: ["sec", "users"], queryFn: () => listUsers() });
+  const refs = useQuery({ queryKey: ["sec", "refs"], queryFn: () => listRefs() });
 
   const [search, setSearch] = useState("");
   const [statutFilter, setStatutFilter] = useState<string>("tous");

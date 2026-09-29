@@ -58,19 +58,19 @@ function SeuilsPage() {
     queryKey: ["approbation-seuils"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("approbation_seuils" as any)
+        .from("approbation_seuils")
         .select("*")
         .order("module")
         .order("type_operation");
       if (error) throw error;
-      return (data ?? []) as Seuil[];
+      return data ?? [];
     },
   });
 
   const saveMut = useMutation({
     mutationFn: async (s: Partial<Seuil> & { id?: string }) => {
       if (s.id) {
-        const { error } = await supabase.from("approbation_seuils" as any)
+        const { error } = await supabase.from("approbation_seuils")
           .update({
             seuil_urgent: s.seuil_urgent,
             seuil_critique: s.seuil_critique,

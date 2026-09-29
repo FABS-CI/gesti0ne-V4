@@ -172,8 +172,8 @@ export async function getBLDetail(blId: string): Promise<BLDetail | null> {
 
   return {
     bl_id: data.bl_id,
-    reference: data.reference,
-    date_emission: data.date_emission,
+    reference: data.reference ?? "—",
+    date_emission: data.date_emission ?? data.date_bon ?? data.created_at,
     date_livraison: data.date_livraison,
     statut: data.statut,
     client_id: data.client_id,

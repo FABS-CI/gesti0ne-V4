@@ -127,15 +127,15 @@ async function fetchRows(kind: DocKind): Promise<Row[]> {
     .order("date_retour", { ascending: false })
     .limit(200);
   if (error) throw error;
-  return (data ?? []).map((r) => ({
+    return (data ?? []).flatMap((r) => r.bon_retour_id ? [{
     id: r.bon_retour_id,
     reference: r.reference ?? "—",
     date: r.date_retour,
     client: r.client_nom ?? "—",
     montant: r.montant,
     statut: r.statut,
-    version: (r as { updated_at?: string }).updated_at ?? r.date_retour,
-  }));
+      version: r.updated_at ?? r.date_retour,
+    }] : []);
 }
 
 function buildDoc(row: Row): DocBase {

@@ -62,9 +62,9 @@ type Contrat = {
   statut: string;
 };
 type Absence = {
-  type_absence: string;
-  date_debut: string;
-  date_fin: string;
+  type: string | null;
+  date_debut: string | null;
+  date_fin: string | null;
   motif: string | null;
   statut: string;
 };
@@ -211,7 +211,7 @@ function EmployeDetailPage() {
               <SimpleTable
                 headers={["Type", "Début", "Fin", "Motif", "Statut"]}
                 rows={(absences as Absence[]).map((a) => [
-                  <span className="capitalize">{a.type_absence}</span>,
+                  <span className="capitalize">{a.type ?? "—"}</span>,
                   frDate(a.date_debut),
                   frDate(a.date_fin),
                   a.motif ?? "—",

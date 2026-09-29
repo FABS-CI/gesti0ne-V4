@@ -240,7 +240,7 @@ export async function generateBonTourneePDF(tourneeId: string): Promise<Blob> {
     doc,
     y,
     [
-      ["N° tournée", t.reference],
+      ["N° tournée", t.reference ?? "—"],
       ["Date", t.date_tournee ?? "—"],
       ["Responsable logistique", t.responsable_nom ?? "—"],
       [isExpedition ? "Transporteur" : "Chauffeur", t.chauffeur_nom ?? "—"],
@@ -461,7 +461,7 @@ export async function generateBonSortieCaissePDF(tourneeId: string): Promise<Blo
     y,
     [
       ["Date", t.date_tournee ?? "—"],
-      ["N° tournée", t.reference],
+      ["N° tournée", t.reference ?? "—"],
       ["Responsable logistique", t.responsable_nom ?? "—"],
       ["Chauffeur / Transporteur", t.chauffeur_nom ?? "—"],
       ["Véhicule", vehicule],

@@ -153,6 +153,9 @@ function ProformaDetailPage() {
             variant="secondary"
             onClick={async () => {
               try {
+                if (!proforma.reference || !proforma.date_proforma) {
+                  throw new Error("Proforma incomplète : référence ou date absente");
+                }
                 invalidatePdfByPrefix(`PF:${proforma.reference}:`);
                 const [lignes, clientInfo, totals] = await Promise.all([
                   loadProformaDocLignes(proformaId),
@@ -194,6 +197,9 @@ function ProformaDetailPage() {
                   pdf.download(
                     proformaId,
                     async () => {
+                      if (!proforma.reference || !proforma.date_proforma) {
+                        throw new Error("Proforma incomplète : référence ou date absente");
+                      }
                       const [lignes, clientInfo, totals] = await Promise.all([
                         loadProformaDocLignes(proformaId),
                         loadClientInfoForProforma(proformaId),

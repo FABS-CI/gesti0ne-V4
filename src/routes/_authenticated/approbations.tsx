@@ -802,7 +802,7 @@ function DecisionDialog({
       const { data: result, error } = await supabase.rpc("approbation_decider", {
         p_approbation_id: row.id,
         p_decision: isApprove ? "approuve" : "rejete",
-        p_commentaire: comment || null,
+        p_commentaire: comment || undefined,
       });
 
       if (error) throw error;
@@ -1018,7 +1018,7 @@ function BulkDecisionDialog({
       const { data, error } = await supabase.rpc("approbation_decider_lot", {
         p_ids: ids,
         p_decision: action,
-        p_commentaire: comment || null,
+        p_commentaire: comment || undefined,
       });
       if (error) throw error;
       const res = (data ?? {}) as { ok?: number; ko?: number };
@@ -1112,8 +1112,8 @@ function DelegateDialog({ row, onClose }: { row: Approval; onClose: () => void }
       const { error } = await supabase.rpc("approbation_deleguer", {
         p_approbation_id: row.id,
         p_delegataire_id: delegataireId,
-        p_commentaire: comment || null,
-        p_expire_at: expireAt ? new Date(expireAt).toISOString() : null,
+        p_commentaire: comment || undefined,
+        p_expire_at: expireAt ? new Date(expireAt).toISOString() : undefined,
       });
       if (error) throw error;
       toast.success("Demande déléguée");

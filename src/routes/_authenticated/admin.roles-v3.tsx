@@ -177,7 +177,7 @@ function RolesV3Page() {
     const { error } = await supabase.rpc("rbac3_role_upsert", {
       _code: form.code,
       _label: form.label,
-      _description: form.description || null,
+      _description: form.description || undefined,
       _portee_globale: form.portee_globale,
       _statut: form.statut,
     });
