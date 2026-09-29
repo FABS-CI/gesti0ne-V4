@@ -9,7 +9,7 @@ import { getRetour, type RetourWithLignes } from "@/lib/retours-api";
 async function loadPrixMap(
   factureId: string | null,
   produitIds: string[],
-): Promise<Map<string, { prix: number; remisePct: number }>> {
+): Promise<Map<string, { prix: number; remisePct: number; quantiteFacturee: number }>> {
   const prices = new Map<string, { prix: number; remisePct: number; quantiteFacturee: number }>();
 
   // 1) Prix + remise vendus sur la facture liée (via la commande)
@@ -118,7 +118,9 @@ export async function buildRetourDocBaseFrom(retour: RetourWithLignes): Promise<
     // Un retour dérivé d'une facture reprend toujours son prix et sa remise effectifs.
     // Le catalogue n'est utilisé que pour les anciens retours sans facture liée.
     const pu = info?.prix ?? Number(l.prix_unitaire ?? 0);
-    const remisePct = info?.remisePct ?? Number(l.remise_pct ?? 0);
+    // La ligne du retour est l'enregistrement historique du calcul réellement appliqué.
+    // Les données de facture servent de repli aux anciens enregistrements incomplets.
+    const remisePct = l.remise_pct == null ? (info?.remisePct ?? 0) : Number(l.remise_pct);
     
     const qte = Number(l.quantite ?? 0);
     const brut = pu * qte;
