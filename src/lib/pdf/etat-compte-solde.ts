@@ -189,7 +189,15 @@ export function computeSoldeClient(input: RawInputs): SoldeResultat {
     });
   }
 
-  lignes.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  // Tri chronologique ; à date égale : facture, puis paiement, puis retour,
+  // départagés par référence (ex. RET-…-002 avant RET-…-003).
+  const ordreType: Record<MouvementLigne["type"], number> = { Report: 0, Facture: 1, Paiement: 2, Avoir: 3 };
+  lignes.sort(
+    (a, b) =>
+      new Date(a.date).getTime() - new Date(b.date).getTime() ||
+      ordreType[a.type] - ordreType[b.type] ||
+      a.reference.localeCompare(b.reference, "fr", { numeric: true }),
+  );
 
   let totalDebit = 0;
   let totalPaiement = 0;

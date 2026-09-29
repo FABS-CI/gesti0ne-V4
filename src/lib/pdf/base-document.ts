@@ -718,7 +718,7 @@ export class BaseDocument {
           const txtW = this.fonts.regular.widthOfTextAtSize(lineText, fontSize);
           
           let alignX = curX + colHPadding;
-          if (['qte', 'qte_fact', 'qte_ret', 'prixUnit', 'remisePct', 'remPct', 'montantHT', 'pu', 'net', 'total', 'montant', 'debit', 'credit', 'solde'].includes(col.key)) {
+          if (['qte', 'qte_fact', 'qte_ret', 'prixUnit', 'remisePct', 'remPct', 'montantHT', 'pu', 'net', 'total', 'montant', 'debit', 'credit', 'retour', 'solde'].includes(col.key)) {
             alignX = curX + col.width - txtW - colHPadding;
           }
 

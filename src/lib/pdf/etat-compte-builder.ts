@@ -166,19 +166,6 @@ export async function buildEtatCompteClientPDF(args: EtatCompteClientArgs): Prom
     avoirs: avoirsReleve,
   });
 
-  // Statut retour par facture (référence facture → aucun/partiel/total)
-  const statutRetourParFacture = new Map<string, "aucun" | "partiel" | "total">();
-  for (const f of facturesReleve) {
-    const totalRet = retoursParFacture.get(f.facture_id) ?? 0;
-    const brut = Number(f.montant_total ?? 0); // ici, montant_total est déjà reconstitué (brut)
-    const net = brut - totalRet;
-    const ref = f.reference ?? "";
-    if (!ref) continue;
-    if (totalRet <= 0) statutRetourParFacture.set(ref, "aucun");
-    else if (net <= 0.5) statutRetourParFacture.set(ref, "total");
-    else statutRetourParFacture.set(ref, "partiel");
-  }
-
   // --- Enrichit les lignes avec un libellé humain
   const lignes: EtatCompteLigne[] = res.lignes.map((l) => ({
     ...l,
@@ -192,12 +179,7 @@ export async function buildEtatCompteClientPDF(args: EtatCompteClientArgs): Prom
           : l.reference,
     libelle:
       l.type === "Facture"
-        ? (() => {
-            const st = statutRetourParFacture.get(l.reference);
-            const suffix =
-              st === "partiel" ? " (Retour partiel)" : st === "total" ? " (Retour total)" : "";
-            return `Facture client ${l.reference}${suffix}`;
-          })()
+        ? `Facture client ${l.reference}`
         : l.type === "Paiement"
           ? `Paiement de la facture ${factureRefParId.get(
               String(paiementsFlat.find((p) => p.reference === l.reference)?.facture_id ?? ""),
