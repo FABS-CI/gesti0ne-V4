@@ -20,12 +20,11 @@ import {
   loadClientInfoForFacture,
   loadClientInfoForProforma,
   loadClientInfoForBL,
-  loadClientInfoForBR,
-  loadFactureIdForBR,
   loadCommandeTotals,
   loadFactureTotals,
   loadProformaTotals,
 } from "@/lib/pdf/enrich-lignes";
+import { buildRetourDocBase } from "@/lib/pdf/retour-builder";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -207,19 +206,14 @@ function makeGenerator(kind: DocKind, row: Row): () => Promise<Blob> {
         clientNom: info.clientNom ?? doc.clientNom,
       });
     }
-    const brFactureId = await loadFactureIdForBR(row.id);
-    const [lignes, info, totals] = await Promise.all([
-      brFactureId ? loadFactureDocLignes(brFactureId) : Promise.resolve([]),
-      loadClientInfoForBR(row.id),
-      brFactureId ? loadFactureTotals(brFactureId) : Promise.resolve({}),
-    ]);
-    doc.lignes = lignes;
-      return generateUnifiedCommercialPDF("Bon de Retour", {
-        ...doc,
-        ...info,
-        ...totals,
-        clientNom: info.clientNom ?? doc.clientNom,
-      });
+    const { data: retour } = await supabase
+      .from("retours")
+      .select("retour_id")
+      .eq("reference", row.reference)
+      .maybeSingle();
+    if (!retour?.retour_id) throw new Error("Retour d'origine introuvable");
+    const retourDoc = await buildRetourDocBase(retour.retour_id);
+    return generateUnifiedCommercialPDF("Bon de Retour", retourDoc);
   };
 }
 

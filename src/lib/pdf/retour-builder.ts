@@ -40,10 +40,7 @@ async function loadPrixMap(
         if (l.produit_id && l.prix_unitaire != null) {
           prices.set(l.produit_id, {
             prix: Number(l.prix_unitaire),
-            remisePct:
-              100 -
-              (100 - Number(l.remise_pct ?? 0)) *
-                (1 - remiseGlobalePct / 100),
+            remisePct: 100 - (100 - Number(l.remise_pct ?? 0)) * (1 - remiseGlobalePct / 100),
           });
         }
       }
@@ -116,11 +113,10 @@ export async function buildRetourDocBaseFrom(retour: RetourWithLignes): Promise<
   const lignes: DocLigne[] = retour.lignes.map((l) => {
     const info = l.produit_id ? prices.get(l.produit_id) : undefined;
     
-    // Le prix unitaire est celui stocké en base s'il existe, sinon celui du catalogue/facture
-    const pu = Number(l.prix_unitaire) || info?.prix || 0;
-    
-    // La remise est celle stockée sur la ligne
-    const remisePct = Number(l.remise_pct ?? 0);
+    // Un retour dérivé d'une facture reprend toujours son prix et sa remise effectifs.
+    // Le catalogue n'est utilisé que pour les anciens retours sans facture liée.
+    const pu = info?.prix ?? Number(l.prix_unitaire ?? 0);
+    const remisePct = info?.remisePct ?? Number(l.remise_pct ?? 0);
     
     const qte = Number(l.quantite ?? 0);
     const brut = pu * qte;
@@ -137,8 +133,8 @@ export async function buildRetourDocBaseFrom(retour: RetourWithLignes): Promise<
       cycle: m?.cycle,
       niveau: m?.niveau,
       matiere: m?.matiere,
-      qteDemandee: Number(l.quantite_demandee ?? l.quantite ?? 0),
-      qteRetournee: Number(l.quantite_recue ?? 0),
+      qteCommandee: Number(l.quantite_demandee ?? l.quantite ?? 0),
+      qteRetournee: Number(l.quantite_recue ?? l.quantite ?? 0),
       motif: l.motif ?? undefined,
       prixUnitaire: pu || undefined,
       remisePct: remisePct || undefined,

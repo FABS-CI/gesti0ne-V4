@@ -284,12 +284,9 @@ export async function generateUnifiedRetourPDF(data: DataBase): Promise<Blob> {
       telephone: data.clientTel || "",
       code: data.codeClient || "",
     },
-    demandeur: (data as any).demandeurNom || (data as any).created_by_nom || "—",
-    approuvePar: (data as any).valide_compta_par_nom || (data as any).approuvePar || "—",
-    dateApprobation: (data as any).valide_compta_at 
-      ? new Date((data as any).valide_compta_at).toLocaleDateString('fr-FR') 
-      : (data as any).dateApprobation || "—",
-    lignes: data.lignes || []
+    emailClient: data.emailClient || undefined,
+    origin: data.origin ?? null,
+    lignes: data.lignes || [],
   };
 
   const doc = new RetourDocument(docBase, {} as any);

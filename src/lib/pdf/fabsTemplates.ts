@@ -158,6 +158,10 @@ export type EtatCompteData = {
   };
   lignes: EtatCompteLigne[];
   soldeOuverture?: number;
+  totalDebit?: number;
+  totalPaiement?: number;
+  totalRetours?: number;
+  solde?: number;
   ageing?: EtatCompteAgeing | null;
 };
 

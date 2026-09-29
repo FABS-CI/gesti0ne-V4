@@ -57,6 +57,8 @@ describe("computeSoldeClient — parité tableau ↔ PDF", () => {
     // Solde = 70 000 + 200 000 − 47 000 = 223 000
     expect(r.totalDebit).toBe(200_000);
     expect(r.totalCredit).toBe(47_000);
+    expect(r.totalPaiement).toBe(40_000);
+    expect(r.totalRetours).toBe(7_000);
     expect(r.solde).toBe(223_000);
 
     // Recalcul « à la manière du PDF » (ligne à ligne à partir du soldeOuverture)
@@ -73,6 +75,8 @@ describe("computeSoldeClient — parité tableau ↔ PDF", () => {
     const pdfRes = computeSoldeClient(base);
     expect(routeRes.totalDebit).toBe(pdfRes.totalDebit);
     expect(routeRes.totalCredit).toBe(pdfRes.totalCredit);
+    expect(routeRes.totalPaiement).toBe(pdfRes.totalPaiement);
+    expect(routeRes.totalRetours).toBe(pdfRes.totalRetours);
     expect(routeRes.solde).toBe(pdfRes.solde);
     expect(routeRes.soldeOuverture).toBe(pdfRes.soldeOuverture);
     expect(routeRes.lignes).toEqual(pdfRes.lignes);
