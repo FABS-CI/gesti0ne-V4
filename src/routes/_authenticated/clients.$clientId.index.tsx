@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { ArrowLeft, Mail, MessageCircle, Pencil, PlusCircle, RotateCcw, Wallet, ReceiptText } from "lucide-react";
+import { ArrowLeft, FileText, Mail, Pencil, PlusCircle, RotateCcw, Wallet, ReceiptText } from "lucide-react";
 
 import { TYPE_COLOR, normalizeTypeClient } from "@/lib/company";
 import { formatFCFA } from "@/lib/format";
@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePermissions } from "@/hooks/use-permissions";
 import { ClientEditSheet } from "@/components/clients/ClientEditSheet";
 import { Kpi, ReportANouveauKpi } from "@/components/clients/detail/shared";
+import { ClientReleveDialog } from "@/components/clients/detail/ClientReleveDialog";
 import { ClientInfosTab } from "@/components/clients/detail/ClientInfosTab";
 import { ClientCommandesTab } from "@/components/clients/detail/ClientCommandesTab";
 import { ClientFacturesTab } from "@/components/clients/detail/ClientFacturesTab";
@@ -60,6 +61,7 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [editOpen, setEditOpen] = useState(false);
+  const [releveOpen, setReleveOpen] = useState(false);
   const { has } = usePermissions();
   const canSeeSolde = has("clients.voir_ca");
 
@@ -185,21 +187,6 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
 
       {/* Actions rapides */}
       <div className="flex flex-wrap gap-2">
-        {client.telephone &&
-          (() => {
-            const waMessage = `Bonjour ${client.nom},`;
-            return (
-              <Button variant="outline" size="sm" asChild>
-                <a
-                  href={`https://wa.me/${client.telephone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(waMessage)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
-                </a>
-              </Button>
-            );
-          })()}
         {client.email && (
           <Button variant="outline" size="sm" asChild>
             <a href={`mailto:${client.email}`}>
@@ -207,16 +194,13 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
             </a>
           </Button>
         )}
-        <Button
-          size="sm"
-          className="bg-orange-500 hover:bg-orange-600 text-white"
-          onClick={() => setEditOpen(true)}
-        >
-          <Pencil className="mr-2 h-4 w-4" /> Modifier
+        <Button size="sm" variant="outline" onClick={() => setReleveOpen(true)}>
+          <FileText className="mr-2 h-4 w-4" /> Relevé de compte
         </Button>
       </div>
 
       <ClientEditSheet client={client} open={editOpen} onOpenChange={setEditOpen} />
+      <ClientReleveDialog open={releveOpen} onOpenChange={setReleveOpen} client={client} />
 
       {/* KPIs */}
       <Section fallback={<SkeletonKpiRow count={canSeeSolde ? 8 : 4} />}>

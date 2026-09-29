@@ -22,6 +22,7 @@ type FactureCompteRow = {
   date_echeance: string | null;
   montant_total: number | null;
   montant_paye: number | null;
+  montant_frais_transport: number | null;
   statut: string | null;
 };
 
@@ -33,7 +34,24 @@ type RetourCompteRow = {
   facture_id: string | null;
 };
 
-export async function buildEtatCompteClientPDF(args: EtatCompteClientArgs): Promise<Blob> {
+export type ReleveClientData = {
+  reference: string;
+  client: {
+    code: string | null; nom: string; adresse: string | null; ville: string | null;
+    telephone: string | null; email: string | null; representant: string | null;
+    ncc: string | null; bp: string | null;
+  };
+  lignes: EtatCompteLigne[];
+  soldeOuverture: number;
+  totalDebit: number;
+  totalPaiement: number;
+  totalRetours: number;
+  totalTransport: number;
+  solde: number;
+};
+
+/** Source unique du relevé : utilisée par l'écran ET par le PDF. */
+export async function loadReleveClient(args: EtatCompteClientArgs): Promise<ReleveClientData> {
   // --- Récupération des données enrichies du client
   // On cherche d'abord dans le référentiel client
   const { data: cli } = await supabase
@@ -87,7 +105,7 @@ export async function buildEtatCompteClientPDF(args: EtatCompteClientArgs): Prom
     await Promise.all([
       supabase
         .from("factures")
-        .select("facture_id, reference, date_facture, date_echeance, montant_total, montant_paye, statut")
+        .select("facture_id, reference, date_facture, date_echeance, montant_total, montant_paye, montant_frais_transport, statut")
         .eq("client_id", args.clientId)
         .order("date_facture", { ascending: true }),
       supabase
@@ -192,15 +210,26 @@ export async function buildEtatCompteClientPDF(args: EtatCompteClientArgs): Prom
   const ref = cli?.reference || "RELEVÉ"; // Plus d'identifiant technique composite
 
 
-  return generateEtatCompteClientPDF({
+  // Information récapitulative : déjà comprise dans les factures, jamais ajoutée au solde.
+  const totalTransport = facturesCompte.reduce(
+    (s, f) => s + Number(f.montant_frais_transport ?? 0),
+    0,
+  );
+
+  return {
     reference: ref,
-    client: clientBlock as any,
+    client: clientBlock,
     lignes,
     soldeOuverture: res.soldeOuverture,
     totalDebit: res.totalDebit,
     totalPaiement: res.totalPaiement,
     totalRetours: res.totalRetours,
+    totalTransport,
     solde: res.solde,
-  });
+  };
+}
 
+export async function buildEtatCompteClientPDF(args: EtatCompteClientArgs): Promise<Blob> {
+  const data = await loadReleveClient(args);
+  return generateEtatCompteClientPDF({ ...data, client: { ...data.client, reference: data.client.code } });
 }

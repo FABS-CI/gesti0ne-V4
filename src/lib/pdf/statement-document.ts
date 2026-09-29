@@ -93,7 +93,7 @@ export class StatementDocument extends BaseDocument {
   }
 
   drawSummary(y: number, data: any): number {
-    const boxW = 200;
+    const boxW = 260;
     const x = PAGE.w - MARGINS.x - boxW;
     let curY = y;
 
@@ -123,8 +123,12 @@ export class StatementDocument extends BaseDocument {
 
     row("Total Débit", totalDebit);
     row("Total Paiement", totalPaiement);
-    if (totalRetours > 0) row("Total Retours", totalRetours);
-    row(solde >= 0 ? "SOLDE DÉBITEUR (Impayé)" : "SOLDE CRÉDITEUR", Math.abs(solde), true);
+    row("Total Retours", totalRetours);
+    // Information seule : déjà comprise dans les factures, jamais ajoutée au solde.
+    if (data.totalTransport != null) {
+      row("Frais de transport compris dans les factures", Number(data.totalTransport));
+    }
+    row(solde >= 0 ? "SOLDE DÉBITEUR (IMPAYÉ)" : "SOLDE CRÉDITEUR", Math.abs(solde), true);
 
     return curY - 20;
   }
