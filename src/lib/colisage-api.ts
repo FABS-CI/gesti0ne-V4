@@ -107,6 +107,9 @@ export async function getBLDetail(blId: string): Promise<BLDetail | null> {
     .maybeSingle();
   if (error) throw error;
   if (!data) return null;
+  if (!data.reference || !data.date_emission) {
+    throw new Error("Bon de livraison incomplet : référence ou date d'émission absente");
+  }
 
   let lignes: BLDetail["lignes"] = [];
   let facture_reference: string | null = null;
@@ -172,8 +175,8 @@ export async function getBLDetail(blId: string): Promise<BLDetail | null> {
 
   return {
     bl_id: data.bl_id,
-    reference: data.reference ?? "—",
-    date_emission: data.date_emission ?? data.date_bon ?? data.created_at,
+    reference: data.reference,
+    date_emission: data.date_emission,
     date_livraison: data.date_livraison,
     statut: data.statut,
     client_id: data.client_id,

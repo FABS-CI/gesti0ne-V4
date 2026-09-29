@@ -341,9 +341,10 @@ export async function getRHDashboard(): Promise<RHDashboardStats> {
     (c) =>
       c.statut === "approuve" && (c.date_debut ?? "") <= todayStr && (c.date_fin ?? todayStr) >= todayStr,
   ).length;
-  const absencesEnCours = absences.filter(
-    (a) => !!(a.date_debut ?? "") && a.date_debut <= todayStr && (a.date_fin ?? todayStr) >= todayStr,
-  ).length;
+  const absencesEnCours = absences.filter((a) => {
+    const debut = a.date_debut;
+    return debut !== null && debut <= todayStr && (a.date_fin ?? todayStr) >= todayStr;
+  }).length;
   const contratsExpirantBientot = contrats.filter(
     (c) => c.date_fin && c.date_fin >= todayStr && c.date_fin <= in30,
   ).length;
