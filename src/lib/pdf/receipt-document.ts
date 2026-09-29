@@ -64,8 +64,10 @@ export class ReceiptDocument extends BaseDocument {
         color: COLORS.grisTexte
       });
     }
-    const boxH = 90;
-    const boxW = CONTENT_W;
+    const boxH = 100;
+    const qrBoxW = 120;
+    const gap = 10;
+    const boxW = CONTENT_W - qrBoxW - gap;
     
     this.page.drawRectangle({
       x: MARGINS.x,
@@ -103,8 +105,52 @@ export class ReceiptDocument extends BaseDocument {
       this.page.drawText(item.v, { x: MARGINS.x + 85, y: y - 55 - i * 12, size: 9, font: this.fonts.bold });
     });
 
-    return y - boxH - 20;
+    // QR Code en haut à droite, à côté du bloc client
+    const qrX = MARGINS.x + boxW + gap;
+    this.page.drawRectangle({
+      x: qrX, y: y - boxH, width: qrBoxW, height: boxH,
+      borderColor: COLORS.bleuElectrique, borderWidth: 0.8,
+    });
+    await this.drawReceiptQr(qrX, y - boxH, qrBoxW, boxH);
+
+    return y - boxH - 16;
   }
+
+  /** Contenu du QR : propre à chaque reçu, à partir des données réelles. */
+  qrPayload(): string {
+    const r = this.receiptData;
+    const multi = this.multiInvoices;
+    const factures = multi ? multi.map((i) => i.reference).join(", ") : r.invoiceNumber;
+    const statut = multi
+      ? `RÈGLEMENT RÉPARTI SUR ${multi.length} FACTURES`
+      : r.balanceAfter <= 0 ? "PAIEMENT COMPLET" : "PAIEMENT PARTIEL";
+    const d = new Date(r.paymentDate);
+    const date = isNaN(d.getTime()) ? String(r.paymentDate) : d.toLocaleDateString("fr-FR");
+    return [
+      `Reçu : ${r.paymentNumber}`,
+      `Date : ${date}`,
+      `Client : ${r.customerName.toUpperCase()}`,
+      `Facture : ${factures}`,
+      `Montant reçu : ${formatFCFA(r.amountPaid)}`,
+      `Statut : ${statut}`,
+    ].join("\n");
+  }
+
+  async drawReceiptQr(x: number, yBottom: number, w: number, h: number) {
+    try {
+      const { default: QRCode } = await import("qrcode");
+      const { QR_COLOR_OPTS } = await import("./qr-logic");
+      const url = await QRCode.toDataURL(this.qrPayload(), {
+        margin: 2, width: 400, errorCorrectionLevel: "M", color: QR_COLOR_OPTS,
+      });
+      const img = await this.doc.embedPng(url);
+      const size = Math.min(w, h) - 12;
+      this.page.drawImage(img, { x: x + (w - size) / 2, y: yBottom + (h - size) / 2, width: size, height: size });
+    } catch (e) {
+      console.error("QR reçu", e);
+    }
+  }
+
 
   /** Factures réellement réglées par ce paiement (≥ 2 = reçu multi-factures). */
   get multiInvoices() {
