@@ -117,6 +117,7 @@ export async function generateBonTourneePDF(tourneeId: string): Promise<Blob> {
     .eq("tournee_id", tourneeId)
     .maybeSingle();
   if (!t) throw new Error("Tournée introuvable");
+  if (!t.reference) throw new Error("Tournée incomplète : référence absente");
   const vehicule = await fetchVehicule(t.vehicule_id);
 
   const { data: rows } = await supabase
