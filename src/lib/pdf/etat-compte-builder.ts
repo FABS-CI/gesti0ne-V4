@@ -192,12 +192,7 @@ export async function buildEtatCompteClientPDF(args: EtatCompteClientArgs): Prom
           : l.reference,
     libelle:
       l.type === "Facture"
-        ? (() => {
-            const st = statutRetourParFacture.get(l.reference);
-            const suffix =
-              st === "partiel" ? " (Retour partiel)" : st === "total" ? " (Retour total)" : "";
-            return `Facture client ${l.reference}${suffix}`;
-          })()
+        ? `Facture client ${l.reference}`
         : l.type === "Paiement"
           ? `Paiement de la facture ${factureRefParId.get(
               String(paiementsFlat.find((p) => p.reference === l.reference)?.facture_id ?? ""),

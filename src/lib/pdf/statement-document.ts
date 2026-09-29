@@ -11,12 +11,13 @@ export class StatementDocument extends BaseDocument {
     
     // Tableau des opérations
     const colonnes = [
-      { label: "Date", key: "date", width: 60 },
-      { label: "Référence", key: "reference", width: 90 },
-      { label: "Libellé", key: "libelle", width: 150 },
-      { label: "Débit", key: "debit", width: 75 },
-      { label: "Paiement", key: "credit", width: 75 },
-      { label: "Solde", key: "solde", width: 75 },
+      { label: "Date", key: "date", width: 58 },
+      { label: "Référence", key: "reference", width: 82 },
+      { label: "Libellé", key: "libelle", width: 127 },
+      { label: "Débit", key: "debit", width: 65 },
+      { label: "Paiement", key: "credit", width: 65 },
+      { label: "Retour", key: "retour", width: 65 },
+      { label: "Solde", key: "solde", width: 65 },
     ];
     
     const lignes = data.lignes.map((l: any) => ({
@@ -26,7 +27,9 @@ export class StatementDocument extends BaseDocument {
       reference: l.reference,
       libelle: l.libelle || l.designation || "",
       debit: l.debit || 0,
-      credit: l.credit || 0,
+      // Une ligne n'alimente qu'une seule colonne : les retours vont en RETOUR.
+      credit: l.type === "Avoir" ? 0 : l.credit || 0,
+      retour: l.type === "Avoir" ? l.credit || 0 : 0,
       solde: l.soldeProgressif || 0,
     }));
 
