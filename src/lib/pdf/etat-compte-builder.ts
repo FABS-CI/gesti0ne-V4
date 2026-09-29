@@ -214,6 +214,11 @@ export async function buildEtatCompteClientPDF(args: EtatCompteClientArgs): Prom
     reference: ref,
     client: clientBlock as any,
     lignes,
+    soldeOuverture: res.soldeOuverture,
+    totalDebit: res.totalDebit,
+    totalPaiement: res.totalPaiement,
+    totalRetours: res.totalRetours,
+    solde: res.solde,
   });
 
 }

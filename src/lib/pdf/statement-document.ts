@@ -1,7 +1,6 @@
 
 import { BaseDocument, COLORS, MARGINS, PAGE, CONTENT_W } from "./base-document";
 import { formatFCFA } from "@/lib/format";
-import { rgb } from "pdf-lib";
 
 export class StatementDocument extends BaseDocument {
   async drawContent(data: any) {
@@ -16,7 +15,7 @@ export class StatementDocument extends BaseDocument {
       { label: "Référence", key: "reference", width: 90 },
       { label: "Libellé", key: "libelle", width: 150 },
       { label: "Débit", key: "debit", width: 75 },
-      { label: "Crédit", key: "credit", width: 75 },
+      { label: "Paiement", key: "credit", width: 75 },
       { label: "Solde", key: "solde", width: 75 },
     ];
     
@@ -108,12 +107,20 @@ export class StatementDocument extends BaseDocument {
       curY -= 20;
     };
 
-    const totalDebit = data.lignes.reduce((a: number, l: any) => a + (l.debit || 0), 0);
-    const totalCredit = data.lignes.reduce((a: number, l: any) => a + (l.credit || 0), 0);
-    const solde = totalDebit - totalCredit;
+    const totalDebit = Number(data.totalDebit ?? data.lignes.reduce((a: number, l: any) => a + (l.debit || 0), 0));
+    const totalPaiement = Number(data.totalPaiement ?? data.lignes
+      .filter((l: any) => l.type === "Paiement")
+      .reduce((a: number, l: any) => a + (l.credit || 0), 0));
+    const totalRetours = Number(data.totalRetours ?? data.lignes
+      .filter((l: any) => l.type === "Avoir")
+      .reduce((a: number, l: any) => a + (l.credit || 0), 0));
+    const solde = Number(
+      data.solde ?? Number(data.soldeOuverture ?? 0) + totalDebit - totalPaiement - totalRetours,
+    );
 
     row("Total Débit", totalDebit);
-    row("Total Crédit", totalCredit);
+    row("Total Paiement", totalPaiement);
+    if (totalRetours > 0) row("Total Retours", totalRetours);
     row(solde >= 0 ? "SOLDE DÉBITEUR (Impayé)" : "SOLDE CRÉDITEUR", Math.abs(solde), true);
 
     return curY - 20;

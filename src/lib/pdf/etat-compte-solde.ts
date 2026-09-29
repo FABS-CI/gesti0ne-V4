@@ -71,6 +71,11 @@ export type SoldeResultat = {
   soldeOuverture: number;
   lignes: MouvementLigne[];
   totalDebit: number;
+  /** Somme des affectations de paiements validés uniquement. */
+  totalPaiement: number;
+  /** Somme des retours financièrement validés uniquement. */
+  totalRetours: number;
+  /** Compatibilité interne : paiements + retours. */
   totalCredit: number;
   solde: number;
   isEmpty: boolean;
@@ -187,16 +192,19 @@ export function computeSoldeClient(input: RawInputs): SoldeResultat {
   lignes.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   let totalDebit = 0;
-  let totalCredit = 0;
+  let totalPaiement = 0;
+  let totalRetours = 0;
   let currentSolde = soldeOuverture;
   for (const l of lignes) {
     const debit = Number(l.debit ?? 0);
     const credit = Number(l.credit ?? 0);
     totalDebit += debit;
-    totalCredit += credit;
+    if (l.type === "Paiement") totalPaiement += credit;
+    if (l.type === "Avoir") totalRetours += credit;
     currentSolde = currentSolde + debit - credit;
     l.soldeProgressif = currentSolde;
   }
+  const totalCredit = totalPaiement + totalRetours;
   const solde = currentSolde;
 
   const isEmpty = lignes.length === 0;
@@ -242,6 +250,8 @@ export function computeSoldeClient(input: RawInputs): SoldeResultat {
     soldeOuverture,
     lignes,
     totalDebit,
+    totalPaiement,
+    totalRetours,
     totalCredit,
     solde,
     isEmpty,

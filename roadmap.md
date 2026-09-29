@@ -44,3 +44,8 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Lot 2.2-2.3 : filtres .or() neutralisés (pgSafe); secrets déjà comparés en temps constant
 - [ ] Lot 3 : A fait; C : 4 vrais bugs corrigés (perf_query_log, incident_alerts x2, expéditions de tournée, clé FNE); reste 40 erreurs de typage (valeurs vides) avant retrait des shims, puis D, E
 - [ ] Lots 4, 5, 6 (6A = audit seul, attendre réponse)
+
+## Documents retours et relevés (file-26/27)
+- [x] Relevé : séparer Total Paiement et Total Retours, conserver un solde unique sans double comptage
+- [x] Bon de retour : reprendre facture, client, quantités, prix et remise; retirer statuts intermédiaires, synthèses et signatures du PDF
+- [ ] Vérification visuelle des deux PDF et parcours réel en lecture seule
