@@ -12,7 +12,6 @@ import {
 } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
 
-type DailyRow = { day: string; info: number; warning: number; critical: number; total: number };
 type ModuleRow = { module: string; total: number };
 
 export function AuditCharts({ days = 30 }: { days?: number }) {
@@ -21,12 +20,12 @@ export function AuditCharts({ days = 30 }: { days?: number }) {
     queryFn: async () => {
       const { data, error } = await supabase.rpc("audit_events_daily", { p_days: days });
       if (error) throw error;
-      return (data ?? []).map((r: DailyRow) => ({
+      return (data ?? []).map((r) => ({
         ...r,
         day: new Date(r.day).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" }),
         info: Number(r.info),
         warning: Number(r.warning),
-        critical: Number(r.critical),
+        critical: Number(r.error),
       }));
     },
     retry: false,

@@ -39,7 +39,21 @@ export async function listParametres(): Promise<PaieParametre[]> {
     .order("categorie", { ascending: true })
     .order("code", { ascending: true });
   if (error) throw error;
-  return (data ?? []) as PaieParametre[];
+  return (data ?? []).flatMap((row) => {
+    if (!row.parametre_id || !row.code || !row.libelle || !row.unite || !row.categorie) return [];
+    return [{
+      ...row,
+      parametre_id: row.parametre_id,
+      code: row.code,
+      libelle: row.libelle,
+      valeur: Number(row.valeur ?? 0),
+      unite: row.unite,
+      categorie: row.categorie,
+      actif: row.actif ?? false,
+      created_at: row.created_at ?? "",
+      updated_at: row.updated_at ?? "",
+    }];
+  });
 }
 
 export async function listRubriques(): Promise<PaieRubrique[]> {

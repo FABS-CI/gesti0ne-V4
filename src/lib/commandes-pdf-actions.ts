@@ -31,6 +31,9 @@ export async function buildProformaBlob(c: Commande) {
     toast.error("Aucune proforma liée à cette commande");
     return null;
   }
+  if (!pro.reference || !pro.date_proforma) {
+    throw new Error("Proforma incomplète : référence ou date absente");
+  }
   const [lignes, clientInfo, totals] = await Promise.all([
     loadCommandeDocLignes(c.commande_id),
     loadClientInfoForCommande(c.commande_id),
@@ -217,6 +220,9 @@ export async function buildBLBlob(c: Commande) {
   if (!bl) {
     toast.error("Aucun bon de livraison lié");
     return null;
+  }
+  if (!bl.reference || !bl.date_emission) {
+    throw new Error("Bon de livraison incomplet : référence ou date absente");
   }
   const [lignes, clientInfo, totals] = await Promise.all([
     loadCommandeDocLignes(c.commande_id),

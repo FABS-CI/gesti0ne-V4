@@ -35,7 +35,7 @@ export function FNELogsPanel() {
       if (dateFrom && r.created_at && r.created_at < dateFrom) return false;
       if (dateTo && r.created_at && r.created_at > dateTo + "T23:59:59") return false;
       if (!s) return true;
-      return [r.action, r.statut, r.fne_facture_id, r.user_nom].some((v) =>
+      return [r.action, r.statut, r.fne_facture_id].some((v) =>
         (v ?? "").toString().toLowerCase().includes(s),
       );
     });
@@ -64,7 +64,7 @@ export function FNELogsPanel() {
     ] as const;
     const rows = filtered.map((r) =>
       keys.map((k) => {
-        const v = (r as Record<string, unknown>)[k];
+        const v = k === "user_nom" ? null : r[k];
         return v == null ? "" : String(v);
       }),
     );
@@ -155,7 +155,7 @@ export function FNELogsPanel() {
                     <TableCell className="text-xs whitespace-nowrap">
                       {r.created_at ? new Date(r.created_at).toLocaleString("fr-FR") : "—"}
                     </TableCell>
-                    <TableCell className="text-xs">{r.user_nom ?? "—"}</TableCell>
+                    <TableCell className="text-xs">—</TableCell>
                     <TableCell className="font-mono text-xs">{r.fne_facture_id ?? "—"}</TableCell>
                     <TableCell>{r.action}</TableCell>
                     <TableCell>

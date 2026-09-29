@@ -39,7 +39,7 @@ export async function listBonsLivraisonAColiser(exerciceId?: string | null): Pro
   let query = supabase
     .from("bons_livraison")
     .select(
-      "bl_id, reference, date_emission, date_livraison, statut, client_id, commande_id, commandes:commande_id(reference, client_nom, etablissement, representant_nom, telephone, ville, adresse, nb_produits, total_quantite)",
+      "bl_id, reference, date_bon, date_emission, date_livraison, created_at, statut, client_id, commande_id, commandes:commande_id(reference, client_nom, etablissement, representant_nom, telephone, ville, adresse, nb_produits, total_quantite)",
     )
     .order("date_emission", { ascending: false });
   if (exerciceId) query = query.eq("exercice_id", exerciceId);
@@ -107,6 +107,9 @@ export async function getBLDetail(blId: string): Promise<BLDetail | null> {
     .maybeSingle();
   if (error) throw error;
   if (!data) return null;
+  if (!data.reference || !data.date_emission) {
+    throw new Error("Bon de livraison incomplet : référence ou date d'émission absente");
+  }
 
   let lignes: BLDetail["lignes"] = [];
   let facture_reference: string | null = null;

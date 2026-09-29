@@ -65,6 +65,7 @@ function FNEDetail() {
     mutationFn: async () => {
       if (!f || !f.facture_id)
         throw new Error("Facture commerciale liée introuvable — réessai impossible");
+      if (!f.reference) throw new Error("Référence FNE absente — réessai impossible");
       return submitFactureToFNE({
         facture_id: f.facture_id,
         reference: f.reference,

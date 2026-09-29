@@ -153,6 +153,9 @@ function ProformaDetailPage() {
             variant="secondary"
             onClick={async () => {
               try {
+                if (!proforma.reference || !proforma.date_proforma) {
+                  throw new Error("Proforma incomplète : référence ou date absente");
+                }
                 invalidatePdfByPrefix(`PF:${proforma.reference}:`);
                 const [lignes, clientInfo, totals] = await Promise.all([
                   loadProformaDocLignes(proformaId),
@@ -194,6 +197,9 @@ function ProformaDetailPage() {
                   pdf.download(
                     proformaId,
                     async () => {
+                      if (!proforma.reference || !proforma.date_proforma) {
+                        throw new Error("Proforma incomplète : référence ou date absente");
+                      }
                       const [lignes, clientInfo, totals] = await Promise.all([
                         loadProformaDocLignes(proformaId),
                         loadClientInfoForProforma(proformaId),
@@ -212,7 +218,7 @@ function ProformaDetailPage() {
                         ...totals,
                       });
                     },
-                    fileNameFor(proforma.reference, proforma.client_nom),
+                    fileNameFor(proforma.reference ?? proformaId, proforma.client_nom),
                     {
                       type: "PF",
                       data: { ...proforma, date: proforma.date_proforma } as any,
@@ -333,7 +339,9 @@ function ProformaDetailPage() {
                   <TableRow key={l.ligne_id}>
                     <TableCell>{l.designation}</TableCell>
                     <TableCell className="text-right text-destructive">
-                      {l.remise_pct ? `${l.remise_pct} %` : "—"}
+                      {Number(l.quantite ?? 0) * Number(l.prix_unitaire ?? 0) > 0 && l.total_ligne != null
+                        ? `${Math.max(0, (1 - Number(l.total_ligne) / (Number(l.quantite) * Number(l.prix_unitaire))) * 100).toLocaleString("fr-FR", { maximumFractionDigits: 2 })} %`
+                        : "—"}
                     </TableCell>
                     <TableCell className="text-right">{l.quantite}</TableCell>
                     <TableCell className="text-right">{formatFCFA(l.prix_unitaire)}</TableCell>
