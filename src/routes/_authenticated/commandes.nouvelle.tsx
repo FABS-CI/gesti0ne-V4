@@ -4,6 +4,7 @@ import { z } from "zod";
 import { ArrowLeft, ShoppingCart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { FloatingCalculator } from "@/components/commandes/FloatingCalculator";
 import { CommandeForm } from "@/components/commandes/CommandeForm";
 import { usePermissions } from "@/hooks/use-permissions";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
@@ -56,6 +57,7 @@ function CommandeNouvellePage() {
         </div>
       </div>
       <CommandeForm mode="create" presetClientId={presetClientId} />
+      <FloatingCalculator />
     </div>
   );
 }
