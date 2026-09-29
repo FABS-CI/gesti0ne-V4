@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FloatingCalculator } from "@/components/commandes/FloatingCalculator";
 import { CommandeForm, type CommandeFormValues } from "@/components/commandes/CommandeForm";
 import { usePermissions } from "@/hooks/use-permissions";
 import { getCommande, getCommandeLignes } from "@/lib/commandes-api";
@@ -144,6 +145,7 @@ function CommandeModifierPage() {
         </div>
       </div>
       <CommandeForm mode="edit" commandeId={commandeId} initialValues={initialValues} />
+      <FloatingCalculator />
     </div>
   );
 }
