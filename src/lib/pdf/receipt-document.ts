@@ -1,5 +1,6 @@
 
-import { BaseDocument, COLORS, MARGINS, PAGE, CONTENT_W } from "./base-document";
+import { BaseDocument, COLORS, MARGINS, PAGE, CONTENT_W, CONTENT_BOTTOM } from "./base-document";
+import tamponUrl from "@/assets/tampon-comptabilite.png";
 import { formatFCFA } from "@/lib/format";
 import { numberToLetters } from "./number-to-letters";
 
@@ -39,7 +40,7 @@ export class ReceiptDocument extends BaseDocument {
     let y = PAGE.h - 110;
 
     // 1. CLIENT / REÇU DE
-    y = this.drawReceiptClient(y);
+    y = await this.drawReceiptClient(y);
 
     // 2. DÉTAIL DU RÈGLEMENT
     y = this.drawPaymentDetails(y);
@@ -51,10 +52,10 @@ export class ReceiptDocument extends BaseDocument {
     y = this.drawRecognition(y);
 
     // 5. SIGNATURE
-    this.drawSignatures(y);
+    await this.drawZoneComptabilite(y);
   }
 
-  drawReceiptClient(y: number): number {
+  async drawReceiptClient(y: number): Promise<number> {
     if (this.receiptData.isReprint) {
       this.page.drawText(`Réimprimé le : ${new Date().toLocaleDateString("fr-FR")}`, {
         x: PAGE.w - MARGINS.x - 100,
@@ -293,7 +294,7 @@ export class ReceiptDocument extends BaseDocument {
     curY -= 12;
     this.page.drawText(`Référence : ${this.receiptData.paymentReference || "—"}`, { x: MARGINS.x + 15, y: curY, size: 9, font: this.fonts.italic });
 
-    return y - boxH - 25;
+    return y - boxH - 16;
   }
 
   drawStatusAndLetters(y: number): number {
@@ -328,7 +329,7 @@ export class ReceiptDocument extends BaseDocument {
       y -= 12;
     });
 
-    return y - 20;
+    return y - 12;
   }
 
   drawRecognition(y: number): number {
@@ -352,25 +353,32 @@ export class ReceiptDocument extends BaseDocument {
       y -= 11;
     });
 
-    return y - 20;
+    return y - 10;
   }
 
-  // Surcharge BaseDocument wrapText logic if needed, but it's inherited.
-  // Note: drawSignatures is already in BaseDocument
-  drawSignatures(y: number) {
-    const boxW = 180;
-    const boxH = 70;
-    const curY = Math.max(y - 80, 150);
-    
-    this.page.drawRectangle({
-      x: PAGE.w - MARGINS.x - boxW,
-      y: curY - boxH,
-      width: boxW,
-      height: boxH,
-      borderColor: COLORS.bleuElectrique,
-      borderWidth: 0.5,
-    });
-    this.page.drawText("LA COMPTABILITÉ", { x: PAGE.w - MARGINS.x - boxW + 5, y: curY - 15, size: 9, font: this.fonts.bold });
+  /** Zone COMPTABILITÉ avec le vrai tampon, toujours sur la page 1 au-dessus du pied. */
+  async drawZoneComptabilite(y: number) {
+    const boxW = 190;
+    const x = PAGE.w - MARGINS.x - boxW;
+    const top = y - 4;
+    const zoneTop = top - 16;
+    const zoneH = Math.max(60, Math.min(120, zoneTop - CONTENT_BOTTOM));
+    const zoneBottom = zoneTop - zoneH;
+    const title = "COMPTABILITÉ";
+    const tw = this.fonts.bold.widthOfTextAtSize(title, 9);
+    this.page.drawText(title, { x: x + (boxW - tw) / 2, y: top - 10, size: 9, font: this.fonts.bold, color: COLORS.bleuFabs });
+    this.page.drawRectangle({ x, y: zoneBottom, width: boxW, height: zoneH, borderColor: COLORS.bleuElectrique, borderWidth: 0.5 });
+    try {
+      const res = await fetch(tamponUrl);
+      if (!res.ok) return;
+      const img = await this.doc.embedPng(new Uint8Array(await res.arrayBuffer()));
+      const pad = 6;
+      const scale = Math.min((boxW - pad * 2) / img.width, (zoneH - pad * 2) / img.height);
+      const w = img.width * scale, h = img.height * scale;
+      this.page.drawImage(img, { x: x + (boxW - w) / 2, y: zoneBottom + (zoneH - h) / 2, width: w, height: h });
+    } catch {
+      // Tampon indisponible : zone réservée conservée, sans erreur.
+    }
   }
 
   // Surcharge Header pour assurer "REÇU DE PAIEMENT"
