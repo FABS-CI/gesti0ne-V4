@@ -42,7 +42,7 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Lot 1 : 7 bugs confirmés corrigés
 - [x] Lot 2.1 : garde super admin sur secListScopeRefs
 - [x] Lot 2.2-2.3 : filtres .or() neutralisés (pgSafe); secrets déjà comparés en temps constant
-- [ ] Lot 3 : A, B, C et E terminés; 40 erreurs corrigées, shims retirés, `noImplicitAny` activé; reste D (28 fichiers `@ts-nocheck`, hors fichier généré)
+- [ ] Lot 3 : A, B, C et E terminés; 40 erreurs corrigées, shims retirés, `noImplicitAny` activé; D avancé de 28 à 1 fichier métier protégé. Blocage documenté : le type généré de `sec_replace_user_scope._principal` refuse `null`, alors que la fonction SQL accepte volontairement l'absence de dépôt principal. `routeTree.gen.ts` reste généré.
 - [ ] Lots 4, 5, 6 (6A = audit seul, attendre réponse)
 
 ## Documents retours et relevés (file-26/27)
