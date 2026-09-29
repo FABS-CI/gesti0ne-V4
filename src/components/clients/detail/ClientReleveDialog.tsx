@@ -106,10 +106,12 @@ export function ClientReleveDialog({ open, onOpenChange, client }: Props) {
 
             <div className="ml-auto w-full max-w-md rounded-md border p-3 text-sm space-y-1.5">
               <div className="font-semibold">Récapitulatif</div>
-              <Row label="Total Débit" value={data.totalDebit} />
-              <Row label="Total Paiement" value={data.totalPaiement} />
-              <Row label="Total Retours" value={data.totalRetours} />
-              <Row label="Frais de transport compris dans les factures" value={data.totalTransport} />
+              {data.totalDebit !== 0 && <Row label="Total Débit" value={data.totalDebit} />}
+              {data.totalPaiement > 0 && <Row label="Total Paiement" value={data.totalPaiement} />}
+              {data.totalRetours > 0 && <Row label="Total Retours" value={data.totalRetours} />}
+              {data.totalTransport > 0 && (
+                <Row label="Frais de transport compris dans les factures" value={data.totalTransport} />
+              )}
               <div className="flex justify-between border-t pt-1.5 font-bold text-destructive">
                 <span>{data.solde >= 0 ? "SOLDE DÉBITEUR (IMPAYÉ)" : "SOLDE CRÉDITEUR"}</span>
                 <span>{formatFCFA(Math.abs(data.solde))}</span>
