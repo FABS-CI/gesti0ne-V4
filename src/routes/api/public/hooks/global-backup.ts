@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { timingSafeEqual } from "crypto";
 
 /**
  * Sauvegarde globale automatique — à appeler toutes les 3 heures
@@ -33,7 +34,7 @@ export const Route = createFileRoute("/api/public/hooks/global-backup")({
         const a = encoder.encode(provided || "");
         const b = encoder.encode(expected);
 
-        if (a.length !== b.length || !crypto.subtle.timingSafeEqual(a, b)) {
+        if (a.length !== b.length || !timingSafeEqual(a, b)) {
           return new Response(JSON.stringify({ error: "Unauthorized" }), {
             status: 401,
             headers: { "Content-Type": "application/json" },
