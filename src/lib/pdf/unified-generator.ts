@@ -229,6 +229,7 @@ export async function generateUnifiedReceiptPDF(data: DataBase): Promise<Blob> {
       code: data.codeClient || "",
     },
     balanceBefore: (data as any).balanceBefore, // Transmit historical balance if present
+    certification: (data as any).certification ?? null,
   };
 
   const receiptData: ReceiptData = {
