@@ -9,7 +9,7 @@ import { canonicalString, toCanonical, type CanonicalDocument } from "./canonica
 
 import { calculateInvoicePaymentStatus } from "@/lib/factures/payment-status";
 
-export type DocType = "FACTURE" | "PROFORMA" | "COMMANDE" | "BL";
+export type DocType = "FACTURE" | "PROFORMA" | "COMMANDE" | "BL" | "PAIEMENT";
 
 export type CertStatut = "AUTHENTIC" | "REVOKED" | "CANCELLED";
 
@@ -108,6 +108,7 @@ export async function loadDocumentData(
     { table: "proformas", idCol: "proforma_id", type: "PROFORMA", label: "Proforma", dateCol: "date_proforma", montantCol: "montant_ttc" },
     { table: "commandes", idCol: "commande_id", type: "COMMANDE", label: "Bon de commande", dateCol: "date_commande", montantCol: "montant_total" },
     { table: "bons_livraison", idCol: "bl_id", type: "BL", label: "Bon de livraison", dateCol: "date_bon", montantCol: "montant" },
+    { table: "paiements", idCol: "paiement_id", type: "PAIEMENT", label: "Reçu de paiement", dateCol: "date_paiement", montantCol: "montant" },
   ];
 
   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(reference);
@@ -144,6 +145,15 @@ export async function loadDocumentData(
         .select("designation, quantite, prix_unitaire, total_ligne")
         .eq("proforma_id", docId);
       lignes = (l as any) ?? [];
+    } else if (t.type === "PAIEMENT") {
+      // Reçu : les « lignes » sont les imputations réelles du paiement sur les factures.
+      const { data: a } = await supabaseAdmin.rpc("get_payment_allocations" as any, { _paiement_id: docId } as any);
+      lignes = ((a as any[]) ?? []).map((x) => ({
+        designation: x.reference,
+        quantite: 1,
+        prix_unitaire: Number(x.montant_affecte ?? 0),
+        total_ligne: Number(x.montant_affecte ?? 0),
+      }));
     }
 
     const montant = Number(row[t.montantCol] ?? row.montant_total ?? row.montant_ttc ?? row.montant ?? 0);
@@ -389,7 +399,7 @@ export async function isRateLimited(ip: string | null): Promise<boolean> {
 }
 
 /** Types de documents soumis à la certification automatique. */
-export const AUTO_CERTIFIED_TYPES: DocType[] = ["FACTURE", "PROFORMA", "COMMANDE", "BL"];
+export const AUTO_CERTIFIED_TYPES: DocType[] = ["FACTURE", "PROFORMA", "COMMANDE", "BL", "PAIEMENT"];
 
 export type EnsureCertificationResult = {
   certified: boolean;
@@ -422,6 +432,8 @@ export async function ensureCertification(
   const doc = await loadDocumentData(reference);
   if (!doc) return empty;
   if (!AUTO_CERTIFIED_TYPES.includes(doc.type)) return empty;
+  // Un reçu n'est certifié que pour un paiement validé.
+  if (doc.type === "PAIEMENT" && doc.data.statut_document !== "valide") return empty;
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { hash } = buildCanonical(doc.canonicalInput);

@@ -15,7 +15,7 @@ export type AutoCertification = {
 /** Un document est-il éligible à la certification automatique (FAC / PRO / BC / BL) ? */
 export function isCertifiable(reference: string): boolean {
   const prefix = (reference ?? "").split("-")[0]?.toUpperCase() ?? "";
-  return ["FAC", "FC", "PRO", "PF", "CMD", "BC", "BL"].includes(prefix);
+  return ["FAC", "FC", "PRO", "PF", "CMD", "BC", "BL", "PAI"].includes(prefix);
 }
 
 /**
