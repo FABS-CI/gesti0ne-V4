@@ -39,7 +39,7 @@ export async function listBonsLivraisonAColiser(exerciceId?: string | null): Pro
   let query = supabase
     .from("bons_livraison")
     .select(
-      "bl_id, reference, date_emission, date_livraison, statut, client_id, commande_id, commandes:commande_id(reference, client_nom, etablissement, representant_nom, telephone, ville, adresse, nb_produits, total_quantite)",
+      "bl_id, reference, date_bon, date_emission, date_livraison, created_at, statut, client_id, commande_id, commandes:commande_id(reference, client_nom, etablissement, representant_nom, telephone, ville, adresse, nb_produits, total_quantite)",
     )
     .order("date_emission", { ascending: false });
   if (exerciceId) query = query.eq("exercice_id", exerciceId);
