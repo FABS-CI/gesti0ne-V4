@@ -42,7 +42,7 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Lot 1 : 7 bugs confirmés corrigés
 - [x] Lot 2.1 : garde super admin sur secListScopeRefs
 - [x] Lot 2.2-2.3 : filtres .or() neutralisés (pgSafe); secrets déjà comparés en temps constant
-- [ ] Lot 3 : A fait; C : 4 vrais bugs corrigés (perf_query_log, incident_alerts x2, expéditions de tournée, clé FNE); reste 40 erreurs de typage (valeurs vides) avant retrait des shims, puis D, E
+- [ ] Lot 3 : A, B, C et E terminés; 40 erreurs corrigées, shims retirés, `noImplicitAny` activé; reste D (28 fichiers `@ts-nocheck`, hors fichier généré)
 - [ ] Lots 4, 5, 6 (6A = audit seul, attendre réponse)
 
 ## Documents retours et relevés (file-26/27)
