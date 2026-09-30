@@ -221,7 +221,11 @@ function ProformaDetailPage() {
                     fileNameFor(proforma.reference ?? proformaId, proforma.client_nom),
                     {
                       type: "PF",
-                      data: { ...proforma, date: proforma.date_proforma } as any,
+                      data: {
+                        ...proforma,
+                        clientNom: proforma.client_nom,
+                        date: proforma.date_proforma,
+                      } as any,
                     }
                   )
                 }
