@@ -108,10 +108,6 @@ export class ReceiptDocument extends BaseDocument {
 
     // QR Code en haut à droite, à côté du bloc client
     const qrX = MARGINS.x + boxW + gap;
-    this.page.drawRectangle({
-      x: qrX, y: y - boxH, width: qrBoxW, height: boxH,
-      borderColor: COLORS.bleuElectrique, borderWidth: 0.8,
-    });
     await this.drawReceiptQr(qrX, y - boxH, qrBoxW, boxH);
 
     return y - boxH - 16;
@@ -345,7 +341,7 @@ export class ReceiptDocument extends BaseDocument {
     return y - 10;
   }
 
-  /** Zone COMPTABILITÉ avec le vrai tampon, toujours sur la page 1 au-dessus du pied. */
+  /** Tampon réel (sans titre ni cadre), toujours sur la page 1 au-dessus du pied. */
   async drawZoneComptabilite(y: number) {
     const boxW = 190;
     const x = PAGE.w - MARGINS.x - boxW;
@@ -353,10 +349,6 @@ export class ReceiptDocument extends BaseDocument {
     const zoneTop = top - 16;
     const zoneH = Math.max(60, Math.min(120, zoneTop - CONTENT_BOTTOM));
     const zoneBottom = zoneTop - zoneH;
-    const title = "COMPTABILITÉ";
-    const tw = this.fonts.bold.widthOfTextAtSize(title, 9);
-    this.page.drawText(title, { x: x + (boxW - tw) / 2, y: top - 10, size: 9, font: this.fonts.bold, color: COLORS.bleuFabs });
-    this.page.drawRectangle({ x, y: zoneBottom, width: boxW, height: zoneH, borderColor: COLORS.bleuElectrique, borderWidth: 0.5 });
     try {
       const res = await fetch(tamponUrl);
       if (!res.ok) return;

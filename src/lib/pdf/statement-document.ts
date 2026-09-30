@@ -82,16 +82,9 @@ export class StatementDocument extends BaseDocument {
     });
 
 
-    // Bloc Période
+    // Bloc Période (sans cadre) + QR code à droite
     const perX = MARGINS.x + boxW + 15;
-    this.page.drawRectangle({
-      x: perX,
-      y: y - boxH,
-      width: boxW,
-      height: boxH,
-      color: COLORS.grisClair,
-      opacity: 0.5,
-    });
+    await this.drawStatementQr(PAGE.w - MARGINS.x - boxH, y - boxH, boxH, data);
     this.page.drawText("PÉRIODE", { x: perX + 10, y: y - 15, size: 7, font: this.fonts.bold, color: COLORS.bleuFabs });
     const periode = data.periodeDebut && data.periodeFin 
       ? `Du ${data.periodeDebut} au ${data.periodeFin}`
@@ -99,6 +92,24 @@ export class StatementDocument extends BaseDocument {
     this.page.drawText(periode, { x: perX + 10, y: y - 32, size: 9, font: this.fonts.bold });
     
     return y - boxH - 20;
+  }
+
+  /** QR dynamique (même outil/couleurs que factures, BC, BL, proformas) ouvrant le relevé de ce client. */
+  async drawStatementQr(x: number, yBottom: number, size: number, data: any) {
+    try {
+      const clientId = data.clientId ?? this.data.client?.id;
+      if (!clientId) return;
+      const { default: QRCode } = await import("qrcode");
+      const { QR_COLOR_OPTS, PUBLIC_VERIFY_BASE_URL } = await import("./qr-logic");
+      const origin = typeof window !== "undefined" ? window.location.origin : "";
+      const base = origin && !/localhost|id-preview|lovableproject|sandbox/.test(origin) ? origin : PUBLIC_VERIFY_BASE_URL;
+      const target = `${base}/clients/${encodeURIComponent(clientId)}?releve=1`;
+      const url = await QRCode.toDataURL(target, { margin: 1, width: 400, errorCorrectionLevel: "M", color: QR_COLOR_OPTS });
+      const img = await this.doc.embedPng(url);
+      this.page.drawImage(img, { x, y: yBottom, width: size, height: size });
+    } catch (e) {
+      console.error("QR relevé", e);
+    }
   }
 
   /** Lignes du récapitulatif : les montants à 0 sont omis, le solde toujours affiché. */
@@ -145,19 +156,12 @@ export class StatementDocument extends BaseDocument {
     return curY - 20;
   }
 
-  /** Zone de validation COMPTABILITÉ avec le véritable tampon (proportions conservées). */
+  /** Véritable tampon, posé directement sur la page (sans titre ni cadre) (proportions conservées). */
   async drawZoneComptabilite(y: number) {
     const boxW = 200;
     const x = PAGE.w - MARGINS.x - boxW;
-    const title = "COMPTABILITÉ";
-    const tw = this.fonts.bold.widthOfTextAtSize(title, 9);
-    this.page.drawText(title, { x: x + (boxW - tw) / 2, y: y - 11, size: 9, font: this.fonts.bold, color: COLORS.bleuFabs });
     const zoneTop = y - TAMPON_TITLE_H;
     const zoneBottom = zoneTop - TAMPON_ZONE_H;
-    this.page.drawRectangle({
-      x, y: zoneBottom, width: boxW, height: TAMPON_ZONE_H,
-      borderColor: COLORS.grisLigne, borderWidth: 0.5,
-    });
     try {
       const res = await fetch(tamponUrl);
       if (!res.ok) return;
