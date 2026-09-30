@@ -15,11 +15,11 @@ import {
   type DocType,
 } from "./certification.server";
 
-const DOWNLOADABLE: DocType[] = ["FACTURE", "PROFORMA", "COMMANDE", "PAIEMENT"];
+const DOWNLOADABLE: DocType[] = ["FACTURE", "PROFORMA", "COMMANDE", "PAIEMENT", "RELEVE"];
 
 export type PublicPdfPayload = {
   docType: DocType;
-  label: "Facture" | "Proforma" | "Commande" | "Reçu";
+  label: "Facture" | "Proforma" | "Commande" | "Reçu" | "Relevé";
   reference: string;
   date: string | null;
   data: Record<string, unknown>;
@@ -77,6 +77,28 @@ export async function loadPublicPdfPayload(
   if (!doc || !DOWNLOADABLE.includes(doc.type)) return null;
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+  if (doc.type === "RELEVE") {
+    const { data: cli } = await supabaseAdmin
+      .from("clients").select("nom, telephone, representant").eq("client_id", doc.id).maybeSingle();
+    if (!cli) return null;
+    const { loadReleveClient } = await import("@/lib/pdf/releve-data");
+    const r = await loadReleveClient(
+      { clientId: doc.id, clientNom: cli.nom, clientTel: cli.telephone, representant: cli.representant },
+      supabaseAdmin,
+    );
+    return {
+      docType: "RELEVE",
+      label: "Relevé",
+      reference: result.document.reference,
+      date: result.document.date,
+      data: {
+        ...r,
+        client: { ...r.client, reference: r.client.code },
+        certification: { verification_url: buildVerificationUrl(verifiedToken) },
+      },
+    };
+  }
 
   if (doc.type === "PAIEMENT") {
     return buildReceiptPayload(doc.id, verifiedToken, result.document, supabaseAdmin);
