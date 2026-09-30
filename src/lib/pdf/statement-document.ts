@@ -97,7 +97,7 @@ export class StatementDocument extends BaseDocument {
   /** QR dynamique (même outil/couleurs que factures, BC, BL, proformas) ouvrant le relevé de ce client. */
   async drawStatementQr(x: number, yBottom: number, size: number, data: any) {
     try {
-      const clientId = data.clientId ?? this.data.client?.id;
+      const clientId = data.clientId;
       if (!clientId) return;
       const { default: QRCode } = await import("qrcode");
       const { QR_COLOR_OPTS, PUBLIC_VERIFY_BASE_URL } = await import("./qr-logic");
