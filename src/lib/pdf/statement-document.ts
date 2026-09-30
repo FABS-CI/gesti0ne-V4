@@ -94,16 +94,20 @@ export class StatementDocument extends BaseDocument {
     return y - boxH - 20;
   }
 
-  /** QR dynamique (même outil/couleurs que factures, BC, BL, proformas) ouvrant le relevé de ce client. */
+  /** QR dynamique vers la page publique de vérification du relevé (même système que les factures). */
   async drawStatementQr(x: number, yBottom: number, size: number, data: any) {
     try {
-      const clientId = data.clientId;
-      if (!clientId) return;
       const { default: QRCode } = await import("qrcode");
-      const { QR_COLOR_OPTS, PUBLIC_VERIFY_BASE_URL } = await import("./qr-logic");
-      const origin = typeof window !== "undefined" ? window.location.origin : "";
-      const base = origin && !/localhost|id-preview|lovableproject|sandbox/.test(origin) ? origin : PUBLIC_VERIFY_BASE_URL;
-      const target = `${base}/clients/${encodeURIComponent(clientId)}?releve=1`;
+      const { QR_COLOR_OPTS, buildQrUrl } = await import("./qr-logic");
+      // Même mécanisme que factures / BC / reçus : jeton stable → page publique /verify.
+      let target: string | null = data.certification?.verification_url ?? null;
+      const code = data.client?.reference ?? data.client?.code;
+      if (!target && code) {
+        const { ensureVerificationSafe } = await import("@/lib/certification/auto-certify");
+        const cert = await ensureVerificationSafe(`REL-${code}`);
+        target = cert?.verification_url ?? (cert?.token ? buildQrUrl(cert.token) : null);
+      }
+      if (!target) return;
       const url = await QRCode.toDataURL(target, { margin: 1, width: 400, errorCorrectionLevel: "M", color: QR_COLOR_OPTS });
       const img = await this.doc.embedPng(url);
       this.page.drawImage(img, { x, y: yBottom, width: size, height: size });

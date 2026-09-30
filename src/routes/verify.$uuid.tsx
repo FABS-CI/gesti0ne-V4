@@ -186,10 +186,12 @@ const DOWNLOAD_LABEL: Record<string, string> = {
   PROFORMA: 'Télécharger la facture proforma',
   COMMANDE: 'Télécharger le bon de commande',
   PAIEMENT: 'Télécharger le reçu de paiement',
+  RELEVE: 'Télécharger le relevé de compte',
 };
 
-function docKeyFromLabel(docType?: string): 'FACTURE' | 'PROFORMA' | 'COMMANDE' | 'PAIEMENT' | null {
+function docKeyFromLabel(docType?: string): 'FACTURE' | 'PROFORMA' | 'COMMANDE' | 'PAIEMENT' | 'RELEVE' | null {
   const v = (docType ?? '').toLowerCase();
+  if (v.includes('relevé') || v.includes('releve')) return 'RELEVE';
   if (v.includes('reçu') || v.includes('paiement')) return 'PAIEMENT';
   if (v.includes('proforma')) return 'PROFORMA';
   if (v.includes('commande')) return 'COMMANDE';
@@ -259,16 +261,18 @@ function VerificationPage() {
       );
       if (!res.ok) throw new Error('indisponible');
       const payload = (await res.json()) as {
-        label: 'Facture' | 'Proforma' | 'Commande' | 'Reçu';
+        label: 'Facture' | 'Proforma' | 'Commande' | 'Reçu' | 'Relevé';
         reference: string;
         data: Record<string, unknown>;
       };
-      const [{ generateUnifiedCommercialPDF, generateUnifiedReceiptPDF }, { downloadBlob }] = await Promise.all([
+      const [{ generateUnifiedCommercialPDF, generateUnifiedReceiptPDF, generateUnifiedStatementPDF }, { downloadBlob }] = await Promise.all([
         import('@/lib/pdf/unified-generator'),
         import('@/lib/pdf/fabsTemplates'),
       ]);
       const blob =
-        payload.label === 'Reçu'
+        payload.label === 'Relevé'
+          ? await generateUnifiedStatementPDF(payload.data)
+          : payload.label === 'Reçu'
           ? await generateUnifiedReceiptPDF(payload.data as never)
           : await generateUnifiedCommercialPDF(payload.label, payload.data as never);
       downloadBlob(blob, `${payload.reference}.pdf`);
