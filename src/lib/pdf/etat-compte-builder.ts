@@ -36,6 +36,7 @@ type RetourCompteRow = {
 
 export type ReleveClientData = {
   reference: string;
+  clientId: string;
   client: {
     code: string | null; nom: string; adresse: string | null; ville: string | null;
     telephone: string | null; email: string | null; representant: string | null;
