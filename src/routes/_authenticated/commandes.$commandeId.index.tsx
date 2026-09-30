@@ -159,6 +159,7 @@ function CommandeDetailPage() {
                       type: "BC",
                       data: {
                         ...commande,
+                        clientNom: commande.client_nom,
                         date: commande.date_commande,
                         statut: STATUT_LABEL[commande.statut]
                           ? {
