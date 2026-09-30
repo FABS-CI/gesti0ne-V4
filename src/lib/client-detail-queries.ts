@@ -132,7 +132,7 @@ export const clientLivraisonsQO = (clientId: string) =>
       if (ids.length === 0) return [] as ClientRelations["livraisons"];
       const { data, error } = await supabase
         .from("livraisons")
-        .select("livraison_id,reference,statut,date_livraison")
+        .select("livraison_id,reference,statut,date_livraison,bl_id")
         .in("bl_id", ids)
         .order("date_livraison", { ascending: false });
       if (error) throw error;
@@ -142,6 +142,7 @@ export const clientLivraisonsQO = (clientId: string) =>
         statut: l.statut,
         date_livraison: l.date_livraison,
         transporteur: null,
+        bl_id: l.bl_id ?? null,
       })) as ClientRelations["livraisons"];
     },
     staleTime: SLICE_STALE,

@@ -12,12 +12,17 @@ import { EmptyRow } from "./shared";
 import { frDate } from "@/lib/client-detail-helpers";
 import { formatFCFA } from "@/lib/format";
 import type { ClientRelations } from "@/lib/clients-api";
+import { useNavigate } from "@tanstack/react-router";
 
 type Commande = ClientRelations["commandes"][number];
 
 const CommandeRow = React.memo(function CommandeRow({ c }: { c: Commande }) {
+  const navigate = useNavigate();
   return (
-    <TableRow>
+    <TableRow
+      className="cursor-pointer hover:bg-muted/50"
+      onClick={() => navigate({ to: "/commandes/$commandeId", params: { commandeId: c.commande_id } })}
+    >
       <TableCell className="font-mono text-xs">{c.reference}</TableCell>
       <TableCell>{frDate(c.date_commande)}</TableCell>
       <TableCell>

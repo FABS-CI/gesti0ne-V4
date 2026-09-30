@@ -183,6 +183,7 @@ export type ClientRelations = {
     statut: string;
     date_livraison: string | null;
     transporteur: string | null;
+    bl_id?: string | null;
   }>;
   proformas: Array<{
     proforma_id: string;
@@ -265,6 +266,7 @@ export async function getClientRelations(
       statut: l.statut,
       date_livraison: l.date_livraison,
       transporteur: null,
+      bl_id: l.bl_id ?? null,
     })) as ClientRelations["livraisons"];
   }
 

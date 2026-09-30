@@ -10,6 +10,8 @@ import { formatFCFA } from "@/lib/format";
 import { buildEtatCompteClientPDF, loadReleveClient } from "@/lib/pdf/etat-compte-builder";
 import { downloadBlob, fileNameFor } from "@/lib/pdf/fabsTemplates";
 import { friendlyError } from "@/lib/friendly-error";
+import { useNavigate } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
 
 type Props = {
   open: boolean;
@@ -23,6 +25,34 @@ const fmtDate = (d: string) =>
 /** Relevé de compte du client consulté : mêmes données que le PDF. */
 export function ClientReleveDialog({ open, onOpenChange, client }: Props) {
   const [busy, setBusy] = useState(false);
+  const navigate = useNavigate();
+
+  /** Ouvre le document source exact : l'ID interne est résolu et vérifié pour ce client. */
+  async function openDoc(type: string, reference: string) {
+    try {
+      if (type === "Paiement") {
+        const { data: p } = await supabase
+          .from("paiements").select("paiement_id").eq("reference", reference).maybeSingle();
+        if (!p) return toast.error(`Paiement ${reference} introuvable`);
+        onOpenChange(false);
+        navigate({ to: "/paiements/$paiementId", params: { paiementId: p.paiement_id } });
+      } else if (type === "Avoir") {
+        const { data: r } = await supabase
+          .from("retours").select("retour_id").eq("reference", reference).eq("client_id", client.client_id).maybeSingle();
+        if (!r) return toast.error(`Retour ${reference} introuvable`);
+        onOpenChange(false);
+        navigate({ to: "/retours/$retourId", params: { retourId: r.retour_id } });
+      } else {
+        const { data: f } = await supabase
+          .from("factures").select("facture_id").eq("reference", reference).eq("client_id", client.client_id).maybeSingle();
+        if (!f) return toast.error(`Facture ${reference} introuvable`);
+        onOpenChange(false);
+        navigate({ to: "/factures/$factureId", params: { factureId: f.facture_id } });
+      }
+    } catch (e) {
+      toast.error(friendlyError(e, "Ouverture impossible"));
+    }
+  }
   const args = {
     clientId: client.client_id,
     clientNom: client.nom,
@@ -90,7 +120,17 @@ export function ClientReleveDialog({ open, onOpenChange, client }: Props) {
                       return (
                         <TableRow key={`${l.reference}-${i}`}>
                           <TableCell className="whitespace-nowrap">{fmtDate(String(l.date ?? ""))}</TableCell>
-                          <TableCell className="font-mono text-xs">{l.reference}</TableCell>
+                          <TableCell className="font-mono text-xs">
+                            {l.reference ? (
+                              <button
+                                type="button"
+                                className="text-primary underline-offset-2 hover:underline"
+                                onClick={() => openDoc(String(l.type ?? ""), String(l.reference))}
+                              >
+                                {l.reference}
+                              </button>
+                            ) : null}
+                          </TableCell>
                           <TableCell>{l.libelle}</TableCell>
                           <TableCell className="text-right">{formatFCFA(Number(l.debit || 0))}</TableCell>
                           <TableCell className="text-right">{formatFCFA(isRetour ? 0 : Number(l.credit || 0))}</TableCell>
