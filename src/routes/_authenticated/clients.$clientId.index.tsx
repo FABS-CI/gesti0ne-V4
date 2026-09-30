@@ -62,6 +62,10 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
   const queryClient = useQueryClient();
   const [editOpen, setEditOpen] = useState(false);
   const [releveOpen, setReleveOpen] = useState(false);
+  // Ouverture directe du relevé depuis le QR code du PDF (?releve=1).
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("releve") === "1") setReleveOpen(true);
+  }, []);
   const { has } = usePermissions();
   const canSeeSolde = has("clients.voir_ca");
 
