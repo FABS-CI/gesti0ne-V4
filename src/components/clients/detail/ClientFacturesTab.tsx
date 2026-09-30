@@ -12,12 +12,17 @@ import { EmptyRow } from "./shared";
 import { frDate } from "@/lib/client-detail-helpers";
 import { formatFCFA } from "@/lib/format";
 import type { ClientRelations } from "@/lib/clients-api";
+import { useNavigate } from "@tanstack/react-router";
 
 type Facture = ClientRelations["factures"][number];
 
 const FactureRow = React.memo(function FactureRow({ f }: { f: Facture }) {
+  const navigate = useNavigate();
   return (
-    <TableRow>
+    <TableRow
+      className="cursor-pointer hover:bg-muted/50"
+      onClick={() => navigate({ to: "/factures/$factureId", params: { factureId: f.facture_id } })}
+    >
       <TableCell className="font-mono text-xs">{f.reference}</TableCell>
       <TableCell>{frDate(f.date_facture)}</TableCell>
       <TableCell>

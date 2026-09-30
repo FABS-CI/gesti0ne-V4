@@ -74,8 +74,12 @@ export function ClientProformasTab({ proformas }: { proformas: ClientRelations["
 
 // ---- Bons de livraison ----
 const BLRow = React.memo(function BLRow({ b }: { b: ClientRelations["bons_livraison"][number] }) {
+  const navigate = useNavigate();
   return (
-    <TableRow className="hover:bg-muted/50">
+    <TableRow
+      className="cursor-pointer hover:bg-muted/50"
+      onClick={() => navigate({ to: "/colisage/$blId", params: { blId: b.bl_id } })}
+    >
       <TableCell className="font-mono text-xs">{b.reference}</TableCell>
       <TableCell>{frDate(b.date_emission)}</TableCell>
       <TableCell>{frDate(b.date_livraison)}</TableCell>
@@ -175,8 +179,13 @@ const LivraisonRow = React.memo(function LivraisonRow({
 }: {
   l: ClientRelations["livraisons"][number];
 }) {
+  const navigate = useNavigate();
+  const blId = l.bl_id;
   return (
-    <TableRow>
+    <TableRow
+      className={blId ? "cursor-pointer hover:bg-muted/50" : undefined}
+      onClick={blId ? () => navigate({ to: "/colisage/$blId", params: { blId } }) : undefined}
+    >
       <TableCell className="font-mono text-xs">{l.reference}</TableCell>
       <TableCell>{frDate(l.date_livraison)}</TableCell>
       <TableCell>{l.transporteur || "—"}</TableCell>
