@@ -9,7 +9,7 @@ import { canonicalString, toCanonical, type CanonicalDocument } from "./canonica
 
 import { calculateInvoicePaymentStatus } from "@/lib/factures/payment-status";
 
-export type DocType = "FACTURE" | "PROFORMA" | "COMMANDE" | "BL" | "PAIEMENT";
+export type DocType = "FACTURE" | "PROFORMA" | "COMMANDE" | "BL" | "PAIEMENT" | "RELEVE";
 
 export type CertStatut = "AUTHENTIC" | "REVOKED" | "CANCELLED";
 
@@ -95,6 +95,9 @@ export async function loadDocumentData(
   reference: string,
 ): Promise<{ type: DocType; id: string; data: PublicDocument; canonicalInput: Parameters<typeof toCanonical>[0] } | null> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+  // Relevé de compte : référence « REL-{code client} », données = source unique du relevé.
+  if (/^REL-/i.test(reference)) return loadReleveDocument(reference.slice(4), supabaseAdmin);
 
   const tables: Array<{
     table: string;
@@ -189,6 +192,52 @@ export async function loadDocumentData(
   }
 
   return null;
+}
+
+/** Relevé de compte d'un client (mêmes données que l'écran et le PDF). */
+async function loadReleveDocument(
+  clientCode: string,
+  db: Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"],
+): Promise<{ type: DocType; id: string; data: PublicDocument; canonicalInput: Parameters<typeof toCanonical>[0] } | null> {
+  const { data: cli } = await db
+    .from("clients")
+    .select("client_id, reference, nom, telephone, representant")
+    .ilike("reference", clientCode)
+    .maybeSingle();
+  if (!cli) return null;
+  const { loadReleveClient } = await import("@/lib/pdf/releve-data");
+  const r = await loadReleveClient(
+    { clientId: cli.client_id, clientNom: cli.nom, clientTel: cli.telephone, representant: cli.representant },
+    db,
+  );
+  const reference = `REL-${cli.reference}`;
+  const last = r.lignes.length ? String(r.lignes[r.lignes.length - 1].date ?? "").slice(0, 10) : null;
+  return {
+    type: "RELEVE",
+    id: cli.client_id,
+    data: {
+      docType: "Relevé de compte",
+      reference,
+      date: last,
+      client_nom: cli.nom,
+      representant_nom: r.client.representant,
+      montant: r.solde,
+      statut_document: r.solde > 0 ? "Solde débiteur" : r.solde < 0 ? "Solde créditeur" : "Soldé",
+    },
+    canonicalInput: {
+      type: "RELEVE",
+      reference,
+      date: last,
+      client_nom: cli.nom,
+      montant_total: r.solde,
+      lignes: r.lignes.map((l) => ({
+        designation: `${l.type ?? ""} ${l.reference ?? ""}`.trim(),
+        quantite: 1,
+        prix_unitaire: Number(l.debit || 0) - Number(l.credit || 0),
+        total_ligne: Number(l.debit || 0) - Number(l.credit || 0),
+      })),
+    },
+  };
 }
 
 /** Certifie un document : empreinte, signature, jeton. Renvoie le jeton en clair une seule fois. */
@@ -399,7 +448,7 @@ export async function isRateLimited(ip: string | null): Promise<boolean> {
 }
 
 /** Types de documents soumis à la certification automatique. */
-export const AUTO_CERTIFIED_TYPES: DocType[] = ["FACTURE", "PROFORMA", "COMMANDE", "BL", "PAIEMENT"];
+export const AUTO_CERTIFIED_TYPES: DocType[] = ["FACTURE", "PROFORMA", "COMMANDE", "BL", "PAIEMENT", "RELEVE"];
 
 export type EnsureCertificationResult = {
   certified: boolean;
