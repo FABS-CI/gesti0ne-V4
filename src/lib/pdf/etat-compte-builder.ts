@@ -218,6 +218,7 @@ export async function loadReleveClient(args: EtatCompteClientArgs): Promise<Rele
 
   return {
     reference: ref,
+    clientId: args.clientId,
     client: clientBlock,
     lignes,
     soldeOuverture: res.soldeOuverture,
