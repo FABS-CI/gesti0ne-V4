@@ -284,7 +284,7 @@ function PaiementsPage() {
                     <TableRow key={p.paiement_id}>
                       <TableCell className="font-mono text-xs">{p.reference}</TableCell>
                       <TableCell className="whitespace-nowrap">{formatDate(p.date_paiement)}</TableCell>
-                      <TableCell className="font-medium">{p.client_nom}</TableCell>
+                      <TableCell className="font-medium">{p.client_nom ?? "—"}</TableCell>
                       <TableCell>
                         {MODE_PAIEMENT_LABEL[p.mode_paiement] ?? p.mode_paiement}
                       </TableCell>

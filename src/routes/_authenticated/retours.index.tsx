@@ -1,3 +1,4 @@
+import { ClientLink } from "@/components/common/ClientLink";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -310,7 +311,7 @@ function RetoursListPage() {
                       </TableCell>
                       <TableCell>
                         <div className="font-medium text-sm leading-tight break-words max-w-[200px]">
-                          {r.etablissement || r.client_nom}
+                          <ClientLink clientId={r.client_id} nom={r.etablissement || r.client_nom} />
                         </div>
                       </TableCell>
                       <TableCell className="text-sm truncate max-w-[120px]" title={r.representant_nom || ""}>
