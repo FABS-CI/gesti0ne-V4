@@ -295,6 +295,13 @@
       "when": 1790846086303,
       "tag": "0041_commande_frais_transport_saisie",
       "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1790849541603,
+      "tag": "0042_sync_facture_transport_on_modifier_commande",
+      "breakpoints": true
     }
   ]
 }
