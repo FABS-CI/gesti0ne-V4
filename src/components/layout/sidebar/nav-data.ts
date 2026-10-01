@@ -1,4 +1,5 @@
 import {
+  Gauge,
   LayoutDashboard,
   BarChart3,
   Users,
@@ -84,6 +85,7 @@ export const groups: Group[] = [
     shadow: "rgba(59,130,246,0.3)",
     items: [
       { title: "Tableau de bord", url: "/dashboard", icon: LayoutDashboard, ready: true },
+      { title: "Centre de pilotage", url: "/pilotage", icon: Gauge, ready: true },
       { title: "Mon tableau de bord", url: "/mon-dashboard", icon: LayoutDashboard, ready: true },
       { title: "Vue globale", url: "/dashboard-global", icon: LayoutDashboard, ready: true },
       { title: "Business Intelligence", url: "/bi-analytics", icon: BarChart3, ready: true },

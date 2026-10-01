@@ -302,6 +302,13 @@
       "when": 1790849541603,
       "tag": "0042_sync_facture_transport_on_modifier_commande",
       "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1790862152557,
+      "tag": "0043_cockpit_overview",
+      "breakpoints": true
     }
   ]
 }
