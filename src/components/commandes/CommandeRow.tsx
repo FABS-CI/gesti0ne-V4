@@ -1,4 +1,6 @@
 import React from "react";
+import { Link } from "@tanstack/react-router";
+import { ClientLink } from "@/components/common/ClientLink";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { ProductCoverThumb } from "@/components/produits/ProductCoverThumb";
 import { Badge } from "@/components/ui/badge";
@@ -34,10 +36,18 @@ function CommandeRowInner({
         <div className="flex items-center gap-2">
           {/* Commande n'a pas de cover_path direct, mais on pourrait enrichir si besoin */}
           <ProductCoverThumb produit={null} size="xs" />
-          <span>{c.reference}</span>
+          <Link
+            to="/commandes/$commandeId"
+            params={{ commandeId: c.commande_id }}
+            className="hover:text-primary hover:underline"
+          >
+            {c.reference}
+          </Link>
         </div>
       </TableCell>
-      <TableCell>{c.client_nom || "—"}</TableCell>
+      <TableCell>
+        <ClientLink clientId={c.client_id} nom={c.client_nom} />
+      </TableCell>
       <TableCell className="text-muted-foreground">{formatDate(c.date_commande)}</TableCell>
       <TableCell>
         <Badge

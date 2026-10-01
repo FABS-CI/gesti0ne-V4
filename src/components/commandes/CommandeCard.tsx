@@ -1,4 +1,5 @@
 import React from "react";
+import { ClientLink } from "@/components/common/ClientLink";
 import { Badge } from "@/components/ui/badge";
 import { STATUT_LABEL, type Commande } from "@/lib/commandes-api";
 import { formatFCFA, formatDate } from "@/lib/format";
@@ -45,7 +46,9 @@ function CommandeCardInner({
               {st?.label ?? c.statut}
             </Badge>
           </div>
-          <p className="mt-0.5 truncate text-sm text-foreground">{c.client_nom || "—"}</p>
+          <p className="mt-0.5 truncate text-sm text-foreground">
+            <ClientLink clientId={c.client_id} nom={c.client_nom} />
+          </p>
           <p className="mt-0.5 text-xs text-muted-foreground">{formatDate(c.date_commande)}</p>
         </div>
         <div className="shrink-0 text-right">
