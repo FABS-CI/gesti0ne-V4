@@ -86,6 +86,7 @@ export function buildEtiquettesPayload(
     facture: bl.facture_reference || undefined,
     bl: bl.reference,
     colis_id: c.colis_id,
+    reference_colis: c.reference || undefined,
     client: bl.client_nom || undefined,
     etablissement: bl.etablissement || undefined,
     representant: bl.representant_nom || undefined,
