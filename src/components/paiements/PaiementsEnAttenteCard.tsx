@@ -1,4 +1,3 @@
-import { ClientLink } from "@/components/common/ClientLink";
 import { useState } from "react";
 import { Check, X, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -62,7 +61,7 @@ export function PaiementsEnAttenteCard({ exerciceId }: { exerciceId?: string | n
                   <TableRow key={p.paiement_id}>
                     <TableCell className="font-medium">{p.reference}</TableCell>
                     <TableCell>{formatDate(p.date_paiement)}</TableCell>
-                    <TableCell><ClientLink clientId={p.client_id} nom={p.client_nom} /></TableCell>
+                    <TableCell>{p.client_nom ?? "—"}</TableCell>
                     <TableCell>{MODE_PAIEMENT_LABEL[p.mode_paiement] ?? p.mode_paiement}</TableCell>
                     <TableCell className="text-right font-medium">{formatFCFA(Number(p.montant))}</TableCell>
                     <TableCell className="text-right">
