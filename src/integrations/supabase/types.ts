@@ -7946,6 +7946,7 @@ export type Database = {
       }
       clients_facets: { Args: never; Returns: Json }
       cloturer_tournee: { Args: { _tournee_id: string }; Returns: undefined }
+      cockpit_overview: { Args: { _exercice_id?: string }; Returns: Json }
       commande_demander_annulation: {
         Args: { p_commande_id: string; p_motif: string }
         Returns: string
