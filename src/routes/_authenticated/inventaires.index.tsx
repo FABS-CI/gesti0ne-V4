@@ -170,7 +170,7 @@ function InventairesPage() {
             </p>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Can permission="inventaires.creer">
           <Dialog open={theoriqueOpen} onOpenChange={setTheoriqueOpen}>
             <DialogTrigger asChild>

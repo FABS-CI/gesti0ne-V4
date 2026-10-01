@@ -66,7 +66,9 @@ const SidebarProvider = React.forwardRef<
     },
     ref,
   ) => {
-    const isMobile = useIsMobile();
+    // Sous 1024 px (téléphone + tablette portrait), le menu devient un tiroir
+    // superposé pour laisser toute la largeur au contenu.
+    const isMobile = useIsMobile(1024);
     const [openMobile, setOpenMobile] = React.useState(false);
 
     // This is the internal state of the sidebar.
