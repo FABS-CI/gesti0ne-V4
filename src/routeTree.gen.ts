@@ -29,6 +29,7 @@ import { Route as AuthenticatedProformasRouteImport } from './routes/_authentica
 import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated/profil'
 import { Route as AuthenticatedProduitsRouteImport } from './routes/_authenticated/produits'
 import { Route as AuthenticatedPlanComptableRouteImport } from './routes/_authenticated/plan-comptable'
+import { Route as AuthenticatedPilotageRouteImport } from './routes/_authenticated/pilotage'
 import { Route as AuthenticatedPaiementsRouteImport } from './routes/_authenticated/paiements'
 import { Route as AuthenticatedPaieRubriquesRouteImport } from './routes/_authenticated/paie-rubriques'
 import { Route as AuthenticatedPaieRapportsRouteImport } from './routes/_authenticated/paie-rapports'
@@ -322,6 +323,11 @@ const AuthenticatedPlanComptableRoute =
     path: '/plan-comptable',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPilotageRoute = AuthenticatedPilotageRouteImport.update({
+  id: '/pilotage',
+  path: '/pilotage',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPaiementsRoute = AuthenticatedPaiementsRouteImport.update({
   id: '/paiements',
   path: '/paiements',
@@ -1478,6 +1484,7 @@ export interface FileRoutesByFullPath {
   '/paie-rapports': typeof AuthenticatedPaieRapportsRoute
   '/paie-rubriques': typeof AuthenticatedPaieRubriquesRoute
   '/paiements': typeof AuthenticatedPaiementsRouteWithChildren
+  '/pilotage': typeof AuthenticatedPilotageRoute
   '/plan-comptable': typeof AuthenticatedPlanComptableRoute
   '/produits': typeof AuthenticatedProduitsRouteWithChildren
   '/profil': typeof AuthenticatedProfilRoute
@@ -1669,6 +1676,7 @@ export interface FileRoutesByTo {
   '/paie-parametres': typeof AuthenticatedPaieParametresRoute
   '/paie-rapports': typeof AuthenticatedPaieRapportsRoute
   '/paie-rubriques': typeof AuthenticatedPaieRubriquesRoute
+  '/pilotage': typeof AuthenticatedPilotageRoute
   '/plan-comptable': typeof AuthenticatedPlanComptableRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/rapports-comptables': typeof AuthenticatedRapportsComptablesRoute
@@ -1872,6 +1880,7 @@ export interface FileRoutesById {
   '/_authenticated/paie-rapports': typeof AuthenticatedPaieRapportsRoute
   '/_authenticated/paie-rubriques': typeof AuthenticatedPaieRubriquesRoute
   '/_authenticated/paiements': typeof AuthenticatedPaiementsRouteWithChildren
+  '/_authenticated/pilotage': typeof AuthenticatedPilotageRoute
   '/_authenticated/plan-comptable': typeof AuthenticatedPlanComptableRoute
   '/_authenticated/produits': typeof AuthenticatedProduitsRouteWithChildren
   '/_authenticated/profil': typeof AuthenticatedProfilRoute
@@ -2081,6 +2090,7 @@ export interface FileRouteTypes {
     | '/paie-rapports'
     | '/paie-rubriques'
     | '/paiements'
+    | '/pilotage'
     | '/plan-comptable'
     | '/produits'
     | '/profil'
@@ -2272,6 +2282,7 @@ export interface FileRouteTypes {
     | '/paie-parametres'
     | '/paie-rapports'
     | '/paie-rubriques'
+    | '/pilotage'
     | '/plan-comptable'
     | '/profil'
     | '/rapports-comptables'
@@ -2474,6 +2485,7 @@ export interface FileRouteTypes {
     | '/_authenticated/paie-rapports'
     | '/_authenticated/paie-rubriques'
     | '/_authenticated/paiements'
+    | '/_authenticated/pilotage'
     | '/_authenticated/plan-comptable'
     | '/_authenticated/produits'
     | '/_authenticated/profil'
@@ -2771,6 +2783,13 @@ declare module '@tanstack/react-router' {
       path: '/plan-comptable'
       fullPath: '/plan-comptable'
       preLoaderRoute: typeof AuthenticatedPlanComptableRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/pilotage': {
+      id: '/_authenticated/pilotage'
+      path: '/pilotage'
+      fullPath: '/pilotage'
+      preLoaderRoute: typeof AuthenticatedPilotageRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/paiements': {
@@ -4560,6 +4579,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPaieRapportsRoute: typeof AuthenticatedPaieRapportsRoute
   AuthenticatedPaieRubriquesRoute: typeof AuthenticatedPaieRubriquesRoute
   AuthenticatedPaiementsRoute: typeof AuthenticatedPaiementsRouteWithChildren
+  AuthenticatedPilotageRoute: typeof AuthenticatedPilotageRoute
   AuthenticatedPlanComptableRoute: typeof AuthenticatedPlanComptableRoute
   AuthenticatedProduitsRoute: typeof AuthenticatedProduitsRouteWithChildren
   AuthenticatedProfilRoute: typeof AuthenticatedProfilRoute
@@ -4680,6 +4700,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPaieRapportsRoute: AuthenticatedPaieRapportsRoute,
   AuthenticatedPaieRubriquesRoute: AuthenticatedPaieRubriquesRoute,
   AuthenticatedPaiementsRoute: AuthenticatedPaiementsRouteWithChildren,
+  AuthenticatedPilotageRoute: AuthenticatedPilotageRoute,
   AuthenticatedPlanComptableRoute: AuthenticatedPlanComptableRoute,
   AuthenticatedProduitsRoute: AuthenticatedProduitsRouteWithChildren,
   AuthenticatedProfilRoute: AuthenticatedProfilRoute,

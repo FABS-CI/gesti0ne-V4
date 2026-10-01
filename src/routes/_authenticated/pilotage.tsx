@@ -46,6 +46,15 @@ export const Route = createFileRoute("/_authenticated/pilotage")({
   notFoundComponent: RouteNotFound,
 });
 
+type Dest =
+  | "/factures"
+  | "/colisage"
+  | "/livraison-suivi"
+  | "/paiements"
+  | "/alertes-stock"
+  | "/retours"
+  | "/clients";
+
 type Tone = "danger" | "warning" | "info" | "success";
 const TONE: Record<Tone, string> = {
   danger: "text-destructive bg-destructive/10",
@@ -234,7 +243,7 @@ function CockpitContent({ data }: { data: CockpitData }) {
           <ListCard title="Clients les plus débiteurs" to="/clients">
             {data.debiteurs.items.map((c) => (
               <Row key={c.client_id} right={formatFCFA(c.reste)}>
-                <ClientLink clientId={c.client_id} name={c.client_nom ?? "Client"} />
+                <ClientLink clientId={c.client_id} nom={c.client_nom} />
               </Row>
             ))}
           </ListCard>
@@ -289,7 +298,7 @@ function Kpi(props: {
   label: string;
   value: number;
   sub?: string;
-  to: string;
+  to: Dest;
 }) {
   return (
     <Link
@@ -309,7 +318,7 @@ function Kpi(props: {
   );
 }
 
-function ListCard({ title, to, children }: { title: string; to: string; children: ReactNode }) {
+function ListCard({ title, to, children }: { title: string; to: Dest; children: ReactNode }) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -360,7 +369,7 @@ function DirectionCard({ d }: { d: NonNullable<CockpitData["direction"]> }) {
             <ul className="divide-y">
               {d.topClients.map((c) => (
                 <Row key={c.client_id} right={formatFCFA(c.montant)}>
-                  <ClientLink clientId={c.client_id} name={c.client_nom ?? "Client"} />
+                  <ClientLink clientId={c.client_id} nom={c.client_nom} />
                 </Row>
               ))}
             </ul>
@@ -410,7 +419,7 @@ function AncienneteCard({ a }: { a: NonNullable<CockpitData["anciennete"]> }) {
   );
 }
 
-type Action = { key: string; title: string; detail?: ReactNode; to: string; cta: string };
+type Action = { key: string; title: string; detail?: ReactNode; to: Dest; cta: string };
 
 function refs(list: string[]) {
   return list.filter(Boolean).join(", ");
@@ -437,13 +446,12 @@ function buildActions(d: CockpitData): Action[] {
     });
   }
   if (d.impayes30 && d.impayes30.count > 0) {
-    const n = new Set(d.impayes30.items.map((f) => f.client_id ?? f.client_nom)).size;
     out.push({
       key: "relance",
       title: `Relancer les clients pour ${d.impayes30.count} facture${d.impayes30.count > 1 ? "s" : ""} impayée${d.impayes30.count > 1 ? "s" : ""} depuis plus de 30 jours`,
       detail: `${formatFCFA(d.impayes30.montant)} à recouvrer — dont ${refs(
         d.impayes30.items.slice(0, 3).map((f) => `${f.reference} (${f.jours} j)`),
-      )}${n > 0 ? "" : ""}`,
+      )}`,
       to: "/factures",
       cta: "Relancer",
     });
