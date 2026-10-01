@@ -64,6 +64,8 @@ export type Commande = {
   created_by: string | null;
   created_by_nom: string | null;
   notes: string | null;
+  type_frais_transport?: string | null;
+  montant_frais_transport?: number | null;
   created_at: string;
   updated_at: string;
 };
@@ -188,7 +190,7 @@ export async function listCommandes(params: ListCommandesParams = {}) {
   // P0 perf : projection restreinte aux colonnes utilisées par la liste
   // (badges, KPI, actions). Évite de transférer 40+ colonnes/ligne.
   const LIST_COLS =
-    "commande_id, reference, numero, client_id, client_nom, telephone, ville, statut, date_commande, montant_total, net_a_payer, created_at, commercial_nom, created_by";
+    "commande_id, reference, numero, client_id, client_nom, telephone, ville, statut, date_commande, montant_total, net_a_payer, created_at, commercial_nom, created_by, type_frais_transport, montant_frais_transport";
   let query = supabase.from("commandes").select(LIST_COLS, { count: "estimated" });
 
   if (exerciceId) query = query.eq("exercice_id", exerciceId);
