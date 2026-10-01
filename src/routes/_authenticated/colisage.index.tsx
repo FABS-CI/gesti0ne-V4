@@ -1,3 +1,4 @@
+import { ClientLink } from "@/components/common/ClientLink";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -223,7 +224,7 @@ function ColisageListPage() {
                       <TableRow key={r.bl_id}>
                         <TableCell className="font-mono text-xs">{r.reference}</TableCell>
                         <TableCell>{frDate(r.date_emission)}</TableCell>
-                        <TableCell>{r.client_nom ?? "—"}</TableCell>
+                        <TableCell><ClientLink clientId={r.client_id} nom={r.client_nom} /></TableCell>
                         <TableCell>{r.etablissement ?? "—"}</TableCell>
                         <TableCell>{r.ville ?? "—"}</TableCell>
                         <TableCell className="text-right">{r.nb_articles}</TableCell>

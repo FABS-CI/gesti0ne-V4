@@ -1,3 +1,4 @@
+import { ClientLink } from "@/components/common/ClientLink";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -391,7 +392,7 @@ function FacturesPage() {
                         </div>
                       </TableCell>
                       <TableCell className="whitespace-nowrap">{formatDate(f.date_facture)}</TableCell>
-                      <TableCell className="font-medium">{f.client_nom}</TableCell>
+                      <TableCell className="font-medium"><ClientLink clientId={f.client_id} nom={f.client_nom} /></TableCell>
                       <TableCell className="text-right">
                         {formatFCFA(Number(f.montant_total))}
                         {(() => {
