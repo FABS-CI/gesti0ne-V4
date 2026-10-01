@@ -32,13 +32,6 @@ export function RouteGuard({ children }: { children: ReactNode }) {
         (typeof required === "string" && has(required)) ||
         (Array.isArray(required) && hasAny(required))));
 
-  // Diagnostic logs in DEV mode
-  useEffect(() => {
-    if (import.meta.env.DEV && !isLoading) {
-      console.log("[Guard] Path:", pathname, "| Required:", required, "| Allowed:", allowed, "| isSuperAdmin:", isSuperAdmin, "| permsCount:", permissions?.size ?? 0);
-    }
-  }, [pathname, required, allowed, isSuperAdmin, isLoading]);
-
   useEffect(() => {
     if (isLoading || allowed) return;
     // Ne pas re-loguer / rediriger si on est déjà sur la page 403.

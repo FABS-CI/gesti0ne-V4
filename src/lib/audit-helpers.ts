@@ -58,6 +58,50 @@ export function countryFlag(code?: string | null): string {
   return String.fromCodePoint(A + cc.charCodeAt(0) - 65, A + cc.charCodeAt(1) - 65);
 }
 
+export type AuditDiffEntry = {
+  champ: string;
+  avant: string;
+  apres: string;
+  kind: "modifie" | "ajoute" | "supprime";
+};
+
+function fmtAuditValue(v: unknown): string {
+  if (v === null || v === undefined) return "—";
+  if (typeof v === "object") return JSON.stringify(v);
+  return String(v);
+}
+
+/**
+ * Résumé lisible des changements entre old_values et new_values :
+ * une entrée par champ modifié, ajouté ou supprimé.
+ */
+export function diffAuditValues(oldValues: unknown, newValues: unknown): AuditDiffEntry[] {
+  const oldObj =
+    oldValues && typeof oldValues === "object" && !Array.isArray(oldValues)
+      ? (oldValues as Record<string, unknown>)
+      : {};
+  const newObj =
+    newValues && typeof newValues === "object" && !Array.isArray(newValues)
+      ? (newValues as Record<string, unknown>)
+      : {};
+  const keys = new Set([...Object.keys(oldObj), ...Object.keys(newObj)]);
+  const out: AuditDiffEntry[] = [];
+  for (const k of keys) {
+    const hasOld = Object.prototype.hasOwnProperty.call(oldObj, k);
+    const hasNew = Object.prototype.hasOwnProperty.call(newObj, k);
+    const a = oldObj[k];
+    const b = newObj[k];
+    if (hasOld && hasNew && JSON.stringify(a) === JSON.stringify(b)) continue;
+    out.push({
+      champ: k,
+      avant: hasOld ? fmtAuditValue(a) : "—",
+      apres: hasNew ? fmtAuditValue(b) : "—",
+      kind: hasOld && hasNew ? "modifie" : hasNew ? "ajoute" : "supprime",
+    });
+  }
+  return out.sort((x, y) => x.champ.localeCompare(y.champ));
+}
+
 /** Couleur pour un navigateur donné (badge de la Chronologie / Détail). */
 export const BROWSER_STYLE: Record<string, string> = {
   Chrome: "bg-yellow-100 text-yellow-800 dark:bg-yellow-950/40 dark:text-yellow-200",

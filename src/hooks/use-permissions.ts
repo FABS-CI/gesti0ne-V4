@@ -153,13 +153,6 @@ export function usePermissions() {
   const isActuallyLoading = authLoading || (!!userId && rolesLoading) || (!!userId && query.isLoading);
   const isLoading = isActuallyLoading;
 
-  // Diagnostic logs in DEV mode
-  useEffect(() => {
-    if (import.meta.env.DEV && userId && !isLoading) {
-      console.log("[RBAC] User:", user?.email, "| Roles:", rolesLoading ? "Loading..." : roles, "| Perms count:", permissions.size, "| isSuperAdmin:", isSuperAdmin);
-    }
-  }, [userId, isLoading, user?.email, roles, permissions.size, isSuperAdmin, rolesLoading]);
-
   return {
     permissions,
     has,
