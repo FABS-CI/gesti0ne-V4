@@ -1,7 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Users, Package, FileText, Truck, UserCircle, Search, Loader2 } from "lucide-react";
+import {
+  Users,
+  Package,
+  FileText,
+  Truck,
+  UserCircle,
+  Search,
+  Loader2,
+  Wallet,
+  ShoppingCart,
+  Undo2,
+  UserPlus,
+  ScrollText,
+  Gauge,
+  History,
+  type LucideIcon,
+} from "lucide-react";
 
 import {
   CommandDialog,
@@ -14,47 +30,80 @@ import {
 } from "@/components/ui/command";
 import { supabase } from "@/integrations/supabase/client";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
+import { usePermissions } from "@/hooks/use-permissions";
+import { getRoutePermission } from "@/lib/route-permissions";
 
 type Hit = {
   id: string;
   group: string;
   label: string;
-  sub?: string;
+  sub?: string | null;
   to: string;
   params?: Record<string, string>;
-  icon: typeof Users;
 };
+
+type QuickAction = { id: string; label: string; to: string; icon: LucideIcon; keywords: string };
+
+const QUICK_ACTIONS: QuickAction[] = [
+  { id: "a-cmd", label: "Nouvelle commande", to: "/commandes/nouvelle", icon: ShoppingCart, keywords: "commande vente bc" },
+  { id: "a-pai", label: "Nouveau paiement", to: "/paiements/nouveau", icon: Wallet, keywords: "paiement encaissement reglement" },
+  { id: "a-ret", label: "Nouveau retour", to: "/retours/nouveau", icon: Undo2, keywords: "retour avoir" },
+  { id: "a-cli", label: "Nouveau client", to: "/clients/nouveau", icon: UserPlus, keywords: "client creer" },
+  { id: "a-rel", label: "Relevé de compte d'un client", to: "/etat-compte-clients", icon: ScrollText, keywords: "releve etat compte solde" },
+  { id: "a-pil", label: "Centre de pilotage", to: "/pilotage", icon: Gauge, keywords: "pilotage tableau bord aujourd'hui" },
+];
+
+const RECENT_KEY = "fabs.globalSearch.recent";
+const RECENT_MAX = 8;
+
+function iconFor(group: string): LucideIcon {
+  switch (group) {
+    case "Clients":
+      return Users;
+    case "Utilisateurs":
+      return UserCircle;
+    case "Produits":
+      return Package;
+    case "Bons de livraison":
+      return Truck;
+    case "Paiements":
+      return Wallet;
+    case "Commandes":
+      return ShoppingCart;
+    default:
+      return FileText;
+  }
+}
+
+function readRecent(): Hit[] {
+  try {
+    const raw = window.localStorage.getItem(RECENT_KEY);
+    const arr: unknown = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? (arr as Hit[]).slice(0, RECENT_MAX) : [];
+  } catch {
+    return [];
+  }
+}
 
 async function search(q: string): Promise<Hit[]> {
   const term = q.trim();
   if (term.length < 2) return [];
-
   const { data, error } = await supabase.rpc("global_search", { _q: term });
-  if (error) {
-    console.error("GlobalSearch error:", error);
-    return [];
-  }
+  if (error) throw error;
+  return Array.isArray(data) ? (data as unknown as Hit[]) : [];
+}
 
-  return (data as any[]).map((h) => ({
-    ...h,
-    icon:
-      h.group === "Clients"
-        ? Users
-        : h.group === "Représentants" || h.group === "Utilisateurs"
-        ? UserCircle
-        : h.group === "Produits"
-        ? Package
-        : h.group === "Bons de livraison" || h.group === "Cartons"
-        ? Truck
-        : FileText,
-  }));
+function fold(s: string) {
+  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
 export function GlobalSearch() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
-  const debounced = useDebouncedValue(value, 350);
+  const [recent, setRecent] = useState<Hit[]>([]);
+  const debounced = useDebouncedValue(value, 300);
   const navigate = useNavigate();
+  const { has, hasAny, isSuperAdmin } = usePermissions();
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -67,10 +116,31 @@ export function GlobalSearch() {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
-  const { data: hits = [], isFetching } = useQuery({
+  useEffect(() => {
+    if (open) setRecent(readRecent());
+  }, [open]);
+
+  const allowedActions = useMemo(
+    () =>
+      QUICK_ACTIONS.filter((a) => {
+        if (isSuperAdmin) return true;
+        const req = getRoutePermission(a.to);
+        if (req === null) return true;
+        if (req === undefined) return false;
+        return Array.isArray(req) ? hasAny(req) : has(req);
+      }),
+    [has, hasAny, isSuperAdmin],
+  );
+
+  const term = fold(value.trim());
+  const visibleActions = term
+    ? allowedActions.filter((a) => fold(`${a.label} ${a.keywords}`).includes(term))
+    : allowedActions;
+
+  const { data: hits = [], isFetching, isError } = useQuery({
     queryKey: ["global-search", debounced],
     queryFn: () => search(debounced),
-    enabled: debounced.trim().length >= 2,
+    enabled: open && debounced.trim().length >= 2,
     staleTime: 60_000,
     gcTime: 5 * 60_000,
   });
@@ -85,12 +155,53 @@ export function GlobalSearch() {
     return Array.from(map.entries());
   }, [hits]);
 
-  function go(h: Hit) {
+  function close() {
     setOpen(false);
     setValue("");
-    // We use @ts-ignore for dynamic routing parameters that TanStack Router cannot statically verify from the search index
-    // @ts-ignore
-    navigate({ to: h.to, params: h.params });
+  }
+
+  function goHit(h: Hit) {
+    const next = [h, ...readRecent().filter((r) => !(r.id === h.id && r.group === h.group))].slice(
+      0,
+      RECENT_MAX,
+    );
+    try {
+      window.localStorage.setItem(RECENT_KEY, JSON.stringify(next));
+    } catch {
+      /* stockage indisponible : on ignore */
+    }
+    close();
+    // Les cibles viennent de l'index serveur : chemins et paramètres dynamiques.
+    navigate({ to: h.to, params: h.params } as Parameters<typeof navigate>[0]);
+  }
+
+  function goAction(a: QuickAction) {
+    close();
+    navigate({ to: a.to } as Parameters<typeof navigate>[0]);
+  }
+
+  const searching = debounced.trim().length >= 2;
+  const showRecent = !term && recent.length > 0;
+
+  function renderHit(h: Hit, keyPrefix: string) {
+    const Icon = iconFor(h.group);
+    return (
+      <CommandItem
+        key={`${keyPrefix}-${h.group}-${h.id}`}
+        value={`${keyPrefix} ${h.group} ${h.label} ${h.sub ?? ""} ${h.id}`}
+        onSelect={() => goHit(h)}
+        className="gap-2"
+      >
+        <Icon className="h-4 w-4 text-muted-foreground" />
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-sm">{h.label}</div>
+          {h.sub && <div className="truncate text-xs text-muted-foreground">{h.sub}</div>}
+        </div>
+        {keyPrefix === "recent" && (
+          <span className="text-[10px] text-muted-foreground">{h.group}</span>
+        )}
+      </CommandItem>
+    );
   }
 
   return (
@@ -101,55 +212,73 @@ export function GlobalSearch() {
         className="flex h-10 w-full max-w-xl items-center gap-2 rounded-xl border border-input bg-muted/60 px-3 text-sm text-muted-foreground shadow-sm transition-all hover:bg-muted hover:ring-2 hover:ring-primary/20 sm:h-11 sm:gap-3 sm:px-4"
       >
         <Search className="h-4 w-4 text-primary shrink-0 sm:h-5 sm:w-5" />
-        <span className="flex-1 text-left font-medium truncate">Rechercher...</span>
+        <span className="flex-1 text-left font-medium truncate">Rechercher ou agir…</span>
         <kbd className="hidden rounded border bg-background px-2 py-1 text-[10px] font-mono font-bold shadow-xs sm:inline-block">
           Ctrl + K
         </kbd>
       </button>
 
-      <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialog open={open} onOpenChange={(o) => (o ? setOpen(true) : close())}>
         <CommandInput
           value={value}
           onValueChange={setValue}
-          placeholder="Rechercher : Client, CMD-2026..., FAC-2026..., téléphone, ville..."
+          placeholder="Client, CMD-2026…, FAC-2026…, PAI-…, produit, téléphone, ou une action…"
         />
         <CommandList>
-          {debounced.trim().length < 2 ? (
-            <CommandEmpty>Tapez au moins 2 caractères…</CommandEmpty>
-          ) : isFetching && hits.length === 0 ? (
-            <div className="flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" /> Recherche…
-            </div>
-          ) : hits.length === 0 ? (
-            <CommandEmpty>Aucun résultat</CommandEmpty>
-          ) : (
-            grouped.map(([group, items], i) => (
-              <div key={group}>
-                {i > 0 && <CommandSeparator />}
-                <CommandGroup heading={group}>
-                  {items.map((h) => {
-                    const Icon = h.icon;
-                    return (
-                      <CommandItem
-                        key={h.id}
-                        value={`${h.group} ${h.label} ${h.sub ?? ""}`}
-                        onSelect={() => go(h)}
-                        className="gap-2"
-                      >
-                        <Icon className="h-4 w-4 text-muted-foreground" />
-                        <div className="min-w-0 flex-1">
-                          <div className="truncate text-sm">{h.label}</div>
-                          {h.sub && (
-                            <div className="truncate text-xs text-muted-foreground">{h.sub}</div>
-                          )}
-                        </div>
-                      </CommandItem>
-                    );
-                  })}
-                </CommandGroup>
-              </div>
-            ))
+          {visibleActions.length > 0 && (
+            <CommandGroup heading="Actions rapides">
+              {visibleActions.map((a) => (
+                <CommandItem
+                  key={a.id}
+                  value={`action ${a.label} ${a.keywords}`}
+                  onSelect={() => goAction(a)}
+                  className="gap-2"
+                >
+                  <a.icon className="h-4 w-4 text-primary" />
+                  <span className="text-sm">{a.label}</span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
           )}
+
+          {showRecent && (
+            <>
+              <CommandSeparator />
+              <CommandGroup heading="Ouverts récemment">
+                {recent.map((h) => renderHit(h, "recent"))}
+              </CommandGroup>
+            </>
+          )}
+
+          {searching &&
+            (isFetching && hits.length === 0 ? (
+              <div className="flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" /> Recherche…
+              </div>
+            ) : isError ? (
+              <div className="py-6 text-center text-sm text-destructive">
+                La recherche a échoué. Réessayez.
+              </div>
+            ) : (
+              grouped.map(([group, items]) => (
+                <div key={group}>
+                  <CommandSeparator />
+                  <CommandGroup heading={group}>{items.map((h) => renderHit(h, "hit"))}</CommandGroup>
+                </div>
+              ))
+            ))}
+
+          <CommandEmpty>
+            {term.length < 2 ? (
+              <span className="inline-flex items-center gap-2">
+                <History className="h-4 w-4" /> Tapez au moins 2 caractères…
+              </span>
+            ) : isFetching ? (
+              "Recherche…"
+            ) : (
+              "Aucun résultat"
+            )}
+          </CommandEmpty>
         </CommandList>
       </CommandDialog>
     </>
