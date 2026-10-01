@@ -49,3 +49,11 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Relevé : séparer Total Paiement et Total Retours, conserver un solde unique sans double comptage
 - [x] Bon de retour : reprendre facture, client, quantités, prix et remise; retirer statuts intermédiaires, synthèses et signatures du PDF
 - [ ] Vérification visuelle des deux PDF et parcours réel en lecture seule
+
+## Modernisation ERP (file-40, plan par lots)
+- [x] Lot 1 : Centre de pilotage (/pilotage) — activité du jour, actions recommandées, direction, impayés par ancienneté
+- [ ] Lot 2 : Centre de commande Ctrl+K (attente validation du lot 1)
+- [ ] Lot 3 : Rapidité (pagination serveur, découpage CommandeForm/Colisage)
+- [ ] Lot 4 : Confort d'utilisation / tablette
+- [ ] Lot 5 : Fiabilité (contrôles stock, tests de non-régression)
+- [ ] Lot 6 : Documents et finitions
