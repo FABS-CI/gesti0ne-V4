@@ -11,6 +11,7 @@ function makeData(numero: number, nb: number): EtiquettePayload {
     commande: "CMD-001",
     bl: "BL-TEST",
     colis_id: `colis-${numero}`,
+    reference_colis: `COL-0000${numero}`,
     client: "Client X",
     telephone: "0700000000",
     ville: "Abidjan",
@@ -32,5 +33,14 @@ describe("EtiquetteCarton", () => {
       expect(root?.textContent).toContain(`${i} / ${total}`);
       expect(root?.textContent).toContain("BL-TEST");
     }
+  });
+
+  it("affiche la référence colisage réelle et pas le bloc produits", () => {
+    const { container } = render(<EtiquetteCarton data={makeData(1, 2)} />);
+    const txt = container.textContent ?? "";
+    expect(txt).toContain("COL-00001");
+    expect(txt).not.toContain("COLIS-1".slice(0, 8));
+    expect(txt).not.toMatch(/PRODUITS|Contenu du carton|Cahier/i);
+    expect(txt).not.toMatch(/undefined|null/);
   });
 });
