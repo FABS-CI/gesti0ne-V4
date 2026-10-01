@@ -67,6 +67,8 @@ const formSchema = z.object({
   depot_id: z.string().optional(),
   depot_override_motif: z.string().nullable().optional(),
   appliquer_tva: z.boolean(),
+  type_frais_transport: z.enum(["aucun", "livraison", "expedition"]),
+  montant_frais_transport: z.number().min(0, "Montant ≥ 0").optional().or(z.literal(undefined)),
   lignes: z.array(ligneSchema).min(1, "Ajoutez au moins une ligne produit"),
 })
   .refine(
@@ -131,6 +133,8 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
       depot_id: "",
       depot_override_motif: null,
       lignes: [],
+      type_frais_transport: "aucun",
+      montant_frais_transport: undefined,
       ...initialValues,
     },
   });
@@ -170,6 +174,13 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
   const appliquerTva = useWatch({ control: form.control, name: "appliquer_tva" });
   const tauxTvaRaw = useWatch({ control: form.control, name: "taux_tva" }) || 0;
   const tauxTva = appliquerTva ? tauxTvaRaw : 0;
+  const typeFraisWatch = useWatch({ control: form.control, name: "type_frais_transport" }) ?? "aucun";
+  const montantFraisWatch = useWatch({ control: form.control, name: "montant_frais_transport" });
+  const fraisPrevus: FraisTransport =
+    typeFraisWatch === "aucun"
+      ? { type: null, montant: null }
+      : { type: typeFraisWatch, montant: Number(montantFraisWatch ?? 0) };
+  const montantFraisPrevu = fraisPrevus.type ? Number(fraisPrevus.montant ?? 0) : 0;
 
   // Calcul des exclusions mutuelles pour les remises
   const hasRemiseEnLigne = useMemo(() => {
@@ -234,10 +245,18 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
         remise_globale_pct: values.remise_globale_pct || 0,
         taux_tva: values.appliquer_tva ? (values.taux_tva || 0) : 0,
         auto_validate: values.auto_validate,
-        type_frais_transport: values.frais_transport?.type ?? null,
-        montant_frais_transport: values.frais_transport?.type
-          ? values.frais_transport.montant
-          : null,
+        // Valeurs confirmées dans la fenêtre de validation, sinon frais prévus dans la saisie
+        ...(() => {
+          const f: FraisTransport = values.frais_transport ?? (
+            values.type_frais_transport && values.type_frais_transport !== "aucun"
+              ? { type: values.type_frais_transport, montant: Number(values.montant_frais_transport ?? 0) }
+              : { type: null, montant: null }
+          );
+          return {
+            type_frais_transport: f.type ?? null,
+            montant_frais_transport: f.type ? Number(f.montant ?? 0) : null,
+          };
+        })(),
         depot_id: values.depot_id || null,
         lignes: values.lignes.map((l) => ({
           produit_id: l.produit_id,
@@ -615,6 +634,50 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
           </section>
         </div>
 
+          <section className="relative overflow-hidden rounded-md border bg-card p-4 pl-5 sm:p-5 sm:pl-6 space-y-3">
+            <span aria-hidden className="absolute inset-y-0 left-0 w-1 bg-primary" />
+            <h2 className="flex items-center gap-2 text-base sm:text-lg font-semibold">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground shadow-sm">
+                <Truck className="h-4 w-4" />
+              </span>
+              5. Frais de transport
+            </h2>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-1">
+                <Label className="text-xs">Type de transport</Label>
+                <Select
+                  value={typeFraisWatch}
+                  onValueChange={(v) => {
+                    form.setValue("type_frais_transport", v as "aucun" | "livraison" | "expedition", { shouldDirty: true });
+                    if (v === "aucun") form.setValue("montant_frais_transport", undefined, { shouldValidate: true });
+                  }}
+                >
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="aucun">Aucun frais</SelectItem>
+                    <SelectItem value="livraison">Livraison</SelectItem>
+                    <SelectItem value="expedition">Expédition</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Montant du transport (FCFA)</Label>
+                <NumberField
+                  control={form.control}
+                  name="montant_frais_transport"
+                  step="1"
+                  min={0}
+                  disabled={typeFraisWatch === "aucun"}
+                />
+                {form.formState.errors.montant_frais_transport ? (
+                  <p className="text-[10px] text-destructive">{form.formState.errors.montant_frais_transport.message}</p>
+                ) : (
+                  <p className="text-xs text-muted-foreground">{formatFCFA(montantFraisPrevu)}</p>
+                )}
+              </div>
+            </div>
+          </section>
+        </div>
         {/* Résumé : colonne sur desktop, barre fixe en bas sur mobile */}
         <aside className="hidden 2xl:block">
           <div className="sticky top-6 space-y-4">
@@ -624,6 +687,8 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
               remiseGlobalePct={remiseGlobalePct || 0}
               totalArticles={totalArticles}
               totalQuantite={totalQuantite}
+              typeFraisTransport={fraisPrevus.type}
+              fraisTransport={montantFraisPrevu}
             />
             <div className="flex flex-col gap-2">
               <Button
@@ -661,7 +726,7 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <div className="text-[10px] uppercase text-muted-foreground">Net à payer</div>
-            <div className="truncate text-lg font-bold">{formatFCFA(totaux.ttc)}</div>
+            <div className="truncate text-lg font-bold">{formatFCFA(totaux.ttc + montantFraisPrevu)}</div>
           </div>
           <div className="flex gap-2 shrink-0">
             <Button type="button" variant="outline" size="sm" asChild>
@@ -740,7 +805,13 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
                   label={`Remise globale (${pendingValues.remise_globale_pct}%)`}
                   value={`- ${formatFCFA(totaux.remiseGlobaleMontant)}`}
                 />
-                <InfoCell label="Net à payer" value={formatFCFA(totaux.ttc)} emphasis />
+                {fraisPrevus.type && (
+                  <InfoCell
+                    label={fraisPrevus.type === "expedition" ? "Frais d'expédition" : "Frais de livraison"}
+                    value={formatFCFA(montantFraisPrevu)}
+                  />
+                )}
+                <InfoCell label="Total à payer" value={formatFCFA(totaux.ttc + montantFraisPrevu)} emphasis />
               </div>
             </div>
           )}
@@ -870,6 +941,7 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
       <FraisTransportDialog
         open={fraisTransportOpen}
         pending={mutation.isPending}
+        initial={fraisPrevus}
         onOpenChange={setFraisTransportOpen}
         onConfirm={(frais) => {
           if (mutation.isPending) return;

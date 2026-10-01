@@ -43,7 +43,11 @@ export function SummaryCard({
   remiseGlobalePct,
   totalArticles,
   totalQuantite,
+  fraisTransport = 0,
+  typeFraisTransport = null,
 }: {
+  fraisTransport?: number;
+  typeFraisTransport?: "livraison" | "expedition" | null;
   totaux: CommandeTotaux;
   tauxTva: number;
   remiseGlobalePct: number;
@@ -66,9 +70,16 @@ export function SummaryCard({
       <Row label="Total remises" value={`- ${formatFCFA(totalRemises)}`} />
       <div className="border-t my-2" />
       <Row label="Total Net HT" value={formatFCFA(totaux.htApresRG)} />
+      {totaux.tva > 0 && <Row label="TVA" value={formatFCFA(totaux.tva)} />}
+      {typeFraisTransport && (
+        <Row
+          label={typeFraisTransport === "expedition" ? "Frais d'expédition" : "Frais de livraison"}
+          value={formatFCFA(fraisTransport)}
+        />
+      )}
       <div className="flex justify-between border-t pt-2 text-base font-bold">
-        <span>Net à payer</span>
-        <span>{formatFCFA(totaux.ttc)}</span>
+        <span>Total à payer</span>
+        <span>{formatFCFA(totaux.ttc + (typeFraisTransport ? fraisTransport : 0))}</span>
       </div>
     </div>
   );
