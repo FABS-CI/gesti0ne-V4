@@ -255,7 +255,7 @@ function CockpitContent({ data }: { data: CockpitData }) {
                 <Link to="/colisage/$blId" params={{ blId: b.id }} className="font-medium hover:underline">
                   {b.reference}
                 </Link>{" "}
-                <span className="text-muted-foreground">— {b.client_nom}</span>
+                {b.client_nom && <span className="text-muted-foreground">— {b.client_nom}</span>}
               </Row>
             ))}
           </ListCard>
@@ -266,12 +266,12 @@ function CockpitContent({ data }: { data: CockpitData }) {
               <Row key={l.id} right={fmtDate(l.date_livraison)}>
                 {l.bl_id ? (
                   <Link to="/colisage/$blId" params={{ blId: l.bl_id }} className="font-medium hover:underline">
-                    {l.reference ?? "Livraison"}
+                    {l.reference ?? "Livraison sans référence"}
                   </Link>
                 ) : (
-                  <span className="font-medium">{l.reference ?? "Livraison"}</span>
+                  <span className="font-medium">{l.reference ?? "Livraison sans référence"}</span>
                 )}{" "}
-                <span className="text-muted-foreground">— {l.client_nom}</span>
+                {l.client_nom && <span className="text-muted-foreground">— {l.client_nom}</span>}
               </Row>
             ))}
           </ListCard>
