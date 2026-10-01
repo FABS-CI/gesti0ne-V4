@@ -41,7 +41,7 @@ export function SidebarAutoHideProvider({ children }: { children: ReactNode }) {
     } catch {
       /* ignore */
     }
-    const mq = window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 768px)");
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 1024px)");
     const upd = () => setEnabled(mq.matches);
     upd();
     mq.addEventListener("change", upd);
