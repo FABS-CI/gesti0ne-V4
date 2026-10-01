@@ -316,6 +316,13 @@
       "when": 1790863334961,
       "tag": "0044_global_search_v2_accents_permissions",
       "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1790865435858,
+      "tag": "0045_report_reconciliation_stock",
+      "breakpoints": true
     }
   ]
 }

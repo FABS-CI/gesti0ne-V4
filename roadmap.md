@@ -55,5 +55,5 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [ ] Lot 2 : Centre de commande Ctrl+K (attente validation du lot 1)
 - [x] Lot 3 : Rapidité — mesuré (listes déjà paginées côté serveur, requêtes < 110 ms, ouvertures 0,1–1,3 s en mode dev); recherche Clients/Produits sécurisée (virgules/parenthèses). Découpage CommandeForm reporté (gain non mesurable)
 - [x] Lot 4 : Confort d'utilisation / tablette (menu en tiroir < 1024 px, en-têtes qui passent à la ligne)
-- [ ] Lot 5 : Fiabilité (contrôles stock, tests de non-régression)
+- [ ] Lot 5 : Fiabilité — fait : réconciliation stock (lecture seule) dans Qualité des données. Reste : journal enrichi, nettoyage messages techniques, tests factures/paiements/retours/transport
 - [ ] Lot 6 : Documents et finitions

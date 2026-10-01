@@ -28,6 +28,7 @@ import { useUserRoles } from "@/hooks/use-user-roles";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 import { friendlyError } from "@/lib/friendly-error";
 import { ReconciliationFinanceCard } from "@/components/data-quality/ReconciliationFinanceCard";
+import { ReconciliationStockCard } from "@/components/data-quality/ReconciliationStockCard";
 
 export const Route = createFileRoute("/_authenticated/admin/data-quality")({
   component: DataQualityPage,
@@ -172,6 +173,7 @@ function DataQualityPage() {
       </div>
 
       <ReconciliationFinanceCard />
+      <ReconciliationStockCard />
 
       {/* Doublons clients */}
       <Card>
