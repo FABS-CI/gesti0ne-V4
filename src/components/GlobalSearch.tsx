@@ -195,7 +195,11 @@ export function GlobalSearch() {
         <Icon className="h-4 w-4 text-muted-foreground" />
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm">{h.label}</div>
-          {h.sub && <div className="truncate text-xs text-muted-foreground">{h.sub}</div>}
+          {h.sub && (
+            <div className="truncate text-xs text-muted-foreground">
+              {h.sub.replace(/(\d+)(?:\.\d+)? FCFA/g, (_m, n: string) => `${n.replace(/\B(?=(\d{3})+(?!\d))/g, " ")} FCFA`)}
+            </div>
+          )}
         </div>
         {keyPrefix === "recent" && (
           <span className="text-[10px] text-muted-foreground">{h.group}</span>
