@@ -19,11 +19,9 @@ export function EtiquettesSection({ etiquettes, blReference }: EtiquettesSection
     const selected = coliId ? etiquettes.filter((e) => e.colis_id === coliId) : etiquettes;
     if (selected.length === 0) return;
 
-    console.log(`[EtiquettesSection] Action ${mode} pour ${selected.length} étiquette(s)`);
     const html = await buildEtiquettesPrintHtml(selected);
-    
+
     if (!html || html.trim() === "") {
-      console.error("[EtiquettesSection] Le HTML généré est vide");
       return;
     }
 

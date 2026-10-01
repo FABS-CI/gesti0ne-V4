@@ -27,10 +27,5 @@ export function useVisibleGroups(): Group[] {
   const accessible = groups.filter((g) => !g.superAdminOnly);
   const visible = filterNavGroupsByPermissions(permissions, accessible);
 
-  // Diagnostic logs in DEV mode
-  if (import.meta.env.DEV) {
-    console.log("[Menu] Groups visible:", visible.length, "/", groups.length, "| isSuperAdmin:", isSuperAdmin, "| isLoading:", isLoading, "| permsCount:", permissions.size);
-  }
-
   return visible;
 }
