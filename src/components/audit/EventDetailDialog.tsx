@@ -14,6 +14,7 @@ import {
   CRITICITE_STYLE,
   STATUS_STYLE,
   countryFlag,
+  diffAuditValues,
   type AuditRow,
 } from "@/lib/audit-helpers";
 
@@ -169,6 +170,37 @@ export function EventDetailDialog({ selected, onClose }: Props) {
                 </ScrollArea>
               </div>
             ) : null}
+            {(() => {
+              const diff = diffAuditValues(selected.old_values, selected.new_values);
+              if (diff.length === 0) return null;
+              return (
+                <div className="sm:col-span-2">
+                  <div className="mb-2 text-xs font-semibold uppercase text-muted-foreground">
+                    Résumé des changements ({diff.length})
+                  </div>
+                  <ScrollArea className="max-h-48 rounded border bg-muted/30">
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="border-b text-left text-muted-foreground">
+                          <th className="px-2 py-1 font-medium">Champ</th>
+                          <th className="px-2 py-1 font-medium">Avant</th>
+                          <th className="px-2 py-1 font-medium">Après</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {diff.map((d) => (
+                          <tr key={d.champ} className="border-b last:border-0">
+                            <td className="px-2 py-1 font-mono">{d.champ}</td>
+                            <td className="px-2 py-1 break-all">{d.avant}</td>
+                            <td className="px-2 py-1 break-all font-medium">{d.apres}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </ScrollArea>
+                </div>
+              );
+            })()}
             <div>
               <div className="mb-2 text-xs font-semibold uppercase text-muted-foreground">
                 Avant
