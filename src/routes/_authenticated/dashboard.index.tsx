@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { lazy, Suspense, useRef, useState } from "react";
 import { zodValidator } from "@tanstack/zod-adapter";
-import { AlertTriangle, Inbox } from "lucide-react";
+import { AlertTriangle, ArrowRight, Gauge, Inbox } from "lucide-react";
 
 import { useExerciceConsulteId } from "@/contexts/ExerciceContext";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -107,6 +107,20 @@ function Dashboard() {
       />
 
       <WelcomeGreeting />
+
+      <Link
+        to="/pilotage"
+        className="flex items-center justify-between gap-3 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-sm transition-colors hover:bg-primary/10"
+      >
+        <span className="flex items-center gap-2">
+          <Gauge className="h-4 w-4 text-primary" />
+          <span>
+            <span className="font-semibold">Centre de pilotage</span>
+            <span className="text-muted-foreground"> — ce qu'il faut traiter aujourd'hui</span>
+          </span>
+        </span>
+        <ArrowRight className="h-4 w-4 text-primary" />
+      </Link>
 
       <MesRaccourcisCard />
 
