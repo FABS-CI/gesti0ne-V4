@@ -633,8 +633,8 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
               </div>
             </div>
           </section>
-        </div>
 
+          {/* 5. Frais de transport */}
           <section className="relative overflow-hidden rounded-md border bg-card p-4 pl-5 sm:p-5 sm:pl-6 space-y-3">
             <span aria-hidden className="absolute inset-y-0 left-0 w-1 bg-primary" />
             <h2 className="flex items-center gap-2 text-base sm:text-lg font-semibold">
