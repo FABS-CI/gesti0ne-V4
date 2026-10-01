@@ -257,6 +257,13 @@ function CommandesPage() {
           open={commandeAValider !== null}
           reference={items.find((c) => c.commande_id === commandeAValider)?.reference}
           pending={validerMutation.isPending}
+          initial={(() => {
+            const c = items.find((x) => x.commande_id === commandeAValider);
+            const t = c?.type_frais_transport;
+            return t === "livraison" || t === "expedition"
+              ? { type: t, montant: Number(c?.montant_frais_transport ?? 0) }
+              : null;
+          })()}
           onOpenChange={(o) => !o && !validerMutation.isPending && setCommandeAValider(null)}
           onConfirm={(frais) => {
             if (!commandeAValider || validerMutation.isPending) return;

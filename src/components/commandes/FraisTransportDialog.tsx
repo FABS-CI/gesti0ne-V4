@@ -22,6 +22,8 @@ type Props = {
   pending?: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: (frais: FraisTransport) => void;
+  /** Frais déjà prévus sur la commande : préremplissent la fenêtre. */
+  initial?: FraisTransport | null;
 };
 
 /**
@@ -35,15 +37,18 @@ export function FraisTransportDialog({
   pending,
   onOpenChange,
   onConfirm,
+  initial,
 }: Props) {
   const [type, setType] = useState<TypeFrais>("aucun");
   const [montant, setMontant] = useState("");
 
   useEffect(() => {
     if (open) {
-      setType("aucun");
-      setMontant("");
+      const t = initial?.type ?? null;
+      setType(t ?? "aucun");
+      setMontant(t && initial?.montant != null ? String(initial.montant) : "");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const montantNum = Number(montant.replace(/\s/g, "").replace(",", "."));

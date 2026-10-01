@@ -288,6 +288,13 @@
       "when": 1790590304290,
       "tag": "0040_replace_user_roles_depots_atomic",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1790846086303,
+      "tag": "0041_commande_frais_transport_saisie",
+      "breakpoints": true
     }
   ]
 }

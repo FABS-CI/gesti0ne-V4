@@ -78,6 +78,13 @@ function CommandeModifierPage() {
     
     remise_globale_pct: Number(commande.remise_globale_pct ?? 0),
     taux_tva: Number(commande.taux_tva ?? 0),
+    // Anciennes commandes sans frais : NULL → « Aucun frais »
+    type_frais_transport:
+      commande.type_frais_transport === "livraison" || commande.type_frais_transport === "expedition"
+        ? commande.type_frais_transport
+        : "aucun",
+    montant_frais_transport:
+      commande.type_frais_transport ? Number(commande.montant_frais_transport ?? 0) : undefined,
     lignes: (() => {
       const map = new Map<
         string,
