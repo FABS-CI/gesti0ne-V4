@@ -218,7 +218,7 @@ export function GlobalSearch() {
         </kbd>
       </button>
 
-      <CommandDialog open={open} onOpenChange={(o) => (o ? setOpen(true) : close())}>
+      <CommandDialog shouldFilter={false} open={open} onOpenChange={(o) => (o ? setOpen(true) : close())}>
         <CommandInput
           value={value}
           onValueChange={setValue}
