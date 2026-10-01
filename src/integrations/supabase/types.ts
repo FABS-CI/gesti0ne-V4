@@ -9182,6 +9182,7 @@ export type Database = {
         }[]
       }
       report_reconciliation_finance: { Args: never; Returns: Json }
+      report_reconciliation_stock: { Args: never; Returns: Json }
       report_stock_ecarts: {
         Args: never
         Returns: {
