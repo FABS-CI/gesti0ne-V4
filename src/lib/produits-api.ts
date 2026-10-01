@@ -1,3 +1,4 @@
+import { pgSafe } from "@/lib/postgrest-filter";
 import { supabase } from "@/integrations/supabase/client";
 
 export type Produit = {
@@ -59,7 +60,7 @@ export async function listProduits(params: ListProduitsParams = {}) {
 
   if (q)
     query = query.or(
-      `titre.ilike.%${q}%,reference.ilike.%${q}%,isbn.ilike.%${q}%,auteur.ilike.%${q}%,niveau.ilike.%${q}%,categorie.ilike.%${q}%`,
+      `titre.ilike.%${pgSafe(q)}%,reference.ilike.%${pgSafe(q)}%,isbn.ilike.%${pgSafe(q)}%,auteur.ilike.%${pgSafe(q)}%,niveau.ilike.%${pgSafe(q)}%,categorie.ilike.%${pgSafe(q)}%`,
     );
   if (categorie) query = query.eq("categorie", categorie);
   if (niveau) query = query.ilike("niveau", `%${niveau}%`);
