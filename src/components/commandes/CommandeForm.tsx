@@ -42,6 +42,7 @@ import { LignesSection, computeLigne } from "./form/LignesSection";
 import { friendlyError } from "@/lib/friendly-error";
 import { FraisTransportDialog } from "@/components/commandes/FraisTransportDialog";
 import type { FraisTransport } from "@/lib/cycle-vente";
+import { normaliserFraisTransport, montantFraisTransport } from "@/lib/frais-transport";
 
 const ligneSchema = z.object({
   produit_id: z.string().min(1, "Sélectionnez un produit"),
@@ -177,11 +178,8 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
   const tauxTva = appliquerTva ? tauxTvaRaw : 0;
   const typeFraisWatch = useWatch({ control: form.control, name: "type_frais_transport" }) ?? "aucun";
   const montantFraisWatch = useWatch({ control: form.control, name: "montant_frais_transport" });
-  const fraisPrevus: FraisTransport =
-    typeFraisWatch === "aucun"
-      ? { type: null, montant: null }
-      : { type: typeFraisWatch, montant: Number(montantFraisWatch ?? 0) };
-  const montantFraisPrevu = fraisPrevus.type ? Number(fraisPrevus.montant ?? 0) : 0;
+  const fraisPrevus: FraisTransport = normaliserFraisTransport(typeFraisWatch, montantFraisWatch);
+  const montantFraisPrevu = montantFraisTransport(fraisPrevus);
 
   // Calcul des exclusions mutuelles pour les remises
   const hasRemiseEnLigne = useMemo(() => {
