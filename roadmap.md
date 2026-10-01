@@ -53,7 +53,7 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 ## Modernisation ERP (file-40, plan par lots)
 - [x] Lot 1 : Centre de pilotage (/pilotage) — activité du jour, actions recommandées, direction, impayés par ancienneté
 - [ ] Lot 2 : Centre de commande Ctrl+K (attente validation du lot 1)
-- [ ] Lot 3 : Rapidité (pagination serveur, découpage CommandeForm/Colisage)
+- [x] Lot 3 : Rapidité — mesuré (listes déjà paginées côté serveur, requêtes < 110 ms, ouvertures 0,1–1,3 s en mode dev); recherche Clients/Produits sécurisée (virgules/parenthèses). Découpage CommandeForm reporté (gain non mesurable)
 - [ ] Lot 4 : Confort d'utilisation / tablette
 - [ ] Lot 5 : Fiabilité (contrôles stock, tests de non-régression)
 - [ ] Lot 6 : Documents et finitions

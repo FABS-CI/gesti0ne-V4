@@ -1,3 +1,4 @@
+import { pgSafe } from "@/lib/postgrest-filter";
 import { supabase } from "@/integrations/supabase/client";
 import { typeClientVariants } from "@/lib/company";
 
@@ -75,7 +76,7 @@ export async function listClients(params: ListClientsParams = {}) {
 
   let query = supabase.from("clients").select("*", { count: "exact" });
   if (q) {
-    const like = `%${q}%`;
+    const like = `%${pgSafe(q)}%`;
     query = query.or(
       `nom.ilike.${like},reference.ilike.${like},representant.ilike.${like},phone_normalized.ilike.${like}`
     );
