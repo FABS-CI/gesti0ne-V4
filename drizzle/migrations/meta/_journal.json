@@ -309,6 +309,13 @@
       "when": 1790862152557,
       "tag": "0043_cockpit_overview",
       "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1790863334961,
+      "tag": "0044_global_search_v2_accents_permissions",
+      "breakpoints": true
     }
   ]
 }

@@ -9237,6 +9237,7 @@ export type Database = {
         Args: { _filters?: Json; _limit?: number; _offset?: number }
         Returns: Json
       }
+      search_fold: { Args: { _t: string }; Returns: string }
       sec_replace_user_scope: {
         Args: {
           _actor_id: string
