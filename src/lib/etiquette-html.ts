@@ -104,13 +104,6 @@ export const SCALES: Record<LabelMode, Scale> = {
 
 const WRAP = "word-break:break-word;overflow-wrap:anywhere;white-space:normal";
 
-function field(label: string, value: string, s: Scale, size: string, weight: number, color = "#000", upper = false): string {
-  return `<div style="min-width:0">
-    <div style="color:#444;font-size:${s.label};font-weight:800;letter-spacing:0.08em">${esc(label)}</div>
-    <div style="font-size:${size};font-weight:${weight};line-height:1.08;color:${color};${upper ? "text-transform:uppercase;" : ""}${WRAP}">${esc(value)}</div>
-  </div>`;
-}
-
 export function labelHtml(e: EtiquettePayload, qr: string, logo: string, mode: LabelMode = "full"): string {
   const s = SCALES[mode];
   const isExpedition = e.mode_acheminement === "expedition";

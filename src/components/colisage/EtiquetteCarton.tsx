@@ -59,7 +59,7 @@ export function EtiquetteCarton({ data }: { data: EtiquettePayload }) {
       className="etiquette-carton bg-white text-black flex flex-col gap-4 p-[7mm] border-[2px] border-black h-full relative overflow-hidden"
       style={{ width: "100%", minHeight: "148.5mm", boxSizing: "border-box" }}
     >
-      <div className="flex items-center justify-between gap-3 border-b-[3px] border-black pb-3">
+      <div className="flex items-center justify-between gap-3 ">
         <div className="flex items-center gap-2">
           <img
             src="/logo.png"
@@ -82,33 +82,35 @@ export function EtiquetteCarton({ data }: { data: EtiquettePayload }) {
         </div>
       </div>
 
-      <Field label="Client" value={dash(data.client)} className="text-[30pt] font-black uppercase" />
-      <Field label="Destination" value={dash(data.ville)} className="text-[30pt] font-black uppercase text-[#1B2A57]" />
-      <div className="min-w-0">
-        <div className="text-[11pt] font-extrabold tracking-wider text-gray-600">REPRÉSENTANT / CONTACT</div>
-        <div className="text-[22pt] font-extrabold uppercase leading-tight break-words">{dash(data.representant)}</div>
-        <div className="text-[22pt] font-extrabold leading-tight whitespace-nowrap">{dash(telephone)}</div>
+      <div className="grid grid-cols-2 gap-4 border-t-[3px] border-black pt-3">
+        <Field label="Client" value={dash(data.client)} className="text-[26pt] font-black uppercase" />
+        <Field label="Destination" value={dash(data.ville)} className="text-[26pt] font-black uppercase text-[#1B2A57]" />
       </div>
-
-      <div className="flex items-end gap-4 border-t-[3px] border-black pt-3">
-        <div className="flex-1 min-w-0 space-y-1">
-          <Field label="N° BL" value={dash(data.bl)} className="text-[22pt] font-black text-[#1B2A57]" />
-          <Field label="N° Commande" value={dash(data.commande)} className="text-[22pt] font-black" />
-          <Field label="N° Colisage" value={dash(data.reference_colis)} className="text-[22pt] font-black" />
+      <div className="grid grid-cols-2 gap-4 border-t-[3px] border-black pt-3">
+        <Field label="Représentant" value={dash(data.representant)} className="text-[22pt] font-extrabold uppercase" />
+        <div className="min-w-0">
+          <div className="text-[11pt] font-extrabold tracking-wider text-gray-600 uppercase">Contact</div>
+          <div className="text-[22pt] font-extrabold leading-tight whitespace-nowrap">{dash(telephone)}</div>
         </div>
-        <div className="shrink-0 bg-white p-2">
+      </div>
+      <div className="bg-black text-white text-center py-2 px-2 text-[22pt] font-black uppercase break-words">
+        Mode de livraison : {modeLabel}
+      </div>
+      <div className="flex items-center gap-3">
+        <div className="flex-1 min-w-0 grid grid-cols-3 border-2 border-black">
+          <div className="p-1.5 border-r-2 border-black"><Field label="N° BL" value={dash(data.bl)} className="text-[16pt] font-black text-[#1B2A57]" /></div>
+          <div className="p-1.5 border-r-2 border-black"><Field label="N° Commande" value={dash(data.commande)} className="text-[16pt] font-black" /></div>
+          <div className="p-1.5"><Field label="N° Colisage" value={dash(data.reference_colis)} className="text-[16pt] font-black" /></div>
+        </div>
+        <div className="shrink-0 bg-white">
           {qrUrl ? (
-            <QRCodeSVG value={qrUrl} size={136} level="M" fgColor={QR_COLOR_DARK} bgColor="#FFFFFF" includeMargin />
+            <QRCodeSVG value={qrUrl} size={120} level="M" fgColor={QR_COLOR_DARK} bgColor="#FFFFFF" includeMargin />
           ) : (
-            <div className="h-[136px] w-[136px] border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-[8pt] font-bold text-center p-4">
+            <div className="h-[120px] w-[120px] border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-[8pt] font-bold text-center p-4">
               QR INDISPONIBLE
             </div>
           )}
         </div>
-      </div>
-
-      <div className="mt-auto border-t border-gray-300 pt-1 text-center text-[11pt] font-bold text-gray-600 uppercase">
-        Mode de livraison : {modeLabel}
       </div>
     </div>
   );
