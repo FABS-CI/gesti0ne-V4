@@ -323,6 +323,13 @@
       "when": 1790865435858,
       "tag": "0045_report_reconciliation_stock",
       "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1790948934867,
+      "tag": "0046_client_code_nomenclature",
+      "breakpoints": true
     }
   ]
 }
