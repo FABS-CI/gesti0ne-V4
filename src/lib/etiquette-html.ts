@@ -76,12 +76,12 @@ export const SCALES: Record<LabelMode, Scale> = {
     titleSize: "13pt",
     cartonLabel: "11pt",
     cartonNum: "32pt",
-    modeSize: "11pt",
-    modePad: "1.6mm",
+    modeSize: "24pt",
+    modePad: "2.5mm",
     label: "11pt",
     clientSize: "30pt",
     contactSize: "22pt",
-    refSize: "22pt",
+    refSize: "20pt",
     gap: "4mm",
     qr: "36mm",
   },
@@ -91,14 +91,14 @@ export const SCALES: Record<LabelMode, Scale> = {
     titleSize: "10pt",
     cartonLabel: "9pt",
     cartonNum: "24pt",
-    modeSize: "9pt",
-    modePad: "0.8mm",
+    modeSize: "18pt",
+    modePad: "1.2mm",
     label: "10pt",
-    clientSize: "22pt",
-    contactSize: "17pt",
-    refSize: "17pt",
+    clientSize: "24pt",
+    contactSize: "18pt",
+    refSize: "14pt",
     gap: "2mm",
-    qr: "30mm",
+    qr: "28mm",
   },
 };
 
@@ -123,13 +123,21 @@ export function labelHtml(e: EtiquettePayload, qr: string, logo: string, mode: L
         : dash(e.mode_acheminement).toUpperCase();
   const tel = dash(telephone);
 
-  return `<div class="etiquette-carton etiquette-${mode}" data-colis-id="${esc(e.colis_id ?? "")}" style="width:100%;font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;padding:${s.padding};border:1px solid #000;background:#fff;color:#000;display:flex;flex-direction:column;gap:${s.gap};position:relative;box-sizing:border-box;overflow:visible">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:3mm;border-bottom:2px solid #000;padding-bottom:${s.gap}">
+  const cell = (label: string, value: string, size: string, weight: number, color = "#000", upper = false, nowrap = false) =>
+    `<div style="min-width:0">
+      <div style="color:#444;font-size:${s.label};font-weight:800;letter-spacing:0.08em">${esc(label)}</div>
+      <div style="font-size:${size};font-weight:${weight};line-height:1.08;color:${color};${upper ? "text-transform:uppercase;" : ""}${nowrap ? "white-space:nowrap" : WRAP}">${esc(value)}</div>
+    </div>`;
+  const row2 = (a: string, b: string) =>
+    `<div style="display:grid;grid-template-columns:1fr 1fr;gap:4mm;border-top:2px solid #000;padding-top:${s.gap}">${a}${b}</div>`;
+
+  return `<div class="etiquette-carton etiquette-${mode}" data-colis-id="${esc(e.colis_id ?? "")}" style="width:100%;font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;padding:${s.padding};border:1px solid #000;background:#fff;color:#000;display:flex;flex-direction:column;gap:${s.gap};position:relative;box-sizing:border-box;overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:3mm">
       <div style="display:flex;align-items:center;gap:2mm">
         <img src="${logo}" alt="FABS-CI" style="height:${s.logoH};width:auto" />
         <div style="line-height:1.1">
           <div style="font-size:${s.titleSize};font-weight:900;letter-spacing:0.08em">ÉTIQUETAGE</div>
-          <div style="font-size:${s.modeSize};color:#444">FABS-CI Éditions</div>
+          <div style="font-size:${s.label};color:#444">FABS-CI Éditions</div>
         </div>
       </div>
       <div style="text-align:center;border:2px solid #000;padding:0.5mm 3mm;line-height:1.02">
@@ -138,28 +146,22 @@ export function labelHtml(e: EtiquettePayload, qr: string, logo: string, mode: L
       </div>
     </div>
 
-    ${field("CLIENT", dash(e.client), s, s.clientSize, 900, "#000", true)}
-    ${field("DESTINATION", dash(e.ville), s, s.clientSize, 900, BLUE, true)}
+    ${row2(cell("CLIENT", dash(e.client), s.clientSize, 900, "#000", true), cell("DESTINATION", dash(e.ville), s.clientSize, 900, BLUE, true))}
+    ${row2(cell("REPRÉSENTANT", dash(e.representant), s.contactSize, 800, "#000", true), cell("CONTACT", tel, s.contactSize, 800, "#000", false, true))}
 
-    <div style="min-width:0">
-      <div style="color:#444;font-size:${s.label};font-weight:800;letter-spacing:0.08em">REPRÉSENTANT / CONTACT</div>
-      <div style="font-size:${s.contactSize};font-weight:800;line-height:1.1;text-transform:uppercase;${WRAP}">${esc(dash(e.representant))}</div>
-      <div style="font-size:${s.contactSize};font-weight:800;line-height:1.1;white-space:nowrap">${esc(tel)}</div>
+    <div style="border:2.5px solid #000;background:#000;color:#fff;text-align:center;padding:${s.modePad} 2mm;font-size:${s.modeSize};font-weight:900;letter-spacing:0.04em;${WRAP}">
+      MODE DE LIVRAISON : ${esc(modeLabel)}
     </div>
 
-    <div style="display:flex;gap:${s.gap};align-items:flex-end;border-top:2px solid #000;padding-top:${s.gap}">
-      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1.2mm">
-        ${field("N° BL", dash(e.bl), s, s.refSize, 900, BLUE)}
-        ${field("N° COMMANDE", dash(e.commande), s, s.refSize, 900)}
-        ${field("N° COLISAGE", dash(e.reference_colis), s, s.refSize, 900)}
+    <div style="display:flex;gap:${s.gap};align-items:center">
+      <div style="flex:1;min-width:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:2px solid #000">
+        <div style="padding:1.5mm;border-right:1.5px solid #000">${cell("N° BL", dash(e.bl), s.refSize, 900, BLUE)}</div>
+        <div style="padding:1.5mm;border-right:1.5px solid #000">${cell("N° COMMANDE", dash(e.commande), s.refSize, 900)}</div>
+        <div style="padding:1.5mm">${cell("N° COLISAGE", dash(e.reference_colis), s.refSize, 900)}</div>
       </div>
-      <div style="flex:0 0 auto;width:${s.qr};background:#fff;padding:1.5mm">
+      <div style="flex:0 0 auto;width:${s.qr};background:#fff">
         ${qr ? `<img src="${qr}" alt="QR" style="width:${s.qr};height:${s.qr};display:block" />` : `<div style="width:${s.qr};height:${s.qr};border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;font-size:7pt;color:#999">QR CODE</div>`}
       </div>
-    </div>
-
-    <div style="font-size:${s.modeSize};font-weight:700;color:#444;text-align:center;padding:${s.modePad} 0;border-top:1px solid #ccc">
-      MODE DE LIVRAISON : ${esc(modeLabel)}
     </div>
   </div>`;
 }
