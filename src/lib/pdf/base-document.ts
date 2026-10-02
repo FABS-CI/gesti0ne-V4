@@ -255,21 +255,22 @@ export class BaseDocument {
    * Filigrane « PAYÉ » (image fournie) visible uniquement quand RESTE À PAYER = 0
    * (statut calculé depuis les affectations réelles).
    */
-  drawPaidStamp() {
-    const paiement = (this.data as any).paiement as { statut?: string } | undefined;
+  drawPaidStamp(area?: { x: number; yBottom: number; w: number; h: number }) {
+    const paiement = (this.data as any).paiement as { statut?: string; resteAPayer?: number } | undefined;
     if (this.data.type !== "Facture" || paiement?.statut !== "PAYÉE" || !this.paidImg) return;
-    const w = 300;
-    const h = (this.paidImg.height / this.paidImg.width) * w;
-    // Dessiné en dernier, par-dessus le contenu, sur chaque page.
-    for (const page of this.doc.getPages()) page.drawImage(this.paidImg, {
-      x: (PAGE.w - w) / 2,
-      y: 250,
+    if ((Number(paiement.resteAPayer) || 0) > 0.005 || !area) return;
+    const ratio = this.paidImg.height / this.paidImg.width;
+    // Zone libre à gauche du récapitulatif, sur la seule page des totaux.
+    const w = Math.min(area.w, area.h / ratio, 260);
+    const h = w * ratio;
+    this.page.drawImage(this.paidImg, {
+      x: area.x + (area.w - w) / 2,
+      y: area.yBottom + (area.h - h) / 2,
       width: w,
       height: h,
       opacity: 0.2,
     });
   }
-
 
   drawHeader() {
     const yTop = PAGE.h - 25;
@@ -840,11 +841,15 @@ export class BaseDocument {
         this.page.drawText(`(${pct} %)`, { x: labelX, y: ty, size: 8, font: this.fonts.bold, color: BODY.ardoise });
       }
       const val = `${formatFCFA(row.value, false)} FCFA`;
-      const valW = this.fonts.bold.widthOfTextAtSize(val, 9);
+      const labelEnd = labelX + lblFont.widthOfTextAtSize(row.label === "REMISE GLOBALE" ? "" : row.label, 8)
+        + (row.label === "REMISE GLOBALE" ? lblFont.widthOfTextAtSize(`(${this.totals.remiseGlobalePct ?? ""} %)`, 8) : 0);
+      let vSize = 9;
+      while (vSize > 6.5 && labelEnd + 8 + this.fonts.bold.widthOfTextAtSize(val, vSize) > x + boxW - 8) vSize -= 0.5;
+      const valW = this.fonts.bold.widthOfTextAtSize(val, vSize);
       this.page.drawText(val, {
         x: x + boxW - valW - 8,
         y: ty,
-        size: 9,
+        size: vSize,
         font: this.fonts.bold,
         color: style?.valueColor ?? BODY.nuit,
       });
@@ -857,10 +862,17 @@ export class BaseDocument {
     // TOTAL À PAYER : bandeau orange plein, coins arrondis.
     const bandY = curY - (TOTAL_H + BAND_H) / 2;
     roundedRect(this.page, x + 6, bandY, boxW - 12, BAND_H, 4, { color: BODY.peche, borderColor: BODY.orange, borderWidth: 0.8 });
-    this.page.drawText("TOTAL À PAYER (FCFA)", { x: x + 12, y: bandY + 9.5, size: 9.5, font: this.fonts.bold, color: BODY.nuit });
+    // Zones gauche (libellé) / droite (montant) indépendantes : tailles adaptées pour ne jamais se chevaucher.
+    const totalLabel = "TOTAL À PAYER (FCFA)";
     const totalVal = `${formatFCFA(this.totals.totalAPayer, false)} FCFA`;
-    const totalW = this.fonts.bold.widthOfTextAtSize(totalVal, 15);
-    this.page.drawText(totalVal, { x: x + boxW - totalW - 12, y: bandY + 8, size: 15, font: this.fonts.bold, color: BODY.orange });
+    const avail = boxW - 24, GAP = 10;
+    let lblSize = 9.5, valSize = 15;
+    const fits = () => this.fonts.bold.widthOfTextAtSize(totalLabel, lblSize) + this.fonts.bold.widthOfTextAtSize(totalVal, valSize) + GAP <= avail;
+    while (!fits() && valSize > 10) valSize -= 0.5;
+    while (!fits() && lblSize > 7) lblSize -= 0.5;
+    this.page.drawText(totalLabel, { x: x + 12, y: bandY + (BAND_H - lblSize * 0.7) / 2, size: lblSize, font: this.fonts.bold, color: BODY.nuit });
+    const totalW = this.fonts.bold.widthOfTextAtSize(totalVal, valSize);
+    this.page.drawText(totalVal, { x: x + boxW - totalW - 12, y: bandY + (BAND_H - valSize * 0.7) / 2, size: valSize, font: this.fonts.bold, color: BODY.orange });
     curY -= TOTAL_H;
 
     payRows.forEach((r, i) => {
@@ -875,6 +887,7 @@ export class BaseDocument {
     });
 
     roundedRect(this.page, x, curY, boxW, boxTop - curY, 6, { borderColor: BODY.bord, borderWidth: 0.6 });
+    this.drawPaidStamp({ x: MARGINS.x, yBottom: curY, w: x - MARGINS.x - 16, h: boxTop - curY });
     curY -= 16;
 
     const fontSize = 9.5;
@@ -945,7 +958,6 @@ export class BaseDocument {
 
   async getBytes() {
     this.drawPagination();
-    this.drawPaidStamp();
     return await this.doc.save();
   }
 
