@@ -1,4 +1,5 @@
 import { formatDocumentReference } from "@/lib/document-reference";
+import tamponPayeUrl from "@/assets/tampon-paye.png";
 
 import { PDFString, PDFName, PDFArray } from "pdf-lib";
 import {
@@ -173,6 +174,7 @@ export class BaseDocument {
     boldItalic: PDFFont;
   };
   logoImg: PDFImage | null = null;
+  paidImg: PDFImage | null = null;
   data: DocBase;
   totals: DocTotals;
   
@@ -199,6 +201,15 @@ export class BaseDocument {
       this.logoImg = await this.doc.embedPng(bytes);
     } catch (e) {
       // Ignored: logo missing is not critical for generation
+    }
+
+    if ((this.data as any).paiement?.statut === "PAYÉE") {
+      try {
+        const res = await fetch(tamponPayeUrl);
+        this.paidImg = await this.doc.embedPng(await res.arrayBuffer());
+      } catch {
+        // Filigrane facultatif : jamais bloquant.
+      }
     }
 
     this.addNewPage();
@@ -241,73 +252,21 @@ export class BaseDocument {
     });
   }
 
-  /** Tampon financier visible uniquement sur les factures entièrement réglées. */
+  /**
+   * Filigrane « PAYÉ » (image fournie) visible uniquement quand RESTE À PAYER = 0
+   * (statut calculé depuis les affectations réelles).
+   */
   drawPaidStamp() {
     const paiement = (this.data as any).paiement as { statut?: string } | undefined;
-    if (this.data.type !== "Facture" || paiement?.statut !== "PAYÉE") return;
-
-    const label = "PAYÉ";
-    const angle = 16;
-    const rad = (angle * Math.PI) / 180;
-    const cos = Math.cos(rad);
-    const sin = Math.sin(rad);
-    const side = 200;
-    const color = COLORS.bleuTampon;
-
-    // Repère local du tampon (origine = coin bas-gauche du cadre), pivoté de `angle`.
-    // Positionné sous le bloc des totaux : ne recouvre ni le tableau des
-    // articles, ni les montants, ni le QR code.
-    const cx = PAGE.w / 2 - 55;
-    const cy = 290;
-
-    const ox = cx - (side / 2) * cos + (side / 2) * sin;
-    const oy = cy - (side / 2) * sin - (side / 2) * cos;
-    const toPage = (lx: number, ly: number) => ({
-      x: ox + lx * cos - ly * sin,
-      y: oy + lx * sin + ly * cos,
-    });
-
-    // Double liseré : cadre extérieur épais + cadre intérieur fin.
-    const frames: Array<{ inset: number; thickness: number; opacity: number }> = [
-      { inset: 0, thickness: 5, opacity: 0.2 },
-      { inset: 9, thickness: 1.6, opacity: 0.16 },
-    ];
-    frames.forEach((f) => {
-      const p = toPage(f.inset, f.inset);
-      this.page.drawRectangle({
-        x: p.x,
-        y: p.y,
-        width: side - f.inset * 2,
-        height: side - f.inset * 2,
-        borderColor: color,
-        borderWidth: f.thickness,
-        borderOpacity: f.opacity,
-        opacity: 0,
-        rotate: degrees(angle),
-      });
-    });
-
-    // Texte : plusieurs passes très légèrement décalées pour un rendu d'encre irrégulier.
-    const size = 62;
-    const labelW = this.fonts.bold.widthOfTextAtSize(label, size);
-    const lx = (side - labelW) / 2;
-    const ly = (side - size * 0.72) / 2;
-    const passes = [
-      { dx: 0, dy: 0, opacity: 0.2 },
-      { dx: 0.9, dy: 0.7, opacity: 0.09 },
-      { dx: -0.8, dy: -0.6, opacity: 0.07 },
-    ];
-    passes.forEach((p) => {
-      const pt = toPage(lx + p.dx, ly + p.dy);
-      this.page.drawText(label, {
-        x: pt.x,
-        y: pt.y,
-        size,
-        font: this.fonts.bold,
-        color,
-        opacity: p.opacity,
-        rotate: degrees(angle),
-      });
+    if (this.data.type !== "Facture" || paiement?.statut !== "PAYÉE" || !this.paidImg) return;
+    const w = 300;
+    const h = (this.paidImg.height / this.paidImg.width) * w;
+    this.page.drawImage(this.paidImg, {
+      x: (PAGE.w - w) / 2,
+      y: 250,
+      width: w,
+      height: h,
+      opacity: 0.2,
     });
   }
 
