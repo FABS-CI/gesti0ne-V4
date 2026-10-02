@@ -182,6 +182,12 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
           >
             <RotateCcw className="mr-2 h-4 w-4" /> Retour
           </Button>
+          <Button
+            className="whitespace-nowrap bg-emerald-600 text-white shadow-sm transition-colors hover:bg-emerald-700"
+            onClick={() => setReleveOpen(true)}
+          >
+            <FileText className="mr-2 h-4 w-4" /> Relevé de compte
+          </Button>
           <Badge style={{ backgroundColor: type?.bg ?? "#CFD8DC", color: type?.color ?? "#0A2540" }}>
             {type?.label ?? client.type_client}
           </Badge>
@@ -190,18 +196,15 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
       </div>
 
       {/* Actions rapides */}
-      <div className="flex flex-wrap gap-2">
-        {client.email && (
+      {client.email && (
+        <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" asChild>
             <a href={`mailto:${client.email}`}>
               <Mail className="mr-2 h-4 w-4" /> Email
             </a>
           </Button>
-        )}
-        <Button size="sm" variant="outline" onClick={() => setReleveOpen(true)}>
-          <FileText className="mr-2 h-4 w-4" /> Relevé de compte
-        </Button>
-      </div>
+        </div>
+      )}
 
       <ClientEditSheet client={client} open={editOpen} onOpenChange={setEditOpen} />
       <ClientReleveDialog open={releveOpen} onOpenChange={setReleveOpen} client={client} />
