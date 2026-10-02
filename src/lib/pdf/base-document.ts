@@ -40,6 +40,57 @@ export const COLORS = {
   grisLigne: rgb(0.82, 0.835, 0.86),
 };
 
+/** Palette « Modèle F » — réservée au corps des documents (jamais en-tête / pied / cadre). */
+export const BODY = {
+  orange: rgb(0.976, 0.451, 0.086), // #F97316
+  nuit: rgb(0.122, 0.2, 0.329), // #1F3354
+  ardoise: rgb(0.31, 0.349, 0.408), // #4F5968
+  grisClair: rgb(0.957, 0.965, 0.976), // #F4F6F9
+  bord: rgb(0.851, 0.871, 0.898), // #D9DEE5
+  peche: rgb(1, 0.941, 0.882), // #FFF0E1
+  creme: rgb(1, 0.973, 0.941), // #FFF8F0
+  filetCreme: rgb(0.953, 0.851, 0.749), // #F3D9BF
+  blanc: rgb(1, 1, 1),
+};
+
+type Radii = number | { tl?: number; tr?: number; br?: number; bl?: number };
+
+/** Rectangle à coins arrondis (x, y = coin bas-gauche, comme drawRectangle). */
+export function roundedRect(
+  page: PDFPage,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: Radii,
+  opts: { color?: RGB; borderColor?: RGB; borderWidth?: number } = {},
+) {
+  const lim = Math.min(w, h) / 2;
+  const c = (v?: number) => Math.max(0, Math.min(lim, v ?? 0));
+  const R = typeof r === "number" ? { tl: r, tr: r, br: r, bl: r } : r;
+  const tl = c(R.tl), tr = c(R.tr), br = c(R.br), bl = c(R.bl);
+  // Coordonnées SVG : origine en haut à gauche, y vers le bas.
+  const d = [
+    `M ${tl} 0`, `L ${w - tr} 0`, `Q ${w} 0 ${w} ${tr}`,
+    `L ${w} ${h - br}`, `Q ${w} ${h} ${w - br} ${h}`,
+    `L ${bl} ${h}`, `Q 0 ${h} 0 ${h - bl}`,
+    `L 0 ${tl}`, `Q 0 0 ${tl} 0`, "Z",
+  ].join(" ");
+  page.drawSvgPath(d, {
+    x,
+    y: y + h,
+    color: opts.color,
+    borderColor: opts.borderColor,
+    borderWidth: opts.borderColor ? opts.borderWidth ?? 0.6 : undefined,
+  });
+}
+
+/** Colonnes numériques : alignées à droite (en-tête et valeurs). */
+export const NUMERIC_KEYS = [
+  'qte', 'qte_fact', 'qte_ret', 'prixUnit', 'remisePct', 'remPct', 'montantHT', 'pu',
+  'net', 'total', 'montant', 'debit', 'credit', 'retour', 'solde',
+];
+
 export const PAGE = { w: 595.28, h: 841.89 }; // A4
 export const MARGINS = { x: 34, top: 40, bottom: 65 };
 /** Plus bas point autorisé pour un bloc de contenu (au-dessus du trait du pied de page, y=70). */
