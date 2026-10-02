@@ -112,6 +112,7 @@ export async function generateUnifiedCommercialPDF(
       const paye = Math.max(0, Number(docBase.paiement.montantPaye) || 0);
       docBase.paiement.montantPaye = paye;
       docBase.paiement.resteAPayer = Math.max(0, totals.totalAPayer - paye);
+      docBase.paiement.statut = computeInvoicePaymentStatus(totals.totalAPayer, paye).statut;
     }
   }
 

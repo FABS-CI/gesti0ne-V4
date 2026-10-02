@@ -224,7 +224,6 @@ export class BaseDocument {
   drawChrome() {
     this.drawFrame();
     this.drawWatermark();
-    this.drawPaidStamp();
     this.drawHeader();
     this.drawFooter();
   }
@@ -261,7 +260,8 @@ export class BaseDocument {
     if (this.data.type !== "Facture" || paiement?.statut !== "PAYÉE" || !this.paidImg) return;
     const w = 300;
     const h = (this.paidImg.height / this.paidImg.width) * w;
-    this.page.drawImage(this.paidImg, {
+    // Dessiné en dernier, par-dessus le contenu, sur chaque page.
+    for (const page of this.doc.getPages()) page.drawImage(this.paidImg, {
       x: (PAGE.w - w) / 2,
       y: 250,
       width: w,
@@ -945,6 +945,7 @@ export class BaseDocument {
 
   async getBytes() {
     this.drawPagination();
+    this.drawPaidStamp();
     return await this.doc.save();
   }
 
