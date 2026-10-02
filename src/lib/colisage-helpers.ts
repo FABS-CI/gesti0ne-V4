@@ -1,4 +1,5 @@
 import { COMMUNES_ABIDJAN, normalize as normLoc } from "@/lib/ci-locations";
+import { displayColisReference } from "@/lib/colis-reference";
 import type { ModeAcheminement, BLDetail, ColisRow } from "@/lib/colisage-api";
 import type { EtiquettePayload } from "@/components/colisage/EtiquetteCarton";
 
@@ -86,7 +87,7 @@ export function buildEtiquettesPayload(
     facture: bl.facture_reference || undefined,
     bl: bl.reference,
     colis_id: c.colis_id,
-    reference_colis: c.reference || undefined,
+    reference_colis: displayColisReference(bl.reference, c.numero_carton, c.reference),
     client: bl.client_nom || undefined,
     etablissement: bl.etablissement || undefined,
     representant: bl.representant_nom || undefined,
