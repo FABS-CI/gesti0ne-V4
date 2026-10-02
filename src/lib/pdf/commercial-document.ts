@@ -1,5 +1,5 @@
 
-import { BaseDocument, COLORS, MARGINS, PAGE, CONTENT_W, CONTENT_BOTTOM, type DocLigne } from "./base-document";
+import { BaseDocument, BODY, roundedRect, COLORS, MARGINS, PAGE, CONTENT_W, CONTENT_BOTTOM, type DocLigne } from "./base-document";
 import { formatFCFA } from "@/lib/format";
 import { rgb, degrees } from "pdf-lib";
 import tamponUrl from "@/assets/tampon-comptabilite.png";
@@ -170,30 +170,16 @@ export class CommercialDocument extends BaseDocument {
     // Zone signatures conditionnelle
     if (this.data.type === 'Bon de Livraison') {
       // Signature 1 : Le Livreur
-      this.page.drawRectangle({
-        x: MARGINS.x,
-        y: curY - boxH,
-        width: boxW,
-        height: boxH,
-        borderColor: COLORS.bleuElectrique,
-        borderWidth: 0.8,
-      });
-      this.page.drawText("LE LIVREUR", { x: MARGINS.x + 5, y: curY - 15, size: 8, font: this.fonts.bold });
-      this.page.drawText("Nom : ....................................", { x: MARGINS.x + 5, y: curY - 30, size: 7, font: this.fonts.regular });
-      this.page.drawText("Signature :", { x: MARGINS.x + 5, y: curY - 50, size: 7, font: this.fonts.italic });
+      roundedRect(this.page, MARGINS.x, curY - boxH, boxW, boxH, 6, { borderColor: BODY.bord, borderWidth: 0.6 });
+      this.page.drawText("LE LIVREUR", { x: MARGINS.x + 5, y: curY - 15, size: 8, font: this.fonts.bold, color: BODY.nuit });
+      this.page.drawText("Nom : ....................................", { x: MARGINS.x + 5, y: curY - 30, size: 7, font: this.fonts.regular, color: BODY.ardoise });
+      this.page.drawText("Signature :", { x: MARGINS.x + 5, y: curY - 50, size: 7, font: this.fonts.italic, color: BODY.ardoise });
 
       // Signature 2 : Le Client
-      this.page.drawRectangle({
-        x: PAGE.w - MARGINS.x - boxW,
-        y: curY - boxH,
-        width: boxW,
-        height: boxH,
-        borderColor: COLORS.bleuElectrique,
-        borderWidth: 0.8,
-      });
-      this.page.drawText("RÉCEPTION CLIENT", { x: PAGE.w - MARGINS.x - boxW + 5, y: curY - 15, size: 8, font: this.fonts.bold });
-      this.page.drawText("Nom : ....................................", { x: PAGE.w - MARGINS.x - boxW + 5, y: curY - 30, size: 7, font: this.fonts.regular });
-      this.page.drawText("Signature & Cachet :", { x: PAGE.w - MARGINS.x - boxW + 5, y: curY - 50, size: 7, font: this.fonts.italic });
+      roundedRect(this.page, PAGE.w - MARGINS.x - boxW, curY - boxH, boxW, boxH, 6, { borderColor: BODY.bord, borderWidth: 0.6 });
+      this.page.drawText("RÉCEPTION CLIENT", { x: PAGE.w - MARGINS.x - boxW + 5, y: curY - 15, size: 8, font: this.fonts.bold, color: BODY.nuit });
+      this.page.drawText("Nom : ....................................", { x: PAGE.w - MARGINS.x - boxW + 5, y: curY - 30, size: 7, font: this.fonts.regular, color: BODY.ardoise });
+      this.page.drawText("Signature & Cachet :", { x: PAGE.w - MARGINS.x - boxW + 5, y: curY - 50, size: 7, font: this.fonts.italic, color: BODY.ardoise });
     } else if (
       this.data.type === 'Facture' ||
       this.data.type === 'Proforma' ||
@@ -203,14 +189,7 @@ export class CommercialDocument extends BaseDocument {
       await this.drawTamponComptabilite(curY);
     } else if (this.data.type === 'Bon de Réception') {
       // Bloc signature classique (sans tampon)
-      this.page.drawRectangle({
-        x: PAGE.w - MARGINS.x - boxW,
-        y: curY - boxH,
-        width: boxW,
-        height: boxH,
-        borderColor: COLORS.bleuElectrique,
-        borderWidth: 0.8,
-      });
+      roundedRect(this.page, PAGE.w - MARGINS.x - boxW, curY - boxH, boxW, boxH, 6, { borderColor: BODY.bord, borderWidth: 0.6 });
       this.page.drawText("LA COMPTABILITÉ", { x: PAGE.w - MARGINS.x - boxW + 5, y: curY - 15, size: 8, font: this.fonts.bold });
     }
   }

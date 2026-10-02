@@ -1,6 +1,6 @@
 import { formatDocumentReference } from "@/lib/document-reference";
 
-import { BaseDocument, COLORS, MARGINS, PAGE, CONTENT_W, CONTENT_BOTTOM } from "./base-document";
+import { BaseDocument, BODY, roundedRect, COLORS, MARGINS, PAGE, CONTENT_W, CONTENT_BOTTOM } from "./base-document";
 import tamponUrl from "@/assets/tampon-comptabilite.png";
 import { formatFCFA } from "@/lib/format";
 import { numberToLetters } from "./number-to-letters";
@@ -71,21 +71,18 @@ export class ReceiptDocument extends BaseDocument {
     const gap = 10;
     const boxW = CONTENT_W - qrBoxW - gap;
     
-    this.page.drawRectangle({
-      x: MARGINS.x,
-      y: y - boxH,
-      width: boxW,
-      height: boxH,
-      borderColor: COLORS.bleuElectrique, borderWidth: 0.8,
-      opacity: 0.5,
+    roundedRect(this.page, MARGINS.x, y - boxH, CONTENT_W, boxH, 6, {
+      color: BODY.grisClair, borderColor: BODY.bord, borderWidth: 0.6,
     });
+    const sepX = MARGINS.x + boxW + gap / 2;
+    this.page.drawLine({ start: { x: sepX, y: y - 8 }, end: { x: sepX, y: y - boxH + 8 }, color: BODY.bord, thickness: 0.6 });
 
     this.page.drawText("CLIENT / REÇU DE", { 
       x: MARGINS.x + 10, 
       y: y - 15, 
       size: 7, 
       font: this.fonts.bold, 
-      color: COLORS.noir 
+      color: BODY.ardoise 
     });
 
     this.page.drawText(this.receiptData.customerName.toUpperCase(), { 
@@ -93,7 +90,7 @@ export class ReceiptDocument extends BaseDocument {
       y: y - 35, 
       size: 14, 
       font: this.fonts.bold, 
-      color: COLORS.noir 
+      color: BODY.nuit 
     });
     
     const kv = [
@@ -103,8 +100,8 @@ export class ReceiptDocument extends BaseDocument {
     ];
 
     kv.forEach((item, i) => {
-      this.page.drawText(`${item.l} :`, { x: MARGINS.x + 10, y: y - 55 - i * 12, size: 9, font: this.fonts.regular });
-      this.page.drawText(item.v, { x: MARGINS.x + 85, y: y - 55 - i * 12, size: 9, font: this.fonts.bold });
+      this.page.drawText(`${item.l} :`, { x: MARGINS.x + 10, y: y - 55 - i * 12, size: 9, font: this.fonts.bold, color: BODY.ardoise });
+      this.page.drawText(item.v, { x: MARGINS.x + 85, y: y - 55 - i * 12, size: 9, font: this.fonts.bold, color: BODY.nuit });
     });
 
     // QR Code en haut à droite, à côté du bloc client
@@ -131,8 +128,10 @@ export class ReceiptDocument extends BaseDocument {
         margin: 2, width: 400, errorCorrectionLevel: "M", color: QR_COLOR_OPTS,
       });
       const img = await this.doc.embedPng(url);
-      const size = Math.min(w, h) - 12;
-      this.page.drawImage(img, { x: x + (w - size) / 2, y: yBottom + (h - size) / 2, width: size, height: size });
+      const size = Math.min(w, h) - 20;
+      const qx = x + (w - size) / 2, qy = yBottom + (h - size) / 2;
+      roundedRect(this.page, qx - 3, qy - 3, size + 6, size + 6, 4, { color: BODY.blanc, borderColor: BODY.bord, borderWidth: 0.6 });
+      this.page.drawImage(img, { x: qx, y: qy, width: size, height: size });
     } catch (e) {
       console.error("QR reçu", e);
     }
@@ -156,17 +155,12 @@ export class ReceiptDocument extends BaseDocument {
       y: y, 
       size: 10, 
       font: this.fonts.bold, 
-      color: COLORS.noir 
+      color: BODY.nuit 
     });
     y -= 20;
 
-    this.page.drawRectangle({
-      x: MARGINS.x,
-      y: y - boxH,
-      width: boxW,
-      height: boxH,
-      borderColor: COLORS.bleuElectrique,
-      borderWidth: 0.5,
+    roundedRect(this.page, MARGINS.x, y - boxH, boxW, boxH, 6, {
+      color: BODY.creme, borderColor: BODY.bord, borderWidth: 0.6,
     });
 
     let curY = y - 25;
@@ -231,9 +225,9 @@ export class ReceiptDocument extends BaseDocument {
       ];
 
       items.forEach(item => {
-        this.page.drawText(item.l, { x: MARGINS.x + 15, y: curY, size: 10, font: this.fonts.regular });
+        this.page.drawText(item.l, { x: MARGINS.x + 15, y: curY, size: 10, font: this.fonts.regular, color: BODY.ardoise });
         const valW = this.fonts.bold.widthOfTextAtSize(item.v, 10);
-        this.page.drawText(item.v, { x: PAGE.w - MARGINS.x - valW - 15, y: curY, size: 10, font: this.fonts.bold });
+        this.page.drawText(item.v, { x: PAGE.w - MARGINS.x - valW - 15, y: curY, size: 10, font: this.fonts.bold, color: BODY.nuit });
         curY -= 20;
       });
     }
@@ -242,27 +236,28 @@ export class ReceiptDocument extends BaseDocument {
     this.page.drawLine({
       start: { x: MARGINS.x + 10, y: curY + 5 },
       end: { x: PAGE.w - MARGINS.x - 10, y: curY + 5 },
-      color: COLORS.bleuElectrique,
-      thickness: 1,
+      color: BODY.filetCreme,
+      thickness: 0.6,
     });
     curY -= 10;
 
-    // Amount Paid (HIGHLIGHT)
+    // Montant reçu : bandeau orange plein
+    roundedRect(this.page, MARGINS.x + 6, curY - 8, boxW - 12, 26, 4, { color: BODY.orange });
     this.page.drawText("MONTANT REÇU", { 
       x: MARGINS.x + 15, 
       y: curY, 
       size: 12, 
       font: this.fonts.bold, 
-      color: COLORS.noir 
+      color: BODY.blanc 
     });
     const paidStr = formatFCFA(this.receiptData.amountPaid);
-    const paidW = this.fonts.bold.widthOfTextAtSize(paidStr, 14);
+    const paidW = this.fonts.bold.widthOfTextAtSize(paidStr, 15);
     this.page.drawText(paidStr, { 
       x: PAGE.w - MARGINS.x - paidW - 15, 
-      y: curY, 
-      size: 14, 
+      y: curY - 1, 
+      size: 15, 
       font: this.fonts.bold, 
-      color: COLORS.noir 
+      color: BODY.blanc 
     });
     curY -= 25;
 
@@ -292,19 +287,21 @@ export class ReceiptDocument extends BaseDocument {
         ? "PAIEMENT COMPLET"
         : "PAIEMENT PARTIEL";
     
-    this.page.drawText("STATUT", { x: MARGINS.x, y: y, size: 9, font: this.fonts.bold, color: COLORS.noir });
+    this.page.drawText("STATUT", { x: MARGINS.x, y: y, size: 9, font: this.fonts.bold, color: BODY.nuit });
     y -= 15;
     
+    const pillW = this.fonts.bold.widthOfTextAtSize(statusText, 11) + 20;
+    roundedRect(this.page, MARGINS.x, y - 6, pillW, 19, 9.5, { color: BODY.peche });
     this.page.drawText(statusText, { 
       x: MARGINS.x + 10, 
       y: y, 
       size: 11, 
       font: this.fonts.bold, 
-      color: isSolded ? COLORS.bleuFabs : COLORS.orangeFabs 
+      color: BODY.orange 
     });
     y -= 25;
 
-    this.page.drawText("En lettres :", { x: MARGINS.x, y: y, size: 9, font: this.fonts.bold });
+    this.page.drawText("En lettres :", { x: MARGINS.x, y: y, size: 9, font: this.fonts.bold, color: BODY.nuit });
     y -= 15;
     
     const letters = numberToLetters(this.receiptData.amountPaid);
