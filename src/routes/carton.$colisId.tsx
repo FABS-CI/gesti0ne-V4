@@ -1,3 +1,4 @@
+import { displayColisReference } from "@/lib/colis-reference";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -133,7 +134,11 @@ function CartonPublicPage() {
           <Row label="Carton" value={`${data.numero_carton ?? "?"} / ${data.nb_cartons ?? "?"}`} accent />
           <Row label="Bon de livraison" value={data.bl_reference} mono accent />
           <Row label="Commande" value={data.commande_reference} mono />
-          <Row label="Colisage" value={data.reference_colis} mono />
+          <Row
+            label="Colisage"
+            value={displayColisReference(data.bl_reference, data.numero_carton, data.reference_colis) ?? null}
+            mono
+          />
         </Card>
 
         {/* Client */}
