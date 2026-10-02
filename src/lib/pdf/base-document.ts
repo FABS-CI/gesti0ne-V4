@@ -945,11 +945,11 @@ export class BaseDocument {
 
   async getBytes() {
     this.drawPagination();
+    this.drawPaidStamp();
     return await this.doc.save();
   }
 
   async getBlob() {
-    this.drawPaidStamp();
     const bytes = await this.getBytes();
     return new Blob([bytes as any], { type: "application/pdf" });
   }
