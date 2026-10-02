@@ -1,6 +1,6 @@
 import { formatDocumentReference } from "@/lib/document-reference";
 
-import { BaseDocument, COLORS, MARGINS, PAGE, CONTENT_W, CONTENT_BOTTOM } from "./base-document";
+import { BaseDocument, BODY, roundedRect, COLORS, MARGINS, PAGE, CONTENT_W, CONTENT_BOTTOM } from "./base-document";
 import { formatFCFA } from "@/lib/format";
 import tamponUrl from "@/assets/tampon-comptabilite.png";
 
@@ -57,18 +57,14 @@ export class StatementDocument extends BaseDocument {
     const boxW = (CONTENT_W - 15) / 2;
     
     // Bloc Client
-    this.page.drawRectangle({
-      x: MARGINS.x,
-      y: y - boxH,
-      width: boxW,
-      height: boxH,
-      color: COLORS.grisClair,
-      opacity: 0.5,
+    roundedRect(this.page, MARGINS.x, y - boxH, CONTENT_W, boxH, 6, {
+      color: BODY.grisClair, borderColor: BODY.bord, borderWidth: 0.6,
     });
+    const sepX = MARGINS.x + boxW + 7.5;
+    this.page.drawLine({ start: { x: sepX, y: y - 8 }, end: { x: sepX, y: y - boxH + 8 }, color: BODY.bord, thickness: 0.6 });
 
-    const bleuFabs = COLORS.bleuFabs;
-    this.page.drawText("RELEVÉ POUR", { x: MARGINS.x + 10, y: y - 15, size: 7, font: this.fonts.bold, color: bleuFabs });
-    this.page.drawText(this.data.client.nom.toUpperCase(), { x: MARGINS.x + 10, y: y - 32, size: 12, font: this.fonts.bold, color: bleuFabs });
+    this.page.drawText("RELEVÉ POUR", { x: MARGINS.x + 10, y: y - 15, size: 7, font: this.fonts.bold, color: BODY.ardoise });
+    this.page.drawText(this.data.client.nom.toUpperCase(), { x: MARGINS.x + 10, y: y - 32, size: 12, font: this.fonts.bold, color: BODY.nuit });
     
     const kv = [
       { l: "Ville", v: this.data.client.ville || "—" },
@@ -78,19 +74,19 @@ export class StatementDocument extends BaseDocument {
 
     kv.forEach((item, i) => {
       const rowY = y - 52 - i * 18;
-      this.page.drawText(`${item.l} :`, { x: MARGINS.x + 10, y: rowY, size: 10, font: this.fonts.regular });
-      this.page.drawText(String(item.v), { x: MARGINS.x + 105, y: rowY, size: 11, font: this.fonts.bold });
+      this.page.drawText(`${item.l} :`, { x: MARGINS.x + 10, y: rowY, size: 10, font: this.fonts.bold, color: BODY.ardoise });
+      this.page.drawText(String(item.v), { x: MARGINS.x + 105, y: rowY, size: 11, font: this.fonts.bold, color: BODY.nuit });
     });
 
 
     // Bloc Période (sans cadre) + QR code à droite
     const perX = MARGINS.x + boxW + 15;
-    await this.drawStatementQr(PAGE.w - MARGINS.x - boxH, y - boxH, boxH, data);
-    this.page.drawText("PÉRIODE", { x: perX + 10, y: y - 15, size: 7, font: this.fonts.bold, color: COLORS.bleuFabs });
+    await this.drawStatementQr(PAGE.w - MARGINS.x - boxH + 8, y - boxH + 8, boxH - 16, data);
+    this.page.drawText("PÉRIODE", { x: perX + 10, y: y - 15, size: 7, font: this.fonts.bold, color: BODY.ardoise });
     const periode = data.periodeDebut && data.periodeFin 
       ? `Du ${data.periodeDebut} au ${data.periodeFin}`
       : "Relevé complet";
-    this.page.drawText(periode, { x: perX + 10, y: y - 32, size: 9, font: this.fonts.bold });
+    this.page.drawText(periode, { x: perX + 10, y: y - 32, size: 9, font: this.fonts.bold, color: BODY.nuit });
     
     return y - boxH - 20;
   }
@@ -111,6 +107,7 @@ export class StatementDocument extends BaseDocument {
       if (!target) return;
       const url = await QRCode.toDataURL(target, { margin: 1, width: 400, errorCorrectionLevel: "M", color: QR_COLOR_OPTS });
       const img = await this.doc.embedPng(url);
+      roundedRect(this.page, x - 3, yBottom - 3, size + 6, size + 6, 4, { color: BODY.blanc, borderColor: BODY.bord, borderWidth: 0.6 });
       this.page.drawImage(img, { x, y: yBottom, width: size, height: size });
     } catch (e) {
       console.error("QR relevé", e);
@@ -147,17 +144,29 @@ export class StatementDocument extends BaseDocument {
   drawSummary(y: number, rows: Array<{ label: string; value: number; total?: boolean }>): number {
     const boxW = 260;
     const x = PAGE.w - MARGINS.x - boxW;
+    // Modèle F : carte crème, ligne de solde en bandeau orange plein (même hauteur totale).
+    const PAD = 4;
+    const top = y + PAD;
+    const boxH = rows.length * ROW_H + PAD * 2;
+    roundedRect(this.page, x, top - boxH, boxW, boxH, 6, { color: BODY.creme, borderColor: BODY.bord, borderWidth: 0.6 });
     let curY = y;
-    for (const r of rows) {
-      const color = r.total ? COLORS.rougeFabs : COLORS.noir;
-      const font = r.total ? this.fonts.bold : this.fonts.regular;
-      this.page.drawText(r.label, { x: x + 5, y: curY - 13, size: 8, font, color });
-      const valText = formatFCFA(r.value);
-      const valW = font.widthOfTextAtSize(valText, 9);
-      this.page.drawText(valText, { x: PAGE.w - MARGINS.x - valW - 5, y: curY - 13, size: 9, font, color });
-      this.page.drawLine({ start: { x, y: curY - 20 }, end: { x: PAGE.w - MARGINS.x, y: curY - 20 }, color: COLORS.grisLigne, thickness: 0.5 });
+    rows.forEach((r, i) => {
+      if (r.total) {
+        roundedRect(this.page, x + 6, curY - ROW_H + 1, boxW - 12, ROW_H - 2, 4, { color: BODY.orange });
+        this.page.drawText(r.label, { x: x + 12, y: curY - 13, size: 8, font: this.fonts.bold, color: BODY.blanc });
+        const valText = formatFCFA(r.value);
+        const valW = this.fonts.bold.widthOfTextAtSize(valText, 10);
+        this.page.drawText(valText, { x: x + boxW - valW - 12, y: curY - 13.5, size: 10, font: this.fonts.bold, color: BODY.blanc });
+      } else {
+        this.page.drawText(r.label, { x: x + 8, y: curY - 13, size: 8, font: this.fonts.regular, color: BODY.ardoise });
+        const valText = formatFCFA(r.value);
+        const valW = this.fonts.bold.widthOfTextAtSize(valText, 9);
+        this.page.drawText(valText, { x: x + boxW - valW - 8, y: curY - 13, size: 9, font: this.fonts.bold, color: BODY.nuit });
+        const next = rows[i + 1];
+        this.page.drawLine({ start: { x: x + 8, y: curY - ROW_H }, end: { x: x + boxW - 8, y: curY - ROW_H }, color: BODY.filetCreme, thickness: next?.total ? 0.6 : 0.4 });
+      }
       curY -= ROW_H;
-    }
+    });
     return curY - 20;
   }
 
