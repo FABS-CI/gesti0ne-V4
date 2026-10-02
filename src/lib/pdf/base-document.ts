@@ -261,14 +261,16 @@ export class BaseDocument {
     if ((Number(paiement.resteAPayer) || 0) > 0.005 || !area) return;
     const ratio = this.paidImg.height / this.paidImg.width;
     // Zone libre à gauche du récapitulatif, sur la seule page des totaux.
-    const w = Math.min(area.w, area.h / ratio, 260);
+    // ~65 % de l'ancienne taille, calé à gauche de la zone libre (jamais sur le récapitulatif).
+    const w = Math.min(area.w - 12, (area.h - 8) / ratio, 170);
+    if (w < 60) return;
     const h = w * ratio;
     this.page.drawImage(this.paidImg, {
-      x: area.x + (area.w - w) / 2,
+      x: area.x + Math.max(0, (area.w - w) * 0.3),
       y: area.yBottom + (area.h - h) / 2,
       width: w,
       height: h,
-      opacity: 0.2,
+      opacity: 0.18,
     });
   }
 
@@ -777,7 +779,7 @@ export class BaseDocument {
     const isListeProduits = this.data.type === "LISTE DES PRODUITS";
     if (isListeProduits) return y;
 
-    const boxW = 240;
+    const boxW = 260;
     const x = PAGE.w - MARGINS.x - boxW;
     let curY = y - 10;
 
@@ -844,7 +846,7 @@ export class BaseDocument {
       const labelEnd = labelX + lblFont.widthOfTextAtSize(row.label === "REMISE GLOBALE" ? "" : row.label, 8)
         + (row.label === "REMISE GLOBALE" ? lblFont.widthOfTextAtSize(`(${this.totals.remiseGlobalePct ?? ""} %)`, 8) : 0);
       let vSize = 9;
-      while (vSize > 6.5 && labelEnd + 8 + this.fonts.bold.widthOfTextAtSize(val, vSize) > x + boxW - 8) vSize -= 0.5;
+      while (vSize > 6.5 && labelEnd + 20 + this.fonts.bold.widthOfTextAtSize(val, vSize) > x + boxW - 8) vSize -= 0.5;
       const valW = this.fonts.bold.widthOfTextAtSize(val, vSize);
       this.page.drawText(val, {
         x: x + boxW - valW - 8,
@@ -865,10 +867,10 @@ export class BaseDocument {
     // Zones gauche (libellé) / droite (montant) indépendantes : tailles adaptées pour ne jamais se chevaucher.
     const totalLabel = "TOTAL À PAYER (FCFA)";
     const totalVal = `${formatFCFA(this.totals.totalAPayer, false)} FCFA`;
-    const avail = boxW - 24, GAP = 10;
-    let lblSize = 9.5, valSize = 15;
+    const avail = boxW - 24, GAP = 28;
+    let lblSize = 9, valSize = 13;
     const fits = () => this.fonts.bold.widthOfTextAtSize(totalLabel, lblSize) + this.fonts.bold.widthOfTextAtSize(totalVal, valSize) + GAP <= avail;
-    while (!fits() && valSize > 10) valSize -= 0.5;
+    while (!fits() && valSize > 9) valSize -= 0.5;
     while (!fits() && lblSize > 7) lblSize -= 0.5;
     this.page.drawText(totalLabel, { x: x + 12, y: bandY + (BAND_H - lblSize * 0.7) / 2, size: lblSize, font: this.fonts.bold, color: BODY.nuit });
     const totalW = this.fonts.bold.widthOfTextAtSize(totalVal, valSize);
