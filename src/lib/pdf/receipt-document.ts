@@ -225,7 +225,7 @@ export class ReceiptDocument extends BaseDocument {
       curY -= 4;
     } else {
       const items = [
-        { l: "Facture réglée", v: this.receiptData.invoiceNumber },
+        { l: "Facture réglée", v: formatDocumentReference(this.receiptData.invoiceNumber) },
         { l: "Montant facture", v: formatFCFA(this.receiptData.invoiceTotal) },
         { l: "Solde avant paiement", v: formatFCFA(this.receiptData.balanceBefore) },
       ];
@@ -323,7 +323,7 @@ export class ReceiptDocument extends BaseDocument {
     const isSolded = this.receiptData.balanceAfter <= 0;
     const objet = multi
       ? `du règlement des factures ${multi.map((i) => formatDocumentReference(i.reference)).join(", ")}`
-      : `du règlement de la facture ${this.receiptData.invoiceNumber}`;
+      : `du règlement de la facture ${formatDocumentReference(this.receiptData.invoiceNumber)}`;
     const conclusion = multi
       ? "Ce règlement a été imputé sur chacune des factures listées ci-dessus."
       : isSolded
