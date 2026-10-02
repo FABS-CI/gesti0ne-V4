@@ -30,7 +30,6 @@ export const COLORS = {
   rougeFabs: rgb(0.827, 0.184, 0.184), // #D32F2F (Couleur pour Remises)
   orangeFabs: rgb(0.96, 0.486, 0.0), // #F57C00
   orangeStatut: rgb(0.961, 0.620, 0.043), // #F59E0B (statut de paiement)
-  bleuRecap: rgb(0.137, 0.357, 0.533), // #235B88 (RÉCAPITULATIF + TOTAL À PAYER)
   bleuElectrique: rgb(0, 0.341, 1), // #0057FF (séparation TOTAL À PAYER)
   bleuTampon: rgb(0, 0.141, 0.753), // #0024C0 (bleu du tampon Comptabilité)
   grisClair: rgb(0.968, 0.968, 0.968), // #F7F7F7
