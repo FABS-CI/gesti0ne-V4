@@ -146,10 +146,10 @@ export class StatementDocument extends BaseDocument {
     const x = PAGE.w - MARGINS.x - boxW;
     // Modèle F : carte crème, ligne de solde en bandeau orange plein (même hauteur totale).
     const PAD = 4;
-    const top = y + PAD;
+    const top = y - 6;
     const boxH = rows.length * ROW_H + PAD * 2;
     roundedRect(this.page, x, top - boxH, boxW, boxH, 6, { color: BODY.creme, borderColor: BODY.bord, borderWidth: 0.6 });
-    let curY = y;
+    let curY = top - PAD;
     rows.forEach((r, i) => {
       if (r.total) {
         roundedRect(this.page, x + 6, curY - ROW_H + 1, boxW - 12, ROW_H - 2, 4, { color: BODY.orange });
@@ -167,7 +167,7 @@ export class StatementDocument extends BaseDocument {
       }
       curY -= ROW_H;
     });
-    return curY - 20;
+    return curY - PAD - 14;
   }
 
   /** Véritable tampon, posé directement sur la page (sans titre ni cadre) (proportions conservées). */
