@@ -811,21 +811,21 @@ export class BaseDocument {
       payRows.push({ label: "RESTE À PAYER", value: Math.max(0, this.totals.totalAPayer - paye) });
     }
 
-    // Palette premium du récapitulatif (présentation uniquement)
+    // Palette sobre du bloc de synthèse (blanc, gris, anthracite, accent orange)
     const R = {
-      nuit: rgb(0.039, 0.145, 0.251), // #0A2540
-      fond: rgb(0.957, 0.969, 0.980), // #F4F7FA
-      bord: rgb(0.843, 0.878, 0.910), // #D7E0E8
-      texte: rgb(0.2, 0.255, 0.333), // #334155
-      resteFond: rgb(1, 0.969, 0.929), // #FFF7ED
-      resteTexte: rgb(0.604, 0.204, 0.071), // #9A3412
+      nuit: rgb(0.173, 0.192, 0.216), // #2C3137 anthracite (montants)
+      bord: rgb(0.851, 0.859, 0.871), // #D9DBDE gris clair
+      texte: rgb(0.290, 0.314, 0.341), // #4A5057 gris anthracite (libellés)
+      totalFond: rgb(1, 0.965, 0.925), // #FFF6EC orange très pâle
+      totalBord: rgb(0.96, 0.486, 0.0), // orange FABS-CI
+      resteFond: rgb(0.953, 0.957, 0.961), // #F3F4F5 gris très clair
     };
-    const HEAD_H = 20, ROW_H = 18, TOTAL_H = 30, PAD = 4;
+    const ROW_H = 18, TOTAL_H = 26, PAD = 4;
 
     // Hauteur réelle : cadre des totaux + mention « Arrêté… » (aucun saut au milieu)
     const mentionText = `Arrêté le présent document à la somme de : ${this.totals.montantLettres}`;
     const mentionLines = this.wrapText(mentionText, CONTENT_W - 4, 9.5, this.fonts.bold);
-    const boxH = HEAD_H + PAD + rows.length * ROW_H + PAD + TOTAL_H + payRows.length * ROW_H;
+    const boxH = PAD + rows.length * ROW_H + PAD + TOTAL_H + payRows.length * ROW_H;
     const blockH = boxH + 16 + mentionLines.length * 9.5 * 1.3 + 4 + this.reserveAfterTotals;
     if (curY - blockH < CONTENT_BOTTOM) {
       this.addNewPage();
@@ -833,18 +833,12 @@ export class BaseDocument {
     }
 
     const boxTop = curY;
-    // Fond général + bordure fine
-    this.page.drawRectangle({ x, y: boxTop - boxH, width: boxW, height: boxH, color: R.fond });
-    // En-tête RÉCAPITULATIF
-    this.page.drawRectangle({ x, y: boxTop - HEAD_H, width: boxW, height: HEAD_H, color: COLORS.bleuRecap });
-    const headTxt = "R É C A P I T U L A T I F";
-    const headW = this.fonts.bold.widthOfTextAtSize(headTxt, 8.5);
-    this.page.drawText(headTxt, { x: x + (boxW - headW) / 2, y: boxTop - 13.5, size: 8.5, font: this.fonts.bold, color: COLORS.blanc });
-    curY = boxTop - HEAD_H - PAD;
+    this.page.drawRectangle({ x, y: boxTop - boxH, width: boxW, height: boxH, color: COLORS.blanc });
+    curY = boxTop - PAD;
 
     const drawRow = (row: (typeof rows)[number], idx = 0, style?: { labelColor: any; valueColor: any; bold?: boolean }) => {
       if (idx > 0 && !style) {
-        this.page.drawLine({ start: { x: x + 8, y: curY }, end: { x: x + boxW - 8, y: curY }, color: R.bord, thickness: 0.5 });
+        this.page.drawLine({ start: { x: x + 8, y: curY }, end: { x: x + boxW - 8, y: curY }, color: R.bord, thickness: 0.4 });
       }
       const ty = curY - 12;
       let labelX = x + 8;
@@ -870,23 +864,26 @@ export class BaseDocument {
     rows.forEach((r, i) => drawRow(r, i));
     curY -= PAD;
 
-    // TOTAL À PAYER : même bleu adouci que l'en-tête du récapitulatif.
-    this.page.drawRectangle({ x, y: curY - TOTAL_H, width: boxW, height: TOTAL_H, color: COLORS.bleuRecap });
-    this.page.drawText("TOTAL À PAYER (FCFA)", { x: x + 8, y: curY - 19, size: 9, font: this.fonts.bold, color: COLORS.blanc });
-    const totalVal = formatFCFA(this.totals.totalAPayer, false);
-    const totalW = this.fonts.bold.widthOfTextAtSize(totalVal, 15);
-    this.page.drawText(totalVal, { x: x + boxW - totalW - 8, y: curY - 20, size: 15, font: this.fonts.bold, color: COLORS.blanc });
+    // TOTAL À PAYER : fond orange très pâle + fine bordure orange.
+    this.page.drawRectangle({
+      x: x + 0.5, y: curY - TOTAL_H, width: boxW - 1, height: TOTAL_H,
+      color: R.totalFond, borderColor: R.totalBord, borderWidth: 0.8,
+    });
+    this.page.drawText("TOTAL À PAYER (FCFA)", { x: x + 8, y: curY - 16.5, size: 9, font: this.fonts.bold, color: R.nuit });
+    const totalVal = `${formatFCFA(this.totals.totalAPayer, false)} FCFA`;
+    const totalW = this.fonts.bold.widthOfTextAtSize(totalVal, 12);
+    this.page.drawText(totalVal, { x: x + boxW - totalW - 8, y: curY - 17, size: 12, font: this.fonts.bold, color: R.nuit });
     curY -= TOTAL_H;
 
     payRows.forEach((r) => {
       const isReste = r.label === "RESTE À PAYER";
       this.page.drawRectangle({ x, y: curY - ROW_H, width: boxW, height: ROW_H, color: isReste ? R.resteFond : COLORS.blanc });
       drawRow(r, 1, isReste
-        ? { labelColor: R.resteTexte, valueColor: R.resteTexte, bold: true }
+        ? { labelColor: R.nuit, valueColor: R.nuit, bold: true }
         : { labelColor: R.texte, valueColor: R.nuit });
     });
 
-    this.page.drawRectangle({ x, y: curY, width: boxW, height: boxTop - curY, borderColor: R.bord, borderWidth: 0.8 });
+    this.page.drawRectangle({ x, y: curY, width: boxW, height: boxTop - curY, borderColor: R.bord, borderWidth: 0.6 });
     curY -= 16;
 
     const fontSize = 9.5;
