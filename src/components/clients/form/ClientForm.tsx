@@ -176,8 +176,12 @@ export function ClientForm({ clientId }: ClientFormProps) {
             <h1 className="text-2xl font-bold">
               {editing ? `Modifier ${existing?.nom ?? "le client"}` : "Nouveau client"}
             </h1>
-            {existing?.reference && (
-              <p className="text-sm text-muted-foreground">Réf. {existing.reference}</p>
+            {existing?.reference ? (
+              <p className="text-sm text-muted-foreground">Code client : {existing.reference}</p>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Code client généré automatiquement selon le type (ex. CL-LYC-339)
+              </p>
             )}
           </div>
         </div>

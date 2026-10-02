@@ -78,7 +78,7 @@ export async function listClients(params: ListClientsParams = {}) {
   if (q) {
     const like = `%${pgSafe(q)}%`;
     query = query.or(
-      `nom.ilike.${like},reference.ilike.${like},representant.ilike.${like},phone_normalized.ilike.${like}`
+      `nom.ilike.${like},reference.ilike.${like},ancien_code.ilike.${like},representant.ilike.${like},phone_normalized.ilike.${like},email.ilike.${like},ville.ilike.${like}`
     );
   }
   if (type_client) query = query.in("type_client", typeClientVariants(type_client));

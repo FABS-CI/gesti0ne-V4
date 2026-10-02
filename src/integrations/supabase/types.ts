@@ -999,10 +999,26 @@ export type Database = {
           },
         ]
       }
+      client_code_counters: {
+        Row: {
+          last_num: number
+          prefix: string
+        }
+        Insert: {
+          last_num?: number
+          prefix: string
+        }
+        Update: {
+          last_num?: number
+          prefix?: string
+        }
+        Relationships: []
+      }
       clients: {
         Row: {
           actif: boolean
           adresse: string | null
+          ancien_code: string | null
           bp: string | null
           categorie: string | null
           client_id: string
@@ -1035,6 +1051,7 @@ export type Database = {
         Insert: {
           actif?: boolean
           adresse?: string | null
+          ancien_code?: string | null
           bp?: string | null
           categorie?: string | null
           client_id?: string
@@ -1067,6 +1084,7 @@ export type Database = {
         Update: {
           actif?: boolean
           adresse?: string | null
+          ancien_code?: string | null
           bp?: string | null
           categorie?: string | null
           client_id?: string
@@ -7944,6 +7962,7 @@ export type Database = {
           total_ligne: number
         }[]
       }
+      client_type_prefix: { Args: { _type: string }; Returns: string }
       clients_facets: { Args: never; Returns: Json }
       cloturer_tournee: { Args: { _tournee_id: string }; Returns: undefined }
       cockpit_overview: { Args: { _exercice_id?: string }; Returns: Json }
@@ -8835,6 +8854,7 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      next_client_code: { Args: { _type: string }; Returns: string }
       norm_key: { Args: { _v: string }; Returns: string }
       norm_txt: { Args: { _v: string }; Returns: string }
       normalize_phone: { Args: { phone: string }; Returns: string }
