@@ -708,6 +708,9 @@ export class BaseDocument {
     let curY = y - 20;
     const fontSize = 10;
     const colHPadding = 5;
+    // Hiérarchie visuelle : produit, quantité et montant en gras ; N°, P.U. et remise en regular.
+    const REGULAR_KEYS = ["num", "pu", "remisePct"];
+    const cellFont = (key: string) => (REGULAR_KEYS.includes(key) ? this.fonts.regular : this.fonts.bold);
 
     lignes.forEach((l, i) => {
       let maxRowH = 22;
@@ -723,7 +726,7 @@ export class BaseDocument {
         val = String(val ?? "");
         
         const availableW = col.width - colHPadding * 2;
-        const wrapped = this.wrapText(val, availableW, fontSize);
+        const wrapped = this.wrapText(val, availableW, fontSize, cellFont(col.key));
         wrapResults.set(col.key, wrapped);
         
         const lineH = fontSize * 1.2;
@@ -753,7 +756,8 @@ export class BaseDocument {
         const lineH = fontSize * 1.2;
         
         wrapped.forEach((lineText, lineIdx) => {
-          const txtW = this.fonts.regular.widthOfTextAtSize(lineText, fontSize);
+          const f = cellFont(col.key);
+          const txtW = f.widthOfTextAtSize(lineText, fontSize);
           
           let alignX = curX + colHPadding;
           if (NUMERIC_KEYS.includes(col.key)) {
@@ -764,8 +768,8 @@ export class BaseDocument {
             x: alignX,
             y: curY - 14 - lineIdx * lineH,
             size: fontSize,
-            font: this.fonts.regular,
-            color: BODY.nuit,
+            font: f,
+            color: col.key === "num" ? BODY.ardoise : BODY.nuit,
           });
         });
         curX += col.width;
@@ -868,7 +872,7 @@ export class BaseDocument {
       }
       const ty = curY - 12;
       let labelX = x + 8;
-      const lblFont = style?.bold ? this.fonts.bold : this.fonts.regular;
+      const lblFont = this.fonts.bold;
       this.page.drawText(row.label, { x: labelX, y: ty, size: 8, font: lblFont, color: style?.labelColor ?? BODY.ardoise });
       if (row.label === "REMISE GLOBALE" && this.totals.sousTotal > 0 && this.totals.remiseGlobale) {
         const rawPct = this.totals.remiseGlobalePct ?? (this.totals.remiseGlobale / this.totals.sousTotal) * 100;
@@ -893,11 +897,11 @@ export class BaseDocument {
 
     // TOTAL À PAYER : bandeau orange plein, coins arrondis.
     const bandY = curY - (TOTAL_H + BAND_H) / 2;
-    roundedRect(this.page, x + 6, bandY, boxW - 12, BAND_H, 4, { color: BODY.orange });
-    this.page.drawText("TOTAL À PAYER (FCFA)", { x: x + 12, y: bandY + 9.5, size: 9, font: this.fonts.bold, color: BODY.blanc });
+    roundedRect(this.page, x + 6, bandY, boxW - 12, BAND_H, 4, { color: BODY.peche, borderColor: BODY.orange, borderWidth: 0.8 });
+    this.page.drawText("TOTAL À PAYER (FCFA)", { x: x + 12, y: bandY + 9.5, size: 9.5, font: this.fonts.bold, color: BODY.nuit });
     const totalVal = `${formatFCFA(this.totals.totalAPayer, false)} FCFA`;
     const totalW = this.fonts.bold.widthOfTextAtSize(totalVal, 15);
-    this.page.drawText(totalVal, { x: x + boxW - totalW - 12, y: bandY + 8, size: 15, font: this.fonts.bold, color: BODY.blanc });
+    this.page.drawText(totalVal, { x: x + boxW - totalW - 12, y: bandY + 8, size: 15, font: this.fonts.bold, color: BODY.orange });
     curY -= TOTAL_H;
 
     payRows.forEach((r, i) => {
