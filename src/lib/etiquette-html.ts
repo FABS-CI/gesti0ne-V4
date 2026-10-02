@@ -124,7 +124,7 @@ export function labelHtml(e: EtiquettePayload, qr: string, logo: string, mode: L
   const row2 = (a: string, b: string) =>
     `<div style="display:grid;grid-template-columns:1fr 1fr;gap:4mm;border-top:2px solid #000;padding-top:${s.gap}">${a}${b}</div>`;
 
-  return `<div class="etiquette-carton etiquette-${mode}" data-colis-id="${esc(e.colis_id ?? "")}" style="width:100%;font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;padding:${s.padding};border:1px solid #000;background:#fff;color:#000;display:flex;flex-direction:column;gap:${s.gap};position:relative;box-sizing:border-box;overflow:hidden">
+  return `<div class="etiquette-carton etiquette-${mode}" data-colis-id="${esc(e.colis_id ?? "")}" style="width:100%;font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;padding:${s.padding};border:1px solid #000;background:#fff;color:#000;display:flex;flex-direction:column;justify-content:space-between;gap:${s.gap};position:relative;box-sizing:border-box;overflow:hidden">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:3mm">
       <div style="display:flex;align-items:center;gap:2mm">
         <img src="${logo}" alt="FABS-CI" style="height:${s.logoH};width:auto" />
