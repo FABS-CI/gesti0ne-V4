@@ -53,9 +53,19 @@ export class StatementDocument extends BaseDocument {
   }
 
   async drawClientInfo(y: number, data: any): Promise<number> {
-    const boxH = 110;
     const boxW = (CONTENT_W - 15) / 2;
-    
+    // Nom du client : renvoyé à la ligne dans la moitié gauche, jamais sur la zone PÉRIODE.
+    const nomMaxW = boxW - 20;
+    let nomLignes = this.wrapText(this.data.client.nom.toUpperCase(), nomMaxW, 12, this.fonts.bold);
+    let nomSize = 12;
+    if (nomLignes.length > 2) {
+      nomSize = 10;
+      nomLignes = this.wrapText(this.data.client.nom.toUpperCase(), nomMaxW, nomSize, this.fonts.bold);
+    }
+    nomLignes = nomLignes.slice(0, 3);
+    const nomH = nomLignes.length * (nomSize + 3);
+    const boxH = Math.max(110, 40 + nomH + 3 * 18 + 10);
+
     // Bloc Client
     roundedRect(this.page, MARGINS.x, y - boxH, CONTENT_W, boxH, 6, {
       color: BODY.grisClair, borderColor: BODY.bord, borderWidth: 0.6,
@@ -64,18 +74,22 @@ export class StatementDocument extends BaseDocument {
     this.page.drawLine({ start: { x: sepX, y: y - 8 }, end: { x: sepX, y: y - boxH + 8 }, color: BODY.bord, thickness: 0.6 });
 
     this.page.drawText("RELEVÉ POUR", { x: MARGINS.x + 10, y: y - 15, size: 7, font: this.fonts.bold, color: BODY.ardoise });
-    this.page.drawText(this.data.client.nom.toUpperCase(), { x: MARGINS.x + 10, y: y - 32, size: 12, font: this.fonts.bold, color: BODY.nuit });
-    
+    nomLignes.forEach((ligne, i) => {
+      this.page.drawText(ligne, { x: MARGINS.x + 10, y: y - 32 - i * (nomSize + 3), size: nomSize, font: this.fonts.bold, color: BODY.nuit });
+    });
+
     const kv = [
       { l: "Ville", v: this.data.client.ville || "—" },
       { l: "Représentant", v: this.data.client.representant || "—" },
       { l: "Téléphone", v: this.data.client.telephone || "—" },
     ];
 
+    const kvTop = y - 32 - nomH - 8;
     kv.forEach((item, i) => {
-      const rowY = y - 52 - i * 18;
+      const rowY = kvTop - i * 18;
       this.page.drawText(`${item.l} :`, { x: MARGINS.x + 10, y: rowY, size: 10, font: this.fonts.bold, color: BODY.ardoise });
-      this.page.drawText(String(item.v), { x: MARGINS.x + 105, y: rowY, size: 11, font: this.fonts.bold, color: BODY.nuit });
+      const valLines = this.wrapText(String(item.v), boxW - 115, 11, this.fonts.bold).slice(0, 1);
+      this.page.drawText(valLines[0] ?? "—", { x: MARGINS.x + 105, y: rowY, size: 11, font: this.fonts.bold, color: BODY.nuit });
     });
 
 
