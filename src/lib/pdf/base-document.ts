@@ -845,16 +845,8 @@ export class BaseDocument {
       payRows.push({ label: "RESTE À PAYER", value: Math.max(0, this.totals.totalAPayer - paye) });
     }
 
-    // Palette sobre du bloc de synthèse (blanc, gris, anthracite, accent orange)
-    const R = {
-      nuit: rgb(0.173, 0.192, 0.216), // #2C3137 anthracite (montants)
-      bord: rgb(0.851, 0.859, 0.871), // #D9DBDE gris clair
-      texte: rgb(0.290, 0.314, 0.341), // #4A5057 gris anthracite (libellés)
-      totalFond: rgb(1, 0.965, 0.925), // #FFF6EC orange très pâle
-      totalBord: rgb(0.96, 0.486, 0.0), // orange FABS-CI
-      resteFond: rgb(0.953, 0.957, 0.961), // #F3F4F5 gris très clair
-    };
-    const ROW_H = 18, TOTAL_H = 26, PAD = 4;
+    // Modèle F : carte crème, bandeau TOTAL orange plein.
+    const ROW_H = 18, TOTAL_H = 30, PAD = 4, BAND_H = 26;
 
     // Hauteur réelle : cadre des totaux + mention « Arrêté… » (aucun saut au milieu)
     const mentionText = `Arrêté le présent document à la somme de : ${this.totals.montantLettres}`;
@@ -867,22 +859,22 @@ export class BaseDocument {
     }
 
     const boxTop = curY;
-    this.page.drawRectangle({ x, y: boxTop - boxH, width: boxW, height: boxH, color: COLORS.blanc });
+    roundedRect(this.page, x, boxTop - boxH, boxW, boxH, 6, { color: BODY.creme });
     curY = boxTop - PAD;
 
-    const drawRow = (row: (typeof rows)[number], idx = 0, style?: { labelColor: any; valueColor: any; bold?: boolean }) => {
+    const drawRow = (row: (typeof rows)[number], idx = 0, style?: { labelColor: RGB; valueColor: RGB; bold?: boolean }) => {
       if (idx > 0 && !style) {
-        this.page.drawLine({ start: { x: x + 8, y: curY }, end: { x: x + boxW - 8, y: curY }, color: R.bord, thickness: 0.4 });
+        this.page.drawLine({ start: { x: x + 8, y: curY }, end: { x: x + boxW - 8, y: curY }, color: BODY.filetCreme, thickness: 0.4 });
       }
       const ty = curY - 12;
       let labelX = x + 8;
       const lblFont = style?.bold ? this.fonts.bold : this.fonts.regular;
-      this.page.drawText(row.label, { x: labelX, y: ty, size: 8, font: lblFont, color: style?.labelColor ?? R.texte });
+      this.page.drawText(row.label, { x: labelX, y: ty, size: 8, font: lblFont, color: style?.labelColor ?? BODY.ardoise });
       if (row.label === "REMISE GLOBALE" && this.totals.sousTotal > 0 && this.totals.remiseGlobale) {
         const rawPct = this.totals.remiseGlobalePct ?? (this.totals.remiseGlobale / this.totals.sousTotal) * 100;
         const pct = parseFloat(rawPct.toFixed(10));
         labelX += lblFont.widthOfTextAtSize(row.label, 8) + 4;
-        this.page.drawText(`(${pct} %)`, { x: labelX, y: ty, size: 8, font: this.fonts.bold, color: COLORS.rougeFabs });
+        this.page.drawText(`(${pct} %)`, { x: labelX, y: ty, size: 8, font: this.fonts.bold, color: BODY.ardoise });
       }
       const val = `${formatFCFA(row.value, false)} FCFA`;
       const valW = this.fonts.bold.widthOfTextAtSize(val, 9);
@@ -891,33 +883,35 @@ export class BaseDocument {
         y: ty,
         size: 9,
         font: this.fonts.bold,
-        color: style?.valueColor ?? (row.label.toLowerCase().includes("remise") ? COLORS.rougeFabs : R.nuit),
+        color: style?.valueColor ?? BODY.nuit,
       });
       curY -= ROW_H;
     };
     rows.forEach((r, i) => drawRow(r, i));
     curY -= PAD;
+    this.page.drawLine({ start: { x: x + 8, y: curY }, end: { x: x + boxW - 8, y: curY }, color: BODY.filetCreme, thickness: 0.6 });
 
-    // TOTAL À PAYER : fond orange très pâle + fine bordure orange.
-    this.page.drawRectangle({
-      x: x + 0.5, y: curY - TOTAL_H, width: boxW - 1, height: TOTAL_H,
-      color: R.totalFond, borderColor: R.totalBord, borderWidth: 0.8,
-    });
-    this.page.drawText("TOTAL À PAYER (FCFA)", { x: x + 8, y: curY - 16.5, size: 9, font: this.fonts.bold, color: R.nuit });
+    // TOTAL À PAYER : bandeau orange plein, coins arrondis.
+    const bandY = curY - (TOTAL_H + BAND_H) / 2;
+    roundedRect(this.page, x + 6, bandY, boxW - 12, BAND_H, 4, { color: BODY.orange });
+    this.page.drawText("TOTAL À PAYER (FCFA)", { x: x + 12, y: bandY + 9.5, size: 9, font: this.fonts.bold, color: BODY.blanc });
     const totalVal = `${formatFCFA(this.totals.totalAPayer, false)} FCFA`;
-    const totalW = this.fonts.bold.widthOfTextAtSize(totalVal, 12);
-    this.page.drawText(totalVal, { x: x + boxW - totalW - 8, y: curY - 17, size: 12, font: this.fonts.bold, color: R.nuit });
+    const totalW = this.fonts.bold.widthOfTextAtSize(totalVal, 15);
+    this.page.drawText(totalVal, { x: x + boxW - totalW - 12, y: bandY + 8, size: 15, font: this.fonts.bold, color: BODY.blanc });
     curY -= TOTAL_H;
 
-    payRows.forEach((r) => {
+    payRows.forEach((r, i) => {
       const isReste = r.label === "RESTE À PAYER";
-      this.page.drawRectangle({ x, y: curY - ROW_H, width: boxW, height: ROW_H, color: isReste ? R.resteFond : COLORS.blanc });
+      if (isReste) {
+        const last = i === payRows.length - 1;
+        roundedRect(this.page, x, curY - ROW_H, boxW, ROW_H, last ? { bl: 6, br: 6 } : 0, { color: BODY.grisClair });
+      }
       drawRow(r, 1, isReste
-        ? { labelColor: R.nuit, valueColor: R.nuit, bold: true }
-        : { labelColor: R.texte, valueColor: R.nuit });
+        ? { labelColor: BODY.nuit, valueColor: BODY.nuit, bold: true }
+        : { labelColor: BODY.ardoise, valueColor: BODY.nuit });
     });
 
-    this.page.drawRectangle({ x, y: curY, width: boxW, height: boxTop - curY, borderColor: R.bord, borderWidth: 0.6 });
+    roundedRect(this.page, x, curY, boxW, boxTop - curY, 6, { borderColor: BODY.bord, borderWidth: 0.6 });
     curY -= 16;
 
     const fontSize = 9.5;
@@ -954,8 +948,9 @@ export class BaseDocument {
       y: curY,
       size: 8,
       font: this.fonts.bold,
-      color: COLORS.noir
+      color: BODY.nuit
     });
+    this.page.drawLine({ start: { x: MARGINS.x, y: curY - 4 }, end: { x: MARGINS.x + CONTENT_W, y: curY - 4 }, color: BODY.bord, thickness: 0.5 });
     curY -= 15;
 
     const wrapped = this.wrapText(notes, CONTENT_W, 9);
@@ -964,7 +959,7 @@ export class BaseDocument {
         this.addNewPage();
         curY = PAGE.h - 120;
       }
-      this.page.drawText(line, { x: MARGINS.x, y: curY, size: 9, font: this.fonts.regular });
+      this.page.drawText(line, { x: MARGINS.x, y: curY, size: 9, font: this.fonts.regular, color: BODY.ardoise });
       curY -= 12;
     });
 
@@ -981,15 +976,8 @@ export class BaseDocument {
       curY = PAGE.h - 180;
     }
     
-    this.page.drawRectangle({
-      x: MARGINS.x,
-      y: curY - 60,
-      width: boxW,
-      height: 60,
-      borderColor: COLORS.bleuElectrique,
-      borderWidth: 0.8,
-    });
-    this.page.drawText("LA COMPTABILITÉ", { x: MARGINS.x + 5, y: curY - 12, size: 8, font: this.fonts.bold });
+    roundedRect(this.page, MARGINS.x, curY - 60, boxW, 60, 6, { borderColor: BODY.bord, borderWidth: 0.6 });
+    this.page.drawText("LA COMPTABILITÉ", { x: MARGINS.x + 5, y: curY - 12, size: 8, font: this.fonts.bold, color: BODY.nuit });
   }
 
   async getBytes() {
