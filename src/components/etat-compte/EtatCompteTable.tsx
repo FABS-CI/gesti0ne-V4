@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { FileDown, FileText, Loader2, Users, Eye, Wallet } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { EmptyState } from "@/components/common/EmptyState";
@@ -62,7 +63,7 @@ export function EtatCompteTable({ clients, isLoading, busy, historiqueBusy, onPd
               const depasse = solde > Number(c.plafond_credit) && Number(c.plafond_credit) > 0;
               return (
                 <TableRow key={c.client_id}>
-                  <TableCell className="font-mono text-xs">{c.reference}</TableCell>
+                  <TableCell className="font-mono text-xs">{formatDocumentReference(c.reference)}</TableCell>
                   <TableCell className="font-medium">{c.nom}</TableCell>
                   <TableCell
                     className="text-right font-semibold"

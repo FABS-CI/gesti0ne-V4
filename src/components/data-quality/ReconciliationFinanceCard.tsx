@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { useQuery } from "@tanstack/react-query";
 import { Scale, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -92,7 +93,7 @@ export function ReconciliationFinanceCard() {
                   <TableBody>
                     {r.factures.map((f) => (
                       <TableRow key={f.facture_id}>
-                        <TableCell>{f.reference}</TableCell><TableCell>{f.client ?? "—"}</TableCell>
+                        <TableCell>{formatDocumentReference(f.reference)}</TableCell><TableCell>{f.client ?? "—"}</TableCell>
                         <TableCell className="text-right">{formatFCFA(f.total)}</TableCell>
                         <TableCell className="text-right">{formatFCFA(f.reste_calcule)}</TableCell>
                         <TableCell className="text-right">{formatFCFA(f.reste_enregistre)}</TableCell>

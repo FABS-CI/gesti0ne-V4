@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { friendlyError } from '@/lib/friendly-error';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -145,7 +146,7 @@ function FactureDetailPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-xl font-bold">Facture {facture.reference}</h1>
+            <h1 className="text-xl font-bold">Facture {formatDocumentReference(facture.reference)}</h1>
             <p className="text-sm text-muted-foreground">
               {facture.client_nom ?? "Client non renseigné"}
             </p>
@@ -236,7 +237,7 @@ function FactureDetailPage() {
                 <div className="rounded border bg-muted/40 p-3 text-sm grid grid-cols-2 gap-2">
                   <div>
                     <span className="text-muted-foreground">N° facture :</span>{" "}
-                    <span className="font-mono">{facture.reference}</span>
+                    <span className="font-mono">{formatDocumentReference(facture.reference)}</span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Client :</span>{" "}
@@ -431,7 +432,7 @@ function FactureDetailPage() {
               ) : (
                 paiements.map((p) => (
                   <TableRow key={p.paiement_id}>
-                    <TableCell>{p.reference}</TableCell>
+                    <TableCell>{formatDocumentReference(p.reference)}</TableCell>
                     <TableCell>{frDate(p.date_paiement)}</TableCell>
                     <TableCell>{p.mode_paiement}</TableCell>
                     <TableCell className="text-right font-medium">
@@ -500,7 +501,7 @@ function FactureDetailPage() {
                     <TableBody>
                       {retours.map((r) => (
                         <TableRow key={r.retour_id}>
-                          <TableCell className="font-mono text-xs">{r.reference}</TableCell>
+                          <TableCell className="font-mono text-xs">{formatDocumentReference(r.reference)}</TableCell>
                           <TableCell>{frDate(r.date_retour)}</TableCell>
                           <TableCell className="text-right">{r.quantite}</TableCell>
                           <TableCell className="text-right font-medium">

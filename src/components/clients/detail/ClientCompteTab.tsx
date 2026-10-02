@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { AlertTriangle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Kpi } from "./shared";
@@ -72,7 +73,7 @@ export function ClientCompteTab({
                 }
                 className="flex w-full items-center justify-between rounded px-2 py-1 text-sm hover:bg-muted"
               >
-                <span className="font-mono text-xs">{f.reference}</span>
+                <span className="font-mono text-xs">{formatDocumentReference(f.reference)}</span>
                 <span className="text-muted-foreground">{frDate(f.date_facture)}</span>
                 <span className="font-semibold text-red-600">
                   {formatFCFA(Number(f.montant_total) - Number(f.montant_paye))}

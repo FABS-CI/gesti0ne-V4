@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { ClientLink } from "@/components/common/ClientLink";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
@@ -222,7 +223,7 @@ function ColisageListPage() {
                     const st = STATUT_BL_LABEL[r.statut];
                     return (
                       <TableRow key={r.bl_id}>
-                        <TableCell className="font-mono text-xs">{r.reference}</TableCell>
+                        <TableCell className="font-mono text-xs">{formatDocumentReference(r.reference)}</TableCell>
                         <TableCell>{frDate(r.date_emission)}</TableCell>
                         <TableCell><ClientLink clientId={r.client_id} nom={r.client_nom} /></TableCell>
                         <TableCell>{r.etablissement ?? "—"}</TableCell>

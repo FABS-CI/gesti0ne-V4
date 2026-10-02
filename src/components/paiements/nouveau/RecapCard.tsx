@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -37,7 +38,7 @@ export function RecapCard({ lignes, mode }: Props) {
           <TableBody>
             {lignes.map((rec) => (
               <TableRow key={rec.reference}>
-                <TableCell className="font-mono text-xs">{rec.reference}</TableCell>
+                <TableCell className="font-mono text-xs">{formatDocumentReference(rec.reference)}</TableCell>
                 <TableCell className="text-right">{formatFCFA(rec.reste_avant)}</TableCell>
                 <TableCell className="text-right font-semibold text-primary">
                   {formatFCFA(rec.montant_impute)}

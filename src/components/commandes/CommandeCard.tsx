@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import React from "react";
 import { ClientLink } from "@/components/common/ClientLink";
 import { Badge } from "@/components/ui/badge";
@@ -37,7 +38,7 @@ function CommandeCardInner({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <span className="truncate font-semibold">{c.reference}</span>
+            <span className="truncate font-semibold">{formatDocumentReference(c.reference)}</span>
             <Badge
               variant="outline"
               className="shrink-0 border-transparent text-[10px] font-medium"

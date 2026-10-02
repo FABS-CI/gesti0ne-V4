@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute } from "@tanstack/react-router";
 import { FileSignature, FileDown, Eye, Printer, Mail, ScanEye, Trash2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
@@ -155,8 +156,8 @@ const config: ResourceConfig = {
       icon: Mail,
       onClick: (row) =>
         emailDoc({
-          subject: `Proforma ${row.reference} — FABS-CI`,
-          body: `Bonjour,\n\nVeuillez trouver ci-joint la proforma ${row.reference}.\n\nCordialement,\nFABS-CI`,
+          subject: `Proforma ${formatDocumentReference(row.reference)} — FABS-CI`,
+          body: `Bonjour,\n\nVeuillez trouver ci-joint la proforma ${formatDocumentReference(row.reference)}.\n\nCordialement,\nFABS-CI`,
         }),
     },
     {

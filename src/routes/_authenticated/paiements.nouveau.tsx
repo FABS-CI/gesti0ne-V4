@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -191,7 +192,7 @@ function NouveauPaiementPage() {
       const f = factures.find((x) => x.facture_id === fid);
       if (!f) continue;
       if (Number(m) > Number(f.solde) + 0.01) {
-        toast.error(`Le montant affecté dépasse le solde de la facture ${f.reference}`);
+        toast.error(`Le montant affecté dépasse le solde de la facture ${formatDocumentReference(f.reference)}`);
         return false;
       }
     }
@@ -337,7 +338,7 @@ function NouveauPaiementPage() {
               {recapLignes.map((rec) => (
                 <div key={rec.reference} className="space-y-1">
                   <div className="flex justify-between">
-                    <span className="font-mono text-xs">{rec.reference}</span>
+                    <span className="font-mono text-xs">{formatDocumentReference(rec.reference)}</span>
                     <span className="font-semibold text-primary">
                       {formatFCFA(rec.montant_impute)}
                     </span>

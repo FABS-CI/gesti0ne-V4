@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ShoppingCart } from "lucide-react";
@@ -145,7 +146,7 @@ function CommandeModifierPage() {
         </Button>
         <ShoppingCart className="h-6 w-6 text-primary" />
         <div>
-          <h1 className="text-2xl font-bold">Modifier la commande {commande.reference}</h1>
+          <h1 className="text-2xl font-bold">Modifier la commande {formatDocumentReference(commande.reference)}</h1>
           <p className="text-sm text-muted-foreground">
             Toutes les modifications recalculent automatiquement les totaux et les documents liés.
           </p>

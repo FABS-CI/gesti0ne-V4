@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -124,7 +125,7 @@ export function FNEFacturesTab() {
                       nav({ to: "/fne-detail/$factureId", params: { factureId: r.fne_id } })
                     }
                   >
-                    <TableCell className="font-mono text-xs">{r.reference}</TableCell>
+                    <TableCell className="font-mono text-xs">{formatDocumentReference(r.reference)}</TableCell>
                     <TableCell>{r.client_nom ?? "—"}</TableCell>
                     <TableCell className="font-mono text-xs">{r.code_dgi ?? "—"}</TableCell>
                     <TableCell className="text-right">

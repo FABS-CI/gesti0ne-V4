@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { ClientLink } from "@/components/common/ClientLink";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
@@ -388,7 +389,7 @@ function FacturesPage() {
                       <TableCell className="font-mono text-xs">
                         <div className="flex items-center gap-2">
                           <ProductCoverThumb produit={null} size="xs" />
-                          {f.reference}
+                          {formatDocumentReference(f.reference)}
                         </div>
                       </TableCell>
                       <TableCell className="whitespace-nowrap">{formatDate(f.date_facture)}</TableCell>

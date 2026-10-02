@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -27,7 +28,7 @@ const ProformaRow = React.memo(function ProformaRow({
       className="cursor-pointer hover:bg-muted/50"
       onClick={() => onNavigate(p.proforma_id)}
     >
-      <TableCell className="font-mono text-xs">{p.reference}</TableCell>
+      <TableCell className="font-mono text-xs">{formatDocumentReference(p.reference)}</TableCell>
       <TableCell>{frDate(p.date_proforma)}</TableCell>
       <TableCell>{frDate(p.date_validite)}</TableCell>
       <TableCell>
@@ -80,7 +81,7 @@ const BLRow = React.memo(function BLRow({ b }: { b: ClientRelations["bons_livrai
       className="cursor-pointer hover:bg-muted/50"
       onClick={() => navigate({ to: "/colisage/$blId", params: { blId: b.bl_id } })}
     >
-      <TableCell className="font-mono text-xs">{b.reference}</TableCell>
+      <TableCell className="font-mono text-xs">{formatDocumentReference(b.reference)}</TableCell>
       <TableCell>{frDate(b.date_emission)}</TableCell>
       <TableCell>{frDate(b.date_livraison)}</TableCell>
       <TableCell>
@@ -130,7 +131,7 @@ const AvoirRow = React.memo(function AvoirRow({
 }) {
   return (
     <TableRow className="cursor-pointer hover:bg-muted/50" onClick={() => onNavigate(a.retour_id)}>
-      <TableCell className="font-mono text-xs">{a.reference}</TableCell>
+      <TableCell className="font-mono text-xs">{formatDocumentReference(a.reference)}</TableCell>
       <TableCell>{frDate(a.date_retour)}</TableCell>
       <TableCell className="text-sm text-muted-foreground">{a.motif || "—"}</TableCell>
       <TableCell>
@@ -186,7 +187,7 @@ const LivraisonRow = React.memo(function LivraisonRow({
       className={blId ? "cursor-pointer hover:bg-muted/50" : undefined}
       onClick={blId ? () => navigate({ to: "/colisage/$blId", params: { blId } }) : undefined}
     >
-      <TableCell className="font-mono text-xs">{l.reference}</TableCell>
+      <TableCell className="font-mono text-xs">{formatDocumentReference(l.reference)}</TableCell>
       <TableCell>{frDate(l.date_livraison)}</TableCell>
       <TableCell>{l.transporteur || "—"}</TableCell>
       <TableCell>
