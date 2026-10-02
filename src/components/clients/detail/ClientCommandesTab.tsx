@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -23,7 +24,7 @@ const CommandeRow = React.memo(function CommandeRow({ c }: { c: Commande }) {
       className="cursor-pointer hover:bg-muted/50"
       onClick={() => navigate({ to: "/commandes/$commandeId", params: { commandeId: c.commande_id } })}
     >
-      <TableCell className="font-mono text-xs">{c.reference}</TableCell>
+      <TableCell className="font-mono text-xs">{formatDocumentReference(c.reference)}</TableCell>
       <TableCell>{frDate(c.date_commande)}</TableCell>
       <TableCell>
         <Badge variant="secondary">{c.statut}</Badge>

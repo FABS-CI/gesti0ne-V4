@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 
 import { BaseDocument, COLORS, MARGINS, PAGE, CONTENT_W, CONTENT_BOTTOM } from "./base-document";
 import { formatFCFA } from "@/lib/format";
@@ -29,7 +30,7 @@ export class StatementDocument extends BaseDocument {
       date: /^\d{4}-\d{2}-\d{2}/.test(String(l.date ?? ""))
         ? String(l.date).slice(0, 10).split("-").reverse().join("/")
         : l.date,
-      reference: l.reference,
+      reference: formatDocumentReference(l.reference),
       libelle: l.libelle || l.designation || "",
       debit: l.debit || 0,
       // Une ligne n'alimente qu'une seule colonne : les retours vont en RETOUR.

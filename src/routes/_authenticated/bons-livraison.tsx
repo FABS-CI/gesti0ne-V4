@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -214,7 +215,7 @@ function BonsLivraisonListPage() {
                     const st = STATUT_BL_LABEL[r.statut];
                     return (
                       <TableRow key={r.bl_id}>
-                        <TableCell className="font-mono text-xs">{r.reference}</TableCell>
+                        <TableCell className="font-mono text-xs">{formatDocumentReference(r.reference)}</TableCell>
                         <TableCell>{frDate(r.date_emission)}</TableCell>
                         <TableCell>{r.client_nom ?? "—"}</TableCell>
                         <TableCell>{r.etablissement ?? "—"}</TableCell>
@@ -344,7 +345,7 @@ function RowActions({ row, blId }: { row: BLAColiser; blId: string }) {
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Annuler le colisage {row.reference} ?</AlertDialogTitle>
+                <AlertDialogTitle>Annuler le colisage {formatDocumentReference(row.reference)} ?</AlertDialogTitle>
                 <AlertDialogDescription>
                   Cette action passe le BL au statut « Annulé » et supprime les cartons générés.
                 </AlertDialogDescription>
@@ -381,8 +382,8 @@ function RowActions({ row, blId }: { row: BLAColiser; blId: string }) {
               <AlertDialogHeader>
                 <AlertDialogTitle>
                   {isSuperAdmin
-                    ? `Suppression définitive du BL ${row.reference}`
-                    : `Supprimer le BL ${row.reference} ?`}
+                    ? `Suppression définitive du BL ${formatDocumentReference(row.reference)}`
+                    : `Supprimer le BL ${formatDocumentReference(row.reference)} ?`}
                 </AlertDialogTitle>
                 <AlertDialogDescription>
                   {isSuperAdmin

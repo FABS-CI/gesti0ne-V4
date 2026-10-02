@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { useState } from "react";
 import { Check, X, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -59,7 +60,7 @@ export function PaiementsEnAttenteCard({ exerciceId }: { exerciceId?: string | n
               <TableBody>
                 {paiements.map((p) => (
                   <TableRow key={p.paiement_id}>
-                    <TableCell className="font-medium">{p.reference}</TableCell>
+                    <TableCell className="font-medium">{formatDocumentReference(p.reference)}</TableCell>
                     <TableCell>{formatDate(p.date_paiement)}</TableCell>
                     <TableCell>{p.client_nom ?? "—"}</TableCell>
                     <TableCell>{MODE_PAIEMENT_LABEL[p.mode_paiement] ?? p.mode_paiement}</TableCell>

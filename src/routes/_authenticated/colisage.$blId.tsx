@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, CheckCircle2, Package, Truck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -80,7 +81,7 @@ function ColisageDetailPage() {
             <Package className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-xl font-bold">Colisage — {bl.reference}</h1>
+            <h1 className="text-xl font-bold">Colisage — {formatDocumentReference(bl.reference)}</h1>
             <p className="text-sm text-muted-foreground">{bl.client_nom ?? "—"}</p>
           </div>
         </div>
@@ -141,7 +142,7 @@ function ColisageDetailPage() {
               <span className="font-semibold">Facture :</span> {bl.facture_reference ?? "—"}
             </div>
             <div>
-              <span className="font-semibold">BL :</span> {bl.reference}
+              <span className="font-semibold">BL :</span> {formatDocumentReference(bl.reference)}
             </div>
           </CardContent>
         </Card>

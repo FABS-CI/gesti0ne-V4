@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import React from "react";
 import { Link } from "@tanstack/react-router";
 import { ClientLink } from "@/components/common/ClientLink";
@@ -41,7 +42,7 @@ function CommandeRowInner({
             params={{ commandeId: c.commande_id }}
             className="hover:text-primary hover:underline"
           >
-            {c.reference}
+            {formatDocumentReference(c.reference)}
           </Link>
         </div>
       </TableCell>

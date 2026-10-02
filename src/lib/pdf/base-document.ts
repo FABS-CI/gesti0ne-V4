@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 
 import { PDFString, PDFName, PDFArray } from "pdf-lib";
 import {
@@ -29,6 +30,7 @@ export const COLORS = {
   rougeFabs: rgb(0.827, 0.184, 0.184), // #D32F2F (Couleur pour Remises)
   orangeFabs: rgb(0.96, 0.486, 0.0), // #F57C00
   orangeStatut: rgb(0.961, 0.620, 0.043), // #F59E0B (statut de paiement)
+  bleuPur: rgb(0, 0, 1), // #0000FF (RÉCAPITULATIF + TOTAL À PAYER)
   bleuElectrique: rgb(0, 0.341, 1), // #0057FF (séparation TOTAL À PAYER)
   bleuTampon: rgb(0, 0.141, 0.753), // #0024C0 (bleu du tampon Comptabilité)
   grisClair: rgb(0.968, 0.968, 0.968), // #F7F7F7
@@ -305,12 +307,14 @@ export class BaseDocument {
     const isStatement = this.data.type === "Relevé de Compte";
 
     if (!isStatement) {
+      const shownRef = formatDocumentReference(this.data.reference);
       const refText =
-        this.data.reference.includes('-') ||
-        this.data.reference.includes('_') ||
-        /^[A-Z]{2,3}$/.test(this.data.reference)
-          ? `N° ${this.data.reference}`
-          : this.data.reference;
+        shownRef.startsWith('|') ||
+        shownRef.includes('-') ||
+        shownRef.includes('_') ||
+        /^[A-Z]{2,3}$/.test(shownRef)
+          ? `N° ${shownRef}`
+          : shownRef;
       this.page.drawRectangle({
         x: cartX,
         y: cartY - 18,
@@ -832,7 +836,7 @@ export class BaseDocument {
     // Fond général + bordure fine
     this.page.drawRectangle({ x, y: boxTop - boxH, width: boxW, height: boxH, color: R.fond });
     // En-tête RÉCAPITULATIF
-    this.page.drawRectangle({ x, y: boxTop - HEAD_H, width: boxW, height: HEAD_H, color: R.nuit });
+    this.page.drawRectangle({ x, y: boxTop - HEAD_H, width: boxW, height: HEAD_H, color: COLORS.bleuPur });
     const headTxt = "R É C A P I T U L A T I F";
     const headW = this.fonts.bold.widthOfTextAtSize(headTxt, 8.5);
     this.page.drawText(headTxt, { x: x + (boxW - headW) / 2, y: boxTop - 13.5, size: 8.5, font: this.fonts.bold, color: COLORS.blanc });
@@ -867,7 +871,7 @@ export class BaseDocument {
     curY -= PAD;
 
     // TOTAL À PAYER : bande pleine bleu nuit
-    this.page.drawRectangle({ x, y: curY - TOTAL_H, width: boxW, height: TOTAL_H, color: R.nuit });
+    this.page.drawRectangle({ x, y: curY - TOTAL_H, width: boxW, height: TOTAL_H, color: COLORS.bleuPur });
     this.page.drawText("TOTAL À PAYER (FCFA)", { x: x + 8, y: curY - 19, size: 9, font: this.fonts.bold, color: COLORS.blanc });
     const totalVal = formatFCFA(this.totals.totalAPayer, false);
     const totalW = this.fonts.bold.widthOfTextAtSize(totalVal, 15);

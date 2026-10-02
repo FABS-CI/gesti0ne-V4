@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { FileDown, Loader2 } from "lucide-react";
@@ -118,7 +119,7 @@ export function ClientReleveDialog({ open, onOpenChange, client }: Props) {
                     data.lignes.map((l, i) => {
                       const isRetour = l.type === "Avoir";
                       return (
-                        <TableRow key={`${l.reference}-${i}`}>
+                        <TableRow key={`${formatDocumentReference(l.reference)}-${i}`}>
                           <TableCell className="whitespace-nowrap">{fmtDate(String(l.date ?? ""))}</TableCell>
                           <TableCell className="font-mono text-xs">
                             {l.reference ? (
@@ -127,7 +128,7 @@ export function ClientReleveDialog({ open, onOpenChange, client }: Props) {
                                 className="text-primary underline-offset-2 hover:underline"
                                 onClick={() => openDoc(String(l.type ?? ""), String(l.reference))}
                               >
-                                {l.reference}
+                                {formatDocumentReference(l.reference)}
                               </button>
                             ) : null}
                           </TableCell>

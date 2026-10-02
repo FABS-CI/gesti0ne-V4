@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Ban, Calendar, FileDown, FileText, Loader2, Package, Pencil, Receipt, User } from "lucide-react";
@@ -113,7 +114,7 @@ function CommandeDetailPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-xl font-bold">Commande {commande.reference}</h1>
+            <h1 className="text-xl font-bold">Commande {formatDocumentReference(commande.reference)}</h1>
             <p className="text-sm text-muted-foreground">
               {commande.client_nom ?? "Client non renseigné"}
             </p>

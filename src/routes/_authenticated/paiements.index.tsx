@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -282,7 +283,7 @@ function PaiementsPage() {
                   const statutMeta = STATUT_PAIEMENT_LABEL[p.statut];
                   return (
                     <TableRow key={p.paiement_id}>
-                      <TableCell className="font-mono text-xs">{p.reference}</TableCell>
+                      <TableCell className="font-mono text-xs">{formatDocumentReference(p.reference)}</TableCell>
                       <TableCell className="whitespace-nowrap">{formatDate(p.date_paiement)}</TableCell>
                       <TableCell className="font-medium">{p.client_nom ?? "—"}</TableCell>
                       <TableCell>

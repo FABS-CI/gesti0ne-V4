@@ -1,3 +1,4 @@
+import { formatDocumentReference, toStoredReferencePattern } from "@/lib/document-reference";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -86,7 +87,9 @@ function readRecent(): Hit[] {
 }
 
 async function search(q: string): Promise<Hit[]> {
-  const term = q.trim();
+  const raw = q.trim();
+  // Saisie au format affiché |FC|26|51 → référence stockée FAC-2026-00051.
+  const term = toStoredReferencePattern(raw) ?? raw;
   if (term.length < 2) return [];
   const { data, error } = await supabase.rpc("global_search", { _q: term });
   if (error) throw error;
@@ -188,13 +191,13 @@ export function GlobalSearch() {
     return (
       <CommandItem
         key={`${keyPrefix}-${h.group}-${h.id}`}
-        value={`${keyPrefix} ${h.group} ${h.label} ${h.sub ?? ""} ${h.id}`}
+        value={`${keyPrefix} ${h.group} ${h.label} ${formatDocumentReference(h.label)} ${h.sub ?? ""} ${h.id}`}
         onSelect={() => goHit(h)}
         className="gap-2"
       >
         <Icon className="h-4 w-4 text-muted-foreground" />
         <div className="min-w-0 flex-1">
-          <div className="truncate text-sm">{h.label}</div>
+          <div className="truncate text-sm">{formatDocumentReference(h.label)}</div>
           {h.sub && (
             <div className="truncate text-xs text-muted-foreground">
               {h.sub.replace(/(\d+)(?:\.\d+)? FCFA/g, (_m, n: string) => `${n.replace(/\B(?=(\d{3})+(?!\d))/g, " ")} FCFA`)}

@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -155,7 +156,7 @@ export function ClientPaiementsTab({ paiements }: { paiements: ClientRelations["
                   }
                 >
                   <TableCell className="font-mono text-xs text-primary underline-offset-2 hover:underline">
-                    {p.reference}
+                    {formatDocumentReference(p.reference)}
                   </TableCell>
                   <TableCell>{frDate(p.date_paiement)}</TableCell>
                   <TableCell>{p.mode_paiement}</TableCell>

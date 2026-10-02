@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -314,7 +315,7 @@ function DocList({ kind, search }: { kind: DocKind; search: string }) {
         <TableBody>
           {filtered.map((row) => (
             <TableRow key={row.id}>
-              <TableCell className="font-mono text-xs">{row.reference}</TableCell>
+              <TableCell className="font-mono text-xs">{formatDocumentReference(row.reference)}</TableCell>
               <TableCell>
                 {row.date ? new Date(row.date).toLocaleDateString("fr-FR") : "—"}
               </TableCell>

@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Calendar, FileDown, FileText, Loader2, Receipt, RefreshCw, User } from "lucide-react";
@@ -141,7 +142,7 @@ function ProformaDetailPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-xl font-bold">Proforma {proforma.reference}</h1>
+            <h1 className="text-xl font-bold">Proforma {formatDocumentReference(proforma.reference)}</h1>
             <p className="text-sm text-muted-foreground">
               {proforma.client_nom ?? "Client non renseigné"}
             </p>
@@ -156,7 +157,7 @@ function ProformaDetailPage() {
                 if (!proforma.reference || !proforma.date_proforma) {
                   throw new Error("Proforma incomplète : référence ou date absente");
                 }
-                invalidatePdfByPrefix(`PF:${proforma.reference}:`);
+                invalidatePdfByPrefix(`PF:${formatDocumentReference(proforma.reference)}:`);
                 const [lignes, clientInfo, totals] = await Promise.all([
                   loadProformaDocLignes(proformaId),
                   loadClientInfoForProforma(proformaId),

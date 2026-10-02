@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 
 import { BaseDocument, COLORS, MARGINS, PAGE, CONTENT_W, CONTENT_BOTTOM } from "./base-document";
 import tamponUrl from "@/assets/tampon-comptabilite.png";
@@ -199,7 +200,7 @@ export class ReceiptDocument extends BaseDocument {
       curY -= 14;
 
       multi.forEach((inv) => {
-        this.page.drawText(inv.reference, {
+        this.page.drawText(formatDocumentReference(inv.reference), {
           x: MARGINS.x + 15,
           y: curY,
           size: 9,
@@ -224,7 +225,7 @@ export class ReceiptDocument extends BaseDocument {
       curY -= 4;
     } else {
       const items = [
-        { l: "Facture réglée", v: this.receiptData.invoiceNumber },
+        { l: "Facture réglée", v: formatDocumentReference(this.receiptData.invoiceNumber) },
         { l: "Montant facture", v: formatFCFA(this.receiptData.invoiceTotal) },
         { l: "Solde avant paiement", v: formatFCFA(this.receiptData.balanceBefore) },
       ];
@@ -321,8 +322,8 @@ export class ReceiptDocument extends BaseDocument {
     const multi = this.multiInvoices;
     const isSolded = this.receiptData.balanceAfter <= 0;
     const objet = multi
-      ? `du règlement des factures ${multi.map((i) => i.reference).join(", ")}`
-      : `du règlement de la facture ${this.receiptData.invoiceNumber}`;
+      ? `du règlement des factures ${multi.map((i) => formatDocumentReference(i.reference)).join(", ")}`
+      : `du règlement de la facture ${formatDocumentReference(this.receiptData.invoiceNumber)}`;
     const conclusion = multi
       ? "Ce règlement a été imputé sur chacune des factures listées ci-dessus."
       : isSolded

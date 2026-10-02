@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -101,12 +102,12 @@ export function FacturesImpayeesCard({
                     <TableCell>
                       <input
                         type="checkbox"
-                        aria-label={`Sélectionner la facture ${f.reference}`}
+                        aria-label={`Sélectionner la facture ${formatDocumentReference(f.reference)}`}
                         checked={checked}
                         onChange={(e) => onToggle(f, e.target.checked)}
                       />
                     </TableCell>
-                    <TableCell className="font-mono text-xs">{f.reference}</TableCell>
+                    <TableCell className="font-mono text-xs">{formatDocumentReference(f.reference)}</TableCell>
                     <TableCell>{frDate(f.date_facture)}</TableCell>
                     <TableCell className="text-right">
                       {formatFCFA(Number(f.montant_total))}

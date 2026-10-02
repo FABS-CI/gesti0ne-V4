@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -23,7 +24,7 @@ const FactureRow = React.memo(function FactureRow({ f }: { f: Facture }) {
       className="cursor-pointer hover:bg-muted/50"
       onClick={() => navigate({ to: "/factures/$factureId", params: { factureId: f.facture_id } })}
     >
-      <TableCell className="font-mono text-xs">{f.reference}</TableCell>
+      <TableCell className="font-mono text-xs">{formatDocumentReference(f.reference)}</TableCell>
       <TableCell>{frDate(f.date_facture)}</TableCell>
       <TableCell>
         <Badge variant="secondary">{f.statut}</Badge>

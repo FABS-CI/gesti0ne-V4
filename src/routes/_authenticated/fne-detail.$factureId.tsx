@@ -1,3 +1,4 @@
+import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -89,7 +90,7 @@ function FNEDetail() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `fne_${f.reference}.json`;
+    a.download = `fne_${formatDocumentReference(f.reference)}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -169,7 +170,7 @@ function FNEDetail() {
       <div className="grid md:grid-cols-2 gap-4">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{f.reference}</CardTitle>
+            <CardTitle className="text-base">{formatDocumentReference(f.reference)}</CardTitle>
           </CardHeader>
           <CardContent>
             <Badge style={{ backgroundColor: STATUT_FNE_COLOR[s] ?? "#999", color: "#fff" }}>
