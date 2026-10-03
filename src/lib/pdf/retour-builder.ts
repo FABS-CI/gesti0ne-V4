@@ -150,6 +150,11 @@ export async function buildRetourDocBaseFrom(retour: RetourWithLignes): Promise<
     };
   });
 
+  // Remise globale reprise de la facture d'origine (conservée comme remise globale, pas répartie sur les lignes).
+  const remiseGlobalePct = Number((retour as { remise_globale_pct?: number | null }).remise_globale_pct ?? 0);
+  const remiseGlobale = remiseGlobalePct > 0 ? Math.round((totalHT * remiseGlobalePct) / 100) : 0;
+  const totalNet = totalHT - remiseGlobale;
+
   // Priorité aux infos saisies sur le retour, fallback sur la fiche client
   const base: any = {
     reference: retour.numero || retour.reference,
@@ -168,8 +173,10 @@ export async function buildRetourDocBaseFrom(retour: RetourWithLignes): Promise<
     lignes,
     totalVente: totalBrut || 0,
     remiseLigneTotal: remiseLigneTotal || 0,
-    montantHT: totalHT || 0,
-    totalTTC: totalHT || 0,
+    remiseGlobale: remiseGlobale || 0,
+    remiseGlobalePct: remiseGlobalePct || 0,
+    montantHT: totalNet || 0,
+    totalTTC: totalNet || 0,
     statut: retour.statut,
     observations: retour.observations || retour.notes,
     demandeurNom: retour.created_by_nom,
