@@ -330,6 +330,13 @@
       "when": 1790948934867,
       "tag": "0046_client_code_nomenclature",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1791028169427,
+      "tag": "0047_correction_historique_stock_ci95_ci29",
+      "breakpoints": true
     }
   ]
 }
