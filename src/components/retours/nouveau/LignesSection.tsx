@@ -33,7 +33,8 @@ type Props = {
 export function LignesSection({ form, fa, onProduitChange }: Props) {
   const { fields, append, remove } = fa;
   const lignes = form.watch("lignes") ?? [];
-  const totaux = calcTotauxRetour(lignes);
+  const remiseGlobalePct = Number(form.watch("remise_globale_pct") ?? 0);
+  const totaux = calcTotauxRetour(lignes, remiseGlobalePct);
 
   const addLigne = () =>
     append({
@@ -203,6 +204,12 @@ export function LignesSection({ form, fa, onProduitChange }: Props) {
               <span className="text-muted-foreground">Remises (FCFA)</span>
               <span className="tabular-nums">- {formatFCFA(totaux.remise, false)}</span>
             </div>
+            {remiseGlobalePct > 0 && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Remise globale facture ({remiseGlobalePct} %)</span>
+                <span className="tabular-nums">- {formatFCFA(totaux.remiseGlobale, false)}</span>
+              </div>
+            )}
             <div className="flex justify-between border-t pt-1 font-semibold">
               <span>Total du retour (FCFA)</span>
               <span className="tabular-nums">{formatFCFA(totaux.net, false)}</span>

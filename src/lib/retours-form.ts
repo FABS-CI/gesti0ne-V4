@@ -28,6 +28,7 @@ export const retourFormSchema = z
     depot_id: z.string().optional(),
     niveau_urgence: z.enum(["normal", "urgent", "critique"]).optional(),
     motif: z.string().optional(),
+    remise_globale_pct: z.number().min(0).max(100).optional(),
     lignes: z.array(retourLigneSchema).min(1, "Ajoutez au moins une ligne produit"),
   })
   .superRefine((val, ctx) => {
@@ -80,8 +81,9 @@ export function calcLigneRetour(l: {
 /** Totaux d'un retour : HT brut, remises, total final. */
 export function calcTotauxRetour(
   lignes: Array<{ quantite?: number; prix_unitaire?: number | null; remise_pct?: number | null }>,
+  remiseGlobalePct = 0,
 ) {
-  const acc = { brut: 0, remise: 0, net: 0, quantite: 0 };
+  const acc = { brut: 0, remise: 0, net: 0, quantite: 0, remiseGlobale: 0 };
   for (const l of lignes) {
     const c = calcLigneRetour(l);
     acc.brut += c.brut;
@@ -89,5 +91,9 @@ export function calcTotauxRetour(
     acc.net += c.net;
     acc.quantite += Math.max(0, Number(l.quantite ?? 0));
   }
+  // Remise globale de la facture d'origine, appliquée après les remises de ligne (identique au moteur en base).
+  const pct = Math.min(100, Math.max(0, Number(remiseGlobalePct) || 0));
+  acc.remiseGlobale = Math.round((acc.net * pct) / 100);
+  acc.net -= acc.remiseGlobale;
   return acc;
 }

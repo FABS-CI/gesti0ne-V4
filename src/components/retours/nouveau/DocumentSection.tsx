@@ -24,6 +24,7 @@ import {
 } from "@/lib/retours-api";
 import type { RetourFormValues } from "@/lib/retours-form";
 import { friendlyError } from "@/lib/friendly-error";
+import { supabase } from "@/integrations/supabase/client";
 
 type Props = {
   form: UseFormReturn<RetourFormValues>;
@@ -48,7 +49,11 @@ export function DocumentSection({ form, fa }: Props) {
     setOpen(false);
     form.setValue("facture_id", f.facture_id, { shouldValidate: true });
     try {
-      const lignes = await getLignesRetournables(f.facture_id);
+      const [lignes, remiseGlobale] = await Promise.all([
+        getLignesRetournables(f.facture_id),
+        loadRemiseGlobaleFacture(f.facture_id),
+      ]);
+      form.setValue("remise_globale_pct", remiseGlobale);
       const usable = lignes.filter((l) => l.qte_disponible > 0);
       if (usable.length === 0) {
         toast.warning("Tous les produits de cette facture ont déjà été retournés");
@@ -74,6 +79,7 @@ export function DocumentSection({ form, fa }: Props) {
   const clear = () => {
     setSelected(null);
     form.setValue("facture_id", "", { shouldValidate: true });
+    form.setValue("remise_globale_pct", 0);
     fa.replace([]);
   };
 
@@ -153,4 +159,20 @@ export function DocumentSection({ form, fa }: Props) {
       </div>
     </section>
   );
+}
+
+/** Remise globale enregistrée sur la commande de la facture (affichage ; le serveur la reprend lui-même). */
+async function loadRemiseGlobaleFacture(factureId: string): Promise<number> {
+  const { data: fac } = await supabase
+    .from("factures")
+    .select("commande_id")
+    .eq("facture_id", factureId)
+    .maybeSingle();
+  if (!fac?.commande_id) return 0;
+  const { data: cmd } = await supabase
+    .from("commandes")
+    .select("remise_globale_pct")
+    .eq("commande_id", fac.commande_id)
+    .maybeSingle();
+  return Number(cmd?.remise_globale_pct ?? 0);
 }
