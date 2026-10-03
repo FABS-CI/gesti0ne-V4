@@ -27,3 +27,18 @@ describe("formatDocumentReference", () => {
   });
   it("recherche inverse", () => expect(back("|FC|26|51")).toBe("FAC-2026-00051"));
 });
+
+describe("shortenReference (libellé du relevé)", () => {
+  it.each([
+    ["FAC-2026-00056", "FAC-2026-56"],
+    ["FAC-2026-00009", "FAC-2026-9"],
+    ["FAC-2026-00014", "FAC-2026-14"],
+    ["FAC-2026-01000", "FAC-2026-1000"],
+    ["CMD-2026-00042", "CMD-2026-42"],
+  ])("%s → %s", (a, b) => expect(s(a)).toBe(b));
+  it("ne touche pas aux autres références", () => {
+    expect(s("RET-260917-001")).toBe("RET-260917-001");
+    expect(s("FABS-CI95")).toBe("FABS-CI95");
+    expect(s(null)).toBe("");
+  });
+});
