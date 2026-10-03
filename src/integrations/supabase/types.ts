@@ -5863,6 +5863,7 @@ export type Database = {
           receptionne_par: string | null
           receptionne_par_nom: string | null
           reference: string | null
+          remise_globale_pct: number
           representant_nom: string | null
           retour_id: string
           statut: string | null
@@ -5903,6 +5904,7 @@ export type Database = {
           receptionne_par?: string | null
           receptionne_par_nom?: string | null
           reference?: string | null
+          remise_globale_pct?: number
           representant_nom?: string | null
           retour_id?: string
           statut?: string | null
@@ -5943,6 +5945,7 @@ export type Database = {
           receptionne_par?: string | null
           receptionne_par_nom?: string | null
           reference?: string | null
+          remise_globale_pct?: number
           representant_nom?: string | null
           retour_id?: string
           statut?: string | null
@@ -8293,6 +8296,7 @@ export type Database = {
           receptionne_par: string | null
           receptionne_par_nom: string | null
           reference: string | null
+          remise_globale_pct: number
           representant_nom: string | null
           retour_id: string
           statut: string | null
