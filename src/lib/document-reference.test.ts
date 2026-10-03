@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { formatDocumentReference as f, toStoredReferencePattern as back } from "./document-reference";
+import {
+  formatDocumentReference as f,
+  toStoredReferencePattern as back,
+  shortenReference as s,
+} from "./document-reference";
 
 describe("formatDocumentReference", () => {
   it.each([

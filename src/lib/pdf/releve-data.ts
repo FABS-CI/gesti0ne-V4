@@ -203,13 +203,17 @@ export async function loadReleveClient(
       l.type === "Facture"
         ? `Facture client ${shortenReference(l.reference)}`
         : l.type === "Paiement"
-          ? `Paiement de la facture ${shortenReference(
-              factureRefParId.get(
-                String(paiementsFlat.find((p) => p.reference === l.reference)?.facture_id ?? ""),
-              ) ?? null,
-            )}`
+          ? `Paiement de la facture ${
+              shortenReference(
+                factureRefParId.get(
+                  String(paiementsFlat.find((p) => p.reference === l.reference)?.facture_id ?? ""),
+                ) ?? null,
+              ) || "—"
+            }`
           : l.type === "Avoir"
-            ? `Retour sur facture ${shortenReference(factureRefParRetour.get(l.reference) ?? null)}`
+            ? `Retour sur facture ${
+                shortenReference(factureRefParRetour.get(l.reference) ?? null) || "—"
+              }`
             : "",
   }));
 
