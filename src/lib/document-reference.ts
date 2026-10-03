@@ -29,6 +29,17 @@ export function formatDocumentReference(ref: string | null | undefined): string 
   return `|${type}|${yy}|${num}`;
 }
 
+/**
+ * Référence raccourcie conservant le préfixe d'origine : FAC-2026-00056 → FAC-2026-56.
+ * Affichage uniquement (libellé du relevé) — la référence stockée reste inchangée.
+ */
+export function shortenReference(ref: string | null | undefined): string {
+  const raw = (ref ?? "").trim();
+  const m = RE.exec(raw);
+  if (!m) return raw;
+  return `${m[1].toUpperCase()}-${m[2]}-${String(parseInt(m[3], 10))}`;
+}
+
 /** Convertit une saisie |FC|26|51 en motif de recherche sur la référence stockée. */
 export function toStoredReferencePattern(input: string): string | null {
   const m = /^\|?([A-Z]+)\|(\d{2})\|(\d+)$/i.exec(input.trim());
