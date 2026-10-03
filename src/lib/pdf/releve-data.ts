@@ -1,4 +1,5 @@
 // Construit un relevé bancaire client unique : factures, paiements et retours.
+import { shortenReference } from "@/lib/document-reference";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { supabase as browserSupabase } from "@/integrations/supabase/client";
 import type { EtatCompteLigne } from "@/lib/pdf/fabsTemplates";
