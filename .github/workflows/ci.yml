@@ -14,7 +14,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       # Bloque toute régression TS (TS2304 « Cannot find name », mauvais schéma search, etc.)
-      - run: bunx tsgo --noEmit
+      - run: bun run typecheck
 
   unit:
     name: Unit + a11y (vitest + jest-axe)

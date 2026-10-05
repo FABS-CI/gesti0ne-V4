@@ -11,7 +11,7 @@
 set -euo pipefail
 
 echo "▶ Typecheck (tsgo)"
-bunx tsgo --noEmit
+bun run typecheck
 
 echo "▶ Tests unitaires (vitest)"
 bunx vitest run

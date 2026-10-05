@@ -33,7 +33,7 @@ modules critiques (Colisage / Tournées / Suivi livraisons), tests.
 ## Phase 1 — Audit global
 
 ### 1.1 Code & build
-- `bunx tsgo --noEmit` : **exit 0** — projet strict, 0 erreur TS.
+- `bun run typecheck` : **exit 0** — projet strict, 0 erreur TS.
 - Dépendances : aucun package inutile détecté dans `package.json` par audit rapide (à confirmer avec `knip` en CI).
 - Placeholders / TODO bloquants : aucun dans `src/routes/index.tsx`.
 
@@ -173,7 +173,7 @@ correction des points B-1 et B-2 pour relancer toutes les vérifications et
 
 ### Commandes exécutées
 ```
-bunx tsgo --noEmit                                # exit 0
+bun run typecheck                                # exit 0
 bunx vitest run                                   # 143/152, 7 FAIL RouteGuard
 node scripts/check-rpc-wrapper.mjs                # 1 violation
 node scripts/check-rbac-coverage.mjs              # OK 93/93

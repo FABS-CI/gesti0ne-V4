@@ -30,7 +30,7 @@ Contraintes :
 Étapes obligatoires (dans cet ordre, résultats consolidés à la fin) :
 
 1. Build & typecheck
-   - bunx tsgo --noEmit                → attendu : exit 0
+   - bun run typecheck                → attendu : exit 0
 
 2. Tests unitaires
    - bunx vitest run                   → attendu : 0 échec
