@@ -351,6 +351,13 @@
       "when": 1791191941332,
       "tag": "0049_securite_audit_lot_a",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1791192232348,
+      "tag": "0050_securite_audit_lot_b",
+      "breakpoints": true
     }
   ]
 }
