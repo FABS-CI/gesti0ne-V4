@@ -15,12 +15,22 @@ Traitement par lots, dans l'ordre de priorité du cahier : sécurité → intég
 
 Déjà conformes : `valider_commande`, `convertir_commande_en_bl`, `creer_colisage_manuel` (assert_permission présent). `generer_facture` et `utiliser_points_fidelite` n'existent pas en base.
 
+## Lot B — Accès trop larges restants — migration `0050_securite_audit_lot_b.sql`
+
+| PROBLÈME | CORRECTION | TEST | STATUT |
+|---|---|---|---|
+| `backups_security_backup` sans RLS, lisible sans connexion | droits retirés à anon/authenticated, RLS activée | lecture anon → 42501 refusée | Corrigé |
+| Insertion directe ouverte dans `audit_stock`, `couts_logistiques_audit`, `historique_envois`, `livsuivi_historique` | policies supprimées (écritures uniquement par fonctions SECURITY DEFINER `cloturer_tournee`, `livsuivi_avancer`, `livsuivi_confirmer_reception`; aucune insertion dans le code) | policies vérifiées en base | Corrigé |
+| `fne_logs` insérable par tout connecté | réservé à `fne.soumettre` / `fne.reessayer` / `fne.rembourser` | policy vérifiée | Corrigé |
+| `client_code_counters` lisible par tous | policy supprimée (lu par le trigger serveur) | aucune lecture dans le code | Corrigé |
+| `document_certifications` lisible par tout connecté (jetons inclus) | policy supprimée; `listCertificationsFn` lit côté serveur, colonnes sans jeton | page publique `/verify/…` testée sur REL-CL-LIB-24 : OK | Corrigé |
+
 ### Points restants identifiés (lots suivants)
-- `fournisseurs.creer/modifier` attribués au seul rôle super_admin : à confirmer métier.
-- Policies d'insertion de journaux ouvertes à tout connecté : `audit_stock`, `couts_logistiques_audit`, `fne_logs`, `historique_envois`, `livsuivi_historique`, `perf_query_log`.
-- Lectures larges : `document_certifications`, `client_code_counters`, `documents`, `document_templates`, `categories_produits`, `approbation_seuils`.
-- `backups_security_backup` sans RLS; secret de sauvegarde dans le coffre (refusé par la plateforme).
+- `fournisseurs.creer/modifier` attribués directement au seul rôle super_admin : à confirmer métier.
+- `perf_query_log` : insertion par tout connecté conservée (télémétrie sans donnée métier).
+- Lectures par tout connecté à revoir : `documents`, `document_templates`, `categories_produits`, `approbation_seuils`.
+- Secret de sauvegarde dans le coffre : refusé par la plateforme.
 - §4 à §31 (RBAC, routes, workflows, stock, références, certification, FNE, migrations, code mort, tests, CI).
 
-## Vérifications du lot A
+## Vérifications lots A et B
 - Typecheck : OK. Vitest : 178 réussis, 12 sautés, 0 échec. Couverture RBAC : 93 OK.
