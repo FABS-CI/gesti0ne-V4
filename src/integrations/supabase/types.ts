@@ -9024,6 +9024,13 @@ export type Database = {
         Args: { _perm: string; _user_id?: string }
         Returns: boolean
       }
+      rbac3_compat_map: {
+        Args: never
+        Returns: {
+          v2_code: string
+          v3_code: string
+        }[]
+      }
       rbac3_depots_autorises: {
         Args: { _user_id?: string }
         Returns: {
