@@ -5585,6 +5585,21 @@ export type Database = {
         }
         Relationships: []
       }
+      rbac3_compat: {
+        Row: {
+          v2_code: string
+          v3_code: string
+        }
+        Insert: {
+          v2_code: string
+          v3_code: string
+        }
+        Update: {
+          v2_code?: string
+          v3_code?: string
+        }
+        Relationships: []
+      }
       rbac3_modules: {
         Row: {
           actif: boolean
@@ -8592,7 +8607,15 @@ export type Database = {
         Args: { _permission_code: string; _user_id: string }
         Returns: boolean
       }
+      has_permission_legacy: {
+        Args: { _permission_code: string; _user_id: string }
+        Returns: boolean
+      }
       has_permission_v2: {
+        Args: { _perm_code: string; _user_id: string }
+        Returns: boolean
+      }
+      has_permission_v2_legacy: {
         Args: { _perm_code: string; _user_id: string }
         Returns: boolean
       }
@@ -9036,6 +9059,10 @@ export type Database = {
         Returns: {
           depot_id: string
         }[]
+      }
+      rbac3_has_code: {
+        Args: { _code: string; _user_id: string }
+        Returns: boolean
       }
       rbac3_is_global: { Args: { _user_id?: string }; Returns: boolean }
       rbac3_log: {

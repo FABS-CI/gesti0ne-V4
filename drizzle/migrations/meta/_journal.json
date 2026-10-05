@@ -372,6 +372,13 @@
       "when": 1791193846696,
       "tag": "0052_rbac3_compat_map",
       "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "7",
+      "when": 1791194182229,
+      "tag": "0053_rbac3_bascule_controles",
+      "breakpoints": true
     }
   ]
 }
