@@ -1,7 +1,7 @@
-// @ts-nocheck — generated RPC type incorrectly forbids the nullable _principal accepted by sec_replace_user_scope.
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { replaceUserScope } from "@/lib/sec-replace-user-scope";
 
 /**
  * Moteur de sécurité — Lot 1 : administration des utilisateurs.
@@ -122,14 +122,13 @@ async function syncScope(
   principal?: string | null,
 ) {
   const db = await admin();
-  const { error } = await db.rpc("sec_replace_user_scope", {
+  await replaceUserScope(db, {
     _actor_id: actorId,
     _user_id: userId,
     _role_codes: codes,
     _depot_ids: depotIds,
     _principal: principal ?? null,
   });
-  if (error) throw new Error(error.message);
 }
 
 // ------------------------------------------------------------- CREATE
