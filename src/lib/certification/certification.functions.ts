@@ -37,8 +37,11 @@ export const revokeCertificationFn = createServerFn({ method: "POST" })
 export const listCertificationsFn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { reference: string }) => ({ reference: String(input?.reference ?? "") }))
-  .handler(async ({ data, context }) => {
-    const { data: rows, error } = await context.supabase
+  .handler(async ({ data }) => {
+    // Lecture serveur : la table n'est plus lisible directement (jetons protégés).
+    // Seules les colonnes sans jeton sont renvoyées à l'utilisateur connecté.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin
       .from("document_certifications" as never)
       .select(
         "certification_id, document_type, document_reference, statut, version, certified_at, revoked_at, revocation_reason, canonical_hash",
