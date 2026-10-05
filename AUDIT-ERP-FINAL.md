@@ -50,3 +50,9 @@ Constats RBAC (§4), non modifiés :
 
 ## Vérifications lots A, B et C
 - Typecheck : OK. Vitest : 182 réussis, 12 sautés, 0 échec. Couverture RBAC : 110 OK.
+
+## Lot D — Bascule des contrôles serveur sur RBAC3 (en préparation)
+
+- Migration `0052_rbac3_compat_map.sql` : fonction `rbac3_compat_map()` (correspondance codes historiques → RBAC3, miroir de `rbac3-bridge.ts` + 37 actions spécifiques : tournées, livraisons, colisage, transferts, retours magasin/compta, approbations, CA). Aucun changement de comportement.
+- Mesure d'impact (94 droits contrôlés par la base, 16 comptes) : sans complément, 10 comptes perdaient des actions (commerciaux : création de commande; compte admin sans rôle RBAC3).
+- Complément proposé des rôles RBAC3 (simulation : 0 perte) — en attente de validation avant application, puis bascule de `has_permission_v2`/`assert_permission` et retrait de `/roles-permissions`.
