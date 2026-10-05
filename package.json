@@ -16,7 +16,8 @@
     "test:rls:ci": "bash -c 'if [ -z \"$SUPABASE_DB_URL\" ]; then echo \"::error::SUPABASE_DB_URL manquant — test RLS bloquant\"; exit 1; fi; psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f scripts/test-rls-audit.sql | tee rls-report.txt && ! grep -Ei \"^FAIL|EXCEPTION|ERROR:\" rls-report.txt'",
     "test:e2e": "playwright test",
     "test:e2e:install": "playwright install --with-deps chromium",
-    "qa:pre-deploy": "bunx vitest run && bun run test:rls:ci"
+    "qa:pre-deploy": "bunx vitest run && bun run test:rls:ci",
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.1",
