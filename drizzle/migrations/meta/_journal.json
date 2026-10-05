@@ -344,6 +344,13 @@
       "when": 1791030527682,
       "tag": "0048_retour_remise_globale",
       "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "7",
+      "when": 1791191941332,
+      "tag": "0049_securite_audit_lot_a",
+      "breakpoints": true
     }
   ]
 }
