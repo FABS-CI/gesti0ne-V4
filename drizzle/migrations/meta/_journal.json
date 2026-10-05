@@ -358,6 +358,13 @@
       "when": 1791192232348,
       "tag": "0050_securite_audit_lot_b",
       "breakpoints": true
+    },
+    {
+      "idx": 51,
+      "version": "7",
+      "when": 1791192614559,
+      "tag": "0051_securite_audit_lot_c_rbac3_alignement",
+      "breakpoints": true
     }
   ]
 }

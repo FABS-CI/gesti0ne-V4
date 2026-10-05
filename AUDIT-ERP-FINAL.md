@@ -25,12 +25,28 @@ Déjà conformes : `valider_commande`, `convertir_commande_en_bl`, `creer_colisa
 | `client_code_counters` lisible par tous | policy supprimée (lu par le trigger serveur) | aucune lecture dans le code | Corrigé |
 | `document_certifications` lisible par tout connecté (jetons inclus) | policy supprimée; `listCertificationsFn` lit côté serveur, colonnes sans jeton | page publique `/verify/…` testée sur REL-CL-LIB-24 : OK | Corrigé |
 
+## Lot C — RBAC (§4) et droits des pages (§5) — migration `0051_securite_audit_lot_c_rbac3_alignement.sql`
+
+| PROBLÈME | CORRECTION | TEST | STATUT |
+|---|---|---|---|
+| Policies fournisseurs/fne_logs des lots A/B basées sur RBAC2 (`has_permission_v2`) alors que l'interface et les autres tables utilisent RBAC3 : comptable, assistante comptable, secrétariat, gestionnaire stock bloqués | policies réécrites avec `rbac3_can` (lecture `fournisseurs.lire`/`achats.lire`, écriture `fournisseurs.creer/modifier/supprimer`; `fne_logs` = `factures.modifier` comme `fne_factures`) | policies vérifiées en base | Corrigé |
+| Pages de création/modification héritant d'un simple droit de lecture : absences, congés, contrats, employés, évaluations, fournisseurs, comptabilité/nouvelle, paie/nouveau, FNE nouvelle, paramètres/zones-livraison, utilisateurs (nouveau, modifier, production) | `ROUTE_TO_PERMISSION` : droits `.creer` / `.modifier` | `route-permissions.test.ts` (19 cas) | Corrigé |
+| Clé `/stock_/$produitId/mouvements` (nom de fichier) au lieu de l'URL réelle `/stock/$produitId/mouvements` | clé corrigée, `/stock_` retiré | test dédié | Corrigé |
+| `/admin/roles-v3`, `/admin/sante-systeme`, `/admin/web-vitals` non déclarées | déclarées (`roles_permissions.voir`, `audit.voir`) | audit automatique des routes | Corrigé |
+| Aucune garantie qu'un droit de page soit attribuable via RBAC3 | test : chaque droit de page doit être accordable par une permission RBAC3 | test ajouté | Corrigé |
+
+Impact vérifié en base (RBAC3) : seul le rôle directeur_general (lecture fournisseurs) perd l'accès à « Nouveau fournisseur ».
+
+Constats RBAC (§4), non modifiés :
+- Écran actif : `/admin/roles-v3` (menu, RBAC3). `/roles-permissions` (lien depuis le tableau de sécurité) édite encore RBAC2.
+- Les RPC métier (`assert_permission`, `has_permission`, `has_permission_v2`) vérifient encore RBAC2, alors que l'interface et les RLS utilisent RBAC3. Exemples d'écarts : `retours.creer` (RBAC2 : commercial, directeur commercial, logistique; RBAC3 : + comptable, gestionnaire stock, responsable magasin, admin). Retirer RBAC2 et `/roles-permissions` exige d'abord de basculer ces contrôles RPC sur RBAC3.
+- Pages de fait réservées au Super Administrateur (aucun droit RBAC3 ne les ouvre) : `/stock/audit`, `/fne-settings`, `/workflows-definitions` — laissées en l'état (pas d'élargissement sans décision).
+
 ### Points restants identifiés (lots suivants)
-- `fournisseurs.creer/modifier` attribués directement au seul rôle super_admin : à confirmer métier.
 - `perf_query_log` : insertion par tout connecté conservée (télémétrie sans donnée métier).
 - Lectures par tout connecté à revoir : `documents`, `document_templates`, `categories_produits`, `approbation_seuils`.
 - Secret de sauvegarde dans le coffre : refusé par la plateforme.
 - §4 à §31 (RBAC, routes, workflows, stock, références, certification, FNE, migrations, code mort, tests, CI).
 
-## Vérifications lots A et B
-- Typecheck : OK. Vitest : 178 réussis, 12 sautés, 0 échec. Couverture RBAC : 93 OK.
+## Vérifications lots A, B et C
+- Typecheck : OK. Vitest : 182 réussis, 12 sautés, 0 échec. Couverture RBAC : 110 OK.

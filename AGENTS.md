@@ -18,3 +18,4 @@
 - Client codes (clients.reference) follow CL-[PREFIX]-[N], generated only by DB trigger via client_code_counters (never reused); old codes kept in clients.ancien_code. Why: unique, race-safe, auditable.
 - Typecheck runs via `bun run typecheck` (tsgo from @typescript/native-preview); CI and scripts must call it, never `bunx tsgo`, because the bare "tsgo" npm package does not exist.
 - Scheduled backup routes (`/api/public/backup/cron`, `hooks/global-backup`, `hooks/run-schedules`) authenticate only via `rejectUnlessCronAuthorized` (`src/lib/cron-auth.server.ts`, header `x-backup-secret`) and backups run only through `orchestrateBackup`, so there is one secret and one backup chain.
+- Route guards use `ROUTE_TO_PERMISSION` keyed by real URLs (never file names like `stock_`); create/edit child routes require `.creer`/`.modifier`, and every route permission must be grantable through `expandRbac3Permissions`, enforced by `route-permissions.test.ts`.
