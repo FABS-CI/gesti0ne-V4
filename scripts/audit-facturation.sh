@@ -5,7 +5,7 @@
 set -euo pipefail
 
 echo "▶ [1/3] Typecheck"
-bunx tsgo --noEmit
+bun run typecheck
 
 echo "▶ [2/3] Tests unitaires du workflow Facturation → Paiements → Comptes clients"
 bunx vitest run \

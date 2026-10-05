@@ -11,16 +11,24 @@
 set -euo pipefail
 
 echo "▶ Typecheck (tsgo)"
-bunx tsgo --noEmit
+bun run typecheck
 
 echo "▶ Tests unitaires (vitest)"
 bunx vitest run
 
-if [ -n "${PGHOST:-}" ]; then
+if [ "${SKIP_RLS:-0}" = "1" ]; then
+  echo "▶ Tests RLS: SKIP volontaire (SKIP_RLS=1)"
+elif [ -n "${PGHOST:-}" ]; then
   echo "▶ Tests RLS (psql)"
-  psql -f scripts/test-rls-audit.sql
+  psql -v ON_ERROR_STOP=1 -f scripts/test-rls-audit.sql 2>&1 | tee /tmp/rls-report.txt
+  if grep -Ei "^FAIL|EXCEPTION|ERROR:" /tmp/rls-report.txt; then
+    echo "❌ Tests RLS en échec"
+    exit 1
+  fi
 else
-  echo "▶ Tests RLS: SKIP (PGHOST non défini)"
+  echo "❌ Tests RLS impossibles : PGHOST non défini."
+  echo "   Définissez PGHOST (et PGUSER/PGPASSWORD/PGDATABASE) ou relancez avec SKIP_RLS=1 pour les sauter volontairement."
+  exit 1
 fi
 
 if [ "${E2E:-0}" = "1" ]; then

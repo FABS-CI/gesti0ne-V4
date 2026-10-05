@@ -14,7 +14,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       # Bloque toute régression TS (TS2304 « Cannot find name », mauvais schéma search, etc.)
-      - run: bunx tsgo --noEmit
+      - run: bun run typecheck
 
   unit:
     name: Unit + a11y (vitest + jest-axe)
@@ -94,7 +94,19 @@ jobs:
   deploy-guard:
     name: Deploy guard (bloque la publication en cas d'échec)
     needs: [typecheck, unit, rls, e2e]
-    if: github.ref == 'refs/heads/main'
+    # always() : le garde s'exécute même si un job a échoué ou a été annulé,
+    # pour échouer explicitement au lieu d'être simplement « ignoré ».
+    if: always() && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Tous les tests unitaires + RLS/RPC + e2e sont passés — publication autorisée."
+      - name: Vérifier le résultat de chaque job de test
+        run: |
+          echo "typecheck=${{ needs.typecheck.result }} unit=${{ needs.unit.result }} rls=${{ needs.rls.result }} e2e=${{ needs.e2e.result }}"
+          if [ "${{ needs.typecheck.result }}" != "success" ] || \
+             [ "${{ needs.unit.result }}" != "success" ] || \
+             [ "${{ needs.rls.result }}" != "success" ] || \
+             [ "${{ needs.e2e.result }}" != "success" ]; then
+            echo "::error::Au moins un job de test n'a pas réussi — publication bloquée."
+            exit 1
+          fi
+          echo "Tous les tests (typecheck, unitaires, RLS/RPC, e2e) sont passés — publication autorisée."

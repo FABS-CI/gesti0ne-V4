@@ -21,7 +21,7 @@ bash scripts/ci-all.sh
 
 | Commande | Ce que ça vérifie |
 | --- | --- |
-| `bunx tsgo --noEmit` | Typecheck TS strict |
+| `bun run typecheck` | Typecheck TS strict (tsgo, paquet `@typescript/native-preview`) |
 | `bunx vitest run` | Tests unitaires (récap paiement, meta PDF comparatif, RouteGuard, validations…) |
 | `psql -f scripts/test-rls-audit.sql` | Policies RLS + RPC `annuler_paiement` (admin only) |
 | `E2E=1 bash scripts/ci-all.sh` | Ajoute les tests Playwright (`e2e/paiements_flow.py`) |
@@ -41,4 +41,4 @@ Voir `e2e/README.md`. Nécessite une session Lovable managée (`LOVABLE_BROWSER_
 
 ## Audit final avant production
 
-Se référer au plan détaillé dans `.lovable/plan.md` et au prompt d'audit fonctionnel complet (modules, workflows, PDF, droits, performances, UX). L'audit ERP complet dépasse le périmètre d'un commit : le décomposer en lots (par module) pour un traitement itératif.
+Se référer aux plans archivés dans `.lovable/plan/` et au prompt d'audit fonctionnel complet (modules, workflows, PDF, droits, performances, UX). L'audit ERP complet dépasse le périmètre d'un commit : le décomposer en lots (par module) pour un traitement itératif.
