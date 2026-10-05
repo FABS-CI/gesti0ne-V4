@@ -104,7 +104,7 @@ export const ROUTE_TO_PERMISSION: Record<string, RoutePermissionRequirement> = {
 
   "/finances": "finances.voir",
   "/fne": "fne.voir",
-  "/fne-nouvelle": "fne.soumettre",
+  "/fne-nouvelle": "fne.creer",
   "/fne-detail": "fne.voir",
   "/fne-logs": "fne.voir",
   "/fne-settings": "fne.acceder_parametres",

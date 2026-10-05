@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { getRoutePermission } from "@/lib/route-permissions";
+import { ROUTE_TO_PERMISSION, getRoutePermission } from "@/lib/route-permissions";
+import { RBAC3_ACTION_TO_ACTIONS, RBAC3_MODULE_TO_SOUS_MODULES, expandRbac3Permissions } from "@/lib/rbac3-bridge";
 
 describe("route permission mapping", () => {
   it("uses action permissions for commercial create/edit routes instead of list permissions", () => {
@@ -43,7 +44,7 @@ describe("route permission mapping", () => {
       ["/fournisseurs/a1/modifier", "fournisseurs.modifier"],
       ["/comptabilite/nouvelle", "comptabilite.creer"],
       ["/paie/nouveau", "paie.creer"],
-      ["/fne-nouvelle", "fne.soumettre"],
+      ["/fne-nouvelle", "fne.creer"],
       ["/parametres/zones-livraison", "parametres.modifier"],
       ["/utilisateurs/nouveau", "utilisateurs.creer"],
       ["/utilisateurs/a1/modifier", "utilisateurs.modifier"],
@@ -59,5 +60,19 @@ describe("route permission mapping", () => {
   it("keeps list routes on view permissions", () => {
     expect(getRoutePermission("/conges")).toBe("conges.voir");
     expect(getRoutePermission("/fournisseurs/a1")).toBe("fournisseurs.voir");
+  });
+
+  it("every route permission can be granted through RBAC3 (no route reachable only by super admin by accident)", () => {
+    const all = expandRbac3Permissions(
+      Object.keys(RBAC3_MODULE_TO_SOUS_MODULES).flatMap((m) =>
+        Object.keys(RBAC3_ACTION_TO_ACTIONS).map((a) => `${m}.${a}`),
+      ),
+    );
+    const unreachable = Object.entries(ROUTE_TO_PERMISSION).filter(([, req]) => {
+      if (req === null) return false;
+      const list = Array.isArray(req) ? req : [req];
+      return !list.some((code) => all.has(code));
+    });
+    expect(unreachable).toEqual([]);
   });
 });
