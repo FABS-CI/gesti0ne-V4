@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { timingSafeEqual } from "crypto";
+import { rejectUnlessCronAuthorized } from "@/lib/cron-auth.server";
 import { getOrCreateBackupFolder } from "@/lib/gdrive-folder";
 
 const TABLES = [
@@ -85,30 +85,9 @@ export const Route = createFileRoute("/api/public/hooks/run-schedules")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        // Authorize: either shared secret (legacy) or Supabase anon apikey (pg_cron pattern)
-        const expected = process.env.SCHEDULE_WEBHOOK_SECRET;
-        if (!expected) {
-          return new Response(JSON.stringify({ error: "Endpoint not configured" }), {
-            status: 503,
-            headers: { "Content-Type": "application/json" },
-          });
-        }
-
-        const provided =
-          request.headers.get("x-schedule-secret") ||
-          request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ||
-          request.headers.get("apikey");
-
-        const encoder = new TextEncoder();
-        const a = encoder.encode(provided || "");
-        const b = encoder.encode(expected);
-
-        if (a.length !== b.length || !timingSafeEqual(a, b)) {
-          return new Response(JSON.stringify({ error: "Unauthorized" }), {
-            status: 401,
-            headers: { "Content-Type": "application/json" },
-          });
-        }
+        // Secret unique des tâches planifiées (en-tête x-backup-secret).
+        const denied = await rejectUnlessCronAuthorized(request);
+        if (denied) return denied;
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const now = new Date();
