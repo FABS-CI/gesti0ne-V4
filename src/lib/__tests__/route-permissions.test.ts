@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { ROUTE_TO_PERMISSION, getRoutePermission } from "@/lib/route-permissions";
+import { ROUTE_TO_PERMISSION, getRoutePermission, isSuperAdminOnlyRoute } from "@/lib/route-permissions";
 import { RBAC3_ACTION_TO_ACTIONS, RBAC3_MODULE_TO_SOUS_MODULES, expandRbac3Permissions } from "@/lib/rbac3-bridge";
 
 describe("route permission mapping", () => {
@@ -68,8 +68,11 @@ describe("route permission mapping", () => {
         Object.keys(RBAC3_ACTION_TO_ACTIONS).map((a) => `${m}.${a}`),
       ),
     );
-    const unreachable = Object.entries(ROUTE_TO_PERMISSION).filter(([, req]) => {
-      if (req === null) return false;
+    // Pages de fait réservées au Super Administrateur (aucun droit RBAC3 ne les ouvre).
+    // Liste figée : ne pas élargir l'accès sans décision métier.
+    const knownSuperAdminOnly = new Set(["/stock/audit", "/fne-settings", "/workflows-definitions"]);
+    const unreachable = Object.entries(ROUTE_TO_PERMISSION).filter(([path, req]) => {
+      if (req === null || isSuperAdminOnlyRoute(path) || knownSuperAdminOnly.has(path)) return false;
       const list = Array.isArray(req) ? req : [req];
       return !list.some((code) => all.has(code));
     });
