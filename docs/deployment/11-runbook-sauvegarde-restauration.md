@@ -22,10 +22,10 @@ Version : 1.0 — Responsable : Direction SI FABS-CI
 ### 1.1 Archive globale — déclenchement
 
 - **Manuel** : Paramètres → Sauvegarde → « Créer l'archive globale maintenant » (super_admin).
-- **Automatique** : appel planifié toutes les 3 heures
-  `POST https://project--<id>.lovable.app/api/public/hooks/global-backup`
-  avec l'en-tête `x-schedule-secret: <SCHEDULE_WEBHOOK_SECRET>`.
-  Un garde-fou empêche deux archives dans la même fenêtre de 3 h (`?force=1` pour forcer).
+- **Automatique** : tâche planifiée `erp-global-backup-3h` toutes les 3 heures
+  `POST https://project--<id>.lovable.app/api/public/backup/cron`
+  avec l'en-tête `x-backup-secret` (secret unique, lu côté serveur).
+  L'ancienne adresse `/api/public/hooks/global-backup` exécute la même chaîne avec le même secret.
 - **Rotation** : les 30 archives les plus récentes sont conservées, les plus anciennes sont supprimées du Drive.
 - **Journalisation** : chaque exécution crée une ligne dans l'historique des sauvegardes (durée, taille, nombre de tables/enregistrements, SHA-256, lien Drive, statut).
 
