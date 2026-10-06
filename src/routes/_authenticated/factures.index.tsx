@@ -3,7 +3,7 @@ import { ClientLink } from "@/components/common/ClientLink";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Download, FileDown, FileText, Search, RotateCcw, X, Package } from "lucide-react";
+import { Download, FileDown, FileText, Search, RotateCcw, X, Package, SlidersHorizontal } from "lucide-react";
 import { ProductCoverThumb } from "@/components/produits/ProductCoverThumb";
 import { usePdfDownload } from "@/hooks/use-pdf-download";
 import {
@@ -85,6 +85,7 @@ function FacturesPage() {
   const [advanced, setAdvanced] = useState<AdvancedFilters>({});
   const exerciceId = useExerciceConsulteId();
   const [page, setPage] = useState(1);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const PAGE_SIZE = 50;
 
   const advancedChips = describeFilters(advanced);
@@ -235,23 +236,15 @@ function FacturesPage() {
             Consultation — les factures sont générées automatiquement à la validation d'une commande
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button variant="outline" onClick={handleExport} disabled={!factures.length}>
-            <Download className="mr-2 h-4 w-4" /> Exporter
-          </Button>
-          <Button variant="outline" onClick={handleExportPDF} disabled={!factures.length}>
-            <FileDown className="mr-2 h-4 w-4" /> PDF
-          </Button>
-        </div>
       </div>
 
       <FacturesKpis {...totals} />
 
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="relative max-w-sm flex-1">
+      <div className="flex flex-wrap items-center gap-3 sticky top-0 z-20 rounded-xl border border-l-4 border-l-accent bg-card/95 p-3 shadow-sm backdrop-blur">
+        <div className="relative min-w-[200px] flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Rechercher..."
+            placeholder="Rechercher une facture, un client…"
             className="pl-9"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -270,24 +263,39 @@ function FacturesPage() {
             ))}
           </SelectContent>
         </Select>
+        <Button
+          variant={filtersOpen ? "secondary" : "outline"}
+          onClick={() => setFiltersOpen((o) => !o)}
+          aria-expanded={filtersOpen}
+        >
+          <SlidersHorizontal className="mr-2 h-4 w-4" /> Filtres
+        </Button>
+        <Button variant="outline" onClick={handleExport} disabled={!factures.length}>
+          <Download className="mr-2 h-4 w-4" /> Exporter
+        </Button>
+        <Button variant="outline" onClick={handleExportPDF} disabled={!factures.length}>
+          <FileDown className="mr-2 h-4 w-4" /> PDF
+        </Button>
       </div>
 
-      <div className="rounded-lg border bg-card p-3">
-        <AdvancedSearchBar
-          fields={[
-            "reference",
-            "commande",
-            "client",
-            "telephone",
-            "commercial",
-            "ville",
-            "dates",
-            "montants",
-          ]}
-          value={advanced}
-          onChange={setAdvanced}
-        />
-      </div>
+      {filtersOpen && (
+        <div className="rounded-lg border bg-card p-3">
+          <AdvancedSearchBar
+            fields={[
+              "reference",
+              "commande",
+              "client",
+              "telephone",
+              "commercial",
+              "ville",
+              "dates",
+              "montants",
+            ]}
+            value={advanced}
+            onChange={setAdvanced}
+          />
+        </div>
+      )}
 
       {hasActiveFilters && (
         <div className="flex flex-wrap items-center gap-2">
