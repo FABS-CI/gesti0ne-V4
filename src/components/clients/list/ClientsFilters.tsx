@@ -1,4 +1,6 @@
-import { Search } from "lucide-react";
+import type { ReactNode } from "react";
+import { Search, SlidersHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -22,6 +24,9 @@ interface Props {
   actifsExercice: boolean;
   setActifsExercice: (v: boolean) => void;
   onAnyChange: () => void;
+  filtersOpen: boolean;
+  onToggleFilters: () => void;
+  actions?: ReactNode;
 }
 
 export function ClientsFilters(p: Props) {
@@ -40,18 +45,18 @@ export function ClientsFilters(p: Props) {
     };
   return (
     <>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="relative">
+      <div className="flex flex-wrap items-center gap-3 sticky top-0 z-20 rounded-xl border border-l-4 border-l-accent bg-card/95 p-3 shadow-sm backdrop-blur">
+        <div className="relative min-w-[200px] flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={p.search}
             onChange={(e) => wrap(p.setSearch)(e.target.value)}
-            placeholder="Rechercher…"
+            placeholder="Rechercher un client…"
             className="pl-9"
           />
         </div>
         <Select value={p.typeFilter} onValueChange={wrap(p.setTypeFilter)}>
-          <SelectTrigger>
+          <SelectTrigger className="w-44">
             <SelectValue placeholder="Type" />
           </SelectTrigger>
           <SelectContent>
@@ -64,7 +69,7 @@ export function ClientsFilters(p: Props) {
           </SelectContent>
         </Select>
         <Select value={p.actifFilter} onValueChange={wrap(p.setActifFilter)}>
-          <SelectTrigger>
+          <SelectTrigger className="w-36">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -73,6 +78,14 @@ export function ClientsFilters(p: Props) {
             <SelectItem value="all">Tous</SelectItem>
           </SelectContent>
         </Select>
+        <Button
+          variant={p.filtersOpen ? "secondary" : "outline"}
+          onClick={p.onToggleFilters}
+          aria-expanded={p.filtersOpen}
+        >
+          <SlidersHorizontal className="mr-2 h-4 w-4" /> Filtres
+        </Button>
+        {p.actions}
       </div>
       {canManageActifExercice && (
         <div className="flex items-center gap-2">

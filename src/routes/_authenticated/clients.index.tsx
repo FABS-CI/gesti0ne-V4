@@ -52,6 +52,7 @@ function ClientsPage() {
   const [actifsExercice, setActifsExercice] = useState(false);
   const [page, setPage] = useState(1);
   const [crmFilters, setCrmFilters] = useState<CrmFilters>({});
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const q = useDebouncedValue(search, 300);
 
