@@ -82,7 +82,7 @@ export class ReceiptDocument extends BaseDocument {
       y: y - 15, 
       size: 7, 
       font: this.fonts.bold, 
-      color: BODY.ardoise 
+      color: BODY.donnee 
     });
 
     this.page.drawText(this.receiptData.customerName.toUpperCase(), { 
@@ -90,7 +90,7 @@ export class ReceiptDocument extends BaseDocument {
       y: y - 35, 
       size: 14, 
       font: this.fonts.bold, 
-      color: BODY.nuit 
+      color: BODY.donnee 
     });
     
     const kv = [
@@ -100,8 +100,8 @@ export class ReceiptDocument extends BaseDocument {
     ];
 
     kv.forEach((item, i) => {
-      this.page.drawText(`${item.l} :`, { x: MARGINS.x + 10, y: y - 55 - i * 12, size: 9, font: this.fonts.bold, color: BODY.ardoise });
-      this.page.drawText(item.v, { x: MARGINS.x + 85, y: y - 55 - i * 12, size: 9, font: this.fonts.bold, color: BODY.nuit });
+      this.page.drawText(`${item.l} :`, { x: MARGINS.x + 10, y: y - 55 - i * 12, size: 9, font: this.fonts.bold, color: BODY.donnee });
+      this.page.drawText(item.v, { x: MARGINS.x + 85, y: y - 55 - i * 12, size: 9, font: this.fonts.bold, color: BODY.donnee });
     });
 
     // QR Code en haut à droite, à côté du bloc client
@@ -155,7 +155,7 @@ export class ReceiptDocument extends BaseDocument {
       y: y, 
       size: 10, 
       font: this.fonts.bold, 
-      color: BODY.nuit 
+      color: BODY.donnee 
     });
     y -= 20;
 
@@ -198,14 +198,14 @@ export class ReceiptDocument extends BaseDocument {
           x: MARGINS.x + 15,
           y: curY,
           size: 9,
-          font: this.fonts.regular,
+          font: this.fonts.bold,
         });
         const tot = formatFCFA(inv.invoiceTotal);
         this.page.drawText(tot, {
-          x: colTotal - this.fonts.regular.widthOfTextAtSize(tot, 9),
+          x: colTotal - this.fonts.bold.widthOfTextAtSize(tot, 9),
           y: curY,
           size: 9,
-          font: this.fonts.regular,
+          font: this.fonts.bold,
         });
         const imp = formatFCFA(inv.amountPaid);
         this.page.drawText(imp, {
@@ -225,9 +225,9 @@ export class ReceiptDocument extends BaseDocument {
       ];
 
       items.forEach(item => {
-        this.page.drawText(item.l, { x: MARGINS.x + 15, y: curY, size: 10, font: this.fonts.regular, color: BODY.ardoise });
+        this.page.drawText(item.l, { x: MARGINS.x + 15, y: curY, size: 10, font: this.fonts.bold, color: BODY.donnee });
         const valW = this.fonts.bold.widthOfTextAtSize(item.v, 10);
-        this.page.drawText(item.v, { x: PAGE.w - MARGINS.x - valW - 15, y: curY, size: 10, font: this.fonts.bold, color: BODY.nuit });
+        this.page.drawText(item.v, { x: PAGE.w - MARGINS.x - valW - 15, y: curY, size: 10, font: this.fonts.bold, color: BODY.donnee });
         curY -= 20;
       });
     }
@@ -263,7 +263,7 @@ export class ReceiptDocument extends BaseDocument {
 
     // Solde après paiement (mono-facture uniquement : n'a pas de sens en multi-factures)
     if (!multi) {
-      this.page.drawText("Solde après paiement", { x: MARGINS.x + 15, y: curY, size: 10, font: this.fonts.regular });
+      this.page.drawText("Solde après paiement", { x: MARGINS.x + 15, y: curY, size: 10, font: this.fonts.bold });
       const balanceAfterStr = formatFCFA(this.receiptData.balanceAfter);
       const balanceAfterW = this.fonts.bold.widthOfTextAtSize(balanceAfterStr, 10);
       this.page.drawText(balanceAfterStr, { x: PAGE.w - MARGINS.x - balanceAfterW - 15, y: curY, size: 10, font: this.fonts.bold });
@@ -287,7 +287,7 @@ export class ReceiptDocument extends BaseDocument {
         ? "PAIEMENT COMPLET"
         : "PAIEMENT PARTIEL";
     
-    this.page.drawText("STATUT", { x: MARGINS.x, y: y, size: 9, font: this.fonts.bold, color: BODY.nuit });
+    this.page.drawText("STATUT", { x: MARGINS.x, y: y, size: 9, font: this.fonts.bold, color: BODY.donnee });
     y -= 15;
     
     const pillW = this.fonts.bold.widthOfTextAtSize(statusText, 11) + 20;
@@ -301,7 +301,7 @@ export class ReceiptDocument extends BaseDocument {
     });
     y -= 25;
 
-    this.page.drawText("En lettres :", { x: MARGINS.x, y: y, size: 9, font: this.fonts.bold, color: BODY.nuit });
+    this.page.drawText("En lettres :", { x: MARGINS.x, y: y, size: 9, font: this.fonts.bold, color: BODY.donnee });
     y -= 15;
     
     const letters = numberToLetters(this.receiptData.amountPaid);
@@ -332,7 +332,7 @@ export class ReceiptDocument extends BaseDocument {
 
     const wrapped = this.wrapText(recognitionText, CONTENT_W, 9);
     wrapped.forEach(line => {
-      this.page.drawText(line, { x: MARGINS.x, y: y, size: 9, font: this.fonts.regular });
+      this.page.drawText(line, { x: MARGINS.x, y: y, size: 9, font: this.fonts.bold });
       y -= 11;
     });
 

@@ -73,9 +73,9 @@ export class StatementDocument extends BaseDocument {
     const sepX = MARGINS.x + boxW + 7.5;
     this.page.drawLine({ start: { x: sepX, y: y - 8 }, end: { x: sepX, y: y - boxH + 8 }, color: BODY.bord, thickness: 0.6 });
 
-    this.page.drawText("RELEVÉ POUR", { x: MARGINS.x + 10, y: y - 15, size: 7, font: this.fonts.bold, color: BODY.ardoise });
+    this.page.drawText("RELEVÉ POUR", { x: MARGINS.x + 10, y: y - 15, size: 7, font: this.fonts.bold, color: BODY.donnee });
     nomLignes.forEach((ligne, i) => {
-      this.page.drawText(ligne, { x: MARGINS.x + 10, y: y - 32 - i * (nomSize + 3), size: nomSize, font: this.fonts.bold, color: BODY.nuit });
+      this.page.drawText(ligne, { x: MARGINS.x + 10, y: y - 32 - i * (nomSize + 3), size: nomSize, font: this.fonts.bold, color: BODY.donnee });
     });
 
     const kv = [
@@ -87,20 +87,20 @@ export class StatementDocument extends BaseDocument {
     const kvTop = y - 32 - nomH - 8;
     kv.forEach((item, i) => {
       const rowY = kvTop - i * 18;
-      this.page.drawText(`${item.l} :`, { x: MARGINS.x + 10, y: rowY, size: 10, font: this.fonts.bold, color: BODY.ardoise });
+      this.page.drawText(`${item.l} :`, { x: MARGINS.x + 10, y: rowY, size: 10, font: this.fonts.bold, color: BODY.donnee });
       const valLines = this.wrapText(String(item.v), boxW - 115, 11, this.fonts.bold).slice(0, 1);
-      this.page.drawText(valLines[0] ?? "—", { x: MARGINS.x + 105, y: rowY, size: 11, font: this.fonts.bold, color: BODY.nuit });
+      this.page.drawText(valLines[0] ?? "—", { x: MARGINS.x + 105, y: rowY, size: 11, font: this.fonts.bold, color: BODY.donnee });
     });
 
 
     // Bloc Période (sans cadre) + QR code à droite
     const perX = MARGINS.x + boxW + 15;
     await this.drawStatementQr(PAGE.w - MARGINS.x - boxH + 8, y - boxH + 8, boxH - 16, data);
-    this.page.drawText("PÉRIODE", { x: perX + 10, y: y - 15, size: 7, font: this.fonts.bold, color: BODY.ardoise });
+    this.page.drawText("PÉRIODE", { x: perX + 10, y: y - 15, size: 7, font: this.fonts.bold, color: BODY.donnee });
     const periode = data.periodeDebut && data.periodeFin 
       ? `Du ${data.periodeDebut} au ${data.periodeFin}`
       : "Relevé complet";
-    this.page.drawText(periode, { x: perX + 10, y: y - 32, size: 9, font: this.fonts.bold, color: BODY.nuit });
+    this.page.drawText(periode, { x: perX + 10, y: y - 32, size: 9, font: this.fonts.bold, color: BODY.donnee });
     
     return y - boxH - 20;
   }
@@ -172,10 +172,10 @@ export class StatementDocument extends BaseDocument {
         const valW = this.fonts.bold.widthOfTextAtSize(valText, 10);
         this.page.drawText(valText, { x: x + boxW - valW - 12, y: curY - 13.5, size: 10, font: this.fonts.bold, color: BODY.blanc });
       } else {
-        this.page.drawText(r.label, { x: x + 8, y: curY - 13, size: 8, font: this.fonts.regular, color: BODY.ardoise });
+        this.page.drawText(r.label, { x: x + 8, y: curY - 13, size: 8, font: this.fonts.bold, color: BODY.donnee });
         const valText = formatFCFA(r.value);
         const valW = this.fonts.bold.widthOfTextAtSize(valText, 9);
-        this.page.drawText(valText, { x: x + boxW - valW - 8, y: curY - 13, size: 9, font: this.fonts.bold, color: BODY.nuit });
+        this.page.drawText(valText, { x: x + boxW - valW - 8, y: curY - 13, size: 9, font: this.fonts.bold, color: BODY.donnee });
         const next = rows[i + 1];
         this.page.drawLine({ start: { x: x + 8, y: curY - ROW_H }, end: { x: x + boxW - 8, y: curY - ROW_H }, color: BODY.filetCreme, thickness: next?.total ? 0.6 : 0.4 });
       }
