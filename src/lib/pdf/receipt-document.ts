@@ -198,14 +198,14 @@ export class ReceiptDocument extends BaseDocument {
           x: MARGINS.x + 15,
           y: curY,
           size: 9,
-          font: this.fonts.regular,
+          font: this.fonts.bold,
         });
         const tot = formatFCFA(inv.invoiceTotal);
         this.page.drawText(tot, {
-          x: colTotal - this.fonts.regular.widthOfTextAtSize(tot, 9),
+          x: colTotal - this.fonts.bold.widthOfTextAtSize(tot, 9),
           y: curY,
           size: 9,
-          font: this.fonts.regular,
+          font: this.fonts.bold,
         });
         const imp = formatFCFA(inv.amountPaid);
         this.page.drawText(imp, {
@@ -263,7 +263,7 @@ export class ReceiptDocument extends BaseDocument {
 
     // Solde après paiement (mono-facture uniquement : n'a pas de sens en multi-factures)
     if (!multi) {
-      this.page.drawText("Solde après paiement", { x: MARGINS.x + 15, y: curY, size: 10, font: this.fonts.regular });
+      this.page.drawText("Solde après paiement", { x: MARGINS.x + 15, y: curY, size: 10, font: this.fonts.bold });
       const balanceAfterStr = formatFCFA(this.receiptData.balanceAfter);
       const balanceAfterW = this.fonts.bold.widthOfTextAtSize(balanceAfterStr, 10);
       this.page.drawText(balanceAfterStr, { x: PAGE.w - MARGINS.x - balanceAfterW - 15, y: curY, size: 10, font: this.fonts.bold });
@@ -332,7 +332,7 @@ export class ReceiptDocument extends BaseDocument {
 
     const wrapped = this.wrapText(recognitionText, CONTENT_W, 9);
     wrapped.forEach(line => {
-      this.page.drawText(line, { x: MARGINS.x, y: y, size: 9, font: this.fonts.regular });
+      this.page.drawText(line, { x: MARGINS.x, y: y, size: 9, font: this.fonts.bold });
       y -= 11;
     });
 

@@ -673,8 +673,7 @@ export class BaseDocument {
     const fontSize = 10;
     const colHPadding = 5;
     // Hiérarchie visuelle : produit, quantité et montant en gras ; N°, P.U. et remise en regular.
-    const REGULAR_KEYS = ["num", "pu", "remisePct"];
-    const cellFont = (key: string) => (void key, this.fonts.bold);
+    const cellFont = (_key: string) => this.fonts.bold;
 
     lignes.forEach((l, i) => {
       let maxRowH = 22;
