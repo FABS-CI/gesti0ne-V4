@@ -52,6 +52,8 @@ export const BODY = {
   creme: rgb(1, 0.973, 0.941), // #FFF8F0
   filetCreme: rgb(0.953, 0.851, 0.749), // #F3D9BF
   blanc: rgb(1, 1, 1),
+  /** Données métier (client, lignes, montants) : noir pur, toujours en gras. */
+  donnee: rgb(0, 0, 0),
 };
 
 type Radii = number | { tl?: number; tr?: number; br?: number; bl?: number };
@@ -489,7 +491,7 @@ export class BaseDocument {
         y: nomY - i * (nomSize + 2),
         size: nomSize,
         font: this.fonts.bold,
-        color: BODY.nuit,
+        color: BODY.donnee,
       });
     });
 
@@ -512,14 +514,14 @@ export class BaseDocument {
     kv.forEach((item) => {
       const valeurs = this.wrapText(item.v || "—", valueMaxW, valueSize, this.fonts.bold).slice(0, 2);
       if (lineY < minY) return;
-      this.page.drawText(`${item.l} :`, { x: MARGINS.x + 10, y: lineY, size: labelSize, font: this.fonts.bold, color: BODY.ardoise });
+      this.page.drawText(`${item.l} :`, { x: MARGINS.x + 10, y: lineY, size: labelSize, font: this.fonts.bold, color: BODY.donnee });
       valeurs.forEach((v, j) => {
         this.page.drawText(v, {
           x: valueX,
           y: lineY - j * (valueSize + 2),
           size: valueSize,
           font: this.fonts.bold,
-          color: BODY.nuit,
+          color: BODY.donnee,
         });
       });
       lineY -= (grandTexte ? 15 : 11) + (valeurs.length - 1) * (valueSize + 2);
@@ -731,7 +733,7 @@ export class BaseDocument {
             y: curY - 14 - lineIdx * lineH,
             size: fontSize,
             font: f,
-            color: col.key === "num" ? BODY.ardoise : BODY.nuit,
+            color: BODY.donnee,
           });
         });
         curX += col.width;
@@ -835,12 +837,12 @@ export class BaseDocument {
       const ty = curY - 12;
       let labelX = x + 8;
       const lblFont = this.fonts.bold;
-      this.page.drawText(row.label, { x: labelX, y: ty, size: 8, font: lblFont, color: style?.labelColor ?? BODY.ardoise });
+      this.page.drawText(row.label, { x: labelX, y: ty, size: 8, font: lblFont, color: style?.labelColor ?? BODY.donnee });
       if (row.label === "REMISE GLOBALE" && this.totals.sousTotal > 0 && this.totals.remiseGlobale) {
         const rawPct = this.totals.remiseGlobalePct ?? (this.totals.remiseGlobale / this.totals.sousTotal) * 100;
         const pct = parseFloat(rawPct.toFixed(10));
         labelX += lblFont.widthOfTextAtSize(row.label, 8) + 4;
-        this.page.drawText(`(${pct} %)`, { x: labelX, y: ty, size: 8, font: this.fonts.bold, color: BODY.ardoise });
+        this.page.drawText(`(${pct} %)`, { x: labelX, y: ty, size: 8, font: this.fonts.bold, color: BODY.donnee });
       }
       const val = `${formatFCFA(row.value, false)} FCFA`;
       const labelEnd = labelX + lblFont.widthOfTextAtSize(row.label === "REMISE GLOBALE" ? "" : row.label, 8)
@@ -853,7 +855,7 @@ export class BaseDocument {
         y: ty,
         size: vSize,
         font: this.fonts.bold,
-        color: style?.valueColor ?? BODY.nuit,
+        color: style?.valueColor ?? BODY.donnee,
       });
       curY -= ROW_H;
     };
@@ -872,9 +874,9 @@ export class BaseDocument {
     const fits = () => this.fonts.bold.widthOfTextAtSize(totalLabel, lblSize) + this.fonts.bold.widthOfTextAtSize(totalVal, valSize) + GAP <= avail;
     while (!fits() && valSize > 9) valSize -= 0.5;
     while (!fits() && lblSize > 7) lblSize -= 0.5;
-    this.page.drawText(totalLabel, { x: x + 12, y: bandY + (BAND_H - lblSize * 0.7) / 2, size: lblSize, font: this.fonts.bold, color: BODY.nuit });
+    this.page.drawText(totalLabel, { x: x + 12, y: bandY + (BAND_H - lblSize * 0.7) / 2, size: lblSize, font: this.fonts.bold, color: BODY.donnee });
     const totalW = this.fonts.bold.widthOfTextAtSize(totalVal, valSize);
-    this.page.drawText(totalVal, { x: x + boxW - totalW - 12, y: bandY + (BAND_H - valSize * 0.7) / 2, size: valSize, font: this.fonts.bold, color: BODY.orange });
+    this.page.drawText(totalVal, { x: x + boxW - totalW - 12, y: bandY + (BAND_H - valSize * 0.7) / 2, size: valSize, font: this.fonts.bold, color: BODY.donnee });
     curY -= TOTAL_H;
 
     payRows.forEach((r, i) => {
@@ -884,8 +886,8 @@ export class BaseDocument {
         roundedRect(this.page, x, curY - ROW_H, boxW, ROW_H, last ? { bl: 6, br: 6 } : 0, { color: BODY.grisClair });
       }
       drawRow(r, 1, isReste
-        ? { labelColor: BODY.nuit, valueColor: BODY.nuit, bold: true }
-        : { labelColor: BODY.ardoise, valueColor: BODY.nuit });
+        ? { labelColor: BODY.donnee, valueColor: BODY.donnee, bold: true }
+        : { labelColor: BODY.donnee, valueColor: BODY.donnee });
     });
 
     roundedRect(this.page, x, curY, boxW, boxTop - curY, 6, { borderColor: BODY.bord, borderWidth: 0.6 });
