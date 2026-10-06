@@ -209,16 +209,6 @@ function ClientsPage() {
             <h1 className="truncate text-2xl font-bold">Clients</h1>
             <p className="text-sm text-muted-foreground">{total} client(s)</p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" onClick={handleExport}>
-              <Download className="mr-2 h-4 w-4" /> Export PDF
-            </Button>
-            {!readOnly && (
-              <Button onClick={() => navigate({ to: "/clients/nouveau" })}>
-                <Plus className="mr-2 h-4 w-4" /> Nouveau client
-              </Button>
-            )}
-          </div>
         </div>
 
         <ClientsFilters
@@ -231,6 +221,20 @@ function ClientsPage() {
           actifsExercice={actifsExercice}
           setActifsExercice={setActifsExercice}
           onAnyChange={() => setPage(1)}
+          filtersOpen={filtersOpen}
+          onToggleFilters={() => setFiltersOpen((o) => !o)}
+          actions={
+            <>
+              <Button variant="outline" onClick={handleExport}>
+                <Download className="mr-2 h-4 w-4" /> Export PDF
+              </Button>
+              {!readOnly && (
+                <Button onClick={() => navigate({ to: "/clients/nouveau" })}>
+                  <Plus className="mr-2 h-4 w-4" /> Nouveau client
+                </Button>
+              )}
+            </>
+          }
         />
 
         {actifsExercice && (
@@ -252,13 +256,15 @@ function ClientsPage() {
           </div>
         )}
 
-        <CrmFiltersPanel
-          value={crmFilters}
-          onChange={(v) => {
-            setCrmFilters(v);
-            setPage(1);
-          }}
-        />
+        {filtersOpen && (
+          <CrmFiltersPanel
+            value={crmFilters}
+            onChange={(v) => {
+              setCrmFilters(v);
+              setPage(1);
+            }}
+          />
+        )}
 
         <ClientsTable
           items={items}
