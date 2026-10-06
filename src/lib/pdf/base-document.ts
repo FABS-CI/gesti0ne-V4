@@ -672,7 +672,7 @@ export class BaseDocument {
     let curY = y - 20;
     const fontSize = 10;
     const colHPadding = 5;
-    // Hiérarchie visuelle : produit, quantité et montant en gras ; N°, P.U. et remise en regular.
+    // Toutes les données des lignes en noir gras (règle commune documents de vente).
     const cellFont = (_key: string) => this.fonts.bold;
 
     lignes.forEach((l, i) => {
