@@ -63,6 +63,7 @@ function CommandesPage() {
   const page = sp.page;
   const q = useDebouncedValue(search, 300);
   const [advanced, setAdvanced] = useState<AdvancedFilters>({});
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const exerciceId = useExerciceConsulteId();
   const { isSuperAdmin } = useUserRoles();
   const { has: hasPermission } = usePermissions();
@@ -155,9 +156,6 @@ function CommandesPage() {
           </div>
         </div>
 
-        <CommandesCycleSteps />
-        <CommandesKpis kpis={kpis} />
-
         <CommandesToolbar
           search={search}
           onSearchChange={setSearch}
@@ -167,7 +165,12 @@ function CommandesPage() {
           onExportCsv={() => exportCommandesCsv(items)}
           onExportPdf={() => exportCommandesPdf(items, q, statut, advanced)}
           hasItems={items.length > 0}
+          filtersOpen={filtersOpen || hasAdvanced}
+          onToggleFilters={() => setFiltersOpen((o) => !o)}
         />
+
+        <CommandesCycleSteps />
+        <CommandesKpis kpis={kpis} />
 
         <FilterBadges
           badges={
@@ -202,6 +205,7 @@ function CommandesPage() {
           onResetAll={resetAllFilters}
         />
 
+        {(filtersOpen || hasAdvanced) && (
         <div className="rounded-xl border bg-card p-3 shadow-sm">
           <AdvancedSearchBar
             fields={[
@@ -217,6 +221,7 @@ function CommandesPage() {
             onChange={setAdvanced}
           />
         </div>
+        )}
 
         <CommandesTable
           items={items}

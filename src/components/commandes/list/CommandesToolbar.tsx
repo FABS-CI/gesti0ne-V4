@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Plus, Search, Download, FileDown } from "lucide-react";
+import { Plus, Search, Download, FileDown, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,6 +20,8 @@ export function CommandesToolbar({
   onExportCsv,
   onExportPdf,
   hasItems,
+  filtersOpen,
+  onToggleFilters,
 }: {
   search: string;
   onSearchChange: (v: string) => void;
@@ -29,9 +31,11 @@ export function CommandesToolbar({
   onExportCsv: () => void;
   onExportPdf: () => void;
   hasItems: boolean;
+  filtersOpen: boolean;
+  onToggleFilters: () => void;
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-xl border bg-card p-3 shadow-sm">
+    <div className="flex flex-wrap items-center gap-3 sticky top-0 z-20 rounded-xl border border-l-4 border-l-accent bg-card/95 p-3 shadow-sm backdrop-blur">
       <div className="relative min-w-[200px] flex-1">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
@@ -61,6 +65,13 @@ export function CommandesToolbar({
           </Link>
         </Button>
       )}
+      <Button
+        variant={filtersOpen ? "secondary" : "outline"}
+        onClick={onToggleFilters}
+        aria-expanded={filtersOpen}
+      >
+        <SlidersHorizontal className="mr-2 h-4 w-4" /> Filtres
+      </Button>
       <Button variant="outline" onClick={onExportCsv} disabled={!hasItems}>
         <Download className="mr-2 h-4 w-4" /> Exporter
       </Button>
