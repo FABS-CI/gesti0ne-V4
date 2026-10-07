@@ -119,7 +119,7 @@ function DashboardGlobal() {
   const loading = ventes.isLoading || stock.isLoading || rh.isLoading || compta.isLoading;
 
   return (
-    <div className="space-y-6">
+    <div className="theme-dashboard space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold">
