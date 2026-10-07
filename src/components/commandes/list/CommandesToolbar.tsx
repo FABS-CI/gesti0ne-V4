@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Plus, Search, Download, FileDown, SlidersHorizontal } from "lucide-react";
+import { VenteRapideDialog } from "@/components/commandes/VenteRapideDialog";
+import { Plus, Search, Download, FileDown, SlidersHorizontal, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -34,6 +36,7 @@ export function CommandesToolbar({
   filtersOpen: boolean;
   onToggleFilters: () => void;
 }) {
+  const [venteRapide, setVenteRapide] = useState(false);
   return (
     <div className="flex flex-wrap items-center gap-3 sticky top-0 z-20 rounded-xl border border-l-4 border-l-accent bg-card/95 p-3 shadow-sm backdrop-blur">
       <div className="relative min-w-[200px] flex-1">
@@ -59,6 +62,11 @@ export function CommandesToolbar({
         </SelectContent>
       </Select>
       {!readOnly && (
+        <Button variant="secondary" onClick={() => setVenteRapide(true)} className="border border-accent font-semibold">
+          <Zap className="mr-2 h-4 w-4 text-accent" /> VENTE RAPIDE
+        </Button>
+      )}
+      {!readOnly && (
         <Button asChild className="bg-primary hover:bg-primary/90">
           <Link to="/commandes/nouvelle">
             <Plus className="mr-2 h-4 w-4" /> Nouvelle commande
@@ -78,6 +86,7 @@ export function CommandesToolbar({
       <Button variant="outline" onClick={onExportPdf} disabled={!hasItems}>
         <FileDown className="mr-2 h-4 w-4" /> PDF
       </Button>
+      {venteRapide && <VenteRapideDialog open={venteRapide} onOpenChange={setVenteRapide} />}
     </div>
   );
 }
