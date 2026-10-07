@@ -16,6 +16,7 @@ import { WelcomeGreeting } from "@/components/dashboard/WelcomeGreeting";
 import { DashboardKpis } from "@/components/dashboard/DashboardKpis";
 import { DashboardChartsSection } from "@/components/dashboard/DashboardChartsSection";
 import { MesRaccourcisCard } from "@/components/dashboard/MesRaccourcisCard";
+import { DashboardQuickActions } from "@/components/dashboard/DashboardQuickActions";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
 // Chargés à la demande : PDF/PNG export (html-to-image, jspdf) et sections
@@ -95,8 +96,27 @@ function Dashboard() {
     (data?.recettes ?? 0) > 0 ||
     (data?.depenses ?? 0) > 0;
 
+  const pilotage = (
+    <div className="grid gap-4 lg:grid-cols-2">
+      <Link
+        to="/pilotage"
+        className="flex items-center justify-between gap-3 rounded-md border bg-card px-4 py-2.5 text-sm transition-colors hover:bg-muted/60"
+      >
+        <span className="flex items-center gap-2">
+          <Gauge className="h-4 w-4 text-muted-foreground" />
+          <span>
+            <span className="font-medium">Centre de pilotage</span>
+            <span className="text-muted-foreground"> — ce qu'il faut traiter aujourd'hui</span>
+          </span>
+        </span>
+        <ArrowRight className="h-4 w-4 text-primary" />
+      </Link>
+      <MesRaccourcisCard />
+    </div>
+  );
+
   return (
-    <div className="space-y-6">
+    <div className="theme-dashboard space-y-4 overflow-x-hidden bg-background text-foreground">
       <DashboardHeader
         periode={periode}
         onPeriode={onPeriode}
@@ -108,26 +128,12 @@ function Dashboard() {
 
       <WelcomeGreeting />
 
-      <Link
-        to="/pilotage"
-        className="flex items-center justify-between gap-3 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-sm transition-colors hover:bg-primary/10"
-      >
-        <span className="flex items-center gap-2">
-          <Gauge className="h-4 w-4 text-primary" />
-          <span>
-            <span className="font-semibold">Centre de pilotage</span>
-            <span className="text-muted-foreground"> — ce qu'il faut traiter aujourd'hui</span>
-          </span>
-        </span>
-        <ArrowRight className="h-4 w-4 text-primary" />
-      </Link>
-
-      <MesRaccourcisCard />
+      <DashboardQuickActions />
 
       <div className="min-h-[400px]">
         {isLoading ? (
           <div className="space-y-6">
-            <SkeletonKpiRow count={8} />
+            <SkeletonKpiRow count={4} />
             <Skeleton className="h-72 w-full rounded-xl" />
             <div className="grid gap-4 lg:grid-cols-2">
               <Skeleton className="h-64 w-full rounded-xl" />
@@ -155,9 +161,12 @@ function Dashboard() {
               </div>
             </CardContent>
           </Card>
-        ) : (
+        ) : null}
+        {!isLoading && !hasData ? <div className="mt-4">{pilotage}</div> : null}
+        {!isLoading && hasData ? (
           <>
             <DashboardKpis data={data} canSeeCA={canSeeCA} />
+            <div className="mt-4">{pilotage}</div>
             <DashboardChartsSection
               ref={chartsRef}
               data={data}
@@ -171,7 +180,7 @@ function Dashboard() {
               <DashboardStockAlerts data={data} />
             </Suspense>
           </>
-        )}
+        ) : null}
       </div>
     </div>
   );
