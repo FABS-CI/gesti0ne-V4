@@ -211,7 +211,9 @@ export async function viewFactureFor(c: Commande) {
 
 // ── Bon de livraison ──────────────────────────────────────────────────────────
 
-export async function buildBLBlob(c: Commande) {
+export type BLSource = Pick<Commande, "commande_id" | "client_nom" | "montant_total">;
+
+export async function buildBLBlob(c: BLSource) {
   const { data: bl } = await supabase
     .from("bons_livraison")
     .select("reference, date_emission")
@@ -242,7 +244,7 @@ export async function buildBLBlob(c: Commande) {
   return { blob, reference: bl.reference };
 }
 
-export async function downloadBLFor(c: Commande) {
+export async function downloadBLFor(c: BLSource) {
   try {
     const built = await buildBLBlob(c);
     if (!built) return;
