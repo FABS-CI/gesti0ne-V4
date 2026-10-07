@@ -62,8 +62,11 @@ export function CommandesToolbar({
         </SelectContent>
       </Select>
       {!readOnly && (
-        <Button variant="secondary" onClick={() => setVenteRapide(true)} className="border border-accent font-semibold">
-          <Zap className="mr-2 h-4 w-4 text-accent" /> VENTE RAPIDE
+        <Button
+          onClick={() => setVenteRapide(true)}
+          className="h-10 bg-accent-foreground px-5 font-bold uppercase tracking-wide text-accent shadow-md ring-1 ring-accent-foreground/40 hover:bg-accent-foreground/90"
+        >
+          <Zap className="mr-2 h-5 w-5" /> VENTE RAPIDE
         </Button>
       )}
       {!readOnly && (
