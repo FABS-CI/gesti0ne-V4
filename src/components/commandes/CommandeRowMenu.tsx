@@ -26,7 +26,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useHasPermission } from "@/components/rbac/Can";
+import { usePermissions } from "@/hooks/use-permissions";
 import type { CommandeActionsProps } from "@/components/commandes/CommandeActions";
 import {
   viewBonCommande,
@@ -91,7 +91,8 @@ export function CommandeRowMenu({
   validerPending,
   onDelete,
 }: CommandeActionsProps) {
-  const canDelete = useHasPermission("commandes.supprimer");
+  const { has, isLoading: permsLoading } = usePermissions();
+  const canDelete = !permsLoading && has("commandes.supprimer");
   const hasFactureBL =
     c.statut === "validee" || c.statut === "facturee" || c.statut === "livree";
   const canEdit =

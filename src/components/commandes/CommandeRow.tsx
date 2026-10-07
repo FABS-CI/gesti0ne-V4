@@ -7,7 +7,7 @@ import { ProductCoverThumb } from "@/components/produits/ProductCoverThumb";
 import { Badge } from "@/components/ui/badge";
 import { STATUT_LABEL, type Commande } from "@/lib/commandes-api";
 import { formatFCFA, formatDate } from "@/lib/format";
-import { CommandeActions } from "@/components/commandes/CommandeActions";
+import { CommandeRowMenu } from "@/components/commandes/CommandeRowMenu";
 
 interface CommandeRowProps {
   commande: Commande;
@@ -61,7 +61,7 @@ function CommandeRowInner({
       </TableCell>
       <TableCell className="text-right font-medium">{formatFCFA(c.montant_total)}</TableCell>
       <TableCell className="text-right">
-        <CommandeActions
+        <CommandeRowMenu
           commande={c}
           readOnly={readOnly}
           isSuperAdmin={isSuperAdmin}
