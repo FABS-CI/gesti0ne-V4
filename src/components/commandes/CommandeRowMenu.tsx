@@ -3,85 +3,64 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { SolderFactureDialog, loadFactureSolde } from "@/components/commandes/SolderFactureDialog";
 import {
-  Eye,
   Pencil,
   Trash2,
   ShoppingCart,
   FileText,
   Truck,
-  Wallet,
+  CircleDollarSign,
   CheckCircle,
   Receipt,
-  Download,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { usePermissions } from "@/hooks/use-permissions";
 import type { CommandeActionsProps } from "@/components/commandes/CommandeActions";
 import {
-  viewBonCommande,
   downloadBonCommande,
-  viewProforma,
   downloadProforma,
-  viewFactureFor,
   downloadFactureFor,
-  viewBLFor,
   downloadBLFor,
 } from "@/lib/commandes-pdf-actions";
 
+/**
+ * Bouton d'un document : un seul clic, téléchargement direct du PDF.
+ * Plus de menu « Visualiser / Télécharger ».
+ */
 function DocButton({
   label,
   short,
   icon: Icon,
-  onView,
   onDownload,
   disabled,
 }: {
   label: string;
   short: string;
   icon: LucideIcon;
-  onView: () => void;
   onDownload: () => void;
   disabled?: boolean;
 }) {
+  const title = disabled
+    ? `${label} — pas encore générée`
+    : `Télécharger ${label.toLowerCase()} (PDF)`;
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-8 px-2"
-          disabled={disabled}
-          title={disabled ? `${label} — pas encore générée` : label}
-          aria-label={label}
-        >
-          <Icon className="mr-1 h-4 w-4" /> {short}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-44">
-        <DropdownMenuItem disabled className="text-xs font-semibold uppercase opacity-100">
-          {label}
-        </DropdownMenuItem>
-        <DropdownMenuItem onSelect={onView}>
-          <Eye className="mr-2 h-4 w-4" /> Visualiser
-        </DropdownMenuItem>
-        <DropdownMenuItem onSelect={onDownload}>
-          <Download className="mr-2 h-4 w-4" /> Télécharger
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Button
+      variant="outline"
+      size="sm"
+      className="h-8 px-2"
+      disabled={disabled}
+      title={title}
+      aria-label={title}
+      onClick={onDownload}
+    >
+      <Icon className="mr-1 h-4 w-4" /> {short}
+    </Button>
   );
 }
 
 /**
- * Actions d'une ligne : Valider (si en attente), menu « Documents »
- * (Visualiser / Télécharger) et menu « ⋯ » (paiement, modification, suppression).
+ * Actions d'une ligne : Valider (si en attente), téléchargement direct des
+ * documents (PF, BC, FAC, BL), solde de facture, modification et suppression.
  */
 export function CommandeRowMenu({
   commande: c,
@@ -125,13 +104,41 @@ export function CommandeRowMenu({
           <CheckCircle className="h-4 w-4 text-success" />
         </Button>
       )}
-      <DocButton label="Proforma" short="PF" icon={FileText} onView={() => viewProforma(c)} onDownload={() => downloadProforma(c)} />
-      <DocButton label="Bon de commande" short="BC" icon={ShoppingCart} onView={() => viewBonCommande(c)} onDownload={() => downloadBonCommande(c)} />
-      <DocButton label="Facture" short="FAC" icon={Receipt} disabled={!hasFactureBL} onView={() => viewFactureFor(c)} onDownload={() => downloadFactureFor(c)} />
-      <DocButton label="Bon de livraison" short="BL" icon={Truck} disabled={!hasFactureBL} onView={() => viewBLFor(c)} onDownload={() => downloadBLFor(c)} />
+      <DocButton
+        label="Proforma"
+        short="PF"
+        icon={FileText}
+        onDownload={() => downloadProforma(c)}
+      />
+      <DocButton
+        label="Bon de commande"
+        short="BC"
+        icon={ShoppingCart}
+        onDownload={() => downloadBonCommande(c)}
+      />
+      <DocButton
+        label="Facture"
+        short="FAC"
+        icon={Receipt}
+        disabled={!hasFactureBL}
+        onDownload={() => downloadFactureFor(c)}
+      />
+      <DocButton
+        label="Bon de livraison"
+        short="BL"
+        icon={Truck}
+        disabled={!hasFactureBL}
+        onDownload={() => downloadBLFor(c)}
+      />
       {showSolder && (
-        <Button variant="ghost" size="icon" title="Solder la facture" aria-label="Solder la facture" onClick={() => setSolderOpen(true)}>
-          <Wallet className="h-4 w-4 text-accent" />
+        <Button
+          variant="ghost"
+          size="icon"
+          title="Solder la facture"
+          aria-label="Solder la facture"
+          onClick={() => setSolderOpen(true)}
+        >
+          <CircleDollarSign className="h-5 w-5 text-accent-foreground" />
         </Button>
       )}
       {canEdit && (
@@ -142,7 +149,13 @@ export function CommandeRowMenu({
         </Button>
       )}
       {isSuperAdmin && canDelete && (
-        <Button variant="ghost" size="icon" title="Supprimer définitivement" aria-label="Supprimer définitivement" onClick={() => onDelete(c)}>
+        <Button
+          variant="ghost"
+          size="icon"
+          title="Supprimer définitivement"
+          aria-label="Supprimer définitivement"
+          onClick={() => onDelete(c)}
+        >
           <Trash2 className="h-4 w-4 text-destructive" />
         </Button>
       )}
