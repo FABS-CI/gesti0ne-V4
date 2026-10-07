@@ -1,20 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import {
-  AlertTriangle,
-  BadgeCheck,
-  Boxes,
-  Clock,
-  FileText,
-  Percent,
-  Receipt,
-  ShoppingCart,
-  TrendingDown,
-  TrendingUp,
-  Truck,
-  Users,
-  Wallet,
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Check } from "lucide-react";
+import type { ReactNode } from "react";
 import { formatFCFA, formatFCFACompact } from "@/lib/format";
 import type { DashboardOverview } from "@/hooks/use-dashboard-overview";
 
@@ -23,225 +9,154 @@ interface Props {
   canSeeCA: boolean;
 }
 
+type To = "/clients" | "/commandes" | "/paiements" | "/factures" | "/stock" | "/tournees" | "/comptabilite";
+
+function Money({ value, className = "" }: { value: number; className?: string }) {
+  return (
+    <span className={`tabular-nums ${className}`} title={formatFCFA(value)}>
+      {formatFCFACompact(value)}
+      <span className="ml-1 text-xs font-normal text-muted-foreground">FCFA</span>
+    </span>
+  );
+}
+
+function Cell({
+  to,
+  label,
+  children,
+  sub,
+  big = false,
+}: {
+  to: To;
+  label: string;
+  children: ReactNode;
+  sub?: ReactNode;
+  big?: boolean;
+}) {
+  return (
+    <Link
+      to={to}
+      className="block min-w-0 px-4 py-3 transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+    >
+      <p className="truncate text-xs text-muted-foreground">{label}</p>
+      <div className={`mt-1 font-semibold tabular-nums ${big ? "text-2xl" : "text-lg"}`}>
+        {children}
+      </div>
+      {sub ? <div className="mt-1 text-xs text-muted-foreground">{sub}</div> : null}
+    </Link>
+  );
+}
+
+function Zone({ title, children, cols }: { title: string; children: ReactNode; cols: string }) {
+  return (
+    <section className="min-w-0 rounded-md border bg-card">
+      <h2 className="border-b px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        {title}
+      </h2>
+      <div className={`grid divide-y sm:divide-y-0 ${cols}`}>{children}</div>
+    </section>
+  );
+}
+
+function CountOrCheck({ n, tone }: { n: number; tone: "destructive" | "warning" }) {
+  if (n === 0)
+    return (
+      <span className="inline-flex items-center gap-1 text-sm font-medium text-success">
+        <Check className="h-4 w-4" aria-hidden /> Aucun
+      </span>
+    );
+  return <span className={tone === "destructive" ? "text-destructive" : "text-warning"}>{n}</span>;
+}
+
 export function DashboardKpis({ data, canSeeCA }: Props) {
-  const allKpis = [
-    {
-      label: "Clients",
-      value: data?.clientsTotal ?? 0,
-      icon: Users,
-      color: "#F97316",
-      to: "/clients" as const,
-      sensitive: false,
-      tone: "neutral" as const,
-    },
-    {
-      label: "Clients actifs",
-      value: data?.clientsActifs ?? 0,
-      icon: BadgeCheck,
-      color: "#10B981",
-      to: "/clients" as const,
-      sensitive: false,
-      tone: "success" as const,
-    },
-    {
-      label: "Commandes",
-      value: data?.nbCommandes ?? 0,
-      icon: ShoppingCart,
-      color: "#3B82F6",
-      to: "/commandes" as const,
-      sensitive: false,
-      tone: "neutral" as const,
-    },
-    {
-      label: "Chiffre d'affaires (encaissé)",
-      value: canSeeCA ? formatFCFACompact(data?.caTotal ?? 0) : "—",
-      icon: Wallet,
-      color: "#14B8A6",
-      to: "/paiements" as const,
-      sensitive: true,
-      tone: "highlight" as const,
-    },
-    {
-      label: "Montant facturé",
-      value: canSeeCA ? formatFCFACompact(data?.montantFacture ?? 0) : "—",
-      icon: FileText,
-      color: "#6366F1",
-      to: "/factures" as const,
-      sensitive: true,
-      tone: "neutral" as const,
-    },
-    {
-      label: "Reste à encaisser",
-      value: canSeeCA ? formatFCFACompact(data?.resteAEncaisser ?? 0) : "—",
-      icon: Receipt,
-      color: "#F59E0B",
-      to: "/factures" as const,
-      sensitive: true,
-      tone: (data?.resteAEncaisser ?? 0) > 0 ? ("warn" as const) : ("neutral" as const),
-    },
-    {
-      label: "Taux d'encaissement",
-      value: canSeeCA ? `${(data?.tauxEncaissement ?? 0).toFixed(1)}%` : "—",
-      icon: Percent,
-      color: "#10B981",
-      to: "/paiements" as const,
-      sensitive: true,
-      tone: "success" as const,
-    },
-    {
-      label: "Encours clients",
-      value: formatFCFACompact(data?.soldeTotal ?? 0),
-      icon: Wallet,
-      color: "#0EA5E9",
-      to: "/clients" as const,
-      sensitive: true,
-      tone: "neutral" as const,
-    },
-    {
-      label: "Stock bas",
-      value: data?.nbStockBas ?? 0,
-      icon: Boxes,
-      color: "#EAB308",
-      to: "/stock" as const,
-      sensitive: false,
-      tone: (data?.nbStockBas ?? 0) > 0 ? ("warn" as const) : ("neutral" as const),
-    },
-    {
-      label: "Factures en retard",
-      value: data?.nbRetards ?? 0,
-      icon: Clock,
-      color: "#EF4444",
-      to: "/factures" as const,
-      sensitive: false,
-      tone: (data?.nbRetards ?? 0) > 0 ? ("danger" as const) : ("neutral" as const),
-    },
-    {
-      label: "Montant en retard",
-      value: formatFCFACompact(data?.montantRetard ?? 0),
-      icon: AlertTriangle,
-      color: "#DC2626",
-      to: "/factures" as const,
-      sensitive: true,
-      tone: (data?.montantRetard ?? 0) > 0 ? ("danger" as const) : ("neutral" as const),
-    },
-    {
-      label: "Frais de tournée",
-      value: formatFCFACompact(data?.fraisTournees ?? 0),
-      icon: Truck,
-      color: "#8B5CF6",
-      to: "/tournees" as const,
-      sensitive: false,
-      tone: "neutral" as const,
-    },
-  ];
-  const kpis = canSeeCA ? allKpis : allKpis.filter((k) => !k.sensitive);
-
-  const finance = [
-    {
-      label: "Recettes",
-      value: data?.recettes ?? 0,
-      icon: TrendingUp,
-      color: "#10B981",
-      to: "/comptabilite" as const,
-    },
-    {
-      label: "Dépenses",
-      value: data?.depenses ?? 0,
-      icon: TrendingDown,
-      color: "#EF4444",
-      to: "/comptabilite" as const,
-    },
-    {
-      label: "Solde",
-      value: data?.solde ?? 0,
-      icon: Wallet,
-      color: "#14B8A6",
-      to: "/comptabilite" as const,
-    },
-  ];
-
-  const toneClass = (tone: "neutral" | "success" | "warn" | "danger" | "highlight") => {
-    switch (tone) {
-      case "danger":
-        return "border-red-500/40 bg-gradient-to-br from-red-500/5 to-transparent";
-      case "warn":
-        return "border-amber-500/40 bg-gradient-to-br from-amber-500/5 to-transparent";
-      case "success":
-        return "border-emerald-500/30 bg-gradient-to-br from-emerald-500/5 to-transparent";
-      case "highlight":
-        return "border-primary/40 bg-gradient-to-br from-primary/5 to-transparent";
-      default:
-        return "";
-    }
-  };
+  const facture = data?.montantFacture ?? 0;
+  const reste = data?.resteAEncaisser ?? 0;
+  const taux = Math.max(0, Math.min(100, data?.tauxEncaissement ?? 0));
+  const clients = data?.clientsTotal ?? 0;
+  const actifs = data?.clientsActifs ?? 0;
+  const pctActifs = clients > 0 ? Math.round((actifs / clients) * 100) : 0;
+  const retards = data?.nbRetards ?? 0;
+  const solde = data?.solde ?? 0;
 
   return (
-    <>
-      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 sm:gap-4">
-        {kpis.map((k) => (
-          <Link key={k.label} to={k.to} className="group">
-            <Card
-              className={`relative h-full overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg group-hover:border-primary ${toneClass(k.tone)}`}
-            >
-              <span
-                aria-hidden
-                className="absolute inset-y-0 left-0 w-1"
-                style={{ backgroundColor: k.color }}
-              />
-              <CardHeader className="flex flex-row items-center justify-between pb-2 pl-4 sm:pl-5">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {k.label}
-                </CardTitle>
-                <span
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white shadow-sm transition-transform group-hover:scale-110"
-                  style={{ backgroundColor: k.color }}
-                >
-                  <k.icon className="h-4 w-4" />
-                </span>
-              </CardHeader>
-              <CardContent className="pl-4 sm:pl-5 pb-4 sm:pb-6">
-                <p
-                  className={`text-2xl font-bold tracking-tight ${k.tone === "danger" ? "text-red-600 dark:text-red-400" : ""}`}
-                >
-                  {k.value}
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
+    <div className="space-y-4">
+      {canSeeCA && (
+        <Zone title="Performance" cols="sm:grid-cols-2 lg:grid-cols-4 sm:divide-x">
+          <Cell to="/paiements" label="Chiffre d'affaires encaissé" big>
+            <Money value={data?.caTotal ?? 0} />
+          </Cell>
+          <Cell to="/factures" label="Montant facturé">
+            <Money value={facture} />
+          </Cell>
+          <Cell
+            to="/factures"
+            label="Reste à encaisser"
+            sub={facture > 0 ? `${((reste / facture) * 100).toFixed(1).replace(".", ",")} % du facturé` : undefined}
+          >
+            <Money value={reste} />
+          </Cell>
+          <Cell
+            to="/paiements"
+            label="Taux d'encaissement"
+            sub={
+              <span className="block h-1 w-full overflow-hidden rounded-full bg-muted">
+                <span className="block h-full bg-primary" style={{ width: `${taux}%` }} />
+              </span>
+            }
+          >
+            {(data?.tauxEncaissement ?? 0).toFixed(1).replace(".", ",")} %
+          </Cell>
+        </Zone>
+      )}
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Zone title="À traiter" cols={canSeeCA ? "sm:grid-cols-3 sm:divide-x" : "sm:grid-cols-2 sm:divide-x"}>
+          <Cell
+            to="/factures"
+            label="Factures en retard"
+            sub={canSeeCA && retards > 0 ? <Money value={data?.montantRetard ?? 0} className="text-destructive" /> : undefined}
+          >
+            <CountOrCheck n={retards} tone="destructive" />
+          </Cell>
+          <Cell to="/stock" label="Stock bas">
+            <CountOrCheck n={data?.nbStockBas ?? 0} tone="warning" />
+          </Cell>
+          {canSeeCA && (
+            <Cell to="/clients" label="Encours clients">
+              <Money value={data?.soldeTotal ?? 0} />
+            </Cell>
+          )}
+        </Zone>
+
+        <Zone title="Activité" cols="sm:grid-cols-3 sm:divide-x">
+          <Cell to="/clients" label="Clients" sub={`${actifs} actifs · ${pctActifs} %`}>
+            {clients}
+          </Cell>
+          <Cell to="/commandes" label="Commandes">
+            {data?.nbCommandes ?? 0}
+          </Cell>
+          <Cell to="/tournees" label="Frais de tournée">
+            <Money value={data?.fraisTournees ?? 0} />
+          </Cell>
+        </Zone>
       </div>
 
       {canSeeCA && (
-      <div className="grid gap-3 grid-cols-1 sm:grid-cols-3 sm:gap-4 mt-4">
-        {finance.map((f) => (
-          <Link key={f.label} to={f.to} className="group">
-            <Card className="relative h-full overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg group-hover:border-primary">
-              <span
-                aria-hidden
-                className="absolute inset-y-0 left-0 w-1"
-                style={{ backgroundColor: f.color }}
-              />
-              <CardHeader className="flex flex-row items-center justify-between pb-2 pl-5">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {f.label}
-                </CardTitle>
-                <span
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white shadow-sm transition-transform group-hover:scale-110"
-                  style={{ backgroundColor: f.color }}
-                >
-                  <f.icon className="h-4 w-4" />
-                </span>
-              </CardHeader>
-              <CardContent className="pl-5">
-                <p className="text-xl font-bold tracking-tight" style={{ color: f.color }}>
-                  {formatFCFA(f.value)}
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
+        <Zone title="Trésorerie" cols="sm:grid-cols-3 sm:divide-x">
+          <Cell to="/comptabilite" label="Recettes">
+            <Money value={data?.recettes ?? 0} />
+          </Cell>
+          <Cell to="/comptabilite" label="Dépenses">
+            <Money value={data?.depenses ?? 0} />
+          </Cell>
+          <Cell to="/comptabilite" label="Solde">
+            <Money
+              value={solde}
+              className={solde > 0 ? "text-success" : solde < 0 ? "text-destructive" : ""}
+            />
+          </Cell>
+        </Zone>
       )}
-    </>
+    </div>
   );
 }
