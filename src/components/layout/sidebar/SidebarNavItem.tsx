@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { cn } from "@/lib/utils";
 import type { Group, Item } from "./nav-data";
 import { useApprobationsCount } from "@/hooks/use-approbations-count";
 
@@ -9,14 +10,10 @@ function BadgeApprobations() {
   return (
     <span
       aria-label={`${total} approbation${total > 1 ? "s" : ""} en attente`}
-      className="ml-auto shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold tabular-nums"
-      style={{
-        background: isCritical ? "#DC2626" : "#F59E0B",
-        color: "#FFFFFF",
-        minWidth: 20,
-        textAlign: "center",
-        boxShadow: isCritical ? "0 0 0 2px rgba(220,38,38,0.25)" : "none",
-      }}
+      className={cn(
+        "ml-auto min-w-5 shrink-0 rounded-md px-1.5 py-0.5 text-center text-[11px] font-medium tabular-nums",
+        isCritical ? "bg-destructive text-destructive-foreground" : "bg-warning text-black",
+      )}
     >
       {total > 99 ? "99+" : total}
     </span>
@@ -25,65 +22,41 @@ function BadgeApprobations() {
 
 export function SidebarNavItem({
   item,
-  group,
   active,
-  activeText,
 }: {
   item: Item;
-  group: Group;
+  group?: Group;
   active: boolean;
-  activeText: string;
+  activeText?: string;
 }) {
   const Icon = item.icon;
   return (
     <li>
       <Link
         to={item.url}
-        className="sidebar-nav-item"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "12px",
-          padding: "12px 14px",
-          minHeight: "44px",
-          borderRadius: "10px",
-          fontSize: "15px",
-          fontWeight: active ? 600 : 500,
-          color: active ? activeText : "#CBD5E1",
-          background: active ? group.grad : "transparent",
-          boxShadow: active ? `0 2px 10px ${group.shadow}` : "none",
-          transition: "all 0.15s",
-          textDecoration: "none",
-          lineHeight: 1.35,
-        }}
-        onMouseEnter={(e) => {
-          if (!active) {
-            e.currentTarget.style.background = `${group.color}30`;
-            e.currentTarget.style.color = "#FFFFFF";
-            e.currentTarget.style.boxShadow = `inset 5px 0 0 ${group.color}`;
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (!active) {
-            e.currentTarget.style.background = "transparent";
-            e.currentTarget.style.color = "#CBD5E1";
-            e.currentTarget.style.boxShadow = "none";
-          }
-        }}
+        aria-current={active ? "page" : undefined}
+        className={cn(
+          "sidebar-nav-item relative flex min-h-10 items-center gap-3 rounded-md px-3 text-sm lg:min-h-9",
+          "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+          active
+            ? "bg-sidebar-accent font-medium text-sidebar-accent-foreground"
+            : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
+        )}
       >
-        <Icon style={{ width: "20px", height: "20px", flexShrink: 0 }} />
-        <span className="truncate">{item.title}</span>
-        {item.badge === "approbations" ? (
-          <BadgeApprobations />
-        ) : active ? (
+        {active && (
           <span
             aria-hidden
-            className="ml-auto h-2 w-2 shrink-0 rounded-full"
-            style={{ background: "#FFFFFF" }}
+            className="absolute inset-y-1.5 -left-2 w-0.5 rounded-full bg-sidebar-primary"
           />
-        ) : null}
+        )}
+        <Icon
+          strokeWidth={1.75}
+          aria-hidden
+          className={cn("h-4 w-4 shrink-0", active ? "text-sidebar-primary" : "text-sidebar-foreground/50")}
+        />
+        <span className="truncate">{item.title}</span>
+        {item.badge === "approbations" ? <BadgeApprobations /> : null}
       </Link>
     </li>
   );
 }
-
