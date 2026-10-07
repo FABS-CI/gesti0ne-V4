@@ -86,7 +86,7 @@ export function FacturePdfActions({ facture: f, pdfState: st }: Props) {
   };
 
   return (
-    <div className="flex flex-wrap items-center justify-end gap-1">
+    <div className="flex flex-nowrap items-center justify-end gap-1 whitespace-nowrap">
       <Button
         variant="outline"
         size="sm"
