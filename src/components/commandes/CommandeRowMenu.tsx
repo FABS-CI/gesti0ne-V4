@@ -1,4 +1,7 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import { SolderFactureDialog, loadFactureSolde } from "@/components/commandes/SolderFactureDialog";
 import {
   Eye,
   Pencil,
@@ -6,12 +9,12 @@ import {
   ShoppingCart,
   FileText,
   Truck,
-  Mail,
+  Wallet,
+  Loader2,
   CheckCircle,
   Receipt,
   MoreHorizontal,
   Download,
-  Printer,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,7 +22,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
@@ -31,17 +33,12 @@ import type { CommandeActionsProps } from "@/components/commandes/CommandeAction
 import {
   viewBonCommande,
   downloadBonCommande,
-  printBonCommande,
   viewProforma,
   downloadProforma,
-  printProforma,
   viewFactureFor,
   downloadFactureFor,
-  printFactureFor,
   viewBLFor,
   downloadBLFor,
-  printBLFor,
-  emailCommande,
 } from "@/lib/commandes-pdf-actions";
 
 function DocSub({
@@ -49,13 +46,11 @@ function DocSub({
   icon: Icon,
   onView,
   onDownload,
-  onPrint,
 }: {
   label: string;
   icon: LucideIcon;
   onView: () => void;
   onDownload: () => void;
-  onPrint: () => void;
 }) {
   return (
     <DropdownMenuSub>
@@ -64,22 +59,27 @@ function DocSub({
       </DropdownMenuSubTrigger>
       <DropdownMenuSubContent>
         <DropdownMenuItem onSelect={onView}>
-          <Eye className="mr-2 h-4 w-4" /> Aperçu
+          <Eye className="mr-2 h-4 w-4" /> Visualiser
         </DropdownMenuItem>
         <DropdownMenuItem onSelect={onDownload}>
           <Download className="mr-2 h-4 w-4" /> Télécharger
-        </DropdownMenuItem>
-        <DropdownMenuItem onSelect={onPrint}>
-          <Printer className="mr-2 h-4 w-4" /> Imprimer
         </DropdownMenuItem>
       </DropdownMenuSubContent>
     </DropdownMenuSub>
   );
 }
 
+function DocPending({ label, icon: Icon }: { label: string; icon: LucideIcon }) {
+  return (
+    <DropdownMenuItem disabled>
+      <Icon className="mr-2 h-4 w-4" /> {label} — pas encore générée
+    </DropdownMenuItem>
+  );
+}
+
 /**
- * Actions compactes d'une ligne (vue tableau) : Visualiser + Valider visibles,
- * le reste regroupé dans un menu « ⋯ ». Mêmes conditions que CommandeActions.
+ * Actions d'une ligne : Valider (si en attente), menu « Documents »
+ * (Visualiser / Télécharger) et menu « ⋯ » (paiement, modification, suppression).
  */
 export function CommandeRowMenu({
   commande: c,
@@ -93,20 +93,24 @@ export function CommandeRowMenu({
 }: CommandeActionsProps) {
   const { has, isLoading: permsLoading } = usePermissions();
   const canDelete = !permsLoading && has("commandes.supprimer");
+  const canPayer = !permsLoading && has("paiements.creer");
   const hasFactureBL =
     c.statut === "validee" || c.statut === "facturee" || c.statut === "livree";
   const canEdit =
     !readOnly &&
     canModifier &&
     (isSuperAdmin || c.statut === "brouillon" || c.statut === "en_attente_validation");
+  const [moreOpen, setMoreOpen] = useState(false);
+  const [solderOpen, setSolderOpen] = useState(false);
+  const { data: solde, isLoading: soldeLoading } = useQuery({
+    queryKey: ["facture-solde", c.commande_id],
+    queryFn: () => loadFactureSolde(c.commande_id),
+    enabled: moreOpen && hasFactureBL && canPayer,
+  });
+  const showSolder = hasFactureBL && canPayer && !!solde && solde.statut !== "PAYÉE";
 
   return (
     <div className="flex items-center justify-end gap-1">
-      <Button aria-label="Visualiser" asChild variant="ghost" size="icon" title="Visualiser">
-        <Link to="/commandes/$commandeId" params={{ commandeId: c.commande_id }}>
-          <Eye className="h-4 w-4" />
-        </Link>
-      </Button>
       {c.statut === "en_attente_validation" && canValider && (
         <Button
           aria-label="Valider la commande (génère facture + BL)"
@@ -121,48 +125,64 @@ export function CommandeRowMenu({
       )}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button aria-label="Plus d'actions" variant="ghost" size="icon" title="Plus d'actions">
-            <MoreHorizontal className="h-4 w-4" />
+          <Button variant="outline" size="sm" className="h-8 px-2">
+            <FileText className="mr-1 h-4 w-4" /> Documents
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-52">
-          <DropdownMenuLabel>Documents</DropdownMenuLabel>
-          <DocSub
-            label="Bon de commande"
-            icon={ShoppingCart}
-            onView={() => viewBonCommande(c)}
-            onDownload={() => downloadBonCommande(c)}
-            onPrint={() => printBonCommande(c)}
-          />
+        <DropdownMenuContent align="end" className="w-56">
           <DocSub
             label="Proforma"
             icon={FileText}
             onView={() => viewProforma(c)}
             onDownload={() => downloadProforma(c)}
-            onPrint={() => printProforma(c)}
           />
-          {hasFactureBL && (
+          <DocSub
+            label="Bon de commande"
+            icon={ShoppingCart}
+            onView={() => viewBonCommande(c)}
+            onDownload={() => downloadBonCommande(c)}
+          />
+          {hasFactureBL ? (
             <>
               <DocSub
                 label="Facture"
                 icon={Receipt}
                 onView={() => viewFactureFor(c)}
                 onDownload={() => downloadFactureFor(c)}
-                onPrint={() => printFactureFor(c)}
               />
               <DocSub
                 label="Bon de livraison"
                 icon={Truck}
                 onView={() => viewBLFor(c)}
                 onDownload={() => downloadBLFor(c)}
-                onPrint={() => printBLFor(c)}
               />
             </>
+          ) : (
+            <>
+              <DocPending label="Facture" icon={Receipt} />
+              <DocPending label="Bon de livraison" icon={Truck} />
+            </>
           )}
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onSelect={() => emailCommande(c)}>
-            <Mail className="mr-2 h-4 w-4" /> Envoyer par email
-          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <DropdownMenu open={moreOpen} onOpenChange={setMoreOpen}>
+        <DropdownMenuTrigger asChild>
+          <Button aria-label="Plus d'actions" variant="ghost" size="icon" title="Plus d'actions">
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-52">
+          {hasFactureBL && canPayer && (
+            soldeLoading ? (
+              <DropdownMenuItem disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Paiement…
+              </DropdownMenuItem>
+            ) : showSolder ? (
+              <DropdownMenuItem onSelect={() => setSolderOpen(true)}>
+                <Wallet className="mr-2 h-4 w-4" /> Solder la facture
+              </DropdownMenuItem>
+            ) : null
+          )}
           {canEdit && (
             <DropdownMenuItem asChild>
               <Link to="/commandes/$commandeId/modifier" params={{ commandeId: c.commande_id }}>
@@ -181,8 +201,14 @@ export function CommandeRowMenu({
               </DropdownMenuItem>
             </>
           )}
+          {!canEdit && !(isSuperAdmin && canDelete) && !showSolder && !soldeLoading && (
+            <DropdownMenuItem disabled>Aucune autre action</DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
+      {solderOpen && (
+        <SolderFactureDialog commande={c} open={solderOpen} onOpenChange={setSolderOpen} />
+      )}
     </div>
   );
 }

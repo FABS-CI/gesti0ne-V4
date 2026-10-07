@@ -11,7 +11,7 @@ export const MODES_PAIEMENT = [
 ] as const;
 
 export const MODE_PAIEMENT_LABEL: Record<string, string> = Object.fromEntries(
-  MODES_PAIEMENT.map((m) => [m.value, m.label]),
+  [...MODES_PAIEMENT.map((m) => [m.value, m.label]), ["autre", "Autre"]],
 );
 
 export const STATUTS_PAIEMENT = [
