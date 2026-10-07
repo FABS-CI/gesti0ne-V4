@@ -64,7 +64,7 @@ function MonDashboard() {
   const reset = () => update({ order: ALL_WIDGET_IDS, hidden: [] });
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="theme-dashboard p-6 space-y-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-semibold">Mon tableau de bord</h1>

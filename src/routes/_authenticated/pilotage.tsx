@@ -76,7 +76,7 @@ function Pilotage() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="theme-dashboard space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
