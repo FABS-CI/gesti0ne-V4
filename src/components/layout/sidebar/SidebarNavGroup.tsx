@@ -1,5 +1,6 @@
-import { ChevronDown, ChevronRight, Folder } from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { cn } from "@/lib/utils";
 import type { Group, Item } from "./nav-data";
 import { SidebarNavItem } from "./SidebarNavItem";
 
@@ -21,6 +22,19 @@ function groupBySection(items: Item[]): Section[] {
   return sections;
 }
 
+function Collapse({ open, children }: { open: boolean; children: React.ReactNode }) {
+  return (
+    <div
+      className={cn(
+        "grid transition-[grid-template-rows,visibility] duration-200 ease-out",
+        open ? "visible grid-rows-[1fr]" : "invisible grid-rows-[0fr]",
+      )}
+    >
+      <div className="overflow-hidden">{children}</div>
+    </div>
+  );
+}
+
 export function SidebarNavGroup({
   group,
   isOpen,
@@ -34,7 +48,6 @@ export function SidebarNavGroup({
   currentPath: string;
   onToggle: () => void;
 }) {
-  const activeText = group.activeText ?? "#FFFFFF";
   const GroupIcon = group.groupIcon;
 
   return (
@@ -42,104 +55,38 @@ export function SidebarNavGroup({
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center justify-between gap-2 text-left transition-all duration-200"
-        style={{
-          padding: "12px 14px",
-          borderRadius: "14px",
-          background: isActive ? group.grad : isOpen ? group.light : "transparent",
-          boxShadow: isActive
-            ? `0 4px 14px ${group.shadow}`
-            : isOpen
-              ? `inset 4px 0 0 ${group.color}`
-              : "none",
-        }}
-        onMouseEnter={(e) => {
-          if (!isActive) {
-            e.currentTarget.style.background = `${group.color}28`;
-            e.currentTarget.style.boxShadow = `0 4px 12px ${group.shadow}`;
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (!isActive) {
-            e.currentTarget.style.background = "transparent";
-            e.currentTarget.style.boxShadow = "none";
-          }
-        }}
+        aria-expanded={isOpen}
+        className={cn(
+          "flex min-h-10 w-full items-center justify-between gap-2 rounded-lg px-3 text-left text-sm font-medium",
+          "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+          isActive
+            ? "text-sidebar-foreground"
+            : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground",
+        )}
       >
         <span className="flex min-w-0 items-center gap-3">
-          <span
-            className="flex shrink-0 items-center justify-center rounded-xl"
-            style={{
-              width: "38px",
-              height: "38px",
-              backgroundColor: isActive
-                ? group.activeText
-                  ? "rgba(17,24,39,0.12)"
-                  : "rgba(255,255,255,0.18)"
-                : group.light,
-              transition: "background 0.2s",
-            }}
-          >
-            <GroupIcon
-              style={{
-                width: "22px",
-                height: "22px",
-                color: isActive ? activeText : group.color,
-                transition: "color 0.2s",
-              }}
-            />
-          </span>
-          <span
-            className="truncate"
-            style={{
-              fontSize: "15px",
-              fontWeight: 700,
-              color: isActive ? activeText : isOpen ? group.color : "#E2E8F0",
-              letterSpacing: "0.01em",
-              lineHeight: 1.3,
-              transition: "color 0.2s",
-            }}
-          >
-            {group.label}
-          </span>
+          <GroupIcon
+            strokeWidth={1.75}
+            aria-hidden
+            className={cn("h-4 w-4 shrink-0", isActive ? "text-sidebar-primary" : "text-sidebar-foreground/60")}
+          />
+          <span className="truncate">{group.label}</span>
         </span>
         <ChevronDown
-          style={{
-            width: "16px",
-            height: "16px",
-            flexShrink: 0,
-            color: isActive ? activeText : isOpen ? group.color : "rgba(255,255,255,0.25)",
-            transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-            transition: "transform 0.25s ease, color 0.2s",
-          }}
+          aria-hidden
+          strokeWidth={1.75}
+          className={cn(
+            "h-4 w-4 shrink-0 text-sidebar-foreground/40 transition-transform duration-200",
+            isOpen && "rotate-180",
+          )}
         />
       </button>
 
-      <div
-        style={{
-          overflow: "hidden",
-          maxHeight: isOpen ? "900px" : "0px",
-          opacity: isOpen ? 1 : 0,
-          transition: "max-height 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.22s ease",
-        }}
-      >
-        <ul
-          className="mb-1.5 mt-1.5 space-y-1"
-          style={{
-            marginLeft: "22px",
-            paddingLeft: "12px",
-            borderLeft: `2px solid ${group.color}30`,
-          }}
-        >
-          <NavSections
-            group={group}
-            currentPath={currentPath}
-            activeText={activeText}
-            parentOpen={isOpen}
-          />
-
+      <Collapse open={isOpen}>
+        <ul className="mb-1 mt-1 ml-5 space-y-0.5 border-l border-sidebar-border pl-2">
+          <NavSections group={group} currentPath={currentPath} parentOpen={isOpen} />
         </ul>
-      </div>
+      </Collapse>
     </li>
   );
 }
@@ -149,32 +96,13 @@ const SECTION_STORAGE_PREFIX = "fabs.sidebar.section.";
 function NavSections({
   group,
   currentPath,
-  activeText,
   parentOpen,
 }: {
   group: Group;
   currentPath: string;
-  activeText: string;
   parentOpen: boolean;
 }) {
   const sections = useMemo(() => groupBySection(group.items), [group.items]);
-  const hasSections = sections.some((s) => s.name !== null);
-
-  if (!hasSections) {
-    return (
-      <>
-        {group.items.map((item) => (
-          <SidebarNavItem
-            key={item.title}
-            item={item}
-            group={group}
-            active={!!item.ready && currentPath === item.url}
-            activeText={activeText}
-          />
-        ))}
-      </>
-    );
-  }
 
   return (
     <>
@@ -186,7 +114,6 @@ function NavSections({
               item={item}
               group={group}
               active={!!item.ready && currentPath === item.url}
-              activeText={activeText}
             />
           ))
         ) : (
@@ -197,7 +124,6 @@ function NavSections({
             items={section.items}
             group={group}
             currentPath={currentPath}
-            activeText={activeText}
             parentOpen={parentOpen}
           />
         ),
@@ -212,7 +138,6 @@ function SubSection({
   items,
   group,
   currentPath,
-  activeText,
   parentOpen,
 }: {
   groupLabel: string;
@@ -220,7 +145,6 @@ function SubSection({
   items: Item[];
   group: Group;
   currentPath: string;
-  activeText: string;
   parentOpen: boolean;
 }) {
   const storageKey = `${SECTION_STORAGE_PREFIX}${groupLabel}::${name}`;
@@ -256,59 +180,35 @@ function SubSection({
         type="button"
         onClick={toggle}
         aria-expanded={open}
-        className="flex w-full items-center gap-2 text-left transition-colors"
-        style={{
-          padding: "8px 10px",
-          borderRadius: "8px",
-          background: open ? `${group.color}18` : "transparent",
-          color: containsActive ? "#FFFFFF" : open ? group.color : "#94A3B8",
-          fontSize: "12px",
-          fontWeight: 700,
-          letterSpacing: "0.06em",
-          textTransform: "uppercase",
-        }}
+        className={cn(
+          "flex min-h-8 w-full items-center gap-1.5 rounded-md px-2 text-left text-xs font-medium",
+          "transition-colors hover:text-sidebar-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+          containsActive ? "text-sidebar-foreground" : "text-sidebar-foreground/50",
+        )}
       >
         {open ? (
-          <ChevronDown style={{ width: 14, height: 14, flexShrink: 0 }} />
+          <ChevronDown aria-hidden strokeWidth={1.75} className="h-3.5 w-3.5 shrink-0" />
         ) : (
-          <ChevronRight style={{ width: 14, height: 14, flexShrink: 0 }} />
+          <ChevronRight aria-hidden strokeWidth={1.75} className="h-3.5 w-3.5 shrink-0" />
         )}
-        <Folder style={{ width: 14, height: 14, flexShrink: 0 }} />
         <span className="truncate">{name}</span>
-        <span
-          className="ml-auto shrink-0"
-          style={{ fontSize: 11, opacity: 0.7, fontWeight: 600 }}
-        >
+        <span className="ml-auto shrink-0 text-[11px] tabular-nums text-sidebar-foreground/40">
           {items.length}
         </span>
       </button>
-      <div
-        style={{
-          overflow: "hidden",
-          maxHeight: parentOpen && open ? "900px" : "0px",
-          opacity: parentOpen && open ? 1 : 0,
-          transition: "max-height 0.25s cubic-bezier(0.4,0,0.2,1), opacity 0.18s ease",
-        }}
-      >
-        <ul
-          className="mt-1 space-y-1"
-          style={{
-            marginLeft: "10px",
-            paddingLeft: "10px",
-            borderLeft: `1px dashed ${group.color}40`,
-          }}
-        >
+
+      <Collapse open={parentOpen && open}>
+        <ul className="mt-0.5 space-y-0.5 pl-2">
           {items.map((item) => (
             <SidebarNavItem
               key={item.title}
               item={item}
               group={group}
               active={!!item.ready && currentPath === item.url}
-              activeText={activeText}
             />
           ))}
         </ul>
-      </div>
+      </Collapse>
     </li>
   );
 }
