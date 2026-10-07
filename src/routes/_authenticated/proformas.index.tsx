@@ -1,6 +1,6 @@
-import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute } from "@tanstack/react-router";
-import { FileSignature, FileDown, Eye, Printer, Mail, ScanEye, Trash2, RefreshCw } from "lucide-react";
+import { FileSignature, FileText, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ResourceManager, type ResourceConfig } from "@/components/crud/ResourceManager";
 import { downloadBlob, fileNameFor } from "@/lib/pdf/fabsTemplates";
@@ -10,8 +10,7 @@ import {
   loadClientInfoForProforma,
   loadProformaTotals,
 } from "@/lib/pdf/enrich-lignes";
-import { printCached, viewCached, emailDoc } from "@/lib/pdf/actions";
-import { getOrCreatePdf, pdfCacheKey, invalidatePdfByPrefix } from "@/lib/pdf/pdfCache";
+import { getOrCreatePdf, pdfCacheKey } from "@/lib/pdf/pdfCache";
 import { SuperAdminDeleteButton } from "@/components/documents/SuperAdminDeleteButton";
 import { deleteProformaDefinitif } from "@/lib/proformas-api";
 
@@ -99,66 +98,27 @@ const config: ResourceConfig = {
   ],
   rowActions: [
     {
-      label: "Visualiser",
-      icon: Eye,
-      to: (row) => `/proformas/${row.proforma_id}`,
-    },
-    {
-      label: "Aperçu PDF",
-      icon: ScanEye,
-      onClick: async (row) => {
-        try {
-          await viewCached(cacheKeyFor(row), () => buildProformaBlob(row));
-        } catch (e) {
-          toast.error(friendlyError(e, "Erreur aperçu"));
-        }
-      },
-    },
-    {
-      label: "Télécharger PDF",
-      icon: FileDown,
-      onClick: async (row) => {
-        try {
-          const blob = await getOrCreatePdf(cacheKeyFor(row), () => buildProformaBlob(row));
-          downloadBlob(blob, fileNameFor(row.reference as string, row.client_nom as string | null));
-        } catch (e) {
-          toast.error(friendlyError(e, "Erreur PDF"));
-        }
-      },
-    },
-    {
-      label: "Imprimer",
-      icon: Printer,
-      onClick: async (row) => {
-        try {
-          await printCached(cacheKeyFor(row), () => buildProformaBlob(row));
-        } catch (e) {
-          toast.error(friendlyError(e, "Erreur impression"));
-        }
-      },
-    },
-    {
-      label: "Régénérer le PDF",
-      icon: RefreshCw,
-      onClick: async (row) => {
-        try {
-          invalidatePdfByPrefix(`PF:${row.reference as string}:`);
-          const blob = await getOrCreatePdf(cacheKeyFor(row), () => buildProformaBlob(row));
-          downloadBlob(blob, fileNameFor(row.reference as string, row.client_nom as string | null));
-          toast.success("Document régénéré avec le nouveau modèle");
-        } catch (e) {
-          toast.error(friendlyError(e, "Erreur régénération"));
-        }
-      },
-    },
-    {
-      label: "Envoyer par email",
-      icon: Mail,
-      onClick: (row) =>
-        emailDoc({
-          subject: `Proforma ${formatDocumentReference(row.reference)} — FABS-CI`,
-          body: `Bonjour,\n\nVeuillez trouver ci-joint la proforma ${formatDocumentReference(row.reference)}.\n\nCordialement,\nFABS-CI`,
-        }),
+      label: "Télécharger la proforma (PDF)",
+      icon: FileText,
+      render: (row) => (
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 px-2"
+          title="Télécharger la proforma (PDF)"
+          aria-label="Télécharger la proforma (PDF)"
+          onClick={async () => {
+            try {
+              const blob = await getOrCreatePdf(cacheKeyFor(row), () => buildProformaBlob(row));
+              downloadBlob(blob, fileNameFor(row.reference as string, row.client_nom as string | null));
+            } catch (e) {
+              toast.error(friendlyError(e, "Erreur PDF"));
+            }
+          }}
+        >
+          <FileText className="mr-1 h-4 w-4" /> PF
+        </Button>
+      ),
     },
     {
       label: "Supprimer définitivement",
