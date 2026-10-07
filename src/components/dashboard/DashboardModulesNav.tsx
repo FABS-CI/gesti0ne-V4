@@ -11,12 +11,10 @@ export function DashboardModulesNav({ data }: { data: DashboardOverview | undefi
         <Card className="h-full transition-colors group-hover:border-primary">
           <CardHeader className="flex flex-row items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600">
-                <Boxes className="h-5 w-5" />
-              </span>
+              <Boxes className="h-4 w-4 text-muted-foreground" />
               <CardTitle className="text-base">Stocks</CardTitle>
             </div>
-            <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
+            <ArrowRight className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
@@ -30,12 +28,10 @@ export function DashboardModulesNav({ data }: { data: DashboardOverview | undefi
         <Card className="h-full transition-colors group-hover:border-primary">
           <CardHeader className="flex flex-row items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-500/10 text-sky-600">
-                <BookOpenCheck className="h-5 w-5" />
-              </span>
+              <BookOpenCheck className="h-4 w-4 text-muted-foreground" />
               <CardTitle className="text-base">Comptabilité</CardTitle>
             </div>
-            <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
+            <ArrowRight className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
@@ -49,12 +45,10 @@ export function DashboardModulesNav({ data }: { data: DashboardOverview | undefi
         <Card className="h-full transition-colors group-hover:border-primary">
           <CardHeader className="flex flex-row items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-500/10 text-red-600">
-                <FileText className="h-5 w-5" />
-              </span>
+              <FileText className="h-4 w-4 text-muted-foreground" />
               <CardTitle className="text-base">Factures</CardTitle>
             </div>
-            <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
+            <ArrowRight className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">

@@ -8,10 +8,10 @@ export const periodeSchema = z.object({
 export type Periode = "7" | "30" | "90";
 
 export const STATUT_COLORS: Record<string, string> = {
-  brouillon: "#94A3B8",
-  confirmee: "#3B82F6",
-  livree: "#10B981",
-  annulee: "#EF4444",
+  brouillon: "var(--muted-foreground)",
+  confirmee: "var(--info)",
+  livree: "var(--success)",
+  annulee: "var(--destructive)",
 };
 
 export const PERIODES = [

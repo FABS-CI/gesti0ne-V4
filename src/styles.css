@@ -50,6 +50,7 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-warning: var(--warning);
   --color-success: var(--success);
+  --color-info: var(--info);
   --color-success-foreground: var(--success-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
@@ -96,6 +97,7 @@
   --ring: oklch(0.45 0.09 245);
   --warning: oklch(0.7 0.17 55);
   --success: oklch(0.55 0.13 150);
+  --info: oklch(0.5 0.09 240);
   --success-foreground: oklch(1 0 0);
   --chart-1: oklch(0.45 0.09 245);
   --chart-2: oklch(0.7 0.17 55);
@@ -135,6 +137,7 @@
   --ring: oklch(0.65 0.22 255);
   --warning: oklch(0.78 0.15 70);
   --success: oklch(0.7 0.15 150);
+  --info: oklch(0.7 0.09 240);
   --success-foreground: oklch(0.15 0.02 150);
   --chart-1: oklch(0.65 0.22 255);
   --chart-2: oklch(0.7 0.15 150);
@@ -292,4 +295,38 @@ a[href*="lovable.dev"][target="_blank"],
   left: 0 !important;
   z-index: 40;
   box-shadow: 8px 0 24px -8px rgb(0 0 0 / 0.35);
+}
+
+/* Palette « cuivre sur ardoise » — portée limitée au tableau de bord. */
+.theme-dashboard {
+  --background: oklch(0.975 0.004 250);
+  --card: oklch(1 0 0);
+  --foreground: oklch(0.24 0.02 250);
+  --card-foreground: oklch(0.24 0.02 250);
+  --muted: oklch(0.955 0.005 250);
+  --muted-foreground: oklch(0.5 0.015 250);
+  --border: oklch(0.9 0.006 250);
+  --primary: oklch(0.56 0.11 50);
+  --primary-foreground: oklch(1 0 0);
+  --ring: oklch(0.56 0.11 50);
+  --success: oklch(0.52 0.12 150);
+  --warning: oklch(0.72 0.14 90);
+  --destructive: oklch(0.53 0.19 27);
+  --info: oklch(0.52 0.09 240);
+}
+.dark .theme-dashboard {
+  --background: oklch(0.17 0.012 250);
+  --card: oklch(0.21 0.014 250);
+  --foreground: oklch(0.93 0.006 250);
+  --card-foreground: oklch(0.93 0.006 250);
+  --muted: oklch(0.25 0.014 250);
+  --muted-foreground: oklch(0.68 0.012 250);
+  --border: oklch(0.3 0.014 250);
+  --primary: oklch(0.7 0.11 55);
+  --primary-foreground: oklch(0.17 0.012 250);
+  --ring: oklch(0.7 0.11 55);
+  --success: oklch(0.7 0.13 150);
+  --warning: oklch(0.82 0.13 90);
+  --destructive: oklch(0.66 0.18 27);
+  --info: oklch(0.7 0.09 240);
 }

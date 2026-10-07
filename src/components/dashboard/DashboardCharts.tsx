@@ -23,14 +23,14 @@ export function CAAreaChart({ data }: { data: CAPoint[] }) {
       <AreaChart data={data}>
         <defs>
           <linearGradient id="caGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#F97316" stopOpacity={0.4} />
-            <stop offset="95%" stopColor="#F97316" stopOpacity={0} />
+            <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.12} />
+            <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-        <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+        <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={12} />
         <YAxis
-          stroke="hsl(var(--muted-foreground))"
+          stroke="var(--muted-foreground)"
           fontSize={12}
           tickFormatter={(v) => formatFCFACompact(v)}
         />
@@ -39,7 +39,7 @@ export function CAAreaChart({ data }: { data: CAPoint[] }) {
           type="monotone"
           dataKey="ca"
           name="CA"
-          stroke="#F97316"
+          stroke="var(--primary)"
           strokeWidth={2}
           fill="url(#caGrad)"
         />
@@ -52,11 +52,11 @@ export function CommandesBarChart({ data }: { data: CAPoint[] }) {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-        <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-        <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} allowDecimals={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+        <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={12} />
+        <YAxis stroke="var(--muted-foreground)" fontSize={12} allowDecimals={false} />
         <Tooltip />
-        <Bar dataKey="nb" name="Commandes" fill="#3B82F6" radius={[6, 6, 0, 0]} />
+        <Bar dataKey="nb" name="Commandes" fill="var(--info)" radius={[3, 3, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -81,7 +81,7 @@ export function StatutPieChart({
           paddingAngle={2}
         >
           {data.map((s) => (
-            <Cell key={s.statut} fill={colors[s.statut] ?? "#94A3B8"} />
+            <Cell key={s.statut} fill={colors[s.statut] ?? "var(--muted-foreground)"} />
           ))}
         </Pie>
         <Tooltip />
