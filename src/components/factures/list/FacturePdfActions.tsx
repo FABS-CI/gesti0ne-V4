@@ -1,18 +1,26 @@
-import { DocumentActions } from "@/components/documents/DocumentActions";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Receipt, Truck, CircleDollarSign, Loader2 } from "lucide-react";
+import { friendlyError } from "@/lib/friendly-error";
+import { Button } from "@/components/ui/button";
+import { usePermissions } from "@/hooks/use-permissions";
+import { SuperAdminDeleteButton } from "@/components/documents/SuperAdminDeleteButton";
+import { SolderFactureDialog } from "@/components/commandes/SolderFactureDialog";
+import { downloadBLFor } from "@/lib/commandes-pdf-actions";
 import {
   loadClientInfoForFacture,
   loadFactureDocLignes,
   loadFactureTotals,
 } from "@/lib/pdf/enrich-lignes";
-import { fileNameFor, generateFacturePDF } from "@/lib/pdf/fabsTemplates";
-import { pdfCacheKey } from "@/lib/pdf/pdfCache";
-import { deleteFactureDefinitif } from "@/lib/factures-api";
-import { STATUT_FACTURE_LABEL } from "@/lib/factures-api";
+import { downloadBlob, fileNameFor, generateFacturePDF } from "@/lib/pdf/fabsTemplates";
+import { getOrCreatePdf, pdfCacheKey } from "@/lib/pdf/pdfCache";
+import { deleteFactureDefinitif, STATUT_FACTURE_LABEL } from "@/lib/factures-api";
 
 type Facture = {
   facture_id: string;
   reference: string;
   client_nom: string | null;
+  commande_id?: string | null;
   date_facture: string;
   montant_total: number | string;
   montant_paye: number | string;
@@ -27,7 +35,18 @@ type Props = {
   pdfState: PdfState;
 };
 
+/**
+ * Actions d'une ligne de facture, alignées comme dans Commandes :
+ * FAC (téléchargement direct), BL (téléchargement direct), Solder, Supprimer.
+ */
 export function FacturePdfActions({ facture: f, pdfState: st }: Props) {
+  const { has, isLoading: permsLoading } = usePermissions();
+  const canPayer = !permsLoading && has("paiements.creer");
+  const [solderOpen, setSolderOpen] = useState(false);
+  const reste = Number(f.montant_total) - Number(f.montant_paye);
+  const commandeId = f.commande_id ?? null;
+  const showSolder = canPayer && !!commandeId && reste > 0 && f.statut !== "annulee";
+
   const buildBlob = async () => {
     const [lignes, clientInfo, totals] = await Promise.all([
       loadFactureDocLignes(f.facture_id),
@@ -45,7 +64,7 @@ export function FacturePdfActions({ facture: f, pdfState: st }: Props) {
       totalVente: totals.totalVente ?? Number(f.montant_total),
       montantHT: totals.montantHT ?? Number(f.montant_total),
       paye: Number(f.montant_paye),
-      soldeDu: Number(f.montant_total) - Number(f.montant_paye),
+      soldeDu: reste,
       lignes,
       statut: STATUT_FACTURE_LABEL[f.statut]
         ? {
@@ -56,21 +75,75 @@ export function FacturePdfActions({ facture: f, pdfState: st }: Props) {
     });
   };
   const cacheKey = pdfCacheKey("FC", f.reference, f.updated_at ?? f.date_facture);
+
+  const downloadFacture = async () => {
+    try {
+      const blob = await getOrCreatePdf(cacheKey, buildBlob);
+      downloadBlob(blob, fileNameFor(f.reference, f.client_nom));
+    } catch (e) {
+      toast.error(friendlyError(e, "Erreur téléchargement"));
+    }
+  };
+
   return (
-    <DocumentActions
-      viewTo={`/factures/${f.facture_id}`}
-      cacheKey={cacheKey}
-      buildBlob={buildBlob}
-      filename={fileNameFor(f.reference, f.client_nom)}
-      emailSubject={`Facture ${f.reference} — FABS-CI`}
-      emailBody={`Bonjour,\n\nVeuillez trouver ci-joint la facture ${f.reference}.\n\nCordialement,\nFABS-CI`}
-      loading={st.loading}
-      progress={st.progress}
-      delete={{
-        entityLabel: `la facture ${f.reference}`,
-        onConfirm: () => deleteFactureDefinitif(f.facture_id),
-        invalidateKeys: [["factures"]],
-      }}
-    />
+    <div className="flex flex-nowrap items-center justify-end gap-1 whitespace-nowrap">
+      <Button
+        variant="outline"
+        size="sm"
+        className="h-8 px-2"
+        disabled={st.loading}
+        title="Télécharger la facture (PDF)"
+        aria-label="Télécharger la facture (PDF)"
+        onClick={downloadFacture}
+      >
+        {st.loading ? (
+          <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+        ) : (
+          <Receipt className="mr-1 h-4 w-4" />
+        )}{" "}
+        FAC
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        className="h-8 px-2"
+        disabled={!commandeId}
+        title={commandeId ? "Télécharger le bon de livraison (PDF)" : "Aucune commande liée"}
+        aria-label="Télécharger le bon de livraison (PDF)"
+        onClick={() =>
+          commandeId &&
+          downloadBLFor({
+            commande_id: commandeId,
+            client_nom: f.client_nom,
+            montant_total: Number(f.montant_total),
+          })
+        }
+      >
+        <Truck className="mr-1 h-4 w-4" /> BL
+      </Button>
+      {showSolder && (
+        <Button
+          variant="ghost"
+          size="icon"
+          title="Solder la facture"
+          aria-label="Solder la facture"
+          onClick={() => setSolderOpen(true)}
+        >
+          <CircleDollarSign className="h-5 w-5 text-accent-foreground" />
+        </Button>
+      )}
+      <SuperAdminDeleteButton
+        entityLabel={`la facture ${f.reference}`}
+        onConfirm={() => deleteFactureDefinitif(f.facture_id)}
+        invalidateKeys={[["factures"]]}
+      />
+      {solderOpen && commandeId && (
+        <SolderFactureDialog
+          commande={{ commande_id: commandeId, client_nom: f.client_nom }}
+          open={solderOpen}
+          onOpenChange={setSolderOpen}
+        />
+      )}
+    </div>
   );
 }
