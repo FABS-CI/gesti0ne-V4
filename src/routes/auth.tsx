@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
-import loginBg from "@/assets/login-bg.webp";
 import fabsLogo from "@/assets/fabs-logo.webp";
 import { LoginStyles } from "@/components/auth/LoginStyles";
 import { LoginForm } from "@/components/auth/LoginForm";
@@ -18,7 +17,6 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "Espace de connexion de l'ERP des Éditions FABS-CI." },
     ],
     links: [
-      { rel: "preload", as: "image", href: loginBg, fetchPriority: "high" },
       { rel: "preload", as: "image", href: fabsLogo, fetchPriority: "high" },
     ],
   }),
@@ -248,145 +246,65 @@ function AuthPage() {
   if (!authReady) {
     return (
       <div
-        className="login-page-root relative flex min-h-dvh w-full items-center justify-center overflow-hidden"
-        style={{
-          backgroundImage: `url(${loginBg})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          backgroundColor: "#0d1b2a",
-        }}
+        className="login-page-root flex min-h-dvh w-full items-center justify-center bg-background"
         aria-busy="true"
         aria-label="Vérification de la session"
       >
-        <LoginStyles />
-        <div
-          className="flex h-24 w-24 items-center justify-center rounded-full"
-          style={{
-            background: "linear-gradient(150deg, #FFF4EC 0%, #F5F7FB 100%)",
-            boxShadow: "0 10px 26px rgba(7,27,77,0.28)",
-          }}
-        >
-          <img
-            src={fabsLogo}
-            alt="Logo Éditions FABS-CI"
-            width={64}
-            height={64}
-            loading="eager"
-            fetchPriority="high"
-            className="h-16 w-16 object-contain"
-          />
-        </div>
+        <img
+          src={fabsLogo}
+          alt="Logo Éditions FABS-CI"
+          width={48}
+          height={48}
+          loading="eager"
+          fetchPriority="high"
+          className="h-12 w-12 object-contain"
+        />
       </div>
     );
   }
 
   return (
     <div
-      className="login-page-root relative flex min-h-dvh w-full overflow-hidden"
-      style={{
-        backgroundImage: `url(${loginBg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        backgroundColor: "#0d1b2a",
-      }}
+      className="login-page-root flex min-h-dvh w-full items-center justify-center bg-background px-4 py-8"
       data-testid="login-page"
     >
       <LoginStyles />
-
       <div
-        aria-hidden
-        className="login-overlay-mobile absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "linear-gradient(90deg, rgba(13,27,42,0.0) 0%, rgba(13,27,42,0.06) 35%, rgba(13,27,42,0.10) 50%, rgba(13,27,42,0.05) 65%, rgba(13,27,42,0.0) 100%)",
-        }}
-      />
-
-      <div className="login-page-shell relative z-10 flex min-h-dvh items-center py-8 sm:py-10">
-        <div
-          data-testid="login-card"
-          className="login-card-box relative z-10"
-          style={{
-            background:
-              "linear-gradient(165deg, rgba(255,255,255,0.99) 0%, rgba(245,248,253,0.97) 100%)",
-            border: "1px solid rgba(255,255,255,0.7)",
-            borderRadius: 28,
-            boxShadow: "0 30px 90px rgba(7,27,77,0.38), 0 2px 0 rgba(255,98,0,0.25) inset",
-          }}
-        >
-          <div
-            aria-hidden
-            style={{
-              position: "absolute",
-              top: 0,
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: "44%",
-              height: 4,
-              background: "linear-gradient(90deg, transparent, #FF6200, transparent)",
-              borderRadius: 99,
-            }}
+        data-testid="login-card"
+        className="login-card-box w-full max-w-[400px] rounded-[12px] border border-border bg-card p-8"
+      >
+        <div className="mb-6 flex flex-col items-center text-center">
+          <img
+            src={fabsLogo}
+            alt="Logo Éditions FABS-CI"
+            width={44}
+            height={44}
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+            className="mb-4 h-11 w-11 object-contain"
           />
-          <div className="mb-8 text-center">
-            <div className="mb-7 flex justify-center">
-              <div
-                className="flex h-24 w-24 items-center justify-center rounded-full"
-                style={{
-                  background: "linear-gradient(150deg, #FFF4EC 0%, #F5F7FB 100%)",
-                  boxShadow: "0 10px 26px rgba(255,98,0,0.18), inset 0 1px 0 rgba(255,255,255,0.9)",
-                }}
-              >
-                <img
-                  src={fabsLogo}
-                  alt="Logo Éditions FABS-CI"
-                  width={64}
-                  height={64}
-                  loading="eager"
-                  decoding="async"
-                  fetchPriority="high"
-                  className="h-16 w-16 object-contain"
-                />
-              </div>
-            </div>
-
-            <h1
-              className="login-card-title slogan-animate"
-              style={{ fontWeight: 800, color: "#071B4D", letterSpacing: 0 }}
-            >
-              Accédez à votre espace
-            </h1>
-            <p className="fade-up d5" style={{ fontSize: 15, color: "#56627A", marginTop: 10 }}>
-              Veuillez renseigner vos identifiants pour continuer
-            </p>
-            <div
-              style={{
-                width: 64,
-                height: 4,
-                background: "#FF6200",
-                borderRadius: 99,
-                margin: "20px auto 0",
-              }}
-            />
-          </div>
-
-          <LoginForm
-            email={email}
-            setEmail={setEmail}
-            password={password}
-            setPassword={setPassword}
-            showPwd={showPwd}
-            setShowPwd={setShowPwd}
-            submitting={submitting}
-            error={error}
-            idleTimeout={idleTimeout}
-            onSubmit={handleSubmit}
-            remember={remember}
-            setRemember={setRemember}
-            authReady={authReady}
-          />
+          <h1 className="font-sans text-[20px] font-semibold tracking-normal text-foreground">Connexion</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Entrez vos identifiants pour continuer</p>
         </div>
+
+        <LoginForm
+          email={email}
+          setEmail={setEmail}
+          password={password}
+          setPassword={setPassword}
+          showPwd={showPwd}
+          setShowPwd={setShowPwd}
+          submitting={submitting}
+          error={error}
+          idleTimeout={idleTimeout}
+          onSubmit={handleSubmit}
+          remember={remember}
+          setRemember={setRemember}
+          authReady={authReady}
+        />
+
+        <p className="mt-6 text-center text-xs text-muted-foreground">Éditions FABS-CI · GESTI-one</p>
       </div>
     </div>
   );
