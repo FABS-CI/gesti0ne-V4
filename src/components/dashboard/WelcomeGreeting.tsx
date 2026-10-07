@@ -18,26 +18,20 @@ function getGreeting(hour: number) {
       Icon: Sun,
       salutation: (name: string) => `Bonjour, ${name}`,
       message: "Excellente journée de travail.",
-      bg: "bg-[linear-gradient(120deg,#0b1f4b_0%,#1e3a8a_100%)]",
-      iconTint: "text-amber-300",
-    };
+                };
   }
   if (hour >= 12 && hour < 18) {
     return {
       Icon: CloudSun,
       salutation: (name: string) => `Bon après-midi, ${name}`,
       message: "Heureux de vous retrouver — bonne continuation.",
-      bg: "bg-[linear-gradient(120deg,#0b1f4b_0%,#1e40af_100%)]",
-      iconTint: "text-orange-200",
-    };
+                };
   }
   return {
     Icon: Moon,
     salutation: (name: string) => `Bonsoir, ${name}`,
     message: "Bienvenue dans GESTI-one — agréable soirée de travail.",
-    bg: "bg-[linear-gradient(120deg,#0a1230_0%,#0b3d91_100%)]",
-    iconTint: "text-indigo-200",
-  };
+          };
 }
 
 export function WelcomeGreeting() {
@@ -100,19 +94,14 @@ export function WelcomeGreeting() {
 
   return (
     <div
-      className={`animate-fade-in relative overflow-hidden rounded-2xl border border-white/10 p-5 text-white shadow-lg ${g.bg}`}
+      className="relative rounded-lg border bg-card p-4 text-card-foreground"
       role="status"
       aria-live="polite"
     >
-      {/* halo décoratif */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-white/10 blur-3xl"
-      />
       <div className="relative flex items-start gap-4">
-        <Avatar className="h-12 w-12 shrink-0 ring-1 ring-white/20">
+        <Avatar className="h-12 w-12 shrink-0 border">
           {avatarUrl ? <AvatarImage src={avatarUrl} alt={name} /> : null}
-          <AvatarFallback className="bg-white/15 text-white text-sm font-semibold backdrop-blur-sm">
+          <AvatarFallback className="bg-muted text-sm font-semibold">
             {fallbackInitials}
           </AvatarFallback>
         </Avatar>
@@ -121,19 +110,19 @@ export function WelcomeGreeting() {
             {g.salutation(name)}
           </p>
           {pick ? (
-            <p className="mt-0.5 inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-white/70">
+            <p className="mt-0.5 inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
               <Sparkles className="h-3 w-3" aria-hidden />
               {pick.roleLabel}
             </p>
           ) : null}
-          <p className="mt-2 text-sm leading-relaxed text-white/90">
+          <p className="mt-2 text-sm leading-relaxed text-foreground">
             {pick ? `« ${pick.message} »` : g.message}
           </p>
-          <p className="mt-1 text-xs italic text-white/60">
+          <p className="mt-1 text-xs italic text-muted-foreground">
             {g.message}
           </p>
         </div>
-        <g.Icon className={`h-7 w-7 shrink-0 ${g.iconTint}`} aria-hidden />
+        <g.Icon className={`h-7 w-7 shrink-0 text-muted-foreground`} aria-hidden />
       </div>
     </div>
   );
