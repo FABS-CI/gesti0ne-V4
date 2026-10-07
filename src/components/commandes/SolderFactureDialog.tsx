@@ -59,7 +59,7 @@ export function SolderFactureDialog({
   open,
   onOpenChange,
 }: {
-  commande: Commande;
+  commande: Pick<Commande, "commande_id" | "client_nom">;
   open: boolean;
   onOpenChange: (o: boolean) => void;
 }) {
