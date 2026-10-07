@@ -152,7 +152,7 @@ function Dashboard() {
                 </p>
               </div>
               <div className="flex flex-wrap justify-center gap-2">
-                <Button asChild>
+                <Button variant="outline" asChild>
                   <Link to="/commandes">Nouvelle commande</Link>
                 </Button>
                 <Button variant="outline" asChild>
