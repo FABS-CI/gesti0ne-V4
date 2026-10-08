@@ -19,7 +19,6 @@ import { Route as CartonColisIdRouteImport } from './routes/carton.$colisId'
 import { Route as AuthenticatedWorkflowsDefinitionsRouteImport } from './routes/_authenticated/workflows-definitions'
 import { Route as AuthenticatedWorkflowApprovalsRouteImport } from './routes/_authenticated/workflow-approvals'
 import { Route as AuthenticatedTransfertsRouteImport } from './routes/_authenticated/transferts'
-import { Route as AuthenticatedRolesPermissionsRouteImport } from './routes/_authenticated/roles-permissions'
 import { Route as AuthenticatedRhDashboardRouteImport } from './routes/_authenticated/rh-dashboard'
 import { Route as AuthenticatedRetoursRouteImport } from './routes/_authenticated/retours'
 import { Route as AuthenticatedRapportsLogistiqueRouteImport } from './routes/_authenticated/rapports-logistique'
@@ -268,12 +267,6 @@ const AuthenticatedTransfertsRoute = AuthenticatedTransfertsRouteImport.update({
   path: '/transferts',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedRolesPermissionsRoute =
-  AuthenticatedRolesPermissionsRouteImport.update({
-    id: '/roles-permissions',
-    path: '/roles-permissions',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedRhDashboardRoute =
   AuthenticatedRhDashboardRouteImport.update({
     id: '/rh-dashboard',
@@ -1494,7 +1487,6 @@ export interface FileRoutesByFullPath {
   '/rapports-logistique': typeof AuthenticatedRapportsLogistiqueRoute
   '/retours': typeof AuthenticatedRetoursRouteWithChildren
   '/rh-dashboard': typeof AuthenticatedRhDashboardRoute
-  '/roles-permissions': typeof AuthenticatedRolesPermissionsRoute
   '/transferts': typeof AuthenticatedTransfertsRouteWithChildren
   '/workflow-approvals': typeof AuthenticatedWorkflowApprovalsRoute
   '/workflows-definitions': typeof AuthenticatedWorkflowsDefinitionsRoute
@@ -1682,7 +1674,6 @@ export interface FileRoutesByTo {
   '/rapports-comptables': typeof AuthenticatedRapportsComptablesRoute
   '/rapports-logistique': typeof AuthenticatedRapportsLogistiqueRoute
   '/rh-dashboard': typeof AuthenticatedRhDashboardRoute
-  '/roles-permissions': typeof AuthenticatedRolesPermissionsRoute
   '/workflow-approvals': typeof AuthenticatedWorkflowApprovalsRoute
   '/workflows-definitions': typeof AuthenticatedWorkflowsDefinitionsRoute
   '/carton/$colisId': typeof CartonColisIdRoute
@@ -1890,7 +1881,6 @@ export interface FileRoutesById {
   '/_authenticated/rapports-logistique': typeof AuthenticatedRapportsLogistiqueRoute
   '/_authenticated/retours': typeof AuthenticatedRetoursRouteWithChildren
   '/_authenticated/rh-dashboard': typeof AuthenticatedRhDashboardRoute
-  '/_authenticated/roles-permissions': typeof AuthenticatedRolesPermissionsRoute
   '/_authenticated/transferts': typeof AuthenticatedTransfertsRouteWithChildren
   '/_authenticated/workflow-approvals': typeof AuthenticatedWorkflowApprovalsRoute
   '/_authenticated/workflows-definitions': typeof AuthenticatedWorkflowsDefinitionsRoute
@@ -2100,7 +2090,6 @@ export interface FileRouteTypes {
     | '/rapports-logistique'
     | '/retours'
     | '/rh-dashboard'
-    | '/roles-permissions'
     | '/transferts'
     | '/workflow-approvals'
     | '/workflows-definitions'
@@ -2288,7 +2277,6 @@ export interface FileRouteTypes {
     | '/rapports-comptables'
     | '/rapports-logistique'
     | '/rh-dashboard'
-    | '/roles-permissions'
     | '/workflow-approvals'
     | '/workflows-definitions'
     | '/carton/$colisId'
@@ -2495,7 +2483,6 @@ export interface FileRouteTypes {
     | '/_authenticated/rapports-logistique'
     | '/_authenticated/retours'
     | '/_authenticated/rh-dashboard'
-    | '/_authenticated/roles-permissions'
     | '/_authenticated/transferts'
     | '/_authenticated/workflow-approvals'
     | '/_authenticated/workflows-definitions'
@@ -2713,13 +2700,6 @@ declare module '@tanstack/react-router' {
       path: '/transferts'
       fullPath: '/transferts'
       preLoaderRoute: typeof AuthenticatedTransfertsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/roles-permissions': {
-      id: '/_authenticated/roles-permissions'
-      path: '/roles-permissions'
-      fullPath: '/roles-permissions'
-      preLoaderRoute: typeof AuthenticatedRolesPermissionsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/rh-dashboard': {
@@ -4589,7 +4569,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedRapportsLogistiqueRoute: typeof AuthenticatedRapportsLogistiqueRoute
   AuthenticatedRetoursRoute: typeof AuthenticatedRetoursRouteWithChildren
   AuthenticatedRhDashboardRoute: typeof AuthenticatedRhDashboardRoute
-  AuthenticatedRolesPermissionsRoute: typeof AuthenticatedRolesPermissionsRoute
   AuthenticatedTransfertsRoute: typeof AuthenticatedTransfertsRouteWithChildren
   AuthenticatedWorkflowApprovalsRoute: typeof AuthenticatedWorkflowApprovalsRoute
   AuthenticatedWorkflowsDefinitionsRoute: typeof AuthenticatedWorkflowsDefinitionsRoute
@@ -4710,7 +4689,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedRapportsLogistiqueRoute: AuthenticatedRapportsLogistiqueRoute,
   AuthenticatedRetoursRoute: AuthenticatedRetoursRouteWithChildren,
   AuthenticatedRhDashboardRoute: AuthenticatedRhDashboardRoute,
-  AuthenticatedRolesPermissionsRoute: AuthenticatedRolesPermissionsRoute,
   AuthenticatedTransfertsRoute: AuthenticatedTransfertsRouteWithChildren,
   AuthenticatedWorkflowApprovalsRoute: AuthenticatedWorkflowApprovalsRoute,
   AuthenticatedWorkflowsDefinitionsRoute:
