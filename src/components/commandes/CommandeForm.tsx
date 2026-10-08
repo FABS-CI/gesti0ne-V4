@@ -631,7 +631,6 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
 
           {/* 5. Frais de transport */}
           <section className="scroll-mt-20 rounded-md border bg-card p-4 sm:p-5 space-y-3">
-            <span aria-hidden className="absolute inset-y-0 left-0 w-1 bg-primary" />
             <h2 className="flex items-center gap-2 text-base sm:text-lg font-semibold">
               <span aria-hidden className="grid h-7 w-7 shrink-0 place-items-center text-muted-foreground">
                 <Truck className="h-4 w-4" />
