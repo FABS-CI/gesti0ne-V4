@@ -8,7 +8,8 @@ import fabsLogo from "@/assets/fabs-logo.webp";
 import { LoginStyles } from "@/components/auth/LoginStyles";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { LoginPattern } from "@/components/auth/LoginPattern";
-import pkg from "../../package.json";
+
+const APP_VERSION = "1.0.0";
 import { applyRememberPolicy, initRememberPolicyFromStorage } from "@/lib/auth/remember";
 import { signInWithPasswordServer } from "@/lib/auth.functions";
 
@@ -320,7 +321,7 @@ function AuthPage() {
       </div>
       <footer className="relative mt-6 space-y-1 text-center text-xs text-muted-foreground">
         <p>Besoin d'aide ? Contactez votre administrateur</p>
-        <p>Version {pkg.version ?? "1.0.0"} · © 2026 Éditions FABS-CI</p>
+        <p>Version {APP_VERSION} · © 2026 Éditions FABS-CI</p>
       </footer>
     </div>
   );
