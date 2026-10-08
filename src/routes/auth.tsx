@@ -7,6 +7,9 @@ import { supabase } from "@/integrations/supabase/client";
 import fabsLogo from "@/assets/fabs-logo.webp";
 import { LoginStyles } from "@/components/auth/LoginStyles";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { LoginPattern } from "@/components/auth/LoginPattern";
+
+const APP_VERSION = "1.0.0";
 import { applyRememberPolicy, initRememberPolicyFromStorage } from "@/lib/auth/remember";
 import { signInWithPasswordServer } from "@/lib/auth.functions";
 
@@ -41,7 +44,7 @@ function AuthPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [idleTimeout, setIdleTimeout] = useState(false);
-  const [remember, setRemember] = useState(true);
+  const [remember, setRemember] = useState(false);
   const [authReady, setAuthReady] = useState(false);
 
   function isFetchProxyError(err: unknown) {
@@ -240,7 +243,7 @@ function AuthPage() {
       const msg = err instanceof Error ? err.message : "";
       setError(
         /invalid login credentials/i.test(msg)
-          ? "Adresse e-mail ou mot de passe incorrect."
+          ? "Identifiant ou mot de passe incorrect. Vérifiez vos informations puis réessayez."
           : /email not confirmed/i.test(msg)
             ? "Adresse e-mail non confirmée."
             : msg || "Échec de l'authentification",
@@ -272,28 +275,32 @@ function AuthPage() {
 
   return (
     <div
-      className="login-page-root flex min-h-dvh w-full items-center justify-center bg-background px-4 py-8"
+      className="login-page-root relative flex min-h-dvh w-full flex-col items-center justify-center bg-background px-4 py-8"
       data-testid="login-page"
     >
       <LoginStyles />
+      <LoginPattern />
+      <div className="relative mb-6 flex flex-col items-center gap-3 text-center">
+        <img
+          src={fabsLogo}
+          alt="Logo Éditions FABS-CI"
+          width={56}
+          height={56}
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
+          className="h-14 w-14 object-contain"
+        />
+        <div>
+          <p className="text-[22px] font-semibold leading-tight text-foreground">GESTI-one</p>
+          <p className="text-[13px] text-muted-foreground">Éditions FABS-CI</p>
+        </div>
+      </div>
       <div
         data-testid="login-card"
-        className="login-card-box w-full max-w-[400px] rounded-[12px] border border-border bg-card p-8"
+        className="login-card-box relative w-full max-w-[400px] rounded-[12px] border border-border bg-card p-8 shadow-sm"
       >
-        <div className="mb-6 flex flex-col items-center text-center">
-          <img
-            src={fabsLogo}
-            alt="Logo Éditions FABS-CI"
-            width={44}
-            height={44}
-            loading="eager"
-            decoding="async"
-            fetchPriority="high"
-            className="mb-4 h-11 w-11 object-contain"
-          />
-          <h1 className="font-sans text-[20px] font-semibold tracking-normal text-foreground">Connexion</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Entrez vos identifiants pour continuer</p>
-        </div>
+        <h1 className="mb-6 font-sans text-[20px] font-semibold tracking-normal text-foreground">Connexion</h1>
 
         <LoginForm
           email={email}
@@ -311,8 +318,11 @@ function AuthPage() {
           authReady={authReady}
         />
 
-        <p className="mt-6 text-center text-xs text-muted-foreground">Éditions FABS-CI · GESTI-one</p>
       </div>
+      <footer className="relative mt-6 space-y-1 text-center text-xs text-muted-foreground">
+        <p>Besoin d'aide ? Contactez votre administrateur</p>
+        <p>Version {APP_VERSION} · © 2026 Éditions FABS-CI</p>
+      </footer>
     </div>
   );
 }
