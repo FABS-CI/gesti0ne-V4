@@ -1,3 +1,4 @@
+import { formatFCFA } from "@/lib/format";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -28,8 +29,7 @@ import { formatDocumentReference } from "@/lib/document-reference";
 import { friendlyError } from "@/lib/friendly-error";
 import type { Commande } from "@/lib/commandes-api";
 
-const fmt = (n: number) =>
-  `${Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} FCFA`;
+const fmt = (n: number) => formatFCFA(n);
 
 /** Choix affichés → valeur enregistrée (modes existants) + précision éventuelle. */
 const MODES = [

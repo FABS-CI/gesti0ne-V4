@@ -1,4 +1,4 @@
-import { formatDateTime } from "@/lib/format";
+import { formatDateTime, formatTime } from "@/lib/format";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -398,7 +398,7 @@ function SanteSystemePage() {
             )}
             {services.data?.checkedAt && (
               <div className="mt-3 text-xs text-muted-foreground">
-                Dernière vérification : {services.data.checkedAt.toLocaleTimeString("fr-FR")}
+                Dernière vérification : {formatTime(services.data.checkedAt)}
               </div>
             )}
           </CardContent>

@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
-import { formatDate, formatDateTime, formatFCFA } from "@/lib/format";
+import { formatDate, formatDateTime, formatFCFA, formatTime } from "@/lib/format";
 
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, FileDown, Printer } from "lucide-react";
@@ -443,10 +443,7 @@ function FeuilleTourneePage() {
   };
 
   const dateEdition = formatDate(new Date());
-  const heureEdition = new Date().toLocaleTimeString("fr-FR", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const heureEdition = formatTime(new Date());
 
   return (
     <div className="min-h-dvh bg-background">

@@ -1,3 +1,4 @@
+import { formatDayMonth } from "@/lib/format";
 import { useQuery } from "@tanstack/react-query";
 import {
   ResponsiveContainer,
@@ -22,7 +23,7 @@ export function AuditCharts({ days = 30 }: { days?: number }) {
       if (error) throw error;
       return (data ?? []).map((r) => ({
         ...r,
-        day: new Date(r.day).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" }),
+        day: formatDayMonth(r.day),
         info: Number(r.info),
         warning: Number(r.warning),
         critical: Number(r.error),

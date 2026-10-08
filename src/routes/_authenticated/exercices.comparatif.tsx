@@ -1,3 +1,4 @@
+import { formatDate, formatTime } from "@/lib/format";
 import { getCurrentUser } from "@/lib/current-user";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AlertCircle, ArrowLeft, FileDown, GitCompare, Inbox } from "lucide-react";
@@ -129,7 +130,7 @@ function ComparatifPage() {
     const { data: authData } = await getCurrentUser();
     const userEmail = authData?.user?.email ?? "—";
     const now = new Date();
-    const timestamp = `${now.toLocaleDateString("fr-FR")} ${now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`;
+    const timestamp = `${formatDate(now)} ${formatTime(now)}`;
     const meta = buildPdfMeta({
       userEmail,
       timestamp,

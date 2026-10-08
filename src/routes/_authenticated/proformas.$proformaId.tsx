@@ -1,3 +1,4 @@
+import { formatPercent } from "@/lib/format";
 import { PageHeader } from "@/components/common/PageHeader";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -339,7 +340,7 @@ function ProformaDetailPage() {
                     <TableCell>{l.designation}</TableCell>
                     <TableCell className="text-right text-destructive">
                       {Number(l.quantite ?? 0) * Number(l.prix_unitaire ?? 0) > 0 && l.total_ligne != null
-                        ? `${Math.max(0, (1 - Number(l.total_ligne) / (Number(l.quantite) * Number(l.prix_unitaire))) * 100).toLocaleString("fr-FR", { maximumFractionDigits: 2 })} %`
+                        ? formatPercent(Math.max(0, (1 - Number(l.total_ligne) / (Number(l.quantite) * Number(l.prix_unitaire))) * 100), 2)
                         : "—"}
                     </TableCell>
                     <TableCell className="text-right">{l.quantite}</TableCell>

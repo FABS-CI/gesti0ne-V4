@@ -1,3 +1,4 @@
+import { formatDateLong } from "@/lib/format";
 import { Lock, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -57,17 +58,9 @@ export function ExercicesTable({
               <TableRow key={ex.exercice_id}>
                 <TableCell className="font-semibold">{ex.code}</TableCell>
                 <TableCell className="text-sm">
-                  {new Date(ex.date_debut).toLocaleDateString("fr-FR", {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                  })}{" "}
+                  {formatDateLong(ex.date_debut)}{" "}
                   →{" "}
-                  {new Date(ex.date_fin).toLocaleDateString("fr-FR", {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                  })}
+                  {formatDateLong(ex.date_fin)}
                 </TableCell>
                 <TableCell>
                   <Badge variant={ex.is_actif ? "default" : "outline"}>

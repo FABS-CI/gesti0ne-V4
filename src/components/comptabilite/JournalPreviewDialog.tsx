@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { useState } from "react";
 import { Download, Eye, Maximize2, Minimize2, Printer, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -42,7 +43,7 @@ export function JournalPreviewDialog({
           </DialogTitle>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
             <span>Période : {periodeLabel}</span>
-            {generatedAt && <span>Généré le {generatedAt.toLocaleString("fr-FR")}</span>}
+            {generatedAt && <span>Généré le {formatDateTime(generatedAt)}</span>}
           </div>
         </DialogHeader>
 
