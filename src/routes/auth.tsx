@@ -300,7 +300,7 @@ function AuthPage() {
         data-testid="login-card"
         className="login-card-box relative w-full max-w-[400px] rounded-[12px] border border-border bg-card p-8 shadow-sm"
       >
-        <h1 className="mb-6 text-[20px] font-semibold text-foreground">Connexion</h1>
+        <h1 className="mb-6 font-sans text-[20px] font-semibold tracking-normal text-foreground">Connexion</h1>
 
         <LoginForm
           email={email}
