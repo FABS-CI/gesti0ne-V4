@@ -124,7 +124,7 @@ function PaiementDetailPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-xl font-bold">Paiement {formatDocumentReference(paiement.reference)}</h1>
+            <h1 className="ds-page-title">Paiement {formatDocumentReference(paiement.reference)}</h1>
             <p className="text-sm text-muted-foreground">
               {paiement.client_nom ?? "Client non renseigné"}
             </p>

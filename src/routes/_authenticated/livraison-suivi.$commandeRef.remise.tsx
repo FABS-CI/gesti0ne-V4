@@ -157,7 +157,7 @@ function RemisePage() {
         <div className="flex items-center gap-2">
           <Icon className="h-6 w-6 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold">{title}</h1>
+            <h1 className="ds-page-title">{title}</h1>
             <p className="text-sm text-muted-foreground">
               Commande {cmd?.reference ?? commandeRef} — vérifiez puis validez l'étape.
             </p>

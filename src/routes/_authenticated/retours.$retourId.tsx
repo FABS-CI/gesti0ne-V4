@@ -173,7 +173,7 @@ function RetourDetailPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-xl font-bold">{titre}</h1>
+            <h1 className="ds-page-title">{titre}</h1>
             <p className="text-sm text-muted-foreground">
               {retour.etablissement ?? retour.client_nom ?? "—"} · v{version}
             </p>

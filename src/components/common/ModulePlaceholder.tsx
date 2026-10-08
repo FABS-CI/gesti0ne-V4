@@ -33,7 +33,7 @@ export function ModulePlaceholder({
             <Icon className="h-6 w-6" />
           </span>
           <div>
-            <h1 className="text-2xl font-bold">{title}</h1>
+            <h1 className="ds-page-title">{title}</h1>
             {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
           </div>
         </div>

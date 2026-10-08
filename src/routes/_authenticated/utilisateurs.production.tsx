@@ -129,7 +129,7 @@ function UtilisateursProductionPage() {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-20 text-center">
         <ShieldAlert className="h-10 w-10 text-destructive" />
-        <h1 className="text-xl font-bold">Accès restreint</h1>
+        <h1 className="ds-page-title">Accès restreint</h1>
         <p className="max-w-md text-sm text-muted-foreground">
           {friendlyError(error, "Réservé au super administrateur.")}
         </p>
@@ -143,7 +143,7 @@ function UtilisateursProductionPage() {
         <div className="flex items-center gap-3">
           <Users className="h-6 w-6 text-[#F97316]" />
           <div>
-            <h1 className="text-2xl font-bold">Utilisateurs — Mise en production</h1>
+            <h1 className="ds-page-title">Utilisateurs — Mise en production</h1>
             <p className="text-sm text-muted-foreground">
               Distribution des accès · {stats.total} comptes · {stats.actifs} actifs ·{" "}
               {stats.inactifs} inactifs

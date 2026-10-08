@@ -146,7 +146,7 @@ function CommandeModifierPage() {
         </Button>
         <ShoppingCart className="h-6 w-6 text-primary" />
         <div>
-          <h1 className="text-2xl font-bold">Modifier la commande {formatDocumentReference(commande.reference)}</h1>
+          <h1 className="ds-page-title">Modifier la commande {formatDocumentReference(commande.reference)}</h1>
           <p className="text-sm text-muted-foreground">
             Toutes les modifications recalculent automatiquement les totaux et les documents liés.
           </p>

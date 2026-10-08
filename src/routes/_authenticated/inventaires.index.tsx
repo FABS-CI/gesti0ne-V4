@@ -164,7 +164,7 @@ function InventairesPage() {
         <div className="flex items-center gap-3">
           <ClipboardList className="h-7 w-7 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold">Inventaires</h1>
+            <h1 className="ds-page-title">Inventaires</h1>
             <p className="text-sm text-muted-foreground">
               Comptages physiques et rapports d'inventaire par dépôt
             </p>

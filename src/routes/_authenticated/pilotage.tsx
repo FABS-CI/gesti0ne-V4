@@ -79,7 +79,7 @@ function Pilotage() {
     <div className="theme-dashboard space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
+          <h1 className="ds-page-title flex items-center gap-2">
             <Gauge className="h-6 w-6 text-primary" /> Centre de pilotage
           </h1>
           <p className="text-sm text-muted-foreground">

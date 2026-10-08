@@ -316,7 +316,7 @@ function AuditPage() {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-20 text-center">
         <ShieldAlert className="h-10 w-10 text-destructive" />
-        <h1 className="text-xl font-bold">Accès restreint</h1>
+        <h1 className="ds-page-title">Accès restreint</h1>
         <p className="max-w-md text-sm text-muted-foreground">
           Le journal d'audit est réservé au Super Administrateur.
         </p>
@@ -379,7 +379,7 @@ function AuditPage() {
         <div className="flex items-center gap-3">
           <History className="h-6 w-6 text-[#F97316]" />
           <div>
-            <h1 className="text-2xl font-bold">Journal d'audit</h1>
+            <h1 className="ds-page-title">Journal d'audit</h1>
             <p className="text-sm text-muted-foreground">
               Traçabilité complète — {rows.length} / {totalEvents} événement(s)
             </p>

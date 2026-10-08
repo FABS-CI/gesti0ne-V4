@@ -462,7 +462,7 @@ function NouvelleTourneePage() {
           <div className="flex items-center gap-2">
             <Navigation className="h-5 w-5 text-primary" />
             <div>
-              <h1 className="text-lg font-semibold leading-none">Nouvelle tournée</h1>
+              <h1 className="ds-page-title">Nouvelle tournée</h1>
               <p className="text-xs text-muted-foreground mt-1">
                 Sélectionnez les colis prêts non affectés à charger dans la tournée.
               </p>

@@ -136,7 +136,7 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
             </Link>
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">{client.nom}</h1>
+            <h1 className="ds-page-title">{client.nom}</h1>
             <p className="font-mono text-xs text-muted-foreground">{client.reference}</p>
           </div>
         </div>

@@ -67,7 +67,7 @@ function MonDashboard() {
     <div className="theme-dashboard p-6 space-y-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-semibold">Mon tableau de bord</h1>
+          <h1 className="ds-page-title">Mon tableau de bord</h1>
           <p className="text-sm text-muted-foreground">
             Réorganisez et masquez les indicateurs selon vos besoins.
           </p>

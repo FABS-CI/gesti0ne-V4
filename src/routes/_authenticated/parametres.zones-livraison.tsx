@@ -121,7 +121,7 @@ function ZonesLivraisonPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <div>
-        <h1 className="flex items-center gap-2 text-2xl font-bold">
+        <h1 className="ds-page-title flex items-center gap-2">
           <MapPin className="h-6 w-6 text-primary" /> Zones de livraison directe
         </h1>
         <p className="text-sm text-muted-foreground">

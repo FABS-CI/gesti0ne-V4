@@ -142,7 +142,7 @@ function ProformaDetailPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-xl font-bold">Proforma {formatDocumentReference(proforma.reference)}</h1>
+            <h1 className="ds-page-title">Proforma {formatDocumentReference(proforma.reference)}</h1>
             <p className="text-sm text-muted-foreground">
               {proforma.client_nom ?? "Client non renseigné"}
             </p>

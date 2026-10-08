@@ -141,7 +141,7 @@ function DashboardLogistique() {
     <div className="space-y-6 p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Tableau de bord logistique</h1>
+          <h1 className="ds-page-title">Tableau de bord logistique</h1>
           <p className="text-sm text-muted-foreground">
             Vue d'ensemble des tournées, véhicules et coûts
           </p>

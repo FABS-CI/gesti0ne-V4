@@ -15,7 +15,7 @@ function SecuritePage() {
   return (
     <div className="container mx-auto space-y-4 p-4 md:p-6">
       <div>
-        <h1 className="text-2xl font-bold">Tableau de bord sécurité</h1>
+        <h1 className="ds-page-title">Tableau de bord sécurité</h1>
         <p className="text-sm text-muted-foreground">
           Utilisateurs, rôles, permissions, approbations en attente et dernières activités
         </p>

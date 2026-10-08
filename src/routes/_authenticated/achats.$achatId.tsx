@@ -157,7 +157,7 @@ function AchatDetailPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-xl font-bold">Approvisionnement {achat.reference}</h1>
+            <h1 className="ds-page-title">Approvisionnement {achat.reference}</h1>
             <p className="text-sm text-muted-foreground">{achat.libelle}</p>
           </div>
         </div>

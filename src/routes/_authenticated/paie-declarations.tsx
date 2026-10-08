@@ -101,7 +101,7 @@ function DeclarationsPage() {
           <ScrollText className="h-6 w-6 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold">Déclarations sociales & fiscales</h1>
+          <h1 className="ds-page-title">Déclarations sociales & fiscales</h1>
           <p className="text-sm text-muted-foreground">
             CNPS · ITS · CN · CMU · DISA — Génération automatique depuis les bulletins de paie
           </p>

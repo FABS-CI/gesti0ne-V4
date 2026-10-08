@@ -156,7 +156,7 @@ function ComparatifPage() {
           </Link>
         </Button>
         <div className="flex-1">
-          <h1 className="flex items-center gap-2 text-2xl font-bold">
+          <h1 className="ds-page-title flex items-center gap-2">
             <GitCompare className="h-6 w-6 text-primary" /> Comparatif multi-exercices
           </h1>
           <p className="text-sm text-muted-foreground">

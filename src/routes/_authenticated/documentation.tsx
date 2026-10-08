@@ -107,7 +107,7 @@ function DocumentationPage() {
           <BookOpen className="h-6 w-6" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold">Documentation</h1>
+          <h1 className="ds-page-title">Documentation</h1>
           <p className="text-sm text-muted-foreground">
             Recherche plein texte dans le manuel d'utilisation de l'ERP.
           </p>

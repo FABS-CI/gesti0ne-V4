@@ -56,7 +56,7 @@ function StockAuditPage() {
         <div className="flex items-center gap-3">
           <ShieldCheck className="h-6 w-6 text-[#3B82F6]" />
           <div>
-            <h1 className="text-2xl font-bold">Audit Stock &amp; Inventaire</h1>
+            <h1 className="ds-page-title">Audit Stock &amp; Inventaire</h1>
             <p className="text-sm text-muted-foreground">
               Diagnostic en lecture seule — aucune modification effectuée
             </p>

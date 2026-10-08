@@ -150,7 +150,7 @@ function CommandesPage() {
               <ShoppingCart className="h-5 w-5" />
             </div>
             <div className="min-w-0">
-              <h1 className="truncate text-2xl font-bold tracking-tight">Ventes &amp; Commandes</h1>
+              <h1 className="ds-page-title truncate">Ventes &amp; Commandes</h1>
               <p className="text-sm text-muted-foreground">Pilotez le cycle de vente complet</p>
             </div>
           </div>

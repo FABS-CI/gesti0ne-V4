@@ -182,7 +182,7 @@ function EtatComptePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold">
+          <h1 className="ds-page-title flex items-center gap-2">
             <FileText className="h-6 w-6 text-primary" /> États de compte clients
           </h1>
           <p className="text-sm text-muted-foreground">Soldes et créances clients</p>

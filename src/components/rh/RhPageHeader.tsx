@@ -54,7 +54,7 @@ export function RhPageHeader({ title, subtitle, backTo, crumbs, actions }: Props
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="min-w-0">
-            <h1 className="truncate text-xl font-bold">{title}</h1>
+            <h1 className="ds-page-title truncate">{title}</h1>
             {subtitle && <p className="truncate text-sm text-muted-foreground">{subtitle}</p>}
           </div>
         </div>

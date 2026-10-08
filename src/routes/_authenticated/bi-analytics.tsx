@@ -123,7 +123,7 @@ function BiAnalytics() {
   return (
     <div className="theme-dashboard space-y-6">
       <div>
-        <h1 className="flex items-center gap-2 text-2xl font-bold">
+        <h1 className="ds-page-title flex items-center gap-2">
           <BarChart3 className="h-6 w-6 text-primary" /> Business Intelligence
         </h1>
         <p className="text-sm text-muted-foreground">Analyses et tendances de l'activité</p>

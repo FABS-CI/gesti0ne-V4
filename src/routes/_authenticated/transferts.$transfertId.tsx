@@ -165,7 +165,7 @@ function TransfertDetailPage() {
               <ArrowLeft className="mr-2 h-4 w-4" /> Retour
             </Link>
           </Button>
-          <h1 className="flex items-center gap-2 text-2xl font-bold">
+          <h1 className="ds-page-title flex items-center gap-2">
             <ArrowRightLeft className="h-6 w-6 text-primary" />
             <span className="font-mono">{transfert.numero}</span>
             <Badge variant={colors[transfert.statut]}>{labels[transfert.statut]}</Badge>

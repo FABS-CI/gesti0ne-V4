@@ -108,7 +108,7 @@ function AlertesStockPage() {
         <div className="flex items-center gap-3">
           <AlertTriangle className="h-7 w-7 text-[#EF4444]" />
           <div>
-            <h1 className="text-2xl font-bold">Alertes de stock par dépôt</h1>
+            <h1 className="ds-page-title">Alertes de stock par dépôt</h1>
             <p className="text-sm text-muted-foreground">
               Produits sous seuil — seuil dépôt prioritaire, sinon seuil produit
             </p>

@@ -158,7 +158,7 @@ function ImportDonneesPage() {
         <div className="flex items-center gap-3">
           <Database className="h-6 w-6 text-[#F97316]" />
           <div>
-            <h1 className="text-2xl font-bold">Import de données</h1>
+            <h1 className="ds-page-title">Import de données</h1>
             <p className="text-sm text-muted-foreground">
               Importer en masse produits, clients ou fournisseurs depuis un fichier CSV
             </p>

@@ -124,7 +124,7 @@ function Profil() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Mon profil</h1>
+        <h1 className="ds-page-title">Mon profil</h1>
         <p className="text-sm text-muted-foreground">Gérez vos informations personnelles</p>
       </div>
 

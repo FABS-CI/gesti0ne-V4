@@ -80,7 +80,7 @@ function PaieDashboardPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">Tableau de bord Paie</h1>
+          <h1 className="ds-page-title">Tableau de bord Paie</h1>
           <p className="text-sm text-muted-foreground">
             Vue d'ensemble des bulletins et de la masse salariale
           </p>

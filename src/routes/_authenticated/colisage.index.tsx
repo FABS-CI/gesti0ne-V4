@@ -128,7 +128,7 @@ function ColisageListPage() {
           <Package className="h-6 w-6 text-primary" />
         </div>
         <div className="flex-1">
-          <h1 className="text-xl font-bold">Colisage</h1>
+          <h1 className="ds-page-title">Colisage</h1>
           <p className="text-sm text-muted-foreground">
             Préparation des cartons à partir des bons de livraison
           </p>

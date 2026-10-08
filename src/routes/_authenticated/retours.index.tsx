@@ -177,7 +177,7 @@ function RetoursListPage() {
         <div className="flex items-center gap-3">
           <RotateCcw className="h-6 w-6 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold">Retours</h1>
+            <h1 className="ds-page-title">Retours</h1>
             <p className="text-sm text-muted-foreground">Gestion des retours produits</p>
           </div>
         </div>

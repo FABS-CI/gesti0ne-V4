@@ -17,7 +17,7 @@ export function BonDocumentHeader({
   return (
     <div className="flex justify-between items-start mb-6 border-b-2 border-slate-800 pb-4">
       <div>
-        <h1 className="text-lg font-bold tracking-tight">{COMPANY.nom}</h1>
+        <h1 className="ds-page-title">{COMPANY.nom}</h1>
         <p className="text-[11px] text-muted-foreground">{COMPANY.adresse}</p>
         <p className="text-[11px] text-muted-foreground">
           Tél : {COMPANY.telephones.join(" / ")} • {COMPANY.email}

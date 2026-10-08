@@ -315,7 +315,7 @@ function VerificationPage() {
               <div className="mx-auto w-fit p-4 rounded-full bg-slate-100 border border-slate-200">
                 <XCircle className="h-10 w-10 text-slate-500" />
               </div>
-              <h1 className="text-xl font-black text-slate-900">Référence invalide</h1>
+              <h1 className="ds-page-title font-black text-slate-900">Référence invalide</h1>
               <p className="text-sm text-slate-600">
                 Le code scanné ne correspond pas à un format de référence valide.
               </p>
@@ -332,7 +332,7 @@ function VerificationPage() {
               <div className="mx-auto w-fit p-4 rounded-full bg-amber-50 border border-amber-200">
                 <WifiOff className="h-10 w-10 text-amber-600" />
               </div>
-              <h1 className="text-xl font-black text-slate-900 leading-tight">
+              <h1 className="ds-page-title font-black text-slate-900">
                 Vérification temporairement indisponible
               </h1>
               <p className="text-sm text-slate-600">

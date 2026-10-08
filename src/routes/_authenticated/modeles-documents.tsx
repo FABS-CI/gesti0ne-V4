@@ -327,7 +327,7 @@ function ModelesDocuments() {
             <FileText className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-xl font-bold">Modèles de documents</h1>
+            <h1 className="ds-page-title">Modèles de documents</h1>
             <p className="text-sm text-muted-foreground">
               Le modèle choisi est enregistré sur votre compte et appliqué à tous vos documents de
               vente. Sans choix, le modèle par défaut « {DEFAULT_TEMPLATE.label} » est utilisé.

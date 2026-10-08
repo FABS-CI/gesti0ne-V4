@@ -126,7 +126,7 @@ function NouvelleEcriturePage() {
           </Link>
         </Button>
         <div>
-          <h1 className="text-xl font-bold">Nouvelle écriture comptable</h1>
+          <h1 className="ds-page-title">Nouvelle écriture comptable</h1>
           <p className="text-sm text-muted-foreground">Saisie manuelle — SYSCOHADA</p>
         </div>
       </div>

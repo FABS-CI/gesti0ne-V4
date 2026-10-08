@@ -180,7 +180,7 @@ function EmployesPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <div className="min-w-0">
-          <h1 className="flex items-center gap-2 text-2xl font-bold">
+          <h1 className="ds-page-title flex items-center gap-2">
             <Users2 className="h-6 w-6 shrink-0 text-primary" /> Employés
           </h1>
           <p className="text-sm text-muted-foreground">Gestion du personnel</p>

@@ -50,7 +50,7 @@ function CommandeNouvellePage() {
         </Button>
         <ShoppingCart className="h-6 w-6 text-primary" />
         <div>
-          <h1 className="text-2xl font-bold">Nouvelle Commande</h1>
+          <h1 className="ds-page-title">Nouvelle Commande</h1>
           <p className="text-sm text-muted-foreground">
             Proforma générée automatiquement · Facture &amp; BL si vous avez le droit de validation, sinon commande en attente
           </p>

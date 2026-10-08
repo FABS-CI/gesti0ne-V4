@@ -142,7 +142,7 @@ function StockPage() {
         <div className="flex items-center gap-3">
           <Boxes className="h-6 w-6 text-[#10B981]" />
           <div>
-            <h1 className="text-2xl font-bold">Stock</h1>
+            <h1 className="ds-page-title">Stock</h1>
             <p className="text-sm text-muted-foreground">
               {produits.length} produit(s) · {enAlerte} en alerte
             </p>

@@ -68,7 +68,7 @@ function AuditPaiementDetailPage() {
           </Link>
         </Button>
         <div>
-          <h1 className="flex items-center gap-2 text-xl font-bold">
+          <h1 className="ds-page-title flex items-center gap-2">
             <ShieldAlert className="h-5 w-5 text-primary" /> Détail annulation
           </h1>
           <p className="text-sm text-muted-foreground font-mono">{audit.id}</p>

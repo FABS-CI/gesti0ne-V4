@@ -206,7 +206,7 @@ function LogisticsCostsPage() {
     <div className="space-y-4 p-4">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
+          <h1 className="ds-page-title flex items-center gap-2">
             <DollarSign className="h-6 w-6" /> Coûts logistiques
           </h1>
           <p className="text-sm text-muted-foreground">

@@ -146,7 +146,7 @@ function FactureDetailPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-xl font-bold">Facture {formatDocumentReference(facture.reference)}</h1>
+            <h1 className="ds-page-title">Facture {formatDocumentReference(facture.reference)}</h1>
             <p className="text-sm text-muted-foreground">
               {facture.client_nom ?? "Client non renseigné"}
             </p>

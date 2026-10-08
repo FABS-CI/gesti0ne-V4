@@ -127,7 +127,7 @@ function BLPage() {
 
         <div className="rounded-lg border bg-card p-8 print:border-0 print:p-4">
           <div className="mb-6 text-center">
-            <h1 className="text-2xl font-bold">BON DE LIVRAISON — TOURNÉE</h1>
+            <h1 className="ds-page-title">BON DE LIVRAISON — TOURNÉE</h1>
             <p className="mt-1 text-sm text-muted-foreground">N° {t.reference}</p>
           </div>
 

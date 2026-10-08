@@ -132,7 +132,7 @@ function IncidentsPage() {
         <div className="flex items-center gap-3">
           <AlertTriangle className="h-7 w-7 text-amber-600" />
           <div>
-            <h1 className="text-2xl font-bold">Incidents de Stock</h1>
+            <h1 className="ds-page-title">Incidents de Stock</h1>
             <p className="text-sm text-muted-foreground">
               Pertes, détériorations, obsolescences et autres sorties exceptionnelles
             </p>

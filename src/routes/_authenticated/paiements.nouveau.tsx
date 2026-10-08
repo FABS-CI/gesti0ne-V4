@@ -264,7 +264,7 @@ function NouveauPaiementPage() {
         </Button>
         <CreditCard className="h-6 w-6 text-primary" />
         <div>
-          <h1 className="text-2xl font-bold">Nouveau paiement</h1>
+          <h1 className="ds-page-title">Nouveau paiement</h1>
           <p className="text-sm text-muted-foreground">
             Enregistrement d'un règlement client à imputer sur une ou plusieurs factures
           </p>

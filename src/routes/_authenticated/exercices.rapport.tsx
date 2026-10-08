@@ -151,7 +151,7 @@ function RapportExercicePage() {
           </Link>
         </Button>
         <div className="flex-1">
-          <h1 className="flex items-center gap-2 text-2xl font-bold">
+          <h1 className="ds-page-title flex items-center gap-2">
             <FileBarChart className="h-6 w-6 text-primary" /> Rapport d'exercice
           </h1>
           <p className="text-sm text-muted-foreground">

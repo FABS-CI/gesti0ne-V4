@@ -138,7 +138,7 @@ function RapportsLogistique() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold">
+          <h1 className="ds-page-title flex items-center gap-2">
             <BarChart3 className="h-6 w-6" /> Rapports logistique
           </h1>
           <p className="text-sm text-muted-foreground">Analyse des tournées et coûts par période</p>
