@@ -310,7 +310,7 @@ function VerificationPage() {
           </p>
         </header>
 
-        <main className="bg-white rounded-2xl shadow-lg border border-border p-6 space-y-5">
+        <main className="bg-card rounded-lg shadow-sm border border-border p-6 space-y-5">
           {malformed ? (
             <div className="text-center space-y-4">
               <div className="mx-auto w-fit p-4 rounded-full bg-muted border border-border">

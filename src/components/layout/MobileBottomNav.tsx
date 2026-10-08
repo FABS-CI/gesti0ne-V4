@@ -40,7 +40,7 @@ export function MobileBottomNav() {
             {active && (
               <span
                 aria-hidden
-                className="absolute left-1/2 top-0 h-[3px] w-10 -translate-x-1/2 rounded-b-full bg-gradient-to-r from-[#3B82F6] to-[#60A5FA]"
+                className="absolute left-1/2 top-0 h-[3px] w-10 -translate-x-1/2 rounded-b-full bg-primary"
               />
             )}
           </Link>

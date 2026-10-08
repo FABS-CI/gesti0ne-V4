@@ -60,7 +60,7 @@ export function KpiCards({ stockValorise, stats }: Props) {
       {cards.map((k) => (
         <Card
           key={k.label}
-          className="relative overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-lg"
+          className="relative overflow-hidden transition-colors hover:border-primary/40"
         >
           <span
             aria-hidden

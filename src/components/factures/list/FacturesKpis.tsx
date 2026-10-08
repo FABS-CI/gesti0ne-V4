@@ -20,7 +20,7 @@ export function FacturesKpis({ total, paye, du }: Props) {
       icon: CheckCircle2,
       color: "#10B981",
       valueClass: "text-success",
-      tone: "border-success/30 bg-gradient-to-br from-emerald-500/5 to-transparent",
+      tone: "border-success/30",
     },
     {
       label: "Reste dû",
@@ -30,7 +30,7 @@ export function FacturesKpis({ total, paye, du }: Props) {
       valueClass: "text-destructive",
       tone:
         du > 0
-          ? "border-destructive/40 bg-gradient-to-br from-red-500/5 to-transparent"
+          ? "border-destructive/40"
           : "",
     },
   ];
@@ -39,7 +39,7 @@ export function FacturesKpis({ total, paye, du }: Props) {
       {items.map((k) => (
         <Card
           key={k.label}
-          className={`relative overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-lg ${k.tone}`}
+          className={`relative overflow-hidden transition-colors hover:border-primary/40 ${k.tone}`}
         >
           <span
             aria-hidden

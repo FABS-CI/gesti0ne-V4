@@ -41,3 +41,9 @@ Note : le compteur « Dégradés » inclut le masque radial de la trame de la pa
 - 128 titres de page normalisés sur une seule variante `ds-page-title` (22 px / 600), couleurs brutes retirées.
 - Composant `src/components/common/PageHeader.tsx` créé (title, description, breadcrumbs, badge, actions, backTo).
 - Reste : migration page par page des titres + boutons voisins vers `PageHeader`, et règle de lint interdisant `<h1>` brut.
+
+## Sprint 9 — lot 1 (8 octobre 2026)
+- Ombres fortes, flous décoratifs, dégradés et coins très arrondis retirés (barre du haut, barres de filtres, KPI factures/produits, fenêtre d'inactivité, page de vérification, état vide, barre mobile).
+- Restent volontairement : `text-[10/11px]` dans `BonDocumentChrome` (document imprimé), dégradés de défilement de `ResponsiveTable` (indice fonctionnel), `confirm(` = hook applicatif `useConfirm` (faux positifs de l'audit).
+- Test de fumée `e2e/smoke-ui-refonte.spec.ts` (clair + sombre, sans erreur console, sans défilement horizontal).
+- Restent pour les lots suivants : sidebar groupée, formulaires longs en sections, Lighthouse, passage sombre sur 10 écrans.
