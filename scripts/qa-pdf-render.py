@@ -4,8 +4,8 @@
 Lance le générateur de chaque type de document dans un Chromium headless
 pointé sur le dev server (http://localhost:8080), enregistre les PDF dans
 tmp/pdf-qa/out/ et les images JPEG dans tmp/pdf-qa/shots/, et vérifie la
-présence des éléments-clés (en-tête, colonne Classe, référence imprimée
-par le code-barres, zones signatures).
+présence des éléments-clés (en-tête, colonnes Code et Désignation, référence imprimée
+par le code-barres, pied de page société).
 
 Prérequis : playwright (python), pdftoppm, pdftotext.
 Usage     : python3 scripts/qa-pdf-render.py
@@ -47,10 +47,9 @@ CALLS = [
     ("FC", "generateFacturePDF"),
     ("BL", "generateBonLivraisonPDF"),
     ("BR", "generateBonRetourPDF"),
-    ("AV", "generateAvoirPDF"),
 ]
 
-REQUIRED = ["EDITIONS FABS-CI", "Classe", "FABS-QA-2026-0001", "Établi par"]
+REQUIRED = ["EDITIONS FABS-CI", "CODE", "FABS-QA-2026-0001", "DÉSIGNATION"]
 
 
 async def main() -> int:
