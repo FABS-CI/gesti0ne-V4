@@ -1,0 +1,38 @@
+# Refonte UI — état de départ (Sprint 0, 8 octobre 2026)
+
+Mesuré par `bun run audit:ui` (scripts/ui-audit.mjs) sur 708 fichiers de `src/`,
+hors `src/components/ui`, tests et fichiers générés.
+
+| Indicateur | Occurrences | Fichiers |
+|---|---:|---:|
+| `<h1` brut | 132 | 123 |
+| Couleurs Tailwind brutes (red/green/blue/amber/yellow/orange/emerald/slate/gray/zinc-NNN) | 526 | 104 |
+| `text-[9px]` / `text-[10px]` / `text-[11px]` | 140 | 45 |
+| Emojis / symboles (☐ ✓ ✗ 💾 ⚡ 🖨 ⚠ 🎉 🚨 ✅) dans les .tsx | 26 | 9 |
+| Sparkles / Wand2 / WandSparkles / Bot | 6 | 3 |
+| Dégradés (bg-gradient-, radial/linear-gradient) | 20 | 6 |
+| backdrop-blur | 10 | 10 |
+| shadow-lg / xl / 2xl | 11 | 10 |
+| rounded-2xl / 3xl | 6 | 5 |
+| toLocaleString / toLocaleDateString | 115 | 86 |
+| « FCFA » en dur | 798 | 160 |
+| `confirm(` / `alert(` natifs | 22 | 17 |
+| « Une erreur est survenue » / « Impossible de » | 27 | 25 |
+
+Note : le compteur « Dégradés » inclut le masque radial de la trame de la page de connexion
+(volontaire, sans couleur). « FCFA » inclut les libellés légitimes des PDF.
+
+## Variantes de className des `<h1>` (les plus fréquentes)
+
+| Nombre | className |
+|---:|---|
+| 46 | `text-2xl font-bold` |
+| 34 | `flex items-center gap-2 text-2xl font-bold` |
+| 16 | `text-xl font-bold` |
+| 3 | `text-2xl font-semibold` |
+| 3 | `text-2xl font-bold flex items-center gap-2` |
+| 2 | `truncate text-2xl font-bold` |
+| 2 | `text-lg font-semibold leading-none` |
+| 2 | `text-lg font-bold tracking-tight` |
+| 2 | `text-2xl font-semibold flex items-center gap-2` |
+| 2 | `flex items-center gap-2 text-3xl font-bold` |
