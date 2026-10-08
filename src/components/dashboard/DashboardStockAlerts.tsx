@@ -9,7 +9,7 @@ export function DashboardStockAlerts({ data }: { data: DashboardOverview | undef
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2 text-base">
-          <AlertTriangle className="h-4 w-4 text-warning" />
+          <AlertTriangle className="h-4 w-4 text-muted-foreground" aria-hidden />
           Alertes de stock
         </CardTitle>
         <Link to="/stock" className="text-sm text-primary hover:underline">
