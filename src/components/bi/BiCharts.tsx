@@ -15,7 +15,7 @@ import {
 } from "recharts";
 import { formatFCFA, formatFCFACompact } from "@/lib/format";
 
-const PIE_COLORS = ["#3B82F6", "#F97316", "#10B981", "#8B5CF6", "#EF4444", "#14B8A6"];
+const PIE_COLORS = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)", "var(--destructive)"];
 
 export function CashflowChart({
   data,
@@ -25,13 +25,13 @@ export function CashflowChart({
   return (
     <ResponsiveContainer width="100%" height="100%">
       <LineChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
         <XAxis dataKey="mois" fontSize={12} />
         <YAxis tickFormatter={(v) => formatFCFACompact(v)} fontSize={12} />
         <Tooltip formatter={(v: number) => formatFCFA(v)} />
         <Legend />
-        <Line type="monotone" dataKey="recettes" name="Recettes" stroke="#10B981" strokeWidth={2} />
-        <Line type="monotone" dataKey="depenses" name="Dépenses" stroke="#EF4444" strokeWidth={2} />
+        <Line type="monotone" dataKey="recettes" name="Recettes" stroke="var(--success)" strokeWidth={2} />
+        <Line type="monotone" dataKey="depenses" name="Dépenses" stroke="var(--destructive)" strokeWidth={2} />
       </LineChart>
     </ResponsiveContainer>
   );
@@ -57,11 +57,11 @@ export function TopProduitsChart({ data }: { data: Array<{ titre: string; valeur
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data} layout="vertical">
-        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
         <XAxis type="number" tickFormatter={(v) => formatFCFACompact(v)} fontSize={11} />
         <YAxis type="category" dataKey="titre" width={120} fontSize={11} />
         <Tooltip formatter={(v: number) => formatFCFA(v)} />
-        <Bar dataKey="valeur" name="Valeur" fill="#3B82F6" radius={[0, 4, 4, 0]} />
+        <Bar dataKey="valeur" name="Valeur" fill="var(--chart-1)" radius={[0, 4, 4, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );

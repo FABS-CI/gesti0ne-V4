@@ -137,32 +137,32 @@ function DashboardGlobal() {
       <Section
         title="Ventes"
         icon={ShoppingCart}
-        color="#3B82F6"
+        color="var(--primary)"
         action={{ label: "Commandes", to: "/commandes" }}
       >
         <Kpi
           label="Commandes en cours"
           value={ventes.data?.commandesEnCours ?? 0}
           icon={ShoppingCart}
-          color="#3B82F6"
+          color="var(--primary)"
         />
         <Kpi
           label="CA du mois"
           value={canSeeCA ? formatFCFA(ventes.data?.caMois ?? 0) : "—"}
           icon={TrendingUp}
-          color="#10B981"
+          color="var(--success)"
         />
         <Kpi
           label="Factures impayées"
           value={ventes.data?.facturesImpayees ?? 0}
           icon={FileText}
-          color="#F97316"
+          color="var(--warning)"
         />
         <Kpi
           label="Montant impayé"
           value={formatFCFA(ventes.data?.montantImpaye ?? 0)}
           icon={Wallet}
-          color="#EF4444"
+          color="var(--destructive)"
         />
       </Section>
 
@@ -170,32 +170,32 @@ function DashboardGlobal() {
       <Section
         title="Stock & logistique"
         icon={Package}
-        color="#8B5CF6"
+        color="var(--primary)"
         action={{ label: "Produits", to: "/produits" }}
       >
         <Kpi
           label="Produits actifs"
           value={stock.data?.totalProduits ?? 0}
           icon={Package}
-          color="#8B5CF6"
+          color="var(--primary)"
         />
         <Kpi
           label="Ruptures"
           value={stock.data?.produitsRupture ?? 0}
           icon={AlertTriangle}
-          color="#EF4444"
+          color="var(--destructive)"
         />
         <Kpi
           label="Sous seuil d'alerte"
           value={stock.data?.produitsAlerte ?? 0}
           icon={AlertTriangle}
-          color="#F97316"
+          color="var(--warning)"
         />
         <Kpi
           label="Valeur du stock"
           value={formatFCFA(stock.data?.valeurStock ?? 0)}
           icon={Wallet}
-          color="#10B981"
+          color="var(--success)"
         />
       </Section>
 
@@ -203,32 +203,32 @@ function DashboardGlobal() {
       <Section
         title="Ressources humaines"
         icon={Briefcase}
-        color="#06B6D4"
+        color="var(--primary)"
         action={{ label: "RH", to: "/rh-dashboard" }}
       >
         <Kpi
           label="Employés actifs"
           value={rh.data?.employesActifs ?? 0}
           icon={Users}
-          color="#06B6D4"
+          color="var(--primary)"
         />
         <Kpi
           label="Masse salariale"
           value={formatFCFA(rh.data?.masseSalariale ?? 0)}
           icon={Wallet}
-          color="#3B82F6"
+          color="var(--primary)"
         />
         <Kpi
           label="Congés en attente"
           value={rh.data?.congesEnAttente ?? 0}
           icon={CalendarClock}
-          color="#F97316"
+          color="var(--warning)"
         />
         <Kpi
           label="Contrats expirant (30j)"
           value={rh.data?.contratsExpirantBientot ?? 0}
           icon={AlertTriangle}
-          color="#EF4444"
+          color="var(--destructive)"
         />
       </Section>
 
@@ -236,32 +236,32 @@ function DashboardGlobal() {
       <Section
         title="Comptabilité"
         icon={Scale}
-        color="#10B981"
+        color="var(--success)"
         action={{ label: "Compta", to: "/compta-dashboard" }}
       >
         <Kpi
           label="Produits (cl. 7)"
           value={formatFCFA(compta.data?.produits ?? 0)}
           icon={TrendingUp}
-          color="#10B981"
+          color="var(--success)"
         />
         <Kpi
           label="Charges (cl. 6)"
           value={formatFCFA(compta.data?.charges ?? 0)}
           icon={TrendingDown}
-          color="#EF4444"
+          color="var(--destructive)"
         />
         <Kpi
           label="Résultat"
           value={formatFCFA(compta.data?.resultat ?? 0)}
           icon={Scale}
-          color={(compta.data?.resultat ?? 0) >= 0 ? "#10B981" : "#EF4444"}
+          color={(compta.data?.resultat ?? 0) >= 0 ? "var(--success)" : "var(--destructive)"}
         />
         <Kpi
           label="Trésorerie"
           value={formatFCFA(compta.data?.tresorerie ?? 0)}
           icon={Wallet}
-          color="#F97316"
+          color="var(--warning)"
         />
       </Section>
 
@@ -270,7 +270,7 @@ function DashboardGlobal() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <AlertTriangle className="h-4 w-4 text-amber-500" /> Alertes RH
+              <AlertTriangle className="h-4 w-4 text-warning" /> Alertes RH
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">

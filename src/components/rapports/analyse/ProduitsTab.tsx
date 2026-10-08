@@ -101,7 +101,7 @@ export function ProduitsTab({ rows, total, isLoading, tri, sens, onSort, page, o
                     <TableCell className="text-right">{r.nb_factures}</TableCell>
                     <TableCell className="text-right">{r.nb_clients}</TableCell>
                     <TableCell className="text-right font-medium">{formatFCFA(r.ca)}</TableCell>
-                    <TableCell className="text-right font-medium text-emerald-600">
+                    <TableCell className="text-right font-medium text-success">
                       {formatFCFA(r.ca_encaisse ?? 0)}
                     </TableCell>
                     <TableCell className="text-right">

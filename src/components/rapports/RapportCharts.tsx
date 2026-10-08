@@ -16,14 +16,14 @@ import {
 import type { AgregatDim, SerieTemp, TopProduit } from "@/lib/rapports-api";
 
 const COLORS = [
-  "#F97316",
-  "#3B82F6",
-  "#10B981",
-  "#EF4444",
-  "#8B5CF6",
-  "#F59E0B",
-  "#14B8A6",
-  "#EC4899",
+  "var(--chart-1)",
+  "var(--chart-3)",
+  "var(--chart-2)",
+  "var(--destructive)",
+  "var(--chart-4)",
+  "var(--chart-5)",
+  "var(--success)",
+  "var(--info)",
 ];
 
 export function TopBarChart({ data }: { data: TopProduit[] }) {
@@ -34,7 +34,7 @@ export function TopBarChart({ data }: { data: TopProduit[] }) {
         <XAxis type="number" />
         <YAxis type="category" dataKey="titre" width={180} tick={{ fontSize: 11 }} />
         <Tooltip />
-        <Bar dataKey="qte_vendue" fill="#F97316" name="Qté vendue" />
+        <Bar dataKey="qte_vendue" fill="var(--chart-1)" name="Qté vendue" />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -49,11 +49,11 @@ export function EvolutionLineChart({ data }: { data: SerieTemp[] }) {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Line type="monotone" dataKey="ca" stroke="#3B82F6" name="CA" strokeWidth={2} dot={false} />
+        <Line type="monotone" dataKey="ca" stroke="var(--chart-3)" name="CA" strokeWidth={2} dot={false} />
         <Line
           type="monotone"
           dataKey="qte"
-          stroke="#F97316"
+          stroke="var(--chart-1)"
           name="Qté"
           strokeWidth={2}
           dot={false}
@@ -95,7 +95,7 @@ export function AgregatBar({ data }: { data: AgregatDim[] }) {
         />
         <YAxis />
         <Tooltip />
-        <Bar dataKey="ca" fill="#3B82F6" name="CA" />
+        <Bar dataKey="ca" fill="var(--chart-3)" name="CA" />
       </BarChart>
     </ResponsiveContainer>
   );

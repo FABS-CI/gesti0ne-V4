@@ -9,7 +9,7 @@ export const Route = createFileRoute("/_authenticated/rapports-comptables")({
       title="Rapports Comptables"
       subtitle="Analyses et tableaux de synthèse"
       icon={BarChart3}
-      color="#F59E0B"
+      color="var(--warning)"
       description="Rapports analytiques : évolution des produits et charges, ratios financiers, marges, synthèse mensuelle et annuelle."
       shortcuts={[
         { label: "Tableau de bord compta", to: "/compta-dashboard" },
