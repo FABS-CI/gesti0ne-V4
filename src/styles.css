@@ -323,6 +323,10 @@ a[href*="lovable.dev"][target="_blank"],
   --warning: oklch(0.72 0.14 90);
   --destructive: oklch(0.53 0.19 27);
   --info: oklch(0.52 0.09 240);
+  --accent: oklch(0.56 0.11 50 / 0.12);
+  --accent-foreground: oklch(0.56 0.11 50);
+  --chart-1: oklch(0.56 0.15 52);
+  --chart-3: oklch(0.55 0.08 240);
 }
 .dark .theme-dashboard {
   --background: oklch(0.17 0.012 250);
@@ -339,4 +343,8 @@ a[href*="lovable.dev"][target="_blank"],
   --warning: oklch(0.82 0.13 90);
   --destructive: oklch(0.66 0.18 27);
   --info: oklch(0.7 0.09 240);
+  --accent: oklch(0.7 0.11 55 / 0.14);
+  --accent-foreground: oklch(0.7 0.11 55);
+  --chart-1: oklch(0.66 0.15 55);
+  --chart-3: oklch(0.68 0.08 240);
 }
