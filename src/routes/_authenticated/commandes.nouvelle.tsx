@@ -42,20 +42,12 @@ function CommandeNouvellePage() {
 
   return (
     <div className="space-y-6 p-6">
-      <div className="flex items-center gap-3">
-        <Button asChild variant="ghost" size="icon">
-          <Link to="/commandes">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </Button>
-        <ShoppingCart className="h-6 w-6 text-primary" />
-        <div>
-          <h1 className="ds-page-title">Nouvelle Commande</h1>
-          <p className="text-sm text-muted-foreground">
-            Proforma générée automatiquement · Facture &amp; BL si vous avez le droit de validation, sinon commande en attente
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        className="mb-0"
+        backTo="/commandes"
+        title="Nouvelle Commande"
+        description="Proforma générée automatiquement · Facture & BL si vous avez le droit de validation, sinon commande en attente"
+      />
       <CommandeForm mode="create" presetClientId={presetClientId} />
       <FloatingCalculator />
     </div>

@@ -144,17 +144,7 @@ function CommandesPage() {
   return (
     <RenderProfiler id="page:commandes">
       <div className="space-y-6">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 sm:flex sm:flex-wrap sm:items-center sm:justify-between">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
-              <ShoppingCart className="h-5 w-5" />
-            </div>
-            <div className="min-w-0">
-              <h1 className="ds-page-title truncate">Ventes &amp; Commandes</h1>
-              <p className="text-sm text-muted-foreground">Pilotez le cycle de vente complet</p>
-            </div>
-          </div>
-        </div>
+        <PageHeader title="Ventes & Commandes" description="Pilotez le cycle de vente complet" className="mb-0" />
 
         <CommandesToolbar
           search={search}
