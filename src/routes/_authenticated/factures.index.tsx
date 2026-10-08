@@ -347,7 +347,7 @@ function FacturesPage() {
                 <TableHead>Retour</TableHead>
                 <TableHead>FNE</TableHead>
                 <TableHead className="text-right">FNE actions</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="text-right lg:sticky lg:right-0 lg:z-[1] lg:bg-card lg:shadow-[inset_1px_0_0_var(--border)]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -460,7 +460,7 @@ function FacturesPage() {
                           fneStatut={(fneInfo?.statut as FNEStatus | undefined) ?? null}
                         />
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right lg:sticky lg:right-0 lg:z-[1] lg:bg-card lg:shadow-[inset_1px_0_0_var(--border)]">
                         <FacturePdfActions facture={f} pdfState={pdf.getState(f.facture_id)} />
                       </TableCell>
                     </TableRow>
