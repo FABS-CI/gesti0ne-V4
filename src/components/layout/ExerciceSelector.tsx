@@ -68,7 +68,7 @@ export function ExerciceSelector() {
         <DropdownMenuLabel className="flex items-center justify-between">
           <span>Exercice consulté</span>
           {exerciceActif && (
-            <span className="text-[10px] font-normal text-muted-foreground">
+            <span className="text-xs font-normal text-muted-foreground">
               Actif : {exerciceActif.code}
             </span>
           )}
@@ -90,7 +90,7 @@ export function ExerciceSelector() {
                 )}
                 <span className="font-medium">{ex.code}</span>
               </div>
-              <Badge variant={STATUT_VARIANT[ex.statut]} className="text-[10px]">
+              <Badge variant={STATUT_VARIANT[ex.statut]} className="text-xs">
                 {STATUT_LABEL[ex.statut]}
               </Badge>
             </DropdownMenuItem>

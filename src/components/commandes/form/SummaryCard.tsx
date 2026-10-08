@@ -21,7 +21,7 @@ export function InfoCell({
 }) {
   return (
     <div className="min-w-0">
-      <div className="text-[10px] uppercase text-muted-foreground">{label}</div>
+      <div className="text-xs uppercase text-muted-foreground">{label}</div>
       <div className={`truncate text-sm font-medium ${emphasis ? "text-destructive" : ""}`}>
         {value}
       </div>

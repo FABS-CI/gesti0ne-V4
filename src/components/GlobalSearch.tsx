@@ -205,7 +205,7 @@ export function GlobalSearch() {
           )}
         </div>
         {keyPrefix === "recent" && (
-          <span className="text-[10px] text-muted-foreground">{h.group}</span>
+          <span className="text-xs text-muted-foreground">{h.group}</span>
         )}
       </CommandItem>
     );
@@ -220,7 +220,7 @@ export function GlobalSearch() {
       >
         <Search className="h-4 w-4 text-primary shrink-0 sm:h-5 sm:w-5" />
         <span className="flex-1 text-left font-medium truncate">Rechercher ou agir…</span>
-        <kbd className="hidden rounded border bg-background px-2 py-1 text-[10px] font-mono font-bold shadow-xs sm:inline-block">
+        <kbd className="hidden rounded border bg-background px-2 py-1 text-xs font-mono font-bold shadow-xs sm:inline-block">
           Ctrl + K
         </kbd>
       </button>

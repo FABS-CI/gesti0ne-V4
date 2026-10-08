@@ -327,7 +327,7 @@ function RetourDetailPage() {
                 {retour.lignes.map((l, i) => (
                   <TableRow key={l.ligne_id} className="text-sm">
                     <TableCell className="text-muted-foreground font-medium">{i + 1}</TableCell>
-                    <TableCell className="font-mono text-[11px] truncate max-w-[100px]" title={l.reference_produit || ""}>
+                    <TableCell className="font-mono text-xs truncate max-w-[100px]" title={l.reference_produit || ""}>
                       {l.reference_produit || "—"}
                     </TableCell>
                     <TableCell className="font-medium break-words max-w-[250px] py-3">
@@ -339,7 +339,7 @@ function RetourDetailPage() {
                     </TableCell>
                     <TableCell>
                       {l.etat_reception ? (
-                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 capitalize font-normal">
+                        <Badge variant="outline" className="text-xs px-1.5 py-0 capitalize font-normal">
                           {l.etat_reception.replace("_", " ")}
                         </Badge>
                       ) : (
@@ -742,30 +742,30 @@ function ValidationComptaDialog({
                   <SelectItem value="diminuer_solde" disabled={!optionsAvailable.diminuer_solde}>
                     <div className="flex flex-col">
                       <span>Créditer le solde client</span>
-                      <span className="text-[10px] text-muted-foreground">Impacte directement la balance du compte</span>
+                      <span className="text-xs text-muted-foreground">Impacte directement la balance du compte</span>
                     </div>
                   </SelectItem>
                   <SelectItem value="creer_avoir" disabled={!optionsAvailable.creer_avoir}>
                     <div className="flex flex-col">
                       <span>Émettre un avoir financier</span>
-                      <span className="text-[10px] text-muted-foreground">Génère un document d'avoir utilisable plus tard</span>
+                      <span className="text-xs text-muted-foreground">Génère un document d'avoir utilisable plus tard</span>
                     </div>
                   </SelectItem>
                   <SelectItem value="preparer_remboursement" disabled={!optionsAvailable.preparer_remboursement}>
                     <div className="flex flex-col">
                       <span>Remboursement direct</span>
-                      <span className="text-[10px] text-muted-foreground">Sortie de caisse ou virement bancaire</span>
+                      <span className="text-xs text-muted-foreground">Sortie de caisse ou virement bancaire</span>
                     </div>
                   </SelectItem>
                   <SelectItem value="aucun_impact" disabled={!optionsAvailable.aucun_impact}>
                     <div className="flex flex-col">
                       <span>Aucun impact financier</span>
-                      <span className="text-[10px] text-muted-foreground">Clôturer sans écriture comptable</span>
+                      <span className="text-xs text-muted-foreground">Clôturer sans écriture comptable</span>
                     </div>
                   </SelectItem>
                 </SelectContent>
               </Select>
-              <p className="text-[11px] text-warning bg-warning/10 p-2 rounded border border-warning/40 mt-2">
+              <p className="text-xs text-warning bg-warning/10 p-2 rounded border border-warning/40 mt-2">
                  Cette action est irréversible et déclenchera les écritures comptables automatiques.
               </p>
             </div>

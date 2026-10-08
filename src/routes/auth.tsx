@@ -292,15 +292,15 @@ function AuthPage() {
           className="h-14 w-14 object-contain"
         />
         <div>
-          <p className="text-[22px] font-semibold leading-tight text-foreground">GESTI-one</p>
-          <p className="text-[13px] text-muted-foreground">Éditions FABS-CI</p>
+          <p className="text-xl font-semibold leading-tight text-foreground">GESTI-one</p>
+          <p className="text-sm text-muted-foreground">Éditions FABS-CI</p>
         </div>
       </div>
       <div
         data-testid="login-card"
         className="login-card-box relative w-full max-w-[400px] rounded-[12px] border border-border bg-card p-8 shadow-sm"
       >
-        <h1 className="mb-6 font-sans text-[20px] font-semibold tracking-normal text-foreground">Connexion</h1>
+        <h1 className="mb-6 font-sans text-xl font-semibold tracking-normal text-foreground">Connexion</h1>
 
         <LoginForm
           email={email}

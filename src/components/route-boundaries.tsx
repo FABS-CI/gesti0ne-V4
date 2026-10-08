@@ -64,7 +64,7 @@ export function RouteError({ error, reset }: { error: Error; reset: () => void }
         </p>
         <p className="mt-3 text-xs text-muted-foreground">
           Trace ID:{" "}
-          <code className="select-all rounded bg-muted px-1.5 py-0.5 font-mono text-[11px] text-foreground">
+          <code className="select-all rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-foreground">
             {traceId}
           </code>
         </p>

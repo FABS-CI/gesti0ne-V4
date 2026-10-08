@@ -403,28 +403,28 @@ function BackupPage() {
                         {row.scope_type === 'GLOBAL' ? 'Sauvegarde complète' : 'Données projet'}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="text-[10px] uppercase font-bold">
+                        <Badge variant="outline" className="text-xs uppercase font-bold">
                           {row.is_test ? 'Test' : row.trigger_type === 'AUTOMATIC' ? 'Auto' : 'Manuel'}
                         </Badge>
-                        {row.duree_ms != null && <div className="text-[10px] text-muted-foreground mt-1">{Math.round(row.duree_ms / 1000)} s</div>}
+                        {row.duree_ms != null && <div className="text-xs text-muted-foreground mt-1">{Math.round(row.duree_ms / 1000)} s</div>}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1.5">
                           {row.statut === "succes" ? (
                             <div className="flex items-center gap-1 text-success" title="Réussie">
                               <CheckCircle2 className="h-4 w-4" />
-                              <span className="text-[10px] font-bold uppercase">OK</span>
+                              <span className="text-xs font-bold uppercase">OK</span>
                             </div>
                           ) : row.statut === "echec" ? (
                             <div className="flex items-center gap-1 text-destructive" title={row.error_message || "Erreur"}>
                               <XCircle className="h-4 w-4" />
-                              <span className="text-[10px] font-bold uppercase">Échec</span>
-                              {row.error_message && <span className="text-[10px] max-w-[160px] truncate">{row.error_message}</span>}
+                              <span className="text-xs font-bold uppercase">Échec</span>
+                              {row.error_message && <span className="text-xs max-w-[160px] truncate">{row.error_message}</span>}
                             </div>
                           ) : (
                             <div className="flex items-center gap-1 text-primary">
                               <Loader2 className="h-4 w-4 animate-spin" />
-                              <span className="text-[10px] font-bold uppercase">...</span>
+                              <span className="text-xs font-bold uppercase">...</span>
                             </div>
                           )}
                         </div>

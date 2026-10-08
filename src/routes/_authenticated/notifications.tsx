@@ -262,7 +262,7 @@ function NotificationRow({
               {meta.label}
             </Badge>
             {!n.lu && (
-              <Badge variant="secondary" className="text-[10px]">
+              <Badge variant="secondary" className="text-xs">
                 Nouveau
               </Badge>
             )}

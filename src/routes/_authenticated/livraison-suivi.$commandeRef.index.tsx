@@ -611,14 +611,14 @@ function HistoRow({
               const val = v == null ? "" : String(v);
               if (!val) return null;
               return (
-                <Badge key={k} variant="secondary" className="text-[10px] font-normal">
+                <Badge key={k} variant="secondary" className="text-xs font-normal">
                   {META_LABEL[k] ?? k} : {val}
                 </Badge>
               );
             })}
           </div>
         )}
-        <div className="text-[11px] text-muted-foreground flex gap-3 mt-1">
+        <div className="text-xs text-muted-foreground flex gap-3 mt-1">
           <span className="inline-flex items-center gap-1">
             <Clock className="h-3 w-3" />
             {new Date(h.created_at).toLocaleString("fr-FR")}

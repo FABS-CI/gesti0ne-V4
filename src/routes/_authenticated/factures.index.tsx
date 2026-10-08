@@ -405,7 +405,7 @@ function FacturesPage() {
                           const m = Number((f as any).montant_frais_transport ?? 0);
                           if (!t || m <= 0) return null;
                           return (
-                            <div className="text-[11px] text-muted-foreground whitespace-nowrap">
+                            <div className="text-xs text-muted-foreground whitespace-nowrap">
                               dont {t === "expedition" ? "expédition" : "livraison"} {formatFCFA(m)}
                             </div>
                           );

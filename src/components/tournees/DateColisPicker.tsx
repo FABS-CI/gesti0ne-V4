@@ -41,7 +41,7 @@ export function DateColisPicker({ value, onChange, colisCount }: Props) {
             type="button"
             size="sm"
             variant={value === shift(-1) ? "default" : "outline"}
-            className="h-7 px-2 text-[11px]"
+            className="h-7 px-2 text-xs"
             onClick={() => onChange(shift(-1))}
           >
             Hier (J-1)
@@ -50,7 +50,7 @@ export function DateColisPicker({ value, onChange, colisCount }: Props) {
             type="button"
             size="sm"
             variant={value === today ? "default" : "outline"}
-            className="h-7 px-2 text-[11px]"
+            className="h-7 px-2 text-xs"
             onClick={() => onChange(today)}
           >
             Aujourd'hui
@@ -59,14 +59,14 @@ export function DateColisPicker({ value, onChange, colisCount }: Props) {
             type="button"
             size="sm"
             variant={value === shift(1) ? "default" : "outline"}
-            className="h-7 px-2 text-[11px]"
+            className="h-7 px-2 text-xs"
             onClick={() => onChange(shift(1))}
           >
             Demain (J+1)
           </Button>
         </div>
       </div>
-      <p className="text-[11px] text-muted-foreground">
+      <p className="text-xs text-muted-foreground">
         Sélectionnez la date de <b>colisage</b> des colis à charger. J = tournée du jour, J-1 =
         rattrapage de la veille, J+1 = tournée préparée à l'avance.
       </p>

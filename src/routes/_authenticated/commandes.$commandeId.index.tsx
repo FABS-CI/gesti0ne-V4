@@ -307,7 +307,7 @@ function CommandeDetailPage() {
                     </TableCell>
                     <TableCell>
                       <div className="font-medium">{l.designation}</div>
-                      <div className="text-[10px] text-muted-foreground font-mono">
+                      <div className="text-xs text-muted-foreground font-mono">
                         {l.reference_produit || "—"}
                       </div>
                     </TableCell>

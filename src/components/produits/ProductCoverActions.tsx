@@ -88,7 +88,7 @@ export function ProductCoverActions({ produit, onChanged }: Props) {
           Supprimer
         </Button>
       )}
-      <p className="text-[11px] text-muted-foreground">
+      <p className="text-xs text-muted-foreground">
         JPG, PNG ou WEBP · 5 Mo max
       </p>
       <input

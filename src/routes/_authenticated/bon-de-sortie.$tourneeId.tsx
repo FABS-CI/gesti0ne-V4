@@ -193,7 +193,7 @@ function BonDeSortiePage() {
             </Link>
           </Button>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] text-muted-foreground inline-flex items-center gap-1">
+            <span className="text-xs text-muted-foreground inline-flex items-center gap-1">
               <ShieldCheck className="h-3.5 w-3.5" />
               Cohérence vérifiée avant impression
             </span>
@@ -237,7 +237,7 @@ function BonDeSortiePage() {
             <br />
             <b>{t.statut}</b>
             {t.statut === "terminee" && t.cloture_mode && (
-              <div className="text-[10px] text-muted-foreground mt-0.5">
+              <div className="text-xs text-muted-foreground mt-0.5">
                 Clôture {t.cloture_mode === "auto" ? "automatique" : "manuelle"}
                 {t.cloture_at ? ` — ${new Date(t.cloture_at).toLocaleString("fr-FR")}` : ""}
               </div>

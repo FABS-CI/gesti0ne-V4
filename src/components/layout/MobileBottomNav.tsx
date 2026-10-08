@@ -27,7 +27,7 @@ export function MobileBottomNav() {
           <Link
             key={url}
             to={url}
-            className="relative flex min-h-[56px] flex-col items-center justify-center gap-1 py-1.5 text-[11px] font-medium transition-colors"
+            className="relative flex min-h-[56px] flex-col items-center justify-center gap-1 py-1.5 text-xs font-medium transition-colors"
             style={{
               color: active ? "#60A5FA" : "#CBD5E1",
             }}
@@ -50,7 +50,7 @@ export function MobileBottomNav() {
         type="button"
         aria-label="Ouvrir le menu"
         onClick={() => setOpenMobile(true)}
-        className="flex min-h-[56px] flex-col items-center justify-center gap-1 py-1.5 text-[11px] font-medium text-muted-foreground"
+        className="flex min-h-[56px] flex-col items-center justify-center gap-1 py-1.5 text-xs font-medium text-muted-foreground"
       >
         <Menu className="h-6 w-6" />
         <span className="leading-none">Menu</span>

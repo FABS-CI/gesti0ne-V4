@@ -126,7 +126,7 @@ export function PaiementVentilationCard({ paiementId }: { paiementId: string }) 
                       </span>
                       <span className="flex items-center gap-2">
                         {l.methode === "manuelle" && (
-                          <Badge variant="outline" className="text-[10px]">
+                          <Badge variant="outline" className="text-xs">
                             corrigé
                           </Badge>
                         )}

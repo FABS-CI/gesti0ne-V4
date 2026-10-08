@@ -149,7 +149,7 @@ export function ProduitsTable({
                           <span className="font-medium text-info">
                             {formatFCFA(p.dernier_prix_achat.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0].prix_unitaire)}
                           </span>
-                          <span className="text-[10px] text-muted-foreground">
+                          <span className="text-xs text-muted-foreground">
                             {p.dernier_prix_achat.length} achat(s)
                           </span>
                         </div>
@@ -224,7 +224,7 @@ export function ProduitsTable({
               <TableCell colSpan={4} />
             </TableRow>
             <TableRow className="hover:bg-transparent">
-              <TableCell colSpan={colSpan} className="text-center py-2 text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
+              <TableCell colSpan={colSpan} className="text-center py-2 text-xs text-muted-foreground uppercase font-bold tracking-widest">
                 Valeur totale du stock au prix de vente
               </TableCell>
             </TableRow>

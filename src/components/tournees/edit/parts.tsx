@@ -14,7 +14,7 @@ export function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-md border p-2">
       <div className="text-xl font-semibold tabular-nums">{value}</div>
-      <div className="text-[10px] uppercase text-muted-foreground">{label}</div>
+      <div className="text-xs uppercase text-muted-foreground">{label}</div>
     </div>
   );
 }

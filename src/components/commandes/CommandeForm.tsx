@@ -617,12 +617,12 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
                   disabled={hasRemiseEnLigne}
                 />
                 {form.formState.errors.remise_globale_pct && (
-                  <p className="text-[10px] text-destructive mt-0.5">{form.formState.errors.remise_globale_pct.message}</p>
+                  <p className="text-xs text-destructive mt-0.5">{form.formState.errors.remise_globale_pct.message}</p>
                 )}
                 <p className="text-xs text-muted-foreground mt-1">
                   S'applique sur le total HT après remises de ligne.
                   <br />
-                  <span className={`text-[10px] font-semibold italic ${hasRemiseEnLigne ? "text-destructive" : "text-warning"}`}>
+                  <span className={`text-xs font-semibold italic ${hasRemiseEnLigne ? "text-destructive" : "text-warning"}`}>
                     {hasRemiseEnLigne 
                       ? "Attention : Remise globale bloquée car des remises en ligne sont utilisées. Supprimez-les pour l'activer." 
                       : "Note : Impossible d'utiliser une remise globale si des remises en ligne sont déjà saisies."}
@@ -669,7 +669,7 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
                   disabled={typeFraisWatch === "aucun"}
                 />
                 {form.formState.errors.montant_frais_transport ? (
-                  <p className="text-[10px] text-destructive">{form.formState.errors.montant_frais_transport.message}</p>
+                  <p className="text-xs text-destructive">{form.formState.errors.montant_frais_transport.message}</p>
                 ) : (
                   <p className="text-xs text-muted-foreground">{formatFCFA(montantFraisPrevu)}</p>
                 )}
@@ -724,7 +724,7 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
         </div>
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <div className="text-[10px] uppercase text-muted-foreground">Net à payer</div>
+            <div className="text-xs uppercase text-muted-foreground">Net à payer</div>
             <div className="truncate text-lg font-bold">{formatFCFA(totaux.ttc + montantFraisPrevu)}</div>
           </div>
           <div className="flex gap-2 shrink-0">
