@@ -6,13 +6,11 @@ import {
   ArrowRight,
   Boxes,
   ClipboardList,
-  Gauge,
   PackageOpen,
   RefreshCw,
   RotateCcw,
   Truck,
   Wallet,
-  Lightbulb,
 } from "lucide-react";
 
 import { useExerciceConsulteId } from "@/contexts/ExerciceContext";
