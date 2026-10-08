@@ -177,7 +177,7 @@ function DepotsPage() {
         onEdit={openEdit}
         onPromote={(id, nom) => {
           if (
-            window.confirm(
+            await askConfirm(
               `Définir « ${nom} » comme dépôt principal ?\n\nLes sorties de stock se feront depuis ce dépôt.`,
             )
           ) {

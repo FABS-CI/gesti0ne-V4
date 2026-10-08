@@ -1175,9 +1175,9 @@ function AccountTab({ employeId, defaultEmail }: { employeId: string; defaultEma
           </Button>
           <Button
             variant="ghost"
-            onClick={() => {
+            onClick={async () => {
               if (
-                confirm(
+                await askConfirm(
                   "Détacher le compte de la fiche employé ? Le compte auth ne sera pas supprimé.",
                 )
               )
