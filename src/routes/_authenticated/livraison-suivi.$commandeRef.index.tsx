@@ -446,13 +446,13 @@ function SuiviDetail() {
             {suivi.signature_url && (
               <div>
                 <div className="text-xs text-muted-foreground mb-1">Signature</div>
-                <img src={suivi.signature_url} alt="Signature" className="border rounded-md bg-white max-h-40" />
+                <img src={suivi.signature_url} alt="Signature" loading="lazy" decoding="async" className="border rounded-md bg-white max-h-40" />
               </div>
             )}
             {suivi.photo_preuve_url && (
               <div>
                 <div className="text-xs text-muted-foreground mb-1">Bon signé</div>
-                <img src={suivi.photo_preuve_url} alt="Bon signé" className="border rounded-md max-h-40" />
+                <img src={suivi.photo_preuve_url} alt="Bon signé" loading="lazy" decoding="async" className="border rounded-md max-h-40" />
               </div>
             )}
           </div>

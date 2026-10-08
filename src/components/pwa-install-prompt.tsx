@@ -99,7 +99,7 @@ export function PWAInstallPrompt() {
       <DialogContent className="sm:max-w-md border-warning/20">
         <DialogHeader>
           <div className="flex justify-center mb-4">
-            <img src="/fabs-logo.png" alt="GESTI-ONE" className="h-16 w-auto" />
+            <img src="/fabs-logo.png" alt="GESTI-ONE" height={64} loading="lazy" decoding="async" className="h-16 w-auto" />
           </div>
           <DialogTitle className="text-2xl font-bold text-center text-warning">
             Installer GESTI-ONE
