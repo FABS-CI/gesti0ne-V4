@@ -56,4 +56,4 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Lot 3 : Rapidité — mesuré (listes déjà paginées côté serveur, requêtes < 110 ms, ouvertures 0,1–1,3 s en mode dev); recherche Clients/Produits sécurisée (virgules/parenthèses). Découpage CommandeForm reporté (gain non mesurable)
 - [x] Lot 4 : Confort d'utilisation / tablette (menu en tiroir < 1024 px, en-têtes qui passent à la ligne)
 - [x] Lot 5 : Fiabilité — réconciliation stock (lecture seule) dans Qualité des données; journal enrichi (résumé des changements champ par champ dans le détail d'un événement); messages techniques de débogage retirés (RouteGuard, use-permissions, use-visible-groups, EtiquettesSection); tests automatiques : transport (frais-transport.test.ts), journal (audit-helpers.test.ts), ajoutés aux tests existants facturation/paiements/retours/solde — 46 tests verts. En attente : validation par l'utilisateur des 2 écarts de stock (FABS-CI95, FABS-CI29)
-- [ ] Lot 6 : Documents et finitions
+- [ ] Lot 6 : Documents et finitions — contrôle automatique des PDF remis à jour (BC, FC, BL, BR, PF rendus et vérifiés); reste : comparaison avant/après à l'écran avec de vraies factures
