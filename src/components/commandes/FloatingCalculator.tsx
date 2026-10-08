@@ -29,6 +29,13 @@ function fmt(n: number): string {
   return d ? `${int},${d}` : int;
 }
 
+/**
+ * Au-dessus de la barre « Enregistrer / Annuler » de la commande (fixée en bas
+ * sous 2xl, et au-dessus du menu du bas sur téléphone) pour ne jamais la masquer.
+ */
+const ABOVE_ACTION_BAR =
+  "bottom-[calc(56px+108px+env(safe-area-inset-bottom))] md:bottom-[108px] 2xl:bottom-4";
+
 export function FloatingCalculator() {
   const [open, setOpen] = useState(false);
   const [display, setDisplay] = useState("0");
@@ -150,7 +157,7 @@ export function FloatingCalculator() {
         type="button"
         size="sm"
         onClick={() => setOpen(true)}
-        className="fixed bottom-4 right-4 z-40 shadow-sm"
+        className={cn("fixed right-4 z-40 shadow-sm", ABOVE_ACTION_BAR)}
         aria-label="Ouvrir la calculatrice"
       >
         <Calculator className="h-4 w-4 mr-2" />
@@ -172,8 +179,11 @@ export function FloatingCalculator() {
       ref={panelRef}
       role="dialog"
       aria-label="Calculatrice"
-      className="fixed z-40 w-[min(240px,calc(100vw-16px))] rounded-lg border bg-card text-card-foreground shadow-md select-none"
-      style={pos ? { left: pos.x, top: pos.y } : { right: 16, bottom: 16 }}
+      className={cn(
+        "fixed z-40 w-[min(240px,calc(100vw-16px))] rounded-lg border bg-card text-card-foreground shadow-md select-none",
+        !pos && cn("right-4", ABOVE_ACTION_BAR),
+      )}
+      style={pos ? { left: pos.x, top: pos.y } : undefined}
     >
       <div
         className="flex items-center justify-between gap-2 border-b px-2 py-1.5 cursor-move touch-none"
