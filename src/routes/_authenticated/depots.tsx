@@ -175,7 +175,7 @@ function DepotsPage() {
         items={pageItems}
         stockCounts={stockCounts}
         onEdit={openEdit}
-        onPromote={(id, nom) => {
+        onPromote={async (id, nom) => {
           if (
             await askConfirm(
               `Définir « ${nom} » comme dépôt principal ?\n\nLes sorties de stock se feront depuis ce dépôt.`,
