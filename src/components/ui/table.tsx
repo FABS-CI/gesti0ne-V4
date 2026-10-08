@@ -55,7 +55,7 @@ const TableBody = React.forwardRef<
     ref={ref}
     className={cn(
       "divide-y divide-border/40",
-      "[&_tr:nth-child(even)]:bg-[#FFF3E0]/30 [&_tr:last-child]:border-0",
+      "[&_tr:nth-child(even)]:bg-muted/40 [&_tr:last-child]:border-0",
       className,
     )}
     {...props}
