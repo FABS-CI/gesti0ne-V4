@@ -43,6 +43,7 @@ import { friendlyError } from "@/lib/friendly-error";
 import { FraisTransportDialog } from "@/components/commandes/FraisTransportDialog";
 import type { FraisTransport } from "@/lib/cycle-vente";
 import { normaliserFraisTransport, montantFraisTransport } from "@/lib/frais-transport";
+import { UnsavedIndicator, useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 
 const ligneSchema = z.object({
   produit_id: z.string().min(1, "Sélectionnez un produit"),
@@ -468,6 +469,9 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
   const totalArticles = fields.length;
   const totalQuantite = lignesWatch.reduce((s, l) => s + (l.quantite || 0), 0);
 
+  const isDirty = form.formState.isDirty && !mutation.isSuccess && !mutation.isPending;
+  useUnsavedChanges(isDirty);
+
   return (
     <form onSubmit={onSubmit} className="space-y-6 pb-32 2xl:pb-6">
       {mode === "create" && draft.pendingDraft ? (
@@ -686,6 +690,7 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
               fraisTransport={montantFraisPrevu}
             />
             <div className="flex flex-col gap-2">
+              <UnsavedIndicator dirty={isDirty} />
               <Button
                 type="submit"
                 disabled={mutation.isPending || hasOvershoot}
@@ -723,7 +728,8 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
             <div className="text-xs uppercase text-muted-foreground">Net à payer</div>
             <div className="truncate text-lg font-bold">{formatFCFA(totaux.ttc + montantFraisPrevu)}</div>
           </div>
-          <div className="flex gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
+            {isDirty && <span role="status" aria-label="Modifications non enregistrées" title="Modifications non enregistrées" className="h-2 w-2 rounded-full bg-warning" />}
             <Button type="button" variant="outline" size="sm" asChild>
               <Link to="/commandes">Annuler</Link>
             </Button>
