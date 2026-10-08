@@ -19,6 +19,7 @@ import { optionMeta } from "./resource-manager-types";
 
 function renderCell(col: ColumnDef, row: Row): ReactNode {
   const v = row[col.name];
+  if (col.format) return v == null || v === "" ? "—" : col.format(v);
   if (col.type === "money") return formatFCFA(Number(v ?? 0));
   if (col.type === "badge") {
     const m = optionMeta(col.options, v);
