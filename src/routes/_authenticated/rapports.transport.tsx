@@ -254,8 +254,8 @@ function RapportTransportPage() {
                     <YAxis tick={{ fontSize: 11 }} />
                     <Tooltip formatter={(v: number) => formatFCFA(Number(v))} />
                     <Legend />
-                    <Bar dataKey="livraison" name="Livraison" fill="#1E3A8A" />
-                    <Bar dataKey="expedition" name="Expédition" fill="#F97316" />
+                    <Bar dataKey="livraison" name="Livraison" fill="var(--chart-1)" />
+                    <Bar dataKey="expedition" name="Expédition" fill="var(--chart-3)" />
                   </BarChart>
                 </ResponsiveContainer>
               )}

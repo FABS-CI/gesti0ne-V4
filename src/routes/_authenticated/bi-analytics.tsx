@@ -144,7 +144,7 @@ function BiAnalytics() {
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground">Recettes (année)</p>
-            <p className="text-xl font-bold text-emerald-600">
+            <p className="text-xl font-bold text-success">
               {formatFCFA(data?.totalRecettes ?? 0)}
             </p>
           </CardContent>
@@ -152,7 +152,7 @@ function BiAnalytics() {
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground">Dépenses (année)</p>
-            <p className="text-xl font-bold text-red-600">{formatFCFA(data?.totalDepenses ?? 0)}</p>
+            <p className="text-xl font-bold text-destructive">{formatFCFA(data?.totalDepenses ?? 0)}</p>
           </CardContent>
         </Card>
         <Card>
