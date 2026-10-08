@@ -94,6 +94,9 @@ export const NUMERIC_KEYS = [
   'net', 'total', 'montant', 'debit', 'credit', 'retour', 'solde',
 ];
 
+/** Colonnes courtes centrées (ex. remise en %), pour ne pas coller au P.U. voisin. */
+export const CENTERED_KEYS = ['remisePct'];
+
 export const PAGE = { w: 595.28, h: 841.89 }; // A4
 export const MARGINS = { x: 34, top: 40, bottom: 65 };
 /** Plus bas point autorisé pour un bloc de contenu (au-dessus du trait du pied de page, y=70). */
@@ -662,7 +665,9 @@ export class BaseDocument {
         if (idx > 0) this.page.drawLine({ start: { x: hx, y: hy }, end: { x: hx, y: hy - 20 }, color: COLORS.blanc, thickness: 0.5, opacity: 0.5 });
         const txt = col.label.toUpperCase();
         const txtW = this.fonts.bold.widthOfTextAtSize(txt, 8.5);
-        const headerX = NUMERIC_KEYS.includes(col.key) ? hx + col.width - txtW - 5 : hx + 5;
+        const headerX = CENTERED_KEYS.includes(col.key)
+          ? hx + (col.width - txtW) / 2
+          : NUMERIC_KEYS.includes(col.key) ? hx + col.width - txtW - 5 : hx + 5;
         this.page.drawText(txt, { x: headerX, y: hy - 13.5, size: 8.5, font: this.fonts.bold, color: COLORS.blanc });
         hx += col.width;
       });
@@ -723,7 +728,9 @@ export class BaseDocument {
           const txtW = f.widthOfTextAtSize(lineText, fontSize);
           
           let alignX = curX + colHPadding;
-          if (NUMERIC_KEYS.includes(col.key)) {
+          if (CENTERED_KEYS.includes(col.key)) {
+            alignX = curX + (col.width - txtW) / 2;
+          } else if (NUMERIC_KEYS.includes(col.key)) {
             alignX = curX + col.width - txtW - colHPadding;
           }
 

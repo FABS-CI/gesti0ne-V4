@@ -38,14 +38,15 @@ export class CommercialDocument extends BaseDocument {
     
     // Tableau
     const isBL = this.data.type === 'Bon de Livraison';
-    // Répartition A4 : N° 5% · Code 13% · Désignation 42% · Qté 8% · P.U. 10% · Remise 10% · Montant 12%
+    // Répartition A4 : N° 5% · Code 13% · Désignation 39% · Qté 8% · P.U. 11% · Remise 10% · Montant 14%
+    // (P.U. élargi et Remise centrée pour que les deux colonnes ne se touchent plus)
     const pct = (p: number) => Math.round(CONTENT_W * p) / 100;
     const avecRemise = !isBL && this.discountMode === 'A';
     const designationW = isBL
       ? CONTENT_W - pct(5) - pct(13) - pct(8)
       : avecRemise
-        ? pct(42)
-        : pct(52);
+        ? pct(39)
+        : pct(50);
     const colonnes = [
       { label: "N°", key: "num", width: pct(5) },
       { label: "Code", key: "code", width: pct(13) },
@@ -54,9 +55,10 @@ export class CommercialDocument extends BaseDocument {
     ];
 
     if (!isBL) {
-      colonnes.push({ label: "P.U.", key: "pu", width: pct(10) });
+      colonnes.push({ label: "P.U.", key: "pu", width: pct(11) });
       if (avecRemise) {
-        colonnes.push({ label: "Remise (%)", key: "remisePct", width: pct(10) });
+        // Les valeurs portent déjà « % » : l'en-tête court tient dans la colonne.
+        colonnes.push({ label: "Remise", key: "remisePct", width: pct(10) });
       }
       // Le montant prend le reste exact de l'espace disponible (CONTENT_W)
       const currentWidth = colonnes.reduce((acc, c) => acc + c.width, 0);
