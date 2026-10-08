@@ -56,13 +56,10 @@ export function LignesSection({
 }: Props) {
   const hasOvershoot = overshootIndexes.length > 0;
   return (
-    <section className="relative overflow-hidden rounded-md border bg-card p-4 pl-5 sm:p-5 sm:pl-6 space-y-4">
-      <span aria-hidden className="absolute inset-y-0 left-0 w-1" style={{ backgroundColor: "#F97316" }} />
+    <section className="relative overflow-hidden rounded-md border bg-card p-4 sm:p-5 space-y-4">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <h2 className="flex min-w-0 items-center gap-2 truncate text-base sm:text-lg font-semibold">
-          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md text-white shadow-sm" style={{ backgroundColor: "#F97316" }}>
-            <Package className="h-4 w-4" />
-          </span>
+          <Package className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
           <span className="truncate">
             3. Produits{" "}
             <span className="text-xs font-normal text-muted-foreground">
