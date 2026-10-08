@@ -175,7 +175,7 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
     onError: (e: unknown) => toast.error(friendlyError(e, "Erreur")),
   });
 
-  useUnsavedChanges(isDirty && !save.isSuccess);
+  useUnsavedChanges(isDirty && !save.isSuccess && !save.isPending);
 
   return (
     <div className="space-y-6">
