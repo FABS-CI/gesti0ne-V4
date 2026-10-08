@@ -1,3 +1,4 @@
+import { askConfirm } from "@/components/common/GlobalConfirm";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -191,8 +192,8 @@ function EmployesPage() {
           </Button>
           <Button
             variant="outline"
-            onClick={() => {
-              if (confirm("Renuméroter tous les matricules (EMP-00001…) ?"))
+            onClick={async () => {
+              if (await askConfirm("Renuméroter tous les matricules (EMP-00001…) ?"))
                 renumberMutation.mutate();
             }}
             disabled={renumberMutation.isPending || !employes.length}

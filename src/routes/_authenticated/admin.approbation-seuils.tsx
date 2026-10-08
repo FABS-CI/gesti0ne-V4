@@ -1,3 +1,4 @@
+import { askConfirm } from "@/components/common/GlobalConfirm";
 import { createFileRoute } from "@tanstack/react-router";
 import { formatFCFA } from "@/lib/format";
 
@@ -181,8 +182,8 @@ function SeuilsPage() {
                       <Button size="sm" variant="outline" onClick={() => { setIsNew(false); setEditing(s); }}>
                         Modifier
                       </Button>
-                      <Button size="sm" variant="ghost" onClick={() => {
-                        if (confirm(`Supprimer le seuil ${s.module}/${s.type_operation} ?`))
+                      <Button size="sm" variant="ghost" onClick={async () => {
+                        if (await askConfirm(`Supprimer le seuil ${s.module}/${s.type_operation} ?`))
                           deleteMut.mutate(s.id);
                       }}>
                         <Trash2 className="w-4 h-4" />

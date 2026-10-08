@@ -1,3 +1,4 @@
+import { askConfirm } from "@/components/common/GlobalConfirm";
 import { Inbox, Pencil, Trash2 } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -121,7 +122,7 @@ export function ResourceTable({ config, rows, isLoading, onEdit, onDelete }: Pro
                         size="icon"
                         title={action.label}
                         onClick={async () => {
-                          if (action.confirm && !confirm(action.confirm(row))) return;
+                          if (action.confirm && !await askConfirm(action.confirm(row))) return;
                           if (action.onClick) await action.onClick(row);
                         }}
                       >
@@ -137,8 +138,8 @@ export function ResourceTable({ config, rows, isLoading, onEdit, onDelete }: Pro
                       <Button aria-label="Supprimer"
                         variant="ghost"
                         size="icon"
-                        onClick={() => {
-                          if (confirm("Supprimer cet élément ?")) onDelete(row[config.idField]);
+                        onClick={async () => {
+                          if (await askConfirm("Supprimer cet élément ?")) onDelete(row[config.idField]);
                         }}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />

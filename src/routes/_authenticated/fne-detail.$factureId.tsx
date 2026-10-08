@@ -1,3 +1,4 @@
+import { askConfirm } from "@/components/common/GlobalConfirm";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -156,8 +157,8 @@ function FNEDetail() {
               variant="destructive"
               size="sm"
               disabled={refund.isPending}
-              onClick={() => {
-                if (confirm("Émettre un avoir pour cette facture certifiée ?")) refund.mutate();
+              onClick={async () => {
+                if (await askConfirm("Émettre un avoir pour cette facture certifiée ?")) refund.mutate();
               }}
             >
               <Undo2 className="h-4 w-4 mr-1" />
