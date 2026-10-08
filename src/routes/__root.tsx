@@ -10,6 +10,7 @@ import { lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { installClientErrorTracing } from "../lib/client-error-tracing";
+import { getStoredTheme } from "../hooks/use-theme";
 import { persistQueryClient } from "@tanstack/react-query-persist-client";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import { RouteError, RouteNotFound } from "../components/route-boundaries";
@@ -182,6 +183,11 @@ function RootComponent() {
 
   useEffect(() => {
     installClientErrorTracing();
+    // Applique le thème enregistré dès le démarrage (page de connexion incluse) :
+    // sans cela, le thème sombre n'était posé que par ThemeToggle, une fois connecté.
+    const storedTheme = getStoredTheme();
+    document.documentElement.classList.toggle("dark", storedTheme === "dark");
+    document.documentElement.setAttribute("data-theme", storedTheme);
     // Lot 5 — Web Vitals (best-effort, ne bloque jamais le rendu)
     import("../lib/web-vitals-reporter").then((m) => m.installWebVitals()).catch(() => {});
 
