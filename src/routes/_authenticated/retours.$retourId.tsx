@@ -766,7 +766,7 @@ function ValidationComptaDialog({
                 </SelectContent>
               </Select>
               <p className="text-[11px] text-warning bg-warning/10 p-2 rounded border border-warning/40 mt-2">
-                ⚠️ Cette action est irréversible et déclenchera les écritures comptables automatiques.
+                 Cette action est irréversible et déclenchera les écritures comptables automatiques.
               </p>
             </div>
 

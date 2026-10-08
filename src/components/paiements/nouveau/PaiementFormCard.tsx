@@ -146,7 +146,7 @@ export function PaiementFormCard({
                 Prévisualiser
               </Button>
               <Button onClick={onSubmit} disabled={submitting}>
-                💾 Enregistrer le paiement
+                 Enregistrer le paiement
               </Button>
             </>
           ) : (
@@ -156,7 +156,7 @@ export function PaiementFormCard({
               </Button>
               <Button onClick={onSubmit} disabled={submitting}>
                 <FileText className="mr-2 h-4 w-4" />
-                💾 Confirmer et enregistrer
+                 Confirmer et enregistrer
               </Button>
             </>
           )}

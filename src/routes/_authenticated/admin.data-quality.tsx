@@ -224,7 +224,7 @@ function DataQualityPage() {
               {dupQ.data?.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center text-muted-foreground py-6">
-                    Aucun doublon détecté ✓
+                    Aucun doublon détecté
                   </TableCell>
                 </TableRow>
               )}
@@ -270,7 +270,7 @@ function DataQualityPage() {
               {orphanQ.data?.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center text-muted-foreground py-6">
-                    Aucun BL orphelin ✓
+                    Aucun BL orphelin
                   </TableCell>
                 </TableRow>
               )}
@@ -312,7 +312,7 @@ function DataQualityPage() {
               {stockQ.data?.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center text-muted-foreground py-6">
-                    Aucun écart détecté ✓
+                    Aucun écart détecté
                   </TableCell>
                 </TableRow>
               )}

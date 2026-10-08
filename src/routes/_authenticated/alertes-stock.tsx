@@ -199,7 +199,7 @@ function AlertesStockPage() {
               ) : rows.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
-                    Aucune alerte 🎉
+                    Aucune alerte 
                   </TableCell>
                 </TableRow>
               ) : (

@@ -260,7 +260,7 @@ function ColisageListPage() {
                                     ...
                                   </span>
                                 ) : (
-                                  "🖨 Imprimer les étiquettes"
+                                  " Imprimer les étiquettes"
                                 )}
                               </Button>
                             )}
