@@ -140,7 +140,7 @@ function StockPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Boxes className="h-6 w-6 text-[#10B981]" />
+          <Boxes className="h-6 w-6 text-success" />
           <div>
             <h1 className="ds-page-title">Stock</h1>
             <p className="text-sm text-muted-foreground">
@@ -157,37 +157,37 @@ function StockPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <ArrowDown className="h-4 w-4 text-[#10B981]" /> Entrées (30j)
+              <ArrowDown className="h-4 w-4 text-success" /> Entrées (30j)
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-2xl font-bold text-[#10B981]">
+          <CardContent className="text-2xl font-bold text-success">
             {kpis?.entrees ?? 0}
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <ArrowUp className="h-4 w-4 text-[#EF4444]" /> Sorties (30j)
+              <ArrowUp className="h-4 w-4 text-destructive" /> Sorties (30j)
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-2xl font-bold text-[#EF4444]">
+          <CardContent className="text-2xl font-bold text-destructive">
             {kpis?.sorties ?? 0}
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <RefreshCw className="h-4 w-4 text-[#F97316]" /> Ajustements (30j)
+              <RefreshCw className="h-4 w-4 text-warning" /> Ajustements (30j)
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-2xl font-bold text-[#F97316]">
+          <CardContent className="text-2xl font-bold text-warning">
             {kpis?.ajustements ?? 0}
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <AlertTriangle className="h-4 w-4 text-[#EF4444]" /> Produits en alerte
+              <AlertTriangle className="h-4 w-4 text-destructive" /> Produits en alerte
             </CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-bold">{enAlerte}</CardContent>
@@ -237,7 +237,7 @@ function StockPage() {
                 produits.map((p) => {
                   const etat = etatDuStock(p.stock, p.seuil_alerte);
                   return (
-                    <TableRow key={p.produit_id} className="hover:bg-[#10B981]/10">
+                    <TableRow key={p.produit_id} className="hover:bg-success/10">
                       <TableCell className="font-medium">{p.reference}</TableCell>
                       <TableCell>{p.titre}</TableCell>
                       <TableCell className="text-muted-foreground">{p.niveau ?? "—"}</TableCell>

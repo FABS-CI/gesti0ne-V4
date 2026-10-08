@@ -143,7 +143,7 @@ function AjustementPage() {
         </Button>
         <div>
           <h1 className="ds-page-title flex items-center gap-2">
-            <Sliders className="h-6 w-6 text-[#10B981]" /> Ajustement manuel de stock
+            <Sliders className="h-6 w-6 text-success" /> Ajustement manuel de stock
           </h1>
           <p className="text-sm text-muted-foreground">
             {produit?.reference} · {produit?.titre}
@@ -199,7 +199,7 @@ function AjustementPage() {
                   key={s.id}
                   type="button"
                   onClick={() => setDepotId(s.depot_id)}
-                  className={`flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm hover:bg-muted ${depotId === s.depot_id ? "border-[#10B981] bg-[#10B981]/10" : ""}`}
+                  className={`flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm hover:bg-muted ${depotId === s.depot_id ? "border-success bg-success/10" : ""}`}
                 >
                   <span>{s.depots?.nom ?? "—"}</span>
                   <span className="font-bold">{s.quantite}</span>
@@ -234,7 +234,7 @@ function AjustementPage() {
               </div>
               <div className="space-y-1 md:col-span-2">
                 <Label className="text-xs">
-                  Dépôt / Entrepôt <span className="text-[#EF4444]">*</span>
+                  Dépôt / Entrepôt <span className="text-destructive">*</span>
                 </Label>
                 <Select value={depotId} onValueChange={setDepotId}>
                   <SelectTrigger>
@@ -256,7 +256,7 @@ function AjustementPage() {
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">
-                  Type d'ajustement <span className="text-[#EF4444]">*</span>
+                  Type d'ajustement <span className="text-destructive">*</span>
                 </Label>
                 <Select value={type} onValueChange={(v) => setType(v as "entree" | "sortie")}>
                   <SelectTrigger>
@@ -270,7 +270,7 @@ function AjustementPage() {
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">
-                  Quantité <span className="text-[#EF4444]">*</span>
+                  Quantité <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   type="number"
@@ -285,14 +285,14 @@ function AjustementPage() {
                 <Input
                   readOnly
                   value={qtyValide ? String(nouvelleQte) : "—"}
-                  className={stockNegatif ? "border-[#EF4444] text-[#EF4444]" : ""}
+                  className={stockNegatif ? "border-destructive text-destructive" : ""}
                 />
               </div>
             </div>
 
             <div className="space-y-1">
               <Label className="text-xs">
-                Motif de l'ajustement <span className="text-[#EF4444]">*</span>
+                Motif de l'ajustement <span className="text-destructive">*</span>
               </Label>
               <Input
                 value={motif}
@@ -311,12 +311,12 @@ function AjustementPage() {
             </div>
 
             {stockNegatif && (
-              <p className="text-sm text-[#EF4444]">
+              <p className="text-sm text-destructive">
                 Le stock résultant serait négatif ({nouvelleQte}). Réduisez la quantité.
               </p>
             )}
             {!rolesLoading && !autorise && (
-              <p className="text-sm text-[#EF4444]">
+              <p className="text-sm text-destructive">
                 Vous n'avez pas l'autorisation d'effectuer un ajustement de stock.
               </p>
             )}

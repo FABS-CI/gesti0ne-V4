@@ -55,7 +55,7 @@ function StockAuditPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <ShieldCheck className="h-6 w-6 text-[#3B82F6]" />
+          <ShieldCheck className="h-6 w-6 text-info" />
           <div>
             <h1 className="ds-page-title">Audit Stock &amp; Inventaire</h1>
             <p className="text-sm text-muted-foreground">
@@ -83,9 +83,9 @@ function StockAuditPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               {go ? (
-                <CheckCircle2 className="h-5 w-5 text-[#10B981]" />
+                <CheckCircle2 className="h-5 w-5 text-success" />
               ) : (
-                <AlertTriangle className="h-5 w-5 text-[#EF4444]" />
+                <AlertTriangle className="h-5 w-5 text-destructive" />
               )}
               Verdict : {go ? "GO PRODUCTION" : "ANOMALIES DÉTECTÉES"}
             </CardTitle>

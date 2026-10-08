@@ -378,7 +378,7 @@ function AuditPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <History className="h-6 w-6 text-[#F97316]" />
+          <History className="h-6 w-6 text-warning" />
           <div>
             <h1 className="ds-page-title">Journal d'audit</h1>
             <p className="text-sm text-muted-foreground">

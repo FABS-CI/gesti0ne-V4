@@ -106,7 +106,7 @@ function AlertesStockPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <AlertTriangle className="h-7 w-7 text-[#EF4444]" />
+          <AlertTriangle className="h-7 w-7 text-destructive" />
           <div>
             <h1 className="ds-page-title">Alertes de stock par dépôt</h1>
             <p className="text-sm text-muted-foreground">
