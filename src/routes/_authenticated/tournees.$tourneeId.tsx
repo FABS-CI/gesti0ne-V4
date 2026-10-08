@@ -310,7 +310,7 @@ function EditTourneePage() {
       qc.invalidateQueries({ queryKey: ["tournee-colis-dispo"] });
       invalidateColisage(qc);
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "Erreur inconnue";
+      const msg = e instanceof Error ? e.message : "cause non précisée par le serveur. Réessayez dans un instant";
       toast.error("Impossible d'enregistrer", { description: msg });
     } finally {
       setSaving(false);
@@ -359,7 +359,7 @@ function EditTourneePage() {
       invalidateColisage(qc);
       navigate({ to: "/tournees" });
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "Erreur inconnue";
+      const msg = e instanceof Error ? e.message : "cause non précisée par le serveur. Réessayez dans un instant";
       toast.error("Impossible de supprimer", { description: msg });
     } finally {
       setDeleting(false);
@@ -427,7 +427,7 @@ function EditTourneePage() {
               ]
                 .filter(Boolean)
                 .join(" — ") || JSON.stringify(e)
-            : "Erreur inconnue";
+            : "cause non précisée par le serveur. Réessayez dans un instant";
       toast.error("Impossible de clôturer", { description: msg });
     } finally {
       setClosing(false);

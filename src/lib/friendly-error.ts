@@ -45,7 +45,7 @@ const MESSAGE_PATTERNS: Array<[RegExp, string]> = [
     "Votre session a expiré. Veuillez vous reconnecter."],
 ];
 
-export function friendlyError(err: unknown, fallback = "Une erreur est survenue"): string {
+export function friendlyError(err: unknown, fallback = "L'opération n'a pas abouti, sans cause précise renvoyée. Vérifiez votre connexion puis réessayez."): string {
   if (!err) return fallback;
   if (typeof err === "string") return err;
 

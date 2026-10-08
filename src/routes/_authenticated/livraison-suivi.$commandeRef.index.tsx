@@ -214,7 +214,7 @@ function SuiviDetail() {
       <div className="p-6">
         <ErrorCard
           title="Échec du chargement du suivi"
-          message={(detailErrorObj as Error)?.message ?? "Erreur inconnue"}
+          message={(detailErrorObj as Error)?.message ?? "cause non précisée par le serveur. Réessayez dans un instant"}
           onRetry={() => refetch()}
           retrying={detailFetching}
         />
@@ -373,7 +373,7 @@ function SuiviDetail() {
             {histoError && !histoLoading && (
               <ErrorCard
                 title="Historique indisponible"
-                message={(histoErrorObj as Error)?.message ?? "Erreur inconnue"}
+                message={(histoErrorObj as Error)?.message ?? "cause non précisée par le serveur. Réessayez dans un instant"}
                 onRetry={() => refetchHisto()}
                 retrying={histoFetching}
               />

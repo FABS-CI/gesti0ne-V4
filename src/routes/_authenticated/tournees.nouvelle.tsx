@@ -441,7 +441,7 @@ function NouvelleTourneePage() {
       qc.invalidateQueries({ queryKey: ["livsuivi"] });
       navigate({ to: "/tournees" });
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "Erreur inconnue";
+      const msg = e instanceof Error ? e.message : "cause non précisée par le serveur. Réessayez dans un instant";
       toast.error("Impossible de créer la tournée", { description: msg });
     } finally {
       setSaving(false);
