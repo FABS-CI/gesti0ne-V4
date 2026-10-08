@@ -271,7 +271,7 @@ export const groups: Group[] = [
       { title: "Tableau de bord sécurité", url: "/admin/securite", icon: Shield, ready: true },
       { title: "Utilisateurs", url: "/utilisateurs", icon: UserCog, ready: true },
       { title: "Rôles & Permissions", url: "/admin/roles-v3", icon: ShieldCheck, ready: true },
-      // v1 legacy masquée du menu (tous les utilisateurs migrés) — accessible via /roles-permissions pour rollback
+      // v1 legacy masquée du menu (tous les utilisateurs migrés) — ancien écran supprimé
       { title: "Journal d'audit", url: "/audit", icon: History, ready: true },
       { title: "Backup", url: "/backup", icon: Database, ready: true },
       { title: "Santé du système", url: "/admin/sante-systeme", icon: Shield, ready: true },

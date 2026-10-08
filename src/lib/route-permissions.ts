@@ -164,7 +164,6 @@ export const ROUTE_TO_PERMISSION: Record<string, RoutePermissionRequirement> = {
   "/utilisateurs/production": "utilisateurs.modifier",
   "/import-donnees": "parametres.importer",
   "/exports": "exports.voir",
-  "/roles-permissions": "roles_permissions.voir",
   "/audit": "audit.voir",
   "/admin/slo": "audit.voir",
   "/admin/data-quality": "audit.voir",
@@ -243,7 +242,6 @@ function matchesDynamicRoute(pattern: string, pathname: string): boolean {
  */
 export const SUPER_ADMIN_ONLY_ROUTES: readonly string[] = [
   "/utilisateurs",
-  "/roles-permissions",
   "/audit",
   "/backup",
   "/admin",
