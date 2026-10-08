@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/common/PageHeader";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -166,19 +167,12 @@ function RetourDetailPage() {
   return (
     <div className="space-y-6 p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <Button asChild variant="ghost" size="icon">
-            <Link to="/retours">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-          <div>
-            <h1 className="ds-page-title">{titre}</h1>
-            <p className="text-sm text-muted-foreground">
-              {retour.etablissement ?? retour.client_nom ?? "—"} · v{version}
-            </p>
-          </div>
-        </div>
+        <PageHeader
+          className="mb-0 border-0 pb-0"
+          backTo="/retours"
+          title={titre}
+          description={`${retour.etablissement ?? retour.client_nom ?? "—"} · v${version}`}
+        />
         <div className="flex items-center gap-2">
           {st && (
             <Badge style={{ backgroundColor: st.color }} className="text-white">

@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/common/PageHeader";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -107,19 +108,12 @@ function CommandeDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <Button asChild variant="ghost" size="icon">
-            <Link to="/commandes">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-          <div>
-            <h1 className="ds-page-title">Commande {formatDocumentReference(commande.reference)}</h1>
-            <p className="text-sm text-muted-foreground">
-              {commande.client_nom ?? "Client non renseigné"}
-            </p>
-          </div>
-        </div>
+        <PageHeader
+          className="mb-0 border-0 pb-0"
+          backTo="/commandes"
+          title={`Commande ${formatDocumentReference(commande.reference)}`}
+          description={commande.client_nom ?? "Client non renseigné"}
+        />
         {statut && (
           <Badge style={{ backgroundColor: statut.color }} className="text-white">
             {statut.label}
