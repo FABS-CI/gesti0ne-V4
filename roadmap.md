@@ -52,7 +52,7 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 
 ## Modernisation ERP (file-40, plan par lots)
 - [x] Lot 1 : Centre de pilotage (/pilotage) — activité du jour, actions recommandées, direction, impayés par ancienneté
-- [ ] Lot 2 : Centre de commande Ctrl+K (attente validation du lot 1)
+- [x] Lot 2 : Centre de commande Ctrl+K (actions, récents, pages, recherche)
 - [x] Lot 3 : Rapidité — mesuré (listes déjà paginées côté serveur, requêtes < 110 ms, ouvertures 0,1–1,3 s en mode dev); recherche Clients/Produits sécurisée (virgules/parenthèses). Découpage CommandeForm reporté (gain non mesurable)
 - [x] Lot 4 : Confort d'utilisation / tablette (menu en tiroir < 1024 px, en-têtes qui passent à la ligne)
 - [x] Lot 5 : Fiabilité — réconciliation stock (lecture seule) dans Qualité des données; journal enrichi (résumé des changements champ par champ dans le détail d'un événement); messages techniques de débogage retirés (RouteGuard, use-permissions, use-visible-groups, EtiquettesSection); tests automatiques : transport (frais-transport.test.ts), journal (audit-helpers.test.ts), ajoutés aux tests existants facturation/paiements/retours/solde — 46 tests verts. En attente : validation par l'utilisateur des 2 écarts de stock (FABS-CI95, FABS-CI29)
