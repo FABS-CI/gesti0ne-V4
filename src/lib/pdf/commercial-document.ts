@@ -76,20 +76,9 @@ export class CommercialDocument extends BaseDocument {
       total: l.montant ?? l.total ?? 0,
     })) || [];
 
-    // Frais de transport : ligne d'affichage uniquement (aucun produit en base,
-    // aucun impact stock ni statistiques produits).
-    const fraisTransport = Number(this.totals.frais ?? 0);
-    if (fraisTransport > 0 && this.totals.fraisLabel) {
-      lignes.push({
-        num: lignes.length + 1,
-        code: "",
-        designation: this.totals.fraisLabel,
-        qte: 1,
-        pu: fraisTransport,
-        remisePct: 0,
-        total: fraisTransport,
-      });
-    }
+    // Frais de transport : affichés une seule fois, dans le bloc des totaux
+    // (base-document.ts). Ne pas les ajouter aussi comme ligne du tableau,
+    // sinon la livraison apparaît en double sur la facture.
 
 
     y = this.drawTable(y, colonnes, lignes);
