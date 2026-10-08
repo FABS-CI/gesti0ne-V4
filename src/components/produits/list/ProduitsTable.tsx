@@ -195,7 +195,7 @@ export function ProduitsTable({
                         </Button>
                         {p.actif && (
                           <Can permission="produits.supprimer">
-                            <Button
+                            <Button aria-label="Désactiver"
                               variant="ghost"
                               size="icon"
                               onClick={() => onDisable(p)}

@@ -157,7 +157,7 @@ export function ClientsTable({
                             </Button>
                             {c.actif && (
                               <Can permission="clients.supprimer">
-                                <Button
+                                <Button aria-label="Désactiver"
                                   variant="ghost"
                                   size="icon"
                                   onClick={() => onDisable(c)}
