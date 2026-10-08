@@ -96,7 +96,7 @@ export function ColisageExpeditionFields(props: {
           <div className="flex-1">
             <Input value={gareResp} onChange={(e) => setGareResp(e.target.value)} className="h-10" />
           </div>
-          <Button
+          <Button aria-label="Ajouter"
             type="button"
             variant="outline"
             size="icon"

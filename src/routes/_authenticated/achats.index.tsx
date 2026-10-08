@@ -492,7 +492,11 @@ function ApprovisionnementsPage() {
                           </Link>
                         </Button>
                         <Can permission="achats.modifier">
-                          <Button
+                          <Button aria-label={
+                              ["recu", "paye", "annule"].includes(a.statut)
+                                ? "Modifier (réservé Super Admin)"
+                                : "Modifier"
+                            }
                             variant="ghost"
                             size="icon"
                             asChild
@@ -519,7 +523,11 @@ function ApprovisionnementsPage() {
                           <Printer className="h-4 w-4" />
                         </Button>
                         <Can permission="achats.supprimer">
-                          <Button
+                          <Button aria-label={
+                              ["recu", "paye"].includes(a.statut)
+                                ? "Supprimer (réservé Super Admin)"
+                                : "Supprimer"
+                            }
                             variant="ghost"
                             size="icon"
                             title={

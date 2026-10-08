@@ -92,7 +92,7 @@ export function LignesProduitsSection({ form, fa, onProduitChange }: Props) {
                       )}
                     </TableCell>
                     <TableCell>
-                      <Button type="button" variant="ghost" size="icon" onClick={() => remove(i)}>
+                      <Button aria-label="Supprimer" type="button" variant="ghost" size="icon" onClick={() => remove(i)}>
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </TableCell>

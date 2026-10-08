@@ -108,7 +108,7 @@ export function DepotsTable({ isLoading, items, stockCounts, onEdit, onPromote, 
                       <Pencil className="h-4 w-4" />
                     </Button>
                     <Can permission="depots.supprimer">
-                      <Button
+                      <Button aria-label={d.is_principal ? "Dépôt principal — non supprimable" : "Supprimer"}
                         variant="ghost"
                         size="icon"
                         disabled={d.is_principal}

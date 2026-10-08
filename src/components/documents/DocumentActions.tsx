@@ -155,7 +155,7 @@ export function DocumentActions({
         </Button>
       )}
       {onTransform && (
-        <Button
+        <Button aria-label={transformLabel}
           variant="ghost"
           size="icon"
           title={transformLabel}

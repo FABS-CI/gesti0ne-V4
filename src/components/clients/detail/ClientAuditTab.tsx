@@ -99,7 +99,7 @@ export function ClientAuditTab({ clientId }: { clientId: string }) {
       </div>
       {auditTotalPages > 1 && (
         <div className="flex items-center justify-end gap-2">
-          <Button
+          <Button aria-label="Précédent"
             variant="outline"
             size="icon"
             disabled={auditPage <= 1}
@@ -110,7 +110,7 @@ export function ClientAuditTab({ clientId }: { clientId: string }) {
           <span className="text-sm text-muted-foreground">
             Page {auditPage} / {auditTotalPages}
           </span>
-          <Button
+          <Button aria-label="Suivant"
             variant="outline"
             size="icon"
             disabled={auditPage >= auditTotalPages}

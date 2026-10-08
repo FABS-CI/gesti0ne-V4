@@ -202,7 +202,7 @@ function NouveauTransfertPage() {
                     />
                   </TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="icon" onClick={() => removeLigne(idx)}>
+                    <Button aria-label="Supprimer" variant="ghost" size="icon" onClick={() => removeLigne(idx)}>
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
                   </TableCell>

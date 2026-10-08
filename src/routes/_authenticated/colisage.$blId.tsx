@@ -74,7 +74,7 @@ function ColisageDetailPage() {
       {/* En-tête */}
       <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate({ to: "/colisage" })}>
+          <Button aria-label="Retour" variant="ghost" size="icon" onClick={() => navigate({ to: "/colisage" })}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="rounded-lg bg-primary/10 p-2">

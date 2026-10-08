@@ -190,7 +190,7 @@ function NouvelIncidentPage() {
   return (
     <div className="space-y-6 p-1">
       <div className="flex items-center gap-3">
-        <Button asChild variant="ghost" size="icon">
+        <Button aria-label="Retour" asChild variant="ghost" size="icon">
           <Link to="/incidents">
             <ArrowLeft className="h-4 w-4" />
           </Link>
@@ -317,7 +317,7 @@ function NouvelIncidentPage() {
                     />
                   </TableCell>
                   <TableCell>
-                    <Button
+                    <Button aria-label="Supprimer"
                       type="button"
                       variant="ghost"
                       size="icon"

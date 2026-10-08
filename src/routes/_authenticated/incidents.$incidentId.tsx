@@ -120,7 +120,7 @@ function IncidentDetailPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
         <div className="flex items-center gap-3">
-          <Button asChild variant="ghost" size="icon">
+          <Button aria-label="Retour" asChild variant="ghost" size="icon">
             <Link to="/incidents">
               <ArrowLeft className="h-5 w-5" />
             </Link>

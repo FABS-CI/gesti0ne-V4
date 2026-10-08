@@ -271,7 +271,7 @@ function NotificationRow({
           <p className="mt-1 text-xs text-muted-foreground">{frDateTime(n.date_notification)}</p>
         </div>
         <div className="flex items-center gap-1">
-          <Button
+          <Button aria-label={n.lu ? "Marquer non lu" : "Marquer lu"}
             variant="ghost"
             size="icon"
             title={n.lu ? "Marquer non lu" : "Marquer lu"}

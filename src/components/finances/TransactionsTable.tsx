@@ -97,11 +97,11 @@ export function TransactionsTable({ transactions, isLoading, onEdit, onDelete }:
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="icon" onClick={() => onEdit(t)}>
+                    <Button aria-label="Modifier" variant="ghost" size="icon" onClick={() => onEdit(t)}>
                       <Pencil className="h-4 w-4" />
                     </Button>
                     <Can permission="finances.supprimer">
-                      <Button
+                      <Button aria-label="Supprimer"
                         variant="ghost"
                         size="icon"
                         onClick={async () => {

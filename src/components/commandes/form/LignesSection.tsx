@@ -201,7 +201,7 @@ export function LignesSection({
                         {formatFCFA(calc.totalLigne)}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button type="button" variant="ghost" size="icon" onClick={() => remove(i)} className="h-8 w-8">
+                        <Button aria-label="Supprimer" type="button" variant="ghost" size="icon" onClick={() => remove(i)} className="h-8 w-8">
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
                       </TableCell>
@@ -259,7 +259,7 @@ export function LignesSection({
                       )}
                     </div>
 
-                    <Button
+                    <Button aria-label="Supprimer"
                       type="button"
                       variant="ghost"
                       size="icon"

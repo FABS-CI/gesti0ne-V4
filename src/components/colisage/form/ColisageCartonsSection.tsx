@@ -204,7 +204,7 @@ export function ColisageCartonsSection({
                         updateLigne(ci, lj, { quantite: String(Math.min(n, maxDispo)) });
                       }}
                     />
-                    <Button
+                    <Button aria-label="Retirer"
                       type="button"
                       variant="ghost"
                       size="icon"

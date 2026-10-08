@@ -423,7 +423,7 @@ export function ColisageForm({
                   </Select>
                 </div>
                 <div className="flex gap-1">
-                  <Button
+                  <Button aria-label="Ajouter"
                     type="button"
                     variant="outline"
                     size="icon"
@@ -435,7 +435,7 @@ export function ColisageForm({
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
-                  <Button
+                  <Button aria-label="Actualiser"
                     type="button"
                     variant="ghost"
                     size="icon"

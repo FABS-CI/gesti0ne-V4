@@ -163,7 +163,7 @@ export function LignesProduitsSection({
                   {formatFCFA(montantLigne(l))}
                 </TableCell>
                 <TableCell>
-                  <Button
+                  <Button aria-label="Supprimer"
                     type="button"
                     variant="ghost"
                     size="icon"

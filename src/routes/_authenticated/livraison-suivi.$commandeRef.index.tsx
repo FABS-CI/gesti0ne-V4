@@ -233,7 +233,7 @@ function SuiviDetail() {
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center gap-3">
-        <Button asChild variant="ghost" size="icon">
+        <Button aria-label="Retour" asChild variant="ghost" size="icon">
           <Link to="/livraison-suivi">
             <ArrowLeft className="h-4 w-4" />
           </Link>
@@ -555,13 +555,13 @@ function HistoRow({
           <div className="font-medium">{STATUT_LABEL[h.etape]}</div>
           <div className="flex gap-1">
             {canEdit && !editing && (
-              <Button size="icon" variant="ghost" onClick={() => setEditing(true)}>
+              <Button aria-label="Modifier" size="icon" variant="ghost" onClick={() => setEditing(true)}>
                 <Pencil className="h-3.5 w-3.5" />
               </Button>
             )}
             {canDelete && !editing && (
               <Can permission="livraisons.supprimer">
-                <Button
+                <Button aria-label="Supprimer"
                   size="icon"
                   variant="ghost"
                   onClick={async () => {
@@ -588,10 +588,10 @@ function HistoRow({
               placeholder="Commentaire"
               className="h-8"
             />
-            <Button size="icon" variant="ghost" onClick={() => mutUpd.mutate()}>
+            <Button aria-label="Valider" size="icon" variant="ghost" onClick={() => mutUpd.mutate()}>
               <Check className="h-4 w-4" />
             </Button>
-            <Button
+            <Button aria-label="Fermer"
               size="icon"
               variant="ghost"
               onClick={() => {
