@@ -1,254 +1,122 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  ShoppingCart,
-  Truck,
-  Package,
-  Calculator,
-  Users,
-  BarChart3,
-  FileCheck,
-  Wallet,
-  ShieldCheck,
-  Zap,
-  Globe,
-  ArrowRight,
-  CheckCircle2,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { COMPANY } from "@/lib/company";
 
 export const Route = createFileRoute("/presentation")({
   head: () => ({
     meta: [
-      { title: "FABS ERP — La gestion complète des PME ivoiriennes" },
+      { title: "GESTI-one — Gestion commerciale, stock, comptabilité et paie" },
       {
         name: "description",
         content:
-          "ERP tout-en-un pour la Côte d'Ivoire : ventes, stock, livraison, comptabilité, paie CNPS/ITS, FNE/DGI. Temps réel, sécurisé, conçu pour vos équipes.",
+          "GESTI-one, logiciel de gestion d'Éditions FABS-CI : ventes, stock, livraisons, comptabilité, paie CNPS/ITS et facturation normalisée FNE/DGI.",
       },
-      { property: "og:title", content: "FABS ERP — Pilotez votre PME de A à Z" },
+      { property: "og:title", content: "GESTI-one — Gestion commerciale, stock, comptabilité et paie" },
       {
         property: "og:description",
-        content:
-          "Ventes, livraisons temps réel, comptabilité, paie CI, facturation normalisée FNE. Un seul outil pour toute votre entreprise.",
+        content: "Ventes, stock, livraisons, comptabilité et paie conformes FNE/DGI, CNPS et ITS, pour les entreprises ivoiriennes.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://gesti-0ne.lovable.app/presentation" },
+      { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "canonical", href: "https://gesti-0ne.lovable.app/presentation" }],
   }),
   component: PresentationPage,
 });
 
 const MODULES = [
-  { icon: ShoppingCart, title: "Ventes", desc: "Commandes, proformas, factures, retours — cycle complet du devis au règlement." },
-  { icon: Truck, title: "Livraison temps réel", desc: "Colisage, tournées, suivi étape par étape avec notifications live." },
-  { icon: Package, title: "Stock & Achats", desc: "Multi-dépôts, inventaires, mouvements, fournisseurs et commandes d'achat." },
-  { icon: Calculator, title: "Comptabilité", desc: "Écritures, FEC, exercices comparatifs, état de compte clients détaillé." },
-  { icon: Wallet, title: "Finances", desc: "Trésorerie, paiements multi-factures, rapprochements et imputations." },
-  { icon: Users, title: "Paie & RH", desc: "Bulletins CNPS, ITS, CN, CMU — barèmes CI 2024, contrats, congés, absences." },
-  { icon: FileCheck, title: "FNE / DGI", desc: "Facturation normalisée intégrée, conforme à la réglementation ivoirienne." },
-  { icon: BarChart3, title: "Rapports & BI", desc: "KPIs temps réel, exports PDF/CSV, tableaux de bord par métier." },
+  { nom: "Ventes", fait: "Proformas, commandes, factures, bons de livraison, retours et avoirs.", remplace: "Factures faites sur tableur ou à la main" },
+  { nom: "Stock et achats", fait: "Plusieurs dépôts, inventaires, transferts, seuils d'alerte, commandes fournisseurs.", remplace: "Fiches de stock papier" },
+  { nom: "Livraison", fait: "Colisage, étiquettes, tournées, bon de sortie, remise signée au client.", remplace: "Suivi par téléphone" },
+  { nom: "Encaissements", fait: "Paiements sur une ou plusieurs factures, relevés et état de compte des clients.", remplace: "Cahier des encaissements" },
+  { nom: "Comptabilité", fait: "Écritures générées depuis les ventes et achats, grand livre, clôture d'exercice.", remplace: "Ressaisie dans un logiciel séparé" },
+  { nom: "Paie et RH", fait: "Bulletins CNPS, ITS, CN et CMU, contrats, congés et absences.", remplace: "Calcul de paie sur tableur" },
 ];
 
-const STATS = [
-  { value: "8+", label: "Modules métiers intégrés" },
-  { value: "100%", label: "Conforme réglementation CI" },
-  { value: "Live", label: "Synchronisation temps réel" },
-  { value: "RBAC", label: "Sécurité par rôles" },
-];
-
-const HIGHLIGHTS = [
-  "Multi-utilisateurs avec rôles et permissions fines",
-  "Édition PDF sur 5 modèles configurables (factures, BL, bulletins)",
-  "Réel-temps sur les livraisons et notifications",
-  "Barèmes fiscaux Côte d'Ivoire à jour (CNPS, ITS, CN, CMU)",
-  "Sauvegardes automatiques et audit complet",
-  "API MCP : votre ERP interrogeable par IA",
+const CONFORMITE = [
+  ["Facturation normalisée", "Les factures sont transmises à la FNE de la DGI et portent un QR code de vérification."],
+  ["Paie", "Les cotisations CNPS et l'ITS sont calculées selon les barèmes en vigueur en Côte d'Ivoire."],
+  ["Journal d'audit", "Chaque création, modification et suppression est enregistrée avec l'auteur et l'heure."],
+  ["Sauvegardes", "Une copie complète des données est faite toutes les trois heures, avec une copie sur Google Drive."],
+  ["Contrôle d'accès", "Chaque utilisateur ne voit et ne modifie que ce que son rôle autorise, dépôt par dépôt."],
 ];
 
 function PresentationPage() {
   return (
     <div className="min-h-dvh bg-background text-foreground">
-      {/* NAV */}
-      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
-              F
-            </div>
-            <span className="text-lg font-bold tracking-tight">FABS ERP</span>
-          </div>
-          <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
+      <header className="border-b border-border">
+        <div className="mx-auto flex max-w-[1100px] items-center justify-between gap-4 px-6 py-4">
+          <span className="text-base font-semibold">GESTI-one</span>
+          <nav aria-label="Navigation principale" className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
             <a href="#modules" className="hover:text-foreground">Modules</a>
-            <a href="#atouts" className="hover:text-foreground">Atouts</a>
-            <a href="#pourquoi" className="hover:text-foreground">Pourquoi FABS</a>
+            <a href="#conformite" className="hover:text-foreground">Conformité</a>
+            <a href="#contact" className="hover:text-foreground">Contact</a>
           </nav>
-          <Link to="/auth">
-            <Button size="sm">Se connecter</Button>
-          </Link>
+          <Button asChild size="sm"><Link to="/auth">Se connecter</Link></Button>
         </div>
       </header>
 
-      {/* HERO */}
-      <section className="relative overflow-hidden border-b border-border/60">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-40"
-          style={{
-            background:
-              "radial-gradient(600px 300px at 20% 10%, oklch(0.55 0.22 258 / 0.25), transparent), radial-gradient(500px 300px at 90% 30%, oklch(0.63 0.21 41 / 0.20), transparent)",
-          }}
-        />
-        <div className="relative mx-auto max-w-6xl px-6 py-24 md:py-32">
-          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-            ERP Made in Côte d'Ivoire — Conforme FNE / DGI
-          </div>
-          <h1 className="ds-page-title mt-6 max-w-3xl">
-            L'ERP qui gère votre PME <span className="text-primary">de A à Z</span>.
+      <main className="mx-auto max-w-[1100px] px-6">
+        <section className="border-b border-border py-16">
+          <h1 className="max-w-3xl text-3xl font-semibold leading-tight md:text-4xl">
+            Gestion commerciale, stock, comptabilité et paie, conforme FNE/DGI.
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl">
-            Ventes, livraisons temps réel, stock, comptabilité, paie CNPS/ITS, facturation
-            normalisée FNE. Un seul outil, pensé pour la Côte d'Ivoire, prêt à l'emploi.
+          <p className="mt-4 max-w-2xl text-base text-muted-foreground">
+            Un seul logiciel pour suivre une vente de la proforma jusqu'au paiement, avec le stock, la livraison et la comptabilité mis à jour au même moment.
           </p>
-          <div className="mt-10 flex flex-wrap items-center gap-4">
-            <Link to="/auth">
-              <Button size="lg" className="gap-2">
-                Démarrer maintenant <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-            <a href="#modules">
-              <Button size="lg" variant="outline">
-                Découvrir les modules
-              </Button>
-            </a>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Button asChild><Link to="/auth">Se connecter</Link></Button>
+            <Button asChild variant="outline">
+              <a href={`mailto:${COMPANY.email}?subject=Demande de démonstration GESTI-one`}>Demander une démonstration</a>
+            </Button>
           </div>
+        </section>
 
-          <div className="mt-16 grid grid-cols-2 gap-6 md:grid-cols-4">
-            {STATS.map((s) => (
-              <div key={s.label} className="rounded-xl border border-border bg-card p-5">
-                <div className="text-3xl font-bold text-primary">{s.value}</div>
-                <div className="mt-1 text-sm text-muted-foreground">{s.label}</div>
+        <section id="modules" className="border-b border-border py-16">
+          <h2 className="text-xl font-semibold">Modules</h2>
+          <div className="mt-6 overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="text-xs text-muted-foreground">
+                <tr className="border-b border-border">
+                  <th className="py-2 pr-4 font-semibold">Module</th>
+                  <th className="py-2 pr-4 font-semibold">Ce qu'il fait</th>
+                  <th className="py-2 font-semibold">Ce qu'il remplace</th>
+                </tr>
+              </thead>
+              <tbody>
+                {MODULES.map((m) => (
+                  <tr key={m.nom} className="border-b border-border align-top">
+                    <td className="py-3 pr-4 font-medium">{m.nom}</td>
+                    <td className="py-3 pr-4">{m.fait}</td>
+                    <td className="py-3 text-muted-foreground">{m.remplace}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="conformite" className="border-b border-border py-16">
+          <h2 className="text-xl font-semibold">Conformité et fiabilité</h2>
+          <dl className="mt-6 grid gap-x-10 gap-y-5 md:grid-cols-2">
+            {CONFORMITE.map(([t, d]) => (
+              <div key={t}>
+                <dt className="text-sm font-semibold">{t}</dt>
+                <dd className="mt-1 text-sm text-muted-foreground">{d}</dd>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
+          </dl>
+        </section>
+      </main>
 
-      {/* MODULES */}
-      <section id="modules" className="mx-auto max-w-6xl px-6 py-24">
-        <div className="max-w-2xl">
-          <div className="text-sm font-semibold text-accent">
-            Modules intégrés
-          </div>
-          <h2 className="mt-2 text-3xl font-bold md:text-4xl">
-            Tout ce dont votre entreprise a besoin.
-          </h2>
-          <p className="mt-4 text-muted-foreground">
-            8 modules métiers connectés entre eux, avec des données partagées et une vue
-            temps réel sur toute votre activité.
-          </p>
-        </div>
-
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {MODULES.map((m) => (
-            <div
-              key={m.title}
-              className="group rounded-xl border border-border bg-card p-6 transition hover:border-primary/50 hover:shadow-lg"
-            >
-              <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 text-primary transition group-hover:bg-primary group-hover:text-primary-foreground">
-                <m.icon className="h-5 w-5" />
-              </div>
-              <h3 className="mt-4 text-base font-semibold">{m.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{m.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ATOUTS */}
-      <section id="atouts" className="border-y border-border/60 bg-card/30">
-        <div className="mx-auto grid max-w-6xl gap-12 px-6 py-24 md:grid-cols-2">
-          <div>
-            <div className="text-sm font-semibold text-accent">
-              Atouts
-            </div>
-            <h2 className="mt-2 text-3xl font-bold md:text-4xl">
-              Conçu pour vos équipes, pas contre elles.
-            </h2>
-            <p className="mt-4 text-muted-foreground">
-              Interface claire, temps réel partout, exports PDF professionnels, sécurité
-              enterprise. FABS ERP a été audité, testé et documenté pour la production.
-            </p>
-            <div className="mt-8 flex flex-col gap-3">
-              {HIGHLIGHTS.map((h) => (
-                <div key={h} className="flex items-start gap-3">
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-                  <span className="text-sm">{h}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Card icon={ShieldCheck} title="Sécurité RBAC v2" desc="Rôles séparés, permissions fines, audit trail complet." />
-            <Card icon={Zap} title="Temps réel" desc="Livraisons, notifications, dashboards — tout se met à jour instantanément." />
-            <Card icon={Globe} title="Fait pour la CI" desc="FCFA, gares, communes, barèmes fiscaux à jour." />
-            <Card icon={FileCheck} title="Documents pro" desc="PDF factures, BL, bulletins de paie, rapports — 5 modèles au choix." />
-          </div>
-        </div>
-      </section>
-
-      {/* POURQUOI */}
-      <section id="pourquoi" className="mx-auto max-w-6xl px-6 py-24">
-        <div className="rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-transparent to-accent/10 p-10 md:p-16">
-          <h2 className="max-w-2xl text-3xl font-bold md:text-4xl">
-            Remplacez 5 outils par un seul.
-          </h2>
-          <p className="mt-4 max-w-2xl text-muted-foreground">
-            Fini les fichiers Excel dispersés, les logiciels de compta déconnectés du
-            stock, les bulletins de paie faits à la main. FABS ERP centralise tout.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-4">
-            <Link to="/auth">
-              <Button size="lg" className="gap-2">
-                Se connecter <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* FOOTER */}
-      <footer className="border-t border-border/60 bg-card/30">
-        <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-4 px-6 py-10 text-sm text-muted-foreground md:flex-row md:items-center">
-          <div>© {new Date().getFullYear()} FABS ERP — Côte d'Ivoire</div>
-          <div className="flex gap-6">
-            <a href="#modules" className="hover:text-foreground">Modules</a>
-            <a href="#atouts" className="hover:text-foreground">Atouts</a>
-            <Link to="/auth" className="hover:text-foreground">Connexion</Link>
-          </div>
-        </div>
+      <footer id="contact" className="mx-auto max-w-[1100px] px-6 py-10 text-sm text-muted-foreground">
+        <p className="font-medium text-foreground">Éditeur : Éditions FABS-CI</p>
+        <p className="mt-1">{COMPANY.adresse}</p>
+        <p className="mt-1">
+          {COMPANY.telephones.join(" · ")} ·{" "}
+          <a href={`mailto:${COMPANY.email}`} className="underline-offset-4 hover:underline">{COMPANY.email}</a>
+        </p>
+        <p className="mt-4 text-xs">GESTI-one · version 1.0.0 · © {new Date().getFullYear()} Éditions FABS-CI</p>
       </footer>
-    </div>
-  );
-}
-
-function Card({
-  icon: Icon,
-  title,
-  desc,
-}: {
-  icon: typeof ShieldCheck;
-  title: string;
-  desc: string;
-}) {
-  return (
-    <div className="rounded-xl border border-border bg-card p-6">
-      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/15 text-accent">
-        <Icon className="h-5 w-5" />
-      </div>
-      <h3 className="mt-4 text-base font-semibold">{title}</h3>
-      <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
     </div>
   );
 }

@@ -126,7 +126,7 @@ function Dashboard() {
         onExportPdf={onExportPdf}
       />
 
-      <WelcomeGreeting />
+      <WelcomeGreeting nbRetards={data?.nbRetards} nbStockBas={data?.nbStockBas} />
 
       <DashboardQuickActions />
 
