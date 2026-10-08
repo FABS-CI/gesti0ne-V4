@@ -189,7 +189,7 @@ function FNEDetail() {
               <dd className="col-span-2 font-mono text-xs flex items-center gap-1">
                 {f.code_dgi ?? "—"}{" "}
                 {f.code_dgi && (
-                  <Button
+                  <Button aria-label="Copier"
                     size="icon"
                     variant="ghost"
                     className="h-5 w-5"
@@ -203,7 +203,7 @@ function FNEDetail() {
               <dd className="col-span-2 font-mono text-xs truncate flex items-center gap-1">
                 {f.token ?? "—"}{" "}
                 {f.token && (
-                  <Button
+                  <Button aria-label="Copier"
                     size="icon"
                     variant="ghost"
                     className="h-5 w-5"

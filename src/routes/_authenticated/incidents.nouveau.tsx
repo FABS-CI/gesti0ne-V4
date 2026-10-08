@@ -317,7 +317,7 @@ function NouvelIncidentPage() {
                     />
                   </TableCell>
                   <TableCell>
-                    <Button
+                    <Button aria-label="Supprimer"
                       type="button"
                       variant="ghost"
                       size="icon"

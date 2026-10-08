@@ -346,7 +346,7 @@ function NewFNE() {
                         {formatFCFA(it.quantity * it.amount * (1 - (it.discount ?? 0) / 100))}
                       </TableCell>
                       <TableCell>
-                        <Button
+                        <Button aria-label="Supprimer"
                           size="icon"
                           variant="ghost"
                           onClick={() => setItems(items.filter((_, j) => j !== i))}

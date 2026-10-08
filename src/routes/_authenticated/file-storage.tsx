@@ -155,11 +155,11 @@ function FileStoragePage() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
-                        <Button variant="ghost" size="icon" onClick={() => handleDownload(f.name)}>
+                        <Button aria-label="Télécharger" variant="ghost" size="icon" onClick={() => handleDownload(f.name)}>
                           <Download className="h-4 w-4" />
                         </Button>
                         <Can permission="documents.supprimer">
-                          <Button
+                          <Button aria-label="Supprimer"
                             variant="ghost"
                             size="icon"
                             onClick={() => deleteMutation.mutate(f.name)}

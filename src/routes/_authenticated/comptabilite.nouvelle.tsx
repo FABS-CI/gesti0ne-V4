@@ -231,7 +231,7 @@ function NouvelleEcriturePage() {
                     />
                   </TableCell>
                   <TableCell>
-                    <Button
+                    <Button aria-label="Supprimer"
                       size="icon"
                       variant="ghost"
                       onClick={() => removeLigne(i)}

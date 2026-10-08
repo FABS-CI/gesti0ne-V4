@@ -131,10 +131,10 @@ export function ResourceTable({ config, rows, isLoading, onEdit, onDelete }: Pro
                   })}
                   {!config.readOnly && (
                     <>
-                      <Button variant="ghost" size="icon" onClick={() => onEdit(row)}>
+                      <Button aria-label="Modifier" variant="ghost" size="icon" onClick={() => onEdit(row)}>
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <Button
+                      <Button aria-label="Supprimer"
                         variant="ghost"
                         size="icon"
                         onClick={() => {

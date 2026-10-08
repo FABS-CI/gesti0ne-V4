@@ -750,7 +750,7 @@ function MoneyList({
               onChange(next);
             }}
           />
-          <Button
+          <Button aria-label="Supprimer"
             type="button"
             size="icon"
             variant="ghost"
@@ -807,7 +807,7 @@ function TextValueList({
               onChange(n);
             }}
           />
-          <Button
+          <Button aria-label="Supprimer"
             type="button"
             size="icon"
             variant="ghost"
@@ -879,7 +879,7 @@ function DiplomeList({
               onChange(n);
             }}
           />
-          <Button
+          <Button aria-label="Supprimer"
             type="button"
             size="icon"
             variant="ghost"
@@ -1033,10 +1033,10 @@ function DocumentsTab({ employeId }: { employeId: string }) {
                 <span className="text-xs text-muted-foreground">
                   {d.taille_octets ? `${Math.round(d.taille_octets / 1024)} Ko` : ""}
                 </span>
-                <Button size="icon" variant="ghost" onClick={() => download(d)}>
+                <Button aria-label="Télécharger" size="icon" variant="ghost" onClick={() => download(d)}>
                   <Download className="h-4 w-4" />
                 </Button>
-                <Button size="icon" variant="ghost" onClick={() => del(d)}>
+                <Button aria-label="Supprimer" size="icon" variant="ghost" onClick={() => del(d)}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>

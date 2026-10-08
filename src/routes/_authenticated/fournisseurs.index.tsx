@@ -264,7 +264,7 @@ function FournisseursPage() {
                         </Link>
                       </Button>
                       <Can permission="fournisseurs.supprimer">
-                        <Button
+                        <Button aria-label="Supprimer"
                           variant="ghost"
                           size="icon"
                           onClick={() => setToDelete(f)}

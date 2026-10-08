@@ -190,7 +190,7 @@ export function ProduitsTable({
                             <Eye className="h-4 w-4" />
                           </Link>
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => onEdit(p)} title="Modifier">
+                        <Button aria-label="Modifier" variant="ghost" size="icon" onClick={() => onEdit(p)} title="Modifier">
                           <Pencil className="h-4 w-4" />
                         </Button>
                         {p.actif && (
