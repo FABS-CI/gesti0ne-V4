@@ -33,6 +33,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { usePermissions } from "@/hooks/use-permissions";
 import { getRoutePermission } from "@/lib/route-permissions";
+import { groups as NAV_GROUPS } from "@/components/layout/sidebar/nav-data";
 
 type Hit = {
   id: string;
@@ -135,7 +136,29 @@ export function GlobalSearch() {
     [has, hasAny, isSuperAdmin],
   );
 
+  const allowedPages = useMemo(() => {
+    const seen = new Set<string>();
+    const out: { url: string; title: string; group: string; icon: LucideIcon }[] = [];
+    for (const g of NAV_GROUPS) {
+      if (g.superAdminOnly && !isSuperAdmin) continue;
+      for (const it of g.items) {
+        if (it.ready === false || seen.has(it.url)) continue;
+        if (!isSuperAdmin) {
+          const req = getRoutePermission(it.url);
+          if (req === undefined) continue;
+          if (req !== null && !(Array.isArray(req) ? hasAny(req) : has(req))) continue;
+        }
+        seen.add(it.url);
+        out.push({ url: it.url, title: it.title, group: g.label, icon: it.icon as LucideIcon });
+      }
+    }
+    return out;
+  }, [has, hasAny, isSuperAdmin]);
+
   const term = fold(value.trim());
+  const visiblePages = term.length >= 2
+    ? allowedPages.filter((p) => fold(`${p.title} ${p.group}`).includes(term)).slice(0, 8)
+    : [];
   const visibleActions = term
     ? allowedActions.filter((a) => fold(`${a.label} ${a.keywords}`).includes(term))
     : allowedActions;
@@ -246,6 +269,29 @@ export function GlobalSearch() {
                 </CommandItem>
               ))}
             </CommandGroup>
+          )}
+
+          {visiblePages.length > 0 && (
+            <>
+              <CommandSeparator />
+              <CommandGroup heading="Aller à une page">
+                {visiblePages.map((p) => (
+                  <CommandItem
+                    key={`page-${p.url}`}
+                    value={`page ${p.title} ${p.group} ${p.url}`}
+                    onSelect={() => {
+                      close();
+                      navigate({ to: p.url } as Parameters<typeof navigate>[0]);
+                    }}
+                    className="gap-2"
+                  >
+                    <p.icon className="h-4 w-4 text-muted-foreground" />
+                    <span className="flex-1 truncate text-sm">{p.title}</span>
+                    <span className="text-xs text-muted-foreground">{p.group}</span>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </>
           )}
 
           {showRecent && (
