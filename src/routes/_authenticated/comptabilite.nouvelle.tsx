@@ -257,7 +257,7 @@ function NouvelleEcriturePage() {
             <div
               className={
                 totals.balanced
-                  ? "font-semibold text-emerald-600"
+                  ? "font-semibold text-success"
                   : "font-semibold text-destructive"
               }
             >

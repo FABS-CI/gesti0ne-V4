@@ -97,15 +97,15 @@ export function AuditLiveBar({ onApplyPreset }: Props) {
       >
         <span className="relative flex h-2 w-2">
           {status === "live" && (
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
           )}
           <span
             className={`relative inline-flex h-2 w-2 rounded-full ${
               status === "live"
-                ? "bg-emerald-500"
+                ? "bg-success"
                 : status === "down"
-                  ? "bg-red-500"
-                  : "bg-yellow-400"
+                  ? "bg-destructive"
+                  : "bg-warning"
             }`}
           />
         </span>
@@ -147,7 +147,7 @@ export function AuditLiveBar({ onApplyPreset }: Props) {
         <Button
           size="sm"
           variant="ghost"
-          className="h-7 gap-1 px-2 text-xs text-red-600 hover:text-red-700"
+          className="h-7 gap-1 px-2 text-xs text-destructive hover:text-destructive"
           onClick={() => onApplyPreset?.("errors")}
         >
           <XCircle className="h-3.5 w-3.5" /> Échecs

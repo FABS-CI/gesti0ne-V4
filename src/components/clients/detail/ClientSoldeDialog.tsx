@@ -50,14 +50,14 @@ export function ClientSoldeDialog({ open, onOpenChange, client, rel }: Props) {
   const dernierPaiement = paiements[0]?.date_paiement ?? null;
 
   const rows: Array<{ label: string; value: string; accent?: string }> = [
-    { label: "Solde actuel", value: formatFCFA(Number(client.solde)), accent: Number(client.solde) > 0 ? "text-red-600" : "text-emerald-600" },
+    { label: "Solde actuel", value: formatFCFA(Number(client.solde)), accent: Number(client.solde) > 0 ? "text-destructive" : "text-success" },
     { label: "Total des commandes", value: formatFCFA(totalCmd) },
     { label: "Total facturé", value: formatFCFA(totalFact) },
-    { label: "Total payé", value: formatFCFA(totalPaye), accent: "text-emerald-600" },
-    { label: "Paiements en attente", value: formatFCFA(paiementsAttente), accent: "text-amber-600" },
+    { label: "Total payé", value: formatFCFA(totalPaye), accent: "text-success" },
+    { label: "Paiements en attente", value: formatFCFA(paiementsAttente), accent: "text-warning" },
     { label: "Avoirs", value: formatFCFA(totalAvoirs) },
     { label: "Retours", value: formatFCFA(totalRetours) },
-    { label: "Montant restant dû", value: formatFCFA(restantDu), accent: restantDu > 0 ? "text-red-600" : undefined },
+    { label: "Montant restant dû", value: formatFCFA(restantDu), accent: restantDu > 0 ? "text-destructive" : undefined },
     { label: "Dernière opération", value: frDate(derniereOp) },
     { label: "Dernière facture", value: frDate(derniereFacture) },
     { label: "Dernier paiement", value: frDate(dernierPaiement) },

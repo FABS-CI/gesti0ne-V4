@@ -411,10 +411,10 @@ function FacturesPage() {
                           );
                         })()}
                       </TableCell>
-                      <TableCell className="whitespace-nowrap text-right text-emerald-600">
+                      <TableCell className="whitespace-nowrap text-right text-success">
                         {formatFCFA(Number(f.montant_paye))}
                       </TableCell>
-                      <TableCell className="whitespace-nowrap text-right font-semibold text-red-600">
+                      <TableCell className="whitespace-nowrap text-right font-semibold text-destructive">
                         {formatFCFA(reste)}
                       </TableCell>
                       <TableCell>

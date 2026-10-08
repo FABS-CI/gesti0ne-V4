@@ -50,7 +50,7 @@ export function MobileBottomNav() {
         type="button"
         aria-label="Ouvrir le menu"
         onClick={() => setOpenMobile(true)}
-        className="flex min-h-[56px] flex-col items-center justify-center gap-1 py-1.5 text-[11px] font-medium text-slate-300"
+        className="flex min-h-[56px] flex-col items-center justify-center gap-1 py-1.5 text-[11px] font-medium text-muted-foreground"
       >
         <Menu className="h-6 w-6" />
         <span className="leading-none">Menu</span>

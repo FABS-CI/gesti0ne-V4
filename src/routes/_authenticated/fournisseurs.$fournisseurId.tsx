@@ -120,7 +120,7 @@ function FournisseurDetailPage() {
             </CardTitle>
           </CardHeader>
           <CardContent
-            className={`text-lg font-bold ${report.montant > 0 ? "text-red-600" : "text-emerald-600"}`}
+            className={`text-lg font-bold ${report.montant > 0 ? "text-destructive" : "text-success"}`}
           >
             {formatFCFA(Math.abs(report.montant))}
           </CardContent>

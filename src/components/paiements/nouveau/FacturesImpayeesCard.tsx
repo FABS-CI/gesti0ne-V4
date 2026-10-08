@@ -54,7 +54,7 @@ export function FacturesImpayeesCard({
           <span>2. Factures du client {clientNom}</span>
           <span className="text-sm font-normal text-muted-foreground">
             Solde total dû :{" "}
-            <span className="font-semibold text-red-600">{formatFCFA(soldeTotal)}</span>
+            <span className="font-semibold text-destructive">{formatFCFA(soldeTotal)}</span>
             {nbSelected > 0 && (
               <>
                 {" — "}Total affecté :{" "}
@@ -112,10 +112,10 @@ export function FacturesImpayeesCard({
                     <TableCell className="text-right">
                       {formatFCFA(Number(f.montant_total))}
                     </TableCell>
-                    <TableCell className="text-right text-emerald-600">
+                    <TableCell className="text-right text-success">
                       {formatFCFA(Number(f.montant_paye))}
                     </TableCell>
-                    <TableCell className="text-right font-semibold text-red-600">
+                    <TableCell className="text-right font-semibold text-destructive">
                       {formatFCFA(Number(f.solde))}
                     </TableCell>
                     <TableCell className="text-right">

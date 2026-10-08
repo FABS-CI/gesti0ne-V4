@@ -68,7 +68,7 @@ export function LignesProduitsSection({ form, fa, onProduitChange }: Props) {
                         onChange={(_id, produit) => onProduitChange(i, produit)}
                       />
                       {err?.produit_id && (
-                        <p className="text-xs text-red-600 mt-1">{err.produit_id.message}</p>
+                        <p className="text-xs text-destructive mt-1">{err.produit_id.message}</p>
                       )}
                     </TableCell>
                     <TableCell className="font-mono text-xs select-all" title="Référence produit">
@@ -88,12 +88,12 @@ export function LignesProduitsSection({ form, fa, onProduitChange }: Props) {
                         onFocus={(e) => { if (e.target.value === "0") e.target.value = ""; }}
                       />
                       {err?.quantite && (
-                        <p className="text-xs text-red-600 mt-1">{err.quantite.message}</p>
+                        <p className="text-xs text-destructive mt-1">{err.quantite.message}</p>
                       )}
                     </TableCell>
                     <TableCell>
                       <Button type="button" variant="ghost" size="icon" onClick={() => remove(i)}>
-                        <Trash2 className="h-4 w-4 text-red-600" />
+                        <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -104,7 +104,7 @@ export function LignesProduitsSection({ form, fa, onProduitChange }: Props) {
         </ResponsiveTable>
       )}
       {form.formState.errors.lignes && !Array.isArray(form.formState.errors.lignes) && (
-        <p className="text-xs text-red-600">{form.formState.errors.lignes.message as string}</p>
+        <p className="text-xs text-destructive">{form.formState.errors.lignes.message as string}</p>
       )}
     </section>
   );

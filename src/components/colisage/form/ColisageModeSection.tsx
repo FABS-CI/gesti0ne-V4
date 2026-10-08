@@ -56,7 +56,7 @@ export function ColisageModeSection({
           <span className="text-muted-foreground">({detection.raison})</span>
         </div>
         {modeManuel && autoMode && mode !== autoMode && (
-          <div className="mt-1 text-amber-600">
+          <div className="mt-1 text-warning">
             Mode forcé manuellement — sera recalculé si vous modifiez la ville ou la commune.
           </div>
         )}

@@ -248,7 +248,7 @@ export function FNESettingsPanel() {
               <CardTitle className="text-base">Tests API DGI</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="rounded border border-blue-300 bg-blue-50 p-3 text-sm text-blue-900 dark:bg-blue-950 dark:text-blue-100">
+              <div className="rounded border border-info/40 bg-info/10 p-3 text-sm text-info">
                 Environnement : {settings.use_production === "true" ? "PRODUCTION" : "SANDBOX"}.{" "}
                 {!settings.dgi_api_key &&
                   "! Bearer Token non configuré — les tests s'exécutent en mode simulé."}

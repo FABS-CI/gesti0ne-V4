@@ -197,7 +197,7 @@ function StatCard({
   tone?: "warn" | "error";
 }) {
   const color =
-    tone === "error" ? "text-destructive" : tone === "warn" ? "text-orange-500" : "text-foreground";
+    tone === "error" ? "text-destructive" : tone === "warn" ? "text-warning" : "text-foreground";
   return (
     <Card>
       <CardContent className="pt-6">

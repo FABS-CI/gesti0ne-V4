@@ -99,7 +99,7 @@ function WorkflowTimeline({ statut }: { statut: string }) {
                 active
                   ? "bg-primary text-primary-foreground border-primary"
                   : done
-                  ? "bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300"
+                  ? "bg-success/10 text-success border-success/40"
                   : "bg-muted text-muted-foreground"
               }`}
             >
@@ -765,7 +765,7 @@ function ValidationComptaDialog({
                   </SelectItem>
                 </SelectContent>
               </Select>
-              <p className="text-[11px] text-amber-600 bg-amber-50 p-2 rounded border border-amber-100 mt-2">
+              <p className="text-[11px] text-warning bg-warning/10 p-2 rounded border border-warning/40 mt-2">
                 ⚠️ Cette action est irréversible et déclenchera les écritures comptables automatiques.
               </p>
             </div>

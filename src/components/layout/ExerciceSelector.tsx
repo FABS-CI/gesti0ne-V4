@@ -51,7 +51,7 @@ export function ExerciceSelector() {
           size="sm"
           className={cn(
             "h-9 gap-2 font-medium",
-            isReadOnly && "border-amber-500/60 text-amber-600 dark:text-amber-400",
+            isReadOnly && "border-warning/60 text-warning",
           )}
           title={isReadOnly ? "Exercice consulté (lecture seule)" : "Exercice actif"}
         >

@@ -197,7 +197,7 @@ function CommandeDetailPage() {
             </Button>
           )}
         {commande.statut === "annulation_en_attente" && (
-          <Badge variant="outline" className="border-amber-500 text-amber-600">
+          <Badge variant="outline" className="border-warning text-warning">
             En attente d'approbation
           </Badge>
         )}

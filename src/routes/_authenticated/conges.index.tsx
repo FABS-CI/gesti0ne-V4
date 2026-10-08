@@ -171,7 +171,7 @@ function CongesListPage() {
                               })
                             }
                           >
-                            <Check className="h-4 w-4 text-emerald-600" />
+                            <Check className="h-4 w-4 text-success" />
                           </Button>
                           <Button
                             variant="ghost"
@@ -184,7 +184,7 @@ function CongesListPage() {
                               })
                             }
                           >
-                            <X className="h-4 w-4 text-red-500" />
+                            <X className="h-4 w-4 text-destructive" />
                           </Button>
                         </>
                       )}
@@ -215,7 +215,7 @@ function CongesListPage() {
                             deleteMutation.mutate(c.conge_id);
                           }}
                         >
-                          <Trash2 className="h-4 w-4 text-red-500" />
+                          <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
                       </Can>
                     </TableCell>

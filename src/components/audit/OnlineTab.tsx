@@ -120,18 +120,18 @@ const Row = React.memo(function Row({
       </TableCell>
       <TableCell>
         {statut === "online" ? (
-          <Badge className="gap-1 bg-emerald-500 hover:bg-emerald-500">
+          <Badge className="gap-1 bg-success hover:bg-success">
             <Circle className="h-2 w-2 fill-white text-white" />
             En ligne
           </Badge>
         ) : statut === "idle" ? (
-          <Badge className="gap-1 bg-amber-500 hover:bg-amber-500">
+          <Badge className="gap-1 bg-warning hover:bg-warning">
             <Circle className="h-2 w-2 fill-white text-white" />
             Inactif
           </Badge>
         ) : (
           <Badge variant="secondary" className="gap-1">
-            <Circle className="h-2 w-2 fill-red-500 text-red-500" />
+            <Circle className="h-2 w-2 fill-destructive text-destructive" />
             Hors ligne
           </Badge>
         )}

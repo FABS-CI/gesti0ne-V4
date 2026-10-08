@@ -74,7 +74,7 @@ function KpiCell({
       >
         <span>{formatFCFA(value)}</span>
         {evol !== null && (
-          <span className={`text-xs ${evol >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+          <span className={`text-xs ${evol >= 0 ? "text-success" : "text-destructive"}`}>
             {evol >= 0 ? "+" : ""}
             {evol.toFixed(1)}%
           </span>

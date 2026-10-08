@@ -47,7 +47,7 @@ function highlight(text: string, terms: string[]) {
   merged.forEach(([a, b], i) => {
     if (cursor < a) out.push(text.slice(cursor, a));
     out.push(
-      <mark key={i} className="rounded bg-yellow-200 px-0.5 text-inherit dark:bg-yellow-500/40">
+      <mark key={i} className="rounded bg-warning/10 px-0.5 text-inherit">
         {text.slice(a, b)}
       </mark>,
     );

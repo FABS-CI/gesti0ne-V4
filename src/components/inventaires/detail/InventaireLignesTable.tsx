@@ -67,9 +67,9 @@ export function InventaireLignesTable({ ecartsLive, editable, obs, onCompte, onO
                 <TableCell
                   className={`text-right font-semibold ${
                     ecart > 0
-                      ? "text-green-600"
+                      ? "text-success"
                       : ecart < 0
-                        ? "text-red-600"
+                        ? "text-destructive"
                         : "text-muted-foreground"
                   }`}
                 >
@@ -78,7 +78,7 @@ export function InventaireLignesTable({ ecartsLive, editable, obs, onCompte, onO
                 <TableCell className="text-right">
                   {formatFCFA(Number(ligne.valeur_unitaire))}
                 </TableCell>
-                <TableCell className="text-right font-medium text-emerald-600">
+                <TableCell className="text-right font-medium text-success">
                   {formatFCFA(compte * Number(ligne.valeur_unitaire))}
                 </TableCell>
                 <TableCell>

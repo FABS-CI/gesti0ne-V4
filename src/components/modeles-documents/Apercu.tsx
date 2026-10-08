@@ -86,7 +86,7 @@ export function Apercu({ t }: { t: PdfTemplate }) {
     >
       {headerNode}
       <div className="space-y-1 p-3">
-        <div className="flex justify-between text-[6px] text-slate-600">
+        <div className="flex justify-between text-[6px] text-muted-foreground">
           <span>N° FA-2026-00042</span>
           <span>Client : Lycée Moderne</span>
         </div>
@@ -102,7 +102,7 @@ export function Apercu({ t }: { t: PdfTemplate }) {
           {["Manuel CE1", "Cahier TP", "Guide pédago"].map((d) => (
             <div
               key={d}
-              className="grid grid-cols-4 gap-1 border-b px-1 py-[2px] text-[6px] text-slate-700"
+              className="grid grid-cols-4 gap-1 border-b px-1 py-[2px] text-[6px] text-foreground"
             >
               <span className="col-span-2">{d}</span>
               <span className="text-right">2 500</span>

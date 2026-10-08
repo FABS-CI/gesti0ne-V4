@@ -100,9 +100,9 @@ const STATUS_UI: Record<
   AUTHENTIC: {
     title: 'Document certifié',
     subtitle: 'Signature numérique valide',
-    text: 'text-emerald-700',
-    badge: 'bg-emerald-50 border-emerald-200',
-    icon: 'text-emerald-600',
+    text: 'text-success',
+    badge: 'bg-success/10 border-success/40',
+    icon: 'text-success',
     Icon: CheckCircle2,
     message:
       "Ce document est signé numériquement par EDITIONS FABS-CI et son contenu n'a pas été modifié depuis sa certification.",
@@ -110,9 +110,9 @@ const STATUS_UI: Record<
   UNCERTIFIED: {
     title: 'Document non certifié',
     subtitle: 'Signature numérique absente',
-    text: 'text-amber-700',
-    badge: 'bg-amber-50 border-amber-200',
-    icon: 'text-amber-600',
+    text: 'text-warning',
+    badge: 'bg-warning/10 border-warning/40',
+    icon: 'text-warning',
     Icon: AlertTriangle,
     message:
       "Ce document existe bien dans le registre d'EDITIONS FABS-CI, mais aucune certification numérique n'y est associée. Demandez à l'émetteur une version certifiée avant tout paiement.",
@@ -120,9 +120,9 @@ const STATUS_UI: Record<
   REVOKED: {
     title: 'Certification révoquée',
     subtitle: 'Document plus valide',
-    text: 'text-orange-700',
-    badge: 'bg-orange-50 border-orange-200',
-    icon: 'text-orange-600',
+    text: 'text-warning',
+    badge: 'bg-warning/10 border-warning/40',
+    icon: 'text-warning',
     Icon: ShieldOff,
     message:
       "La certification de ce document a été révoquée par l'émetteur. Contactez EDITIONS FABS-CI avant tout paiement.",
@@ -130,18 +130,18 @@ const STATUS_UI: Record<
   CANCELLED: {
     title: 'Document annulé',
     subtitle: 'Annulé par l’émetteur',
-    text: 'text-orange-700',
-    badge: 'bg-orange-50 border-orange-200',
-    icon: 'text-orange-600',
+    text: 'text-warning',
+    badge: 'bg-warning/10 border-warning/40',
+    icon: 'text-warning',
     Icon: ShieldOff,
     message: "Ce document a été annulé et ne doit plus être utilisé.",
   },
   TAMPERED: {
     title: 'Intégrité compromise',
     subtitle: 'Contenu modifié après certification',
-    text: 'text-red-700',
-    badge: 'bg-red-50 border-red-200',
-    icon: 'text-red-600',
+    text: 'text-destructive',
+    badge: 'bg-destructive/10 border-destructive/40',
+    icon: 'text-destructive',
     Icon: ShieldAlert,
     message:
       "Le contenu enregistré ne correspond plus à la signature numérique d'origine. Ne réglez pas ce document sans confirmation de l'émetteur.",
@@ -149,9 +149,9 @@ const STATUS_UI: Record<
   NOT_FOUND: {
     title: 'Document introuvable',
     subtitle: 'Aucune correspondance dans le registre',
-    text: 'text-slate-700',
-    badge: 'bg-slate-100 border-slate-200',
-    icon: 'text-slate-500',
+    text: 'text-foreground',
+    badge: 'bg-muted border-border',
+    icon: 'text-muted-foreground',
     Icon: XCircle,
     message:
       "La référence recherchée ne correspond à aucun document enregistré. Vérifiez la référence ou contactez l'émetteur.",
@@ -169,10 +169,10 @@ function Row({
 }) {
   return (
     <div className="flex items-start gap-3">
-      <Icon className="h-4 w-4 text-blue-600 mt-1 shrink-0" />
+      <Icon className="h-4 w-4 text-info mt-1 shrink-0" />
       <div className="min-w-0 flex-1">
-        <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">{label}</p>
-        <div className="text-slate-900 font-semibold text-sm break-words leading-snug">
+        <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">{label}</p>
+        <div className="text-foreground font-semibold text-sm break-words leading-snug">
           {children}
         </div>
       </div>
@@ -286,7 +286,7 @@ function VerificationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center px-4 py-8">
+    <div className="min-h-screen bg-muted flex flex-col items-center px-4 py-8">
       <div className="w-full max-w-md space-y-4">
         {/* En-tête */}
         <header className="text-center space-y-2">
@@ -296,46 +296,46 @@ function VerificationPage() {
             className="h-16 w-auto object-contain mx-auto"
           />
           <div>
-            <p className="text-lg font-black tracking-tight text-slate-900">GESTI-ONE</p>
-            <p className="text-[11px] text-slate-500 font-medium">
+            <p className="text-lg font-black tracking-tight text-foreground">GESTI-ONE</p>
+            <p className="text-[11px] text-muted-foreground font-medium">
               Système de certification numérique
             </p>
-            <p className="text-[10px] text-slate-400 uppercase font-bold tracking-[0.2em]">
+            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-[0.2em]">
               Éditions FABS-CI
             </p>
           </div>
-          <p className="inline-block text-[10px] uppercase font-bold tracking-widest text-blue-700 bg-blue-50 border border-blue-100 rounded-full px-3 py-1">
+          <p className="inline-block text-[10px] uppercase font-bold tracking-widest text-info bg-info/10 border border-info/40 rounded-full px-3 py-1">
             Vérification officielle de document
           </p>
         </header>
 
-        <main className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 space-y-5">
+        <main className="bg-white rounded-2xl shadow-lg border border-border p-6 space-y-5">
           {malformed ? (
             <div className="text-center space-y-4">
-              <div className="mx-auto w-fit p-4 rounded-full bg-slate-100 border border-slate-200">
-                <XCircle className="h-10 w-10 text-slate-500" />
+              <div className="mx-auto w-fit p-4 rounded-full bg-muted border border-border">
+                <XCircle className="h-10 w-10 text-muted-foreground" />
               </div>
               <h1 className="ds-page-title text-foreground">Référence invalide</h1>
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-muted-foreground">
                 Le code scanné ne correspond pas à un format de référence valide.
               </p>
             </div>
           ) : isLoading ? (
             <div className="flex flex-col items-center space-y-3 py-10">
-              <Loader2 className="h-10 w-10 text-blue-600 animate-spin" />
-              <p className="text-slate-500 text-sm font-medium">
+              <Loader2 className="h-10 w-10 text-info animate-spin" />
+              <p className="text-muted-foreground text-sm font-medium">
                 Vérification de l'authenticité...
               </p>
             </div>
           ) : error ? (
             <div className="text-center space-y-4">
-              <div className="mx-auto w-fit p-4 rounded-full bg-amber-50 border border-amber-200">
-                <WifiOff className="h-10 w-10 text-amber-600" />
+              <div className="mx-auto w-fit p-4 rounded-full bg-warning/10 border border-warning/40">
+                <WifiOff className="h-10 w-10 text-warning" />
               </div>
               <h1 className="ds-page-title text-foreground">
                 Vérification temporairement indisponible
               </h1>
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-muted-foreground">
                 {(error as Error).message ||
                   "Impossible de confirmer l'authenticité du document pour le moment."}
               </p>
@@ -353,25 +353,25 @@ function VerificationPage() {
                   <h1 className={`text-base font-black uppercase tracking-tight ${ui.text}`}>
                     {ui.title}
                   </h1>
-                  <p className="text-[11px] font-bold uppercase tracking-wide text-slate-600">
+                  <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
                     {hasDocumentInfo && data.docType ? `${data.docType} — ` : ''}
                     {ui.subtitle}
                   </p>
                   {data.reason && (
-                    <p className="text-[11px] text-slate-500 italic mt-1">Motif : {data.reason}</p>
+                    <p className="text-[11px] text-muted-foreground italic mt-1">Motif : {data.reason}</p>
                   )}
                 </div>
               </div>
 
-              <p className="text-[12px] text-slate-600 leading-relaxed">{ui.message}</p>
+              <p className="text-[12px] text-muted-foreground leading-relaxed">{ui.message}</p>
 
               {/* Informations document */}
               {hasDocumentInfo && (
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-4">
+                <div className="rounded-xl border border-border bg-muted p-4 space-y-4">
                   <Row Icon={FileText} label="Référence officielle">
                     <span className="font-mono">{data.reference}</span>
                     {data.docType && (
-                      <span className="block text-[11px] font-medium text-slate-500">
+                      <span className="block text-[11px] font-medium text-muted-foreground">
                         {data.docType}
                       </span>
                     )}
@@ -387,7 +387,7 @@ function VerificationPage() {
                     <Row Icon={User} label="Client">
                       {data.client_nom}
                       {data.representant_nom && (
-                        <span className="block text-[11px] text-slate-500 font-medium italic mt-0.5">
+                        <span className="block text-[11px] text-muted-foreground font-medium italic mt-0.5">
                           Rep : {data.representant_nom}
                         </span>
                       )}
@@ -399,18 +399,18 @@ function VerificationPage() {
                   </Row>
 
                   {typeof data.montant === 'number' && (
-                    <div className="pt-3 border-t border-slate-200 flex items-center justify-between">
-                      <p className="text-slate-500 text-sm font-medium">Montant total</p>
-                      <p className="text-xl font-black text-blue-900">
+                    <div className="pt-3 border-t border-border flex items-center justify-between">
+                      <p className="text-muted-foreground text-sm font-medium">Montant total</p>
+                      <p className="text-xl font-black text-info">
                         {formatFCFA(data.montant)}
                       </p>
                     </div>
                   )}
 
                   {data.paiement && (
-                    <div className="pt-3 border-t border-slate-200 space-y-2">
+                    <div className="pt-3 border-t border-border space-y-2">
                       <div className="flex items-center justify-between gap-3">
-                        <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
+                        <p className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground">
                           Statut de paiement
                         </p>
                         <span
@@ -421,13 +421,13 @@ function VerificationPage() {
                         </span>
                       </div>
                       <div className="flex items-center justify-between gap-3">
-                        <p className="text-[11px] font-medium text-slate-500">Montant payé</p>
+                        <p className="text-[11px] font-medium text-muted-foreground">Montant payé</p>
                         <p className="text-sm font-bold" style={{ color: PAYMENT_STATUS_COLOR }}>
                           {formatFCFA(data.paiement.montantPaye)}
                         </p>
                       </div>
                       <div className="flex items-center justify-between gap-3">
-                        <p className="text-[11px] font-medium text-slate-500">Reste à payer</p>
+                        <p className="text-[11px] font-medium text-muted-foreground">Reste à payer</p>
                         <p className="text-sm font-bold" style={{ color: PAYMENT_STATUS_COLOR }}>
                           {formatFCFA(data.paiement.resteAPayer)}
                         </p>
@@ -435,29 +435,29 @@ function VerificationPage() {
                     </div>
                   )}
 
-                  <div className="pt-3 border-t border-slate-200 space-y-1">
-                    <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">
+                  <div className="pt-3 border-t border-border space-y-1">
+                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
                       Certification numérique
                     </p>
                     {data.certified_at ? (
                       <>
-                        <p className="text-[11px] text-slate-600">
+                        <p className="text-[11px] text-muted-foreground">
                           Certifié le {formatDate(data.certified_at)} •{' '}
                           {data.signature_algorithm ?? 'Ed25519'}
                         </p>
                         {data.certification_id && (
-                          <p className="font-mono text-[10px] text-slate-400 break-all">
+                          <p className="font-mono text-[10px] text-muted-foreground break-all">
                             ID : {data.certification_id}
                           </p>
                         )}
                         {data.canonical_hash && (
-                          <p className="font-mono text-[10px] text-slate-400 break-all">
+                          <p className="font-mono text-[10px] text-muted-foreground break-all">
                             SHA-256 : {data.canonical_hash}
                           </p>
                         )}
                       </>
                     ) : (
-                      <p className="text-[11px] text-slate-500">
+                      <p className="text-[11px] text-muted-foreground">
                         Aucune signature numérique enregistrée pour ce document.
                       </p>
                     )}
@@ -466,7 +466,7 @@ function VerificationPage() {
               )}
 
               {data.checked_at && (
-                <p className="text-[10px] text-slate-400 text-center">
+                <p className="text-[10px] text-muted-foreground text-center">
                   Dernière vérification : {new Date(data.checked_at).toLocaleString('fr-FR')}
                 </p>
               )}
@@ -483,7 +483,7 @@ function VerificationPage() {
                 </Button>
                 {downloadKey && (
                   <Button
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                    className="flex-1 bg-info hover:bg-info text-white"
                     onClick={() => void handleDownload()}
                     disabled={downloading}
                   >
@@ -498,11 +498,11 @@ function VerificationPage() {
               </div>
 
               {downloadError && (
-                <p className="text-[12px] text-amber-700 text-center">{downloadError}</p>
+                <p className="text-[12px] text-warning text-center">{downloadError}</p>
               )}
 
               <div className="flex">
-                <Button variant="ghost" className="flex-1 text-slate-500" asChild>
+                <Button variant="ghost" className="flex-1 text-muted-foreground" asChild>
                   <a href={OFFICIAL_SITE_URL}>
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Site officiel
@@ -514,10 +514,10 @@ function VerificationPage() {
         </main>
 
         <footer className="flex flex-col items-center space-y-1 opacity-60 pt-2">
-          <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em]">
+          <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-[0.2em]">
             Certification digitale • Editions FABS-CI
           </p>
-          <p className="text-slate-400 text-[10px]">
+          <p className="text-muted-foreground text-[10px]">
             © {new Date().getFullYear()} Tous droits réservés.
           </p>
         </footer>

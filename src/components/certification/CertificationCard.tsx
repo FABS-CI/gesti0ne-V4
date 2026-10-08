@@ -86,7 +86,7 @@ export function CertificationCard({ reference }: { reference: string }) {
               {active.canonical_hash}
             </div>
             {active.revoked_at && (
-              <p className="text-orange-600">
+              <p className="text-warning">
                 Révoquée le {formatDate(active.revoked_at)} — {active.revocation_reason ?? "—"}
               </p>
             )}

@@ -105,14 +105,14 @@ function ColisageDetailPage() {
       />
 
       {locked && (
-        <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-sm text-amber-900 dark:text-amber-200 print:hidden">
+        <div className="rounded-md border border-warning/40 bg-warning/10 p-3 text-sm text-warning print:hidden">
           Ce colisage ne peut plus être modifié car il est déjà en cours de traitement par le
           service logistique.
         </div>
       )}
 
       {bl.statut === "colisage_termine" && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-emerald-500/40 bg-emerald-500/10 p-3 text-sm text-emerald-900 dark:text-emerald-200 print:hidden">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-success/40 bg-success/10 p-3 text-sm text-success print:hidden">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-5 w-5" />
             <span>

@@ -263,45 +263,45 @@ function BackupPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-orange-500/20 bg-orange-50/30 dark:bg-orange-950/10">
+        <Card className="border-warning/20 bg-warning/10">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Clock className="h-4 w-4 text-orange-600" />
+              <Clock className="h-4 w-4 text-warning" />
               Prochaine Exécution
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold text-orange-700">
+            <div className="text-xl font-bold text-warning">
               {stats.next_run_at ? new Date(stats.next_run_at).toLocaleString("fr-FR", { hour: '2-digit', minute: '2-digit' }) : "—"}
             </div>
             <p className="text-xs text-muted-foreground mt-1">{stats.next_run_at ? "Tâche planifiée active" : "Tâche planifiée inactive"}</p>
           </CardContent>
         </Card>
 
-        <Card className="border-green-500/20 bg-green-50/30 dark:bg-green-950/10">
+        <Card className="border-success/20 bg-success/10">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              <CheckCircle2 className="h-4 w-4 text-success" />
               Dernière Sauvegarde
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold text-green-700">
+            <div className="text-xl font-bold text-success">
               {lastSuccess ? new Date(lastSuccess.created_at).toLocaleString("fr-FR", { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : "—"}
             </div>
             <p className="text-xs text-muted-foreground mt-1">{lastSuccess ? `Réussie · ${lastSuccess.trigger_type === 'AUTOMATIC' ? 'automatique' : 'manuelle'}` : 'Aucune réussie'}</p>
           </CardContent>
         </Card>
 
-        <Card className="border-blue-500/20 bg-blue-50/30 dark:bg-blue-950/10">
+        <Card className="border-info/20 bg-info/10">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <History className="h-4 w-4 text-blue-600" />
+              <History className="h-4 w-4 text-info" />
               Sauvegardes
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-700">{stats.count}</div>
+            <div className="text-2xl font-bold text-info">{stats.count}</div>
             <p className="text-xs text-muted-foreground mt-1">Historique total</p>
           </CardContent>
         </Card>
@@ -411,7 +411,7 @@ function BackupPage() {
                       <TableCell>
                         <div className="flex items-center gap-1.5">
                           {row.statut === "succes" ? (
-                            <div className="flex items-center gap-1 text-green-600" title="Réussie">
+                            <div className="flex items-center gap-1 text-success" title="Réussie">
                               <CheckCircle2 className="h-4 w-4" />
                               <span className="text-[10px] font-bold uppercase">OK</span>
                             </div>
@@ -445,7 +445,7 @@ function BackupPage() {
                           <Button 
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-amber-600"
+                            className="h-8 w-8 text-warning"
                             onClick={() => handleRestore(row)}
                             disabled={row.statut !== "succes" || !!restoring}
                             title="Restaurer"
@@ -467,20 +467,20 @@ function BackupPage() {
         </CardContent>
       </Card>
 
-      <Card className="border-amber-500/40 bg-amber-50/30">
+      <Card className="border-warning/40 bg-warning/10">
         <CardHeader>
-          <CardTitle className="text-amber-800 flex items-center gap-2">
+          <CardTitle className="text-warning flex items-center gap-2">
             <AlertTriangle className="h-5 w-5" />
             Zone de Danger : Restauration Manuelle
           </CardTitle>
-          <CardDescription className="text-amber-700">
+          <CardDescription className="text-warning">
             Utilisez cette section uniquement si vous avez un fichier de sauvegarde (.zip) externe à importer.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
-            <label className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-amber-300 rounded-lg p-6 bg-white cursor-pointer hover:bg-amber-50 transition-colors">
-              <Download className="h-8 w-8 text-amber-500 mb-2" />
+            <label className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-warning/40 rounded-lg p-6 bg-white cursor-pointer hover:bg-warning/10 transition-colors">
+              <Download className="h-8 w-8 text-warning mb-2" />
               <span className="text-sm font-medium">Glissez ou cliquez pour importer une archive globale (.zip)</span>
               <input 
                 type="file" 

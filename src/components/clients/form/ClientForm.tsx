@@ -187,7 +187,7 @@ export function ClientForm({ clientId }: ClientFormProps) {
         </div>
 
         {!editing && duplicates.length > 0 && (
-          <div className="rounded-md border border-amber-400/50 bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
+          <div className="rounded-md border border-warning/50 bg-warning/10 p-3 text-sm text-warning">
             <p className="flex items-center gap-2 font-medium">
               <AlertTriangle className="h-4 w-4" />
               {duplicates.length} client(s) au nom similaire

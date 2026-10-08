@@ -33,7 +33,7 @@ export function PaiementsEnAttenteCard({ exerciceId }: { exerciceId?: string | n
       <Card>
         <CardHeader className="flex flex-row items-center justify-between gap-2">
           <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-amber-500" />
+            <Clock className="h-5 w-5 text-warning" />
             Paiements en attente de validation
           </CardTitle>
           <Badge variant="outline">{paiements.length}</Badge>
@@ -73,7 +73,7 @@ export function PaiementsEnAttenteCard({ exerciceId }: { exerciceId?: string | n
                         disabled={valider.isPending}
                         title="Valider"
                       >
-                        <Check className="h-4 w-4 text-emerald-600" />
+                        <Check className="h-4 w-4 text-success" />
                       </Button>
                       <Button
                         size="sm"

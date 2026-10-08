@@ -147,8 +147,8 @@ function GoogleDriveAdminPage() {
 
           {result &&
             (result.ok ? (
-              <div className="space-y-3 rounded-md border border-emerald-500/40 bg-emerald-50 p-3 text-sm dark:bg-emerald-950/30">
-                <div className="flex items-center gap-2 font-medium text-emerald-700 dark:text-emerald-300">
+              <div className="space-y-3 rounded-md border border-success/40 bg-success/10 p-3 text-sm">
+                <div className="flex items-center gap-2 font-medium text-success">
                   <ShieldCheck className="h-4 w-4" /> Connexion validée (HTTP {result.status})
                 </div>
                 <div className="grid gap-2 sm:grid-cols-2">

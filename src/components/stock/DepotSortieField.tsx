@@ -79,7 +79,7 @@ export function DepotSortieField({ value, onChange, label = "Dépôt de sortie",
           {locked ? (
             <Lock className="h-3 w-3 text-muted-foreground" />
           ) : (
-            <Unlock className="h-3 w-3 text-amber-600" />
+            <Unlock className="h-3 w-3 text-warning" />
           )}
         </Label>
         {canOverride &&
@@ -103,7 +103,7 @@ export function DepotSortieField({ value, onChange, label = "Dépôt de sortie",
               type="button"
               variant="ghost"
               size="sm"
-              className="h-7 text-xs text-amber-700 hover:text-amber-800"
+              className="h-7 text-xs text-warning hover:text-warning"
               onClick={() => setAskOpen(true)}
             >
               Autoriser un autre dépôt
@@ -139,11 +139,11 @@ export function DepotSortieField({ value, onChange, label = "Dépôt de sortie",
       )}
 
       {unlocked && !isPrincipalSelected && selected && (
-        <div className="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 p-2 text-xs text-amber-900">
+        <div className="flex items-start gap-2 rounded-md border border-warning/40 bg-warning/10 p-2 text-xs text-warning">
           <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
           <div>
             <div className="font-medium">Déstockage exceptionnel — {selected.nom}</div>
-            <div className="text-amber-800">Motif : {motif || "—"}</div>
+            <div className="text-warning">Motif : {motif || "—"}</div>
           </div>
         </div>
       )}

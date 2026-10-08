@@ -277,9 +277,9 @@ function SuiviDetail() {
               key={s}
               className={`rounded-md border p-2 text-center ${
                 i < idx
-                  ? "bg-emerald-50 border-emerald-300 text-emerald-800"
+                  ? "bg-success/10 border-success/40 text-success"
                   : i === idx
-                    ? "bg-blue-50 border-blue-300 text-blue-800 font-semibold"
+                    ? "bg-info/10 border-info/40 text-info font-semibold"
                     : "text-muted-foreground"
               }`}
             >

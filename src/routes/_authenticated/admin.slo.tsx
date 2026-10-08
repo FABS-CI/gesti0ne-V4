@@ -256,7 +256,7 @@ function MetricCard({
   tone: "ok" | "warn" | "danger";
 }) {
   const toneClass =
-    tone === "danger" ? "border-destructive" : tone === "warn" ? "border-yellow-500" : "";
+    tone === "danger" ? "border-destructive" : tone === "warn" ? "border-warning" : "";
   return (
     <Card className={toneClass}>
       <CardHeader className="pb-2">

@@ -127,7 +127,7 @@ function NewFNE() {
       {mode === "json" ? (
         <Card>
           <CardContent className="p-0">
-            <pre className="bg-[#0A2540] text-green-300 text-xs p-4 rounded overflow-auto max-h-[70vh]">
+            <pre className="bg-[#0A2540] text-success text-xs p-4 rounded overflow-auto max-h-[70vh]">
               {JSON.stringify(payload, null, 2)}
             </pre>
           </CardContent>

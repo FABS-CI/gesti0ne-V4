@@ -30,7 +30,7 @@ export function InfosGeneralesSection({ form, depots }: Props) {
           <Label htmlFor="date_envoi">Date *</Label>
           <Input id="date_envoi" type="date" {...form.register("date_envoi")} />
           {form.formState.errors.date_envoi && (
-            <p className="text-xs text-red-600 mt-1">{form.formState.errors.date_envoi.message}</p>
+            <p className="text-xs text-destructive mt-1">{form.formState.errors.date_envoi.message}</p>
           )}
         </div>
         <div>
@@ -49,7 +49,7 @@ export function InfosGeneralesSection({ form, depots }: Props) {
             {...form.register("donneur_nom")}
           />
           {form.formState.errors.donneur_nom && (
-            <p className="text-xs text-red-600 mt-1">{form.formState.errors.donneur_nom.message}</p>
+            <p className="text-xs text-destructive mt-1">{form.formState.errors.donneur_nom.message}</p>
           )}
         </div>
         <div className="md:col-span-2">

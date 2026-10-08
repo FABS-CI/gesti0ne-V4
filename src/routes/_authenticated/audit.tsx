@@ -433,11 +433,11 @@ function AuditPage() {
           <TabsTrigger value="all">Chronologie</TabsTrigger>
           <TabsTrigger value="by-user">Par utilisateur</TabsTrigger>
           <TabsTrigger value="online" className="gap-2">
-            <Circle className="h-2 w-2 fill-emerald-500 text-emerald-500" />
+            <Circle className="h-2 w-2 fill-success text-success" />
             Connectés ({connectedUsers.length})
           </TabsTrigger>
           <TabsTrigger value="alerts" className="gap-2">
-            <ShieldAlert className="h-3.5 w-3.5 text-red-500" />
+            <ShieldAlert className="h-3.5 w-3.5 text-destructive" />
             Alertes ({alerts?.filter((a) => !a.acknowledged_at).length ?? 0})
           </TabsTrigger>
         </TabsList>

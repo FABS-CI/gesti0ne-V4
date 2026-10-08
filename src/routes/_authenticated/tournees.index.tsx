@@ -176,7 +176,7 @@ function buildConfig(onCloturer: (tourneeId: string, ref: string) => void): Reso
               title="Valider la tournée"
               onClick={() => onCloturer(id, ref)}
             >
-              <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+              <CheckCircle2 className="h-4 w-4 text-success" />
             </Button>
           );
         },

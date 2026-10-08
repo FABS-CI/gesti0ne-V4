@@ -29,11 +29,11 @@ export function ClientCompteTab({
     <div className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-3">
         <Kpi label="Total facturé" value={formatFCFA(caFacture)} />
-        <Kpi label="Total encaissé" value={formatFCFA(totalPaye)} accent="text-emerald-600" />
+        <Kpi label="Total encaissé" value={formatFCFA(totalPaye)} accent="text-success" />
         <Kpi
           label="Solde dû"
           value={formatFCFA(Math.max(0, caFacture - totalPaye))}
-          accent={caFacture - totalPaye > 0 ? "text-red-600" : "text-emerald-600"}
+          accent={caFacture - totalPaye > 0 ? "text-destructive" : "text-success"}
         />
       </div>
       <Card>
@@ -49,7 +49,7 @@ export function ClientCompteTab({
           </div>
           <div className="h-2 w-full rounded-full bg-muted">
             <div
-              className={`h-2 rounded-full ${tauxCredit > 90 ? "bg-red-500" : tauxCredit > 70 ? "bg-amber-500" : "bg-emerald-500"}`}
+              className={`h-2 rounded-full ${tauxCredit > 90 ? "bg-destructive" : tauxCredit > 70 ? "bg-warning" : "bg-success"}`}
               style={{ width: `${tauxCredit}%` }}
             />
           </div>
@@ -58,7 +58,7 @@ export function ClientCompteTab({
       {facturesImpayees.length > 0 && (
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm text-red-600">
+            <CardTitle className="flex items-center gap-2 text-sm text-destructive">
               <AlertTriangle className="h-4 w-4" />
               {facturesImpayees.length} facture(s) impayée(s)
             </CardTitle>
@@ -75,7 +75,7 @@ export function ClientCompteTab({
               >
                 <span className="font-mono text-xs">{formatDocumentReference(f.reference)}</span>
                 <span className="text-muted-foreground">{frDate(f.date_facture)}</span>
-                <span className="font-semibold text-red-600">
+                <span className="font-semibold text-destructive">
                   {formatFCFA(Number(f.montant_total) - Number(f.montant_paye))}
                 </span>
               </button>

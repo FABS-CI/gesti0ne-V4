@@ -335,7 +335,7 @@ function InventairesPage() {
                       <TableCell className="text-right">{i.nb_produits}</TableCell>
                       <TableCell className="text-right">
                         {i.nb_ecarts > 0 ? (
-                          <span className="text-orange-600 font-semibold">{i.nb_ecarts}</span>
+                          <span className="text-warning font-semibold">{i.nb_ecarts}</span>
                         ) : (
                           <span className="text-muted-foreground">0</span>
                         )}

@@ -171,7 +171,7 @@ export function LignesProduitsSection({
                     disabled={lignes.length === 1}
                     className="h-10 w-10"
                   >
-                    <Trash2 className="h-4 w-4 text-red-600" />
+                    <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>
                 </TableCell>
               </TableRow>

@@ -19,18 +19,18 @@ export function FacturesKpis({ total, paye, du }: Props) {
       value: paye,
       icon: CheckCircle2,
       color: "#10B981",
-      valueClass: "text-emerald-600",
-      tone: "border-emerald-500/30 bg-gradient-to-br from-emerald-500/5 to-transparent",
+      valueClass: "text-success",
+      tone: "border-success/30 bg-gradient-to-br from-emerald-500/5 to-transparent",
     },
     {
       label: "Reste dû",
       value: du,
       icon: AlertCircle,
       color: "#EF4444",
-      valueClass: "text-red-600",
+      valueClass: "text-destructive",
       tone:
         du > 0
-          ? "border-red-500/40 bg-gradient-to-br from-red-500/5 to-transparent"
+          ? "border-destructive/40 bg-gradient-to-br from-red-500/5 to-transparent"
           : "",
     },
   ];

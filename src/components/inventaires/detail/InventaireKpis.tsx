@@ -24,7 +24,7 @@ export function InventaireKpis({ nbLignes, nbEcarts, valeur, editable, createdBy
             Écarts {editable ? "(prévisualisation)" : ""}
           </CardTitle>
         </CardHeader>
-        <CardContent className="text-2xl font-bold text-orange-600">{nbEcarts}</CardContent>
+        <CardContent className="text-2xl font-bold text-warning">{nbEcarts}</CardContent>
       </Card>
       <Card>
         <CardHeader className="pb-2">

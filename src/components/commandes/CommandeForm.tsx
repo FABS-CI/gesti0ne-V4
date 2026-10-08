@@ -622,7 +622,7 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
                 <p className="text-xs text-muted-foreground mt-1">
                   S'applique sur le total HT après remises de ligne.
                   <br />
-                  <span className={`text-[10px] font-semibold italic ${hasRemiseEnLigne ? "text-destructive" : "text-amber-600"}`}>
+                  <span className={`text-[10px] font-semibold italic ${hasRemiseEnLigne ? "text-destructive" : "text-warning"}`}>
                     {hasRemiseEnLigne 
                       ? "Attention : Remise globale bloquée car des remises en ligne sont utilisées. Supprimez-les pour l'activer." 
                       : "Note : Impossible d'utiliser une remise globale si des remises en ligne sont déjà saisies."}
@@ -913,7 +913,7 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
                 confirmSubmit(false);
               }}
             >
-              <span className="font-semibold text-base text-amber-600">Option 2 : Mettre en attente</span>
+              <span className="font-semibold text-base text-warning">Option 2 : Mettre en attente</span>
               <span className="text-xs text-muted-foreground text-left">
                 Crée uniquement la proforma et le bon de commande. Le statut sera "En attente".
               </span>

@@ -95,7 +95,7 @@ export function LignesSection({ form, fa, onProduitChange }: Props) {
                         }}
                       />
                       {err?.produit_id && (
-                        <p className="text-xs text-red-600 mt-1">{err.produit_id.message}</p>
+                        <p className="text-xs text-destructive mt-1">{err.produit_id.message}</p>
                       )}
                     </TableCell>
                     <TableCell className="font-mono text-xs select-all" title="Référence produit">
@@ -110,7 +110,7 @@ export function LignesSection({ form, fa, onProduitChange }: Props) {
                         placeholder=""
                       />
                       {err?.quantite && (
-                        <p className="text-xs text-red-600 mt-1">{err.quantite.message}</p>
+                        <p className="text-xs text-destructive mt-1">{err.quantite.message}</p>
                       )}
                     </TableCell>
                     <TableCell className="text-right">
@@ -132,7 +132,7 @@ export function LignesSection({ form, fa, onProduitChange }: Props) {
                         className="text-right h-10 min-w-[80px]"
                       />
                       {err?.remise_pct && (
-                        <p className="text-xs text-red-600 mt-1">{err.remise_pct.message}</p>
+                        <p className="text-xs text-destructive mt-1">{err.remise_pct.message}</p>
                       )}
                     </TableCell>
                     <TableCell className="text-right font-medium tabular-nums">
@@ -182,7 +182,7 @@ export function LignesSection({ form, fa, onProduitChange }: Props) {
                     </TableCell>
                     <TableCell>
                       <Button type="button" variant="ghost" size="icon" onClick={() => remove(i)}>
-                        <Trash2 className="h-4 w-4 text-red-600" />
+                        <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -219,7 +219,7 @@ export function LignesSection({ form, fa, onProduitChange }: Props) {
       )}
 
       {form.formState.errors.lignes && !Array.isArray(form.formState.errors.lignes) && (
-        <p className="text-xs text-red-600">{form.formState.errors.lignes.message as string}</p>
+        <p className="text-xs text-destructive">{form.formState.errors.lignes.message as string}</p>
       )}
     </section>
   );

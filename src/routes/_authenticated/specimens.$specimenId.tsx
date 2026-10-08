@@ -96,7 +96,7 @@ function SpecimenDetailPage() {
   if (error || !data) {
     return (
       <div className="p-6">
-        <p className="text-red-600">Spécimen introuvable.</p>
+        <p className="text-destructive">Spécimen introuvable.</p>
         <Button asChild variant="outline" className="mt-4">
           <Link to="/specimens">Retour</Link>
         </Button>

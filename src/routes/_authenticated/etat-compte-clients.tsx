@@ -226,7 +226,7 @@ function EtatComptePage() {
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground">Total dû</p>
-            <p className="text-xl font-bold text-red-600">{formatFCFA(totalDu)}</p>
+            <p className="text-xl font-bold text-destructive">{formatFCFA(totalDu)}</p>
           </CardContent>
         </Card>
         <Card>
