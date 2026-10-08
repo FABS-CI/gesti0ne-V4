@@ -13,6 +13,7 @@ import {
 import { getOrCreatePdf, pdfCacheKey } from "@/lib/pdf/pdfCache";
 import { SuperAdminDeleteButton } from "@/components/documents/SuperAdminDeleteButton";
 import { deleteProformaDefinitif } from "@/lib/proformas-api";
+import { formatDocumentReference } from "@/lib/document-reference";
 
 import { authRouteHead } from "@/lib/route-head";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
@@ -84,7 +85,12 @@ const config: ResourceConfig = {
   },
   pdfExport: { title: "Liste des proformas", filename: "proformas" },
   columns: [
-    { name: "reference", label: "Référence", type: "mono" },
+    {
+      name: "reference",
+      label: "Référence",
+      type: "mono",
+      format: (v) => formatDocumentReference(String(v)),
+    },
     { name: "date_proforma", label: "Date" },
     { name: "client_nom", label: "Client" },
     { name: "montant_total", label: "Montant", type: "money", align: "right" },

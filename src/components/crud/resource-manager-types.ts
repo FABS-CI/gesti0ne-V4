@@ -50,6 +50,8 @@ export type ColumnDef = {
   type?: "text" | "date" | "money" | "number" | "badge" | "mono";
   options?: Option[];
   align?: "left" | "right";
+  /** Affichage uniquement : transforme la valeur stockée avant rendu. */
+  format?: (value: unknown) => string;
 };
 
 export type RowAction = {
