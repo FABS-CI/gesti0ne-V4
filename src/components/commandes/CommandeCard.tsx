@@ -1,5 +1,6 @@
 import { formatDocumentReference } from "@/lib/document-reference";
 import React from "react";
+import { Link } from "@tanstack/react-router";
 import { ClientLink } from "@/components/common/ClientLink";
 import { Badge } from "@/components/ui/badge";
 import { STATUT_LABEL, type Commande } from "@/lib/commandes-api";
@@ -38,7 +39,14 @@ function CommandeCardInner({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <span className="truncate font-semibold">{formatDocumentReference(c.reference)}</span>
+            <Link
+              to="/commandes/$commandeId"
+              params={{ commandeId: c.commande_id }}
+              className="truncate font-semibold text-primary underline-offset-2 hover:underline"
+              title="Ouvrir la commande"
+            >
+              {formatDocumentReference(c.reference)}
+            </Link>
             <Badge
               variant="outline"
               className="shrink-0 border-transparent text-[10px] font-medium"
