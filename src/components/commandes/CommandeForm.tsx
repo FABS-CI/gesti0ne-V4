@@ -622,7 +622,7 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
                 <p className="text-xs text-muted-foreground mt-1">
                   S'applique sur le total HT après remises de ligne.
                   <br />
-                  <span className={`text-xs font-semibold italic ${hasRemiseEnLigne ? "text-destructive" : "text-warning"}`}>
+                  <span className={`text-xs font-semibold ${hasRemiseEnLigne ? "text-destructive" : "text-warning"}`}>
                     {hasRemiseEnLigne 
                       ? "Attention : Remise globale bloquée car des remises en ligne sont utilisées. Supprimez-les pour l'activer." 
                       : "Note : Impossible d'utiliser une remise globale si des remises en ligne sont déjà saisies."}

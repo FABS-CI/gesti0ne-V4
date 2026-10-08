@@ -181,7 +181,7 @@ export function FloatingCalculator() {
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
       >
-        <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
           <GripHorizontal className="h-3.5 w-3.5" />
           Calculatrice
         </div>

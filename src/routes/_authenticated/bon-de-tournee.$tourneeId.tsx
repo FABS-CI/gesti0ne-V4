@@ -356,7 +356,7 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
   if (value === null || value === undefined || value === "" || value === "—") return null;
   return (
     <div className="text-xs leading-tight">
-      <div className="text-muted-foreground uppercase text-xs tracking-wide">{label}</div>
+      <div className="text-muted-foreground text-xs">{label}</div>
       <div className="font-semibold">{value}</div>
     </div>
   );
@@ -480,10 +480,10 @@ function FeuilleTourneePage() {
             <p className="text-xs text-muted-foreground">
               Email : {COMPANY.email}
             </p>
-            <p className="text-xs italic text-muted-foreground mt-0.5">{COMPANY.slogan}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{COMPANY.slogan}</p>
           </div>
           <div className="text-right">
-            <h2 className="text-xl font-bold uppercase tracking-wide">Bon de tournée</h2>
+            <h2 className="text-xl font-bold">Bon de tournée</h2>
             <p className="text-sm font-mono">{bonRef}</p>
             <p className="text-xs">N° tournée : <b>{t.reference}</b></p>
             {t.date_tournee && <p className="text-xs">Date : {formatDate(t.date_tournee)}</p>}
@@ -579,7 +579,7 @@ function FeuilleTourneePage() {
                   <td className="border p-1">
                     {[l.ville_livraison, l.commune].filter(Boolean).join(" · ") || "—"}
                     {l.gare_nom ? (
-                      <div className="text-xs italic">Gare : {l.gare_nom}</div>
+                      <div className="text-xs">Gare : {l.gare_nom}</div>
                     ) : null}
                   </td>
                   <td className="border p-1 text-right">{l.nb_cartons || 0}</td>
@@ -612,7 +612,7 @@ function FeuilleTourneePage() {
 
         {/* Récapitulatif */}
         <div className="mt-4 border rounded p-3 bg-muted">
-          <div className="text-xs font-semibold mb-2 uppercase tracking-wide">
+          <div className="text-xs font-semibold mb-2">
             Récapitulatif automatique
           </div>
           <div className="grid grid-cols-4 md:grid-cols-6 gap-2 text-xs">
@@ -683,7 +683,7 @@ function FeuilleTourneePage() {
 
         {/* Observations */}
         <div className="mt-4">
-          <div className="text-xs font-semibold uppercase tracking-wide mb-1">
+          <div className="text-xs font-semibold mb-1">
             Observations / Incidents
           </div>
           {t.notes && (
@@ -715,7 +715,7 @@ function FeuilleTourneePage() {
             "Client",
           ].map((label) => (
             <div key={label} className="border rounded p-2 min-h-[70px]">
-              <div className="font-semibold text-xs uppercase tracking-wide text-muted-foreground">
+              <div className="font-semibold text-xs text-muted-foreground">
                 {label}
               </div>
               <div className="mt-1 text-xs">Nom : ______________</div>
@@ -741,7 +741,7 @@ function FeuilleTourneePage() {
               Édité le {dateEdition} à {heureEdition}
             </div>
             <div>Par : {user?.email ?? "—"}</div>
-            <div className="italic">Document généré automatiquement par ERP FABS-CI</div>
+            <div className="">Document généré automatiquement par ERP FABS-CI</div>
           </div>
         </div>
       </div>

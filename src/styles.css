@@ -382,3 +382,13 @@ a[href*="lovable.dev"][target="_blank"],
     scroll-behavior: auto !important;
   }
 }
+
+/* B5 — cibles tactiles ≥ 44 px sur écrans tactiles jusqu'à 1024 px */
+@media (max-width: 1024px) and (pointer: coarse) {
+  button:not([role="checkbox"]):not([role="switch"]):not([role="radio"]),
+  [role="button"],
+  [role="menuitem"],
+  a[data-slot="button"] {
+    min-height: 44px;
+  }
+}

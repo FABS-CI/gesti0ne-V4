@@ -613,7 +613,7 @@ function OverallCard({ status }: { status: Overall }) {
         <div className="flex items-center gap-3">
           {cfg.icon}
           <div>
-            <div className="text-xs uppercase tracking-wide opacity-80">État général</div>
+            <div className="text-xs opacity-80">État général</div>
             <div className="text-2xl font-bold">{cfg.label}</div>
           </div>
         </div>

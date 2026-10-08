@@ -171,7 +171,7 @@ function Row({
     <div className="flex items-start gap-3">
       <Icon className="h-4 w-4 text-info mt-1 shrink-0" />
       <div className="min-w-0 flex-1">
-        <p className="text-xs text-muted-foreground uppercase font-bold tracking-widest">{label}</p>
+        <p className="text-xs text-muted-foreground font-bold">{label}</p>
         <div className="text-foreground font-semibold text-sm break-words leading-snug">
           {children}
         </div>
@@ -300,11 +300,11 @@ function VerificationPage() {
             <p className="text-xs text-muted-foreground font-medium">
               Système de certification numérique
             </p>
-            <p className="text-xs text-muted-foreground uppercase font-bold tracking-[0.2em]">
+            <p className="text-xs text-muted-foreground font-bold">
               Éditions FABS-CI
             </p>
           </div>
-          <p className="inline-block text-xs uppercase font-bold tracking-widest text-info bg-info/10 border border-info/40 rounded-full px-3 py-1">
+          <p className="inline-block text-xs font-bold text-info bg-info/10 border border-info/40 rounded-full px-3 py-1">
             Vérification officielle de document
           </p>
         </header>
@@ -353,7 +353,7 @@ function VerificationPage() {
                   <h1 className={`text-base font-black uppercase tracking-tight ${ui.text}`}>
                     {ui.title}
                   </h1>
-                  <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                  <p className="text-xs font-bold text-muted-foreground">
                     {hasDocumentInfo && data.docType ? `${data.docType} — ` : ''}
                     {ui.subtitle}
                   </p>
@@ -387,7 +387,7 @@ function VerificationPage() {
                     <Row Icon={User} label="Client">
                       {data.client_nom}
                       {data.representant_nom && (
-                        <span className="block text-xs text-muted-foreground font-medium italic mt-0.5">
+                        <span className="block text-xs text-muted-foreground font-medium mt-0.5">
                           Rep : {data.representant_nom}
                         </span>
                       )}
@@ -410,7 +410,7 @@ function VerificationPage() {
                   {data.paiement && (
                     <div className="pt-3 border-t border-border space-y-2">
                       <div className="flex items-center justify-between gap-3">
-                        <p className="text-xs uppercase font-bold tracking-widest text-muted-foreground">
+                        <p className="text-xs font-bold text-muted-foreground">
                           Statut de paiement
                         </p>
                         <span
@@ -436,7 +436,7 @@ function VerificationPage() {
                   )}
 
                   <div className="pt-3 border-t border-border space-y-1">
-                    <p className="text-xs text-muted-foreground uppercase font-bold tracking-widest">
+                    <p className="text-xs text-muted-foreground font-bold">
                       Certification numérique
                     </p>
                     {data.certified_at ? (
@@ -514,7 +514,7 @@ function VerificationPage() {
         </main>
 
         <footer className="flex flex-col items-center space-y-1 opacity-60 pt-2">
-          <p className="text-muted-foreground text-xs font-bold uppercase tracking-[0.2em]">
+          <p className="text-muted-foreground text-xs font-bold">
             Certification digitale • Editions FABS-CI
           </p>
           <p className="text-muted-foreground text-xs">
