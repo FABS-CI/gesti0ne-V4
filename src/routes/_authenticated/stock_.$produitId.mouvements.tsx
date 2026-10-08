@@ -1,3 +1,4 @@
+import { formatDate, formatTime } from "@/lib/format";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -218,13 +219,13 @@ function AjustementPage() {
             <div className="grid gap-3 md:grid-cols-3">
               <div className="space-y-1">
                 <Label className="text-xs">Date</Label>
-                <Input readOnly value={now.toLocaleDateString("fr-FR")} />
+                <Input readOnly value={formatDate(now)} />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Heure</Label>
                 <Input
                   readOnly
-                  value={now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+                  value={formatTime(now)}
                 />
               </div>
               <div className="space-y-1">

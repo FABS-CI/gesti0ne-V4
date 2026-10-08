@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -39,10 +40,7 @@ export const Route = createFileRoute("/_authenticated/notifications")({
 
 function frDateTime(d: string) {
   try {
-    return new Date(d).toLocaleString("fr-FR", {
-      dateStyle: "short",
-      timeStyle: "short",
-    });
+    return formatDateTime(d);
   } catch {
     return d;
   }

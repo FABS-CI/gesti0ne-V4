@@ -1,5 +1,5 @@
 import { getCurrentUser } from "@/lib/current-user";
-import { formatDateTime } from "@/lib/format";
+import { formatDateTime, formatTime } from "@/lib/format";
 
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
@@ -272,7 +272,7 @@ function BackupPage() {
           </CardHeader>
           <CardContent>
             <div className="text-xl font-bold text-warning">
-              {stats.next_run_at ? new Date(stats.next_run_at).toLocaleString("fr-FR", { hour: '2-digit', minute: '2-digit' }) : "—"}
+              {stats.next_run_at ? formatTime(stats.next_run_at) : "—"}
             </div>
             <p className="text-xs text-muted-foreground mt-1">{stats.next_run_at ? "Tâche planifiée active" : "Tâche planifiée inactive"}</p>
           </CardContent>
@@ -287,7 +287,7 @@ function BackupPage() {
           </CardHeader>
           <CardContent>
             <div className="text-xl font-bold text-success">
-              {lastSuccess ? new Date(lastSuccess.created_at).toLocaleString("fr-FR", { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : "—"}
+              {lastSuccess ? formatDateTime(lastSuccess.created_at) : "—"}
             </div>
             <p className="text-xs text-muted-foreground mt-1">{lastSuccess ? `Réussie · ${lastSuccess.trigger_type === 'AUTOMATIC' ? 'automatique' : 'manuelle'}` : 'Aucune réussie'}</p>
           </CardContent>
@@ -388,7 +388,7 @@ function BackupPage() {
                   history.map((row) => (
                     <TableRow key={row.backup_id} className="group">
                       <TableCell className="font-medium whitespace-nowrap">
-                        {new Date(row.created_at).toLocaleString("fr-FR", { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        {formatDateTime(row.created_at)}
                       </TableCell>
                       <TableCell className="font-semibold text-primary">
                         {row.project_name || "Tous les projets"}

@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { FileClock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -18,7 +19,7 @@ export function DraftRestoreBanner({ updatedAt, onRestore, onDiscard, label }: P
   const when = (() => {
     const d = new Date(updatedAt);
     return Number.isFinite(d.getTime())
-      ? d.toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })
+      ? formatDateTime(d)
       : "";
   })();
 

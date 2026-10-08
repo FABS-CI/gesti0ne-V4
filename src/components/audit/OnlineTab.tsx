@@ -1,3 +1,4 @@
+import { formatTime } from "@/lib/format";
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -114,7 +115,7 @@ const Row = React.memo(function Row({
         </div>
         {u.connected_at && (
           <div className="text-xs text-muted-foreground">
-            Depuis {new Date(u.connected_at).toLocaleTimeString("fr-FR")}
+            Depuis {formatTime(u.connected_at)}
           </div>
         )}
       </TableCell>

@@ -79,3 +79,19 @@ export function formatRelative(date: string | Date | null | undefined, now: Date
   const j = Math.round(h / 24); if (j < 30) return `il y a ${j} jour${j > 1 ? "s" : ""}`;
   return formatDate(d);
 }
+
+/** « 14h32 ». */
+export function formatTime(date: string | Date | null | undefined): string {
+  if (!date) return "—";
+  const d = typeof date === "string" ? new Date(date) : date;
+  if (isNaN(d.getTime())) return String(date);
+  return dateFnsFormat(d, "HH'h'mm");
+}
+
+/** « 08/10 » (axes de graphiques). */
+export function formatDayMonth(date: string | Date | null | undefined): string {
+  if (!date) return "—";
+  const d = typeof date === "string" ? new Date(date) : date;
+  if (isNaN(d.getTime())) return String(date);
+  return dateFnsFormat(d, "dd/MM");
+}

@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -105,7 +106,7 @@ function initials(u: UserRow) {
 
 function formatDate(value: string | null) {
   if (!value) return "—";
-  return new Date(value).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" });
+  return formatDateTime(value);
 }
 
 const emptyForm = {

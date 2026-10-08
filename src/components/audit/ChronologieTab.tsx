@@ -1,4 +1,4 @@
-import { formatDate } from "@/lib/format";
+import { formatDate, formatTime } from "@/lib/format";
 import React from "react";
 import {
   Table,
@@ -56,7 +56,7 @@ const Row = React.memo(function Row({
       <TableCell className="whitespace-nowrap text-xs">
         <div>{formatDate(r.occurred_at)}</div>
         <div className="text-muted-foreground">
-          {new Date(r.occurred_at).toLocaleTimeString("fr-FR", { hour12: false })}
+          {formatTime(r.occurred_at)}
         </div>
       </TableCell>
       <TableCell>

@@ -101,7 +101,7 @@ export function ClientHistoriqueTab({ clientId }: { clientId: string }) {
           label="Période d'activité"
           value={
             stats.premiere
-              ? `${formatDate(stats.premiere)} → ${new Date(stats.derniere!).toLocaleDateString("fr-FR")}`
+              ? `${formatDate(stats.premiere)} → ${formatDate(stats.derniere!)}`
               : "—"
           }
         />
