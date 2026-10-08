@@ -43,6 +43,7 @@ import { friendlyError } from "@/lib/friendly-error";
 import { FraisTransportDialog } from "@/components/commandes/FraisTransportDialog";
 import type { FraisTransport } from "@/lib/cycle-vente";
 import { normaliserFraisTransport, montantFraisTransport } from "@/lib/frais-transport";
+import { UnsavedIndicator, useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 
 const ligneSchema = z.object({
   produit_id: z.string().min(1, "Sélectionnez un produit"),
@@ -468,6 +469,9 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
   const totalArticles = fields.length;
   const totalQuantite = lignesWatch.reduce((s, l) => s + (l.quantite || 0), 0);
 
+  const isDirty = form.formState.isDirty && !mutation.isSuccess && !mutation.isPending;
+  useUnsavedChanges(isDirty);
+
   return (
     <form onSubmit={onSubmit} className="space-y-6 pb-32 2xl:pb-6">
       {mode === "create" && draft.pendingDraft ? (
@@ -486,10 +490,9 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
 
         <div className="space-y-6 min-w-0">
           {/* 1. Client */}
-          <section className="relative overflow-hidden rounded-md border bg-card p-4 pl-5 sm:p-5 sm:pl-6 space-y-4">
-            <span aria-hidden className="absolute inset-y-0 left-0 w-1" style={{ backgroundColor: "#3B82F6" }} />
+          <section className="scroll-mt-20 rounded-md border bg-card p-4 sm:p-5 space-y-4">
             <h2 className="flex items-center gap-2 text-base sm:text-lg font-semibold">
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md text-white shadow-sm" style={{ backgroundColor: "#3B82F6" }}>
+              <span aria-hidden className="grid h-7 w-7 shrink-0 place-items-center text-muted-foreground">
                 <User className="h-4 w-4" />
               </span>
               1. Client
@@ -551,10 +554,9 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
           </section>
 
           {/* 2. Infos commande */}
-          <section className="relative overflow-hidden rounded-md border bg-card p-4 pl-5 sm:p-5 sm:pl-6 space-y-4">
-            <span aria-hidden className="absolute inset-y-0 left-0 w-1" style={{ backgroundColor: "#8B5CF6" }} />
+          <section className="scroll-mt-20 rounded-md border bg-card p-4 sm:p-5 space-y-4">
             <h2 className="flex items-center gap-2 text-base sm:text-lg font-semibold">
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md text-white shadow-sm" style={{ backgroundColor: "#8B5CF6" }}>
+              <span aria-hidden className="grid h-7 w-7 shrink-0 place-items-center text-muted-foreground">
                 <Info className="h-4 w-4" />
               </span>
               2. Informations Générales
@@ -595,10 +597,9 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
           />
 
           {/* 4. Remise globale */}
-          <section className="relative overflow-hidden rounded-md border bg-card p-4 pl-5 sm:p-5 sm:pl-6 space-y-3">
-            <span aria-hidden className="absolute inset-y-0 left-0 w-1" style={{ backgroundColor: "#10B981" }} />
+          <section className="scroll-mt-20 rounded-md border bg-card p-4 sm:p-5 space-y-3">
             <h2 className="flex items-center gap-2 text-base sm:text-lg font-semibold">
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md text-white shadow-sm" style={{ backgroundColor: "#10B981" }}>
+              <span aria-hidden className="grid h-7 w-7 shrink-0 place-items-center text-muted-foreground">
                 <Percent className="h-4 w-4" />
               </span>
               4. Remise globale
@@ -633,10 +634,9 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
           </section>
 
           {/* 5. Frais de transport */}
-          <section className="relative overflow-hidden rounded-md border bg-card p-4 pl-5 sm:p-5 sm:pl-6 space-y-3">
-            <span aria-hidden className="absolute inset-y-0 left-0 w-1 bg-primary" />
+          <section className="scroll-mt-20 rounded-md border bg-card p-4 sm:p-5 space-y-3">
             <h2 className="flex items-center gap-2 text-base sm:text-lg font-semibold">
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground shadow-sm">
+              <span aria-hidden className="grid h-7 w-7 shrink-0 place-items-center text-muted-foreground">
                 <Truck className="h-4 w-4" />
               </span>
               5. Frais de transport
@@ -690,6 +690,7 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
               fraisTransport={montantFraisPrevu}
             />
             <div className="flex flex-col gap-2">
+              <UnsavedIndicator dirty={isDirty} />
               <Button
                 type="submit"
                 disabled={mutation.isPending || hasOvershoot}
@@ -727,7 +728,8 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
             <div className="text-xs uppercase text-muted-foreground">Net à payer</div>
             <div className="truncate text-lg font-bold">{formatFCFA(totaux.ttc + montantFraisPrevu)}</div>
           </div>
-          <div className="flex gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
+            {isDirty && <span role="status" aria-label="Modifications non enregistrées" title="Modifications non enregistrées" className="h-2 w-2 rounded-full bg-warning" />}
             <Button type="button" variant="outline" size="sm" asChild>
               <Link to="/commandes">Annuler</Link>
             </Button>
