@@ -1,3 +1,4 @@
+import { formatDate } from "@/lib/format";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -117,7 +118,7 @@ function SpecimenDetailPage() {
           <div>
             <h1 className="ds-page-title">{data.numero}</h1>
             <p className="text-sm text-muted-foreground">
-              {new Date(data.date_envoi).toLocaleDateString("fr-FR")} — {data.etablissement}
+              {formatDate(data.date_envoi)} — {data.etablissement}
             </p>
           </div>
           <Badge style={{ backgroundColor: st?.color, color: "white" }}>
@@ -149,7 +150,7 @@ function SpecimenDetailPage() {
           <Info label="Numéro" value={data.numero} />
           <Info
             label="Date d'envoi"
-            value={new Date(data.date_envoi).toLocaleDateString("fr-FR")}
+            value={formatDate(data.date_envoi)}
           />
           <Info label="Motif" value={data.motif} />
           <Info label="Donneur des spécimens" value={data.donneur_nom} />

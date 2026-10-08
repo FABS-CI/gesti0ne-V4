@@ -1,3 +1,4 @@
+import { formatDate } from "@/lib/format";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -263,7 +264,7 @@ function SpecimensListPage() {
                   return (
                     <TableRow key={s.specimen_id}>
                       <TableCell className="font-mono text-xs">{s.numero}</TableCell>
-                      <TableCell>{new Date(s.date_envoi).toLocaleDateString("fr-FR")}</TableCell>
+                      <TableCell>{formatDate(s.date_envoi)}</TableCell>
                       <TableCell className="font-medium">{s.etablissement}</TableCell>
                       <TableCell>{s.representant_nom ?? "—"}</TableCell>
                       <TableCell>{s.ville ?? "—"}</TableCell>

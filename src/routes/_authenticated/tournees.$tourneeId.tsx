@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -475,7 +476,7 @@ function EditTourneePage() {
                   </Badge>
                   {form.cloture_at && (
                     <span className="text-xs text-muted-foreground">
-                      le {new Date(form.cloture_at).toLocaleString("fr-FR")}
+                      le {formatDateTime(form.cloture_at)}
                     </span>
                   )}
                 </div>
@@ -640,7 +641,7 @@ function EditTourneePage() {
                   value={
                     <>
                       {form.cloture_at
-                        ? new Date(form.cloture_at).toLocaleString("fr-FR")
+                        ? formatDateTime(form.cloture_at)
                         : "date inconnue"}
                       <div className="text-xs text-muted-foreground">
                         {form.cloture_mode === "auto"

@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, History } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
-import { formatFCFA } from "@/lib/format";
+import { formatDateTime, formatFCFA } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -100,7 +100,7 @@ function JournalCloturePage() {
               ) : (
                 rows.map((r) => (
                   <TableRow key={r.journal_id}>
-                    <TableCell>{new Date(r.date_cloture).toLocaleString("fr-FR")}</TableCell>
+                    <TableCell>{formatDateTime(r.date_cloture)}</TableCell>
                     <TableCell className="font-mono text-xs">{r.source?.code ?? "—"}</TableCell>
                     <TableCell className="font-mono text-xs">{r.cible?.code ?? "—"}</TableCell>
                     <TableCell className="text-right">{r.nb_clients_reportes}</TableCell>

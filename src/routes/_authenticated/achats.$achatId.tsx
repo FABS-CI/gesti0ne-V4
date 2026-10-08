@@ -15,7 +15,7 @@ import {
 import { toast } from "sonner";
 
 import { getAchat, getAchatLignes, STATUT_ACHAT_LABEL } from "@/lib/achats-api";
-import { formatFCFA } from "@/lib/format";
+import { formatDate, formatFCFA } from "@/lib/format";
 import { generateApprovisionnementPDF } from "@/lib/pdf/fabsTemplates";
 import { printCached, viewCached } from "@/lib/pdf/actions";
 import { pdfCacheKey } from "@/lib/pdf/pdfCache";
@@ -42,7 +42,7 @@ export const Route = createFileRoute("/_authenticated/achats/$achatId")({
 });
 
 function frDate(d: string | null | undefined) {
-  return d ? new Date(d).toLocaleDateString("fr-FR") : "—";
+  return d ? formatDate(d) : "—";
 }
 
 function AchatDetailPage() {

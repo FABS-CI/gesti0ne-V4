@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -463,7 +464,7 @@ export function ColisageForm({
             </div>
             <div>
               <Label>Date / heure</Label>
-              <Input value={new Date().toLocaleString("fr-FR")} disabled />
+              <Input value={formatDateTime(new Date())} disabled />
             </div>
             <div>
               <Label>Nombre total de cartons</Label>

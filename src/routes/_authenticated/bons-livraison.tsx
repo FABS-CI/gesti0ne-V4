@@ -1,3 +1,4 @@
+import { formatDate } from "@/lib/format";
 import { PageHeader } from "@/components/common/PageHeader";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -62,7 +63,7 @@ export const Route = createFileRoute("/_authenticated/bons-livraison")({
 });
 
 function frDate(d: string | null | undefined) {
-  return d ? new Date(d).toLocaleDateString("fr-FR") : "—";
+  return d ? formatDate(d) : "—";
 }
 
 function BonsLivraisonListPage() {

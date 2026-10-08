@@ -1,3 +1,4 @@
+import { formatDate } from "@/lib/format";
 import { COMMANDE_REF_SEARCH_DEFAULTS } from "@/lib/route-schemas";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -180,9 +181,9 @@ function RemisePage() {
           label="Date"
           value={
             colis?.bl_date_livraison
-              ? new Date(colis.bl_date_livraison).toLocaleDateString("fr-FR")
+              ? formatDate(colis.bl_date_livraison)
               : colis?.date_envoi
-                ? new Date(colis.date_envoi).toLocaleDateString("fr-FR")
+                ? formatDate(colis.date_envoi)
                 : null
           }
         />

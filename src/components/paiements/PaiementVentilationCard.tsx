@@ -19,7 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { formatFCFA } from "@/lib/format";
+import { formatDate, formatFCFA } from "@/lib/format";
 import { friendlyError } from "@/lib/friendly-error";
 import {
   getPaiementAllocationsDetail,
@@ -29,7 +29,7 @@ import {
 import { usePermissions } from "@/hooks/use-permissions";
 
 function frDate(d: string | null | undefined) {
-  return d ? new Date(d).toLocaleDateString("fr-FR") : "—";
+  return d ? formatDate(d) : "—";
 }
 
 export function PaiementVentilationCard({ paiementId }: { paiementId: string }) {

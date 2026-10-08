@@ -1,3 +1,4 @@
+import { formatDate } from "@/lib/format";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { ClientLink } from "@/components/common/ClientLink";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -40,7 +41,7 @@ export const Route = createFileRoute("/_authenticated/colisage/")({
 });
 
 function frDate(d: string | null | undefined) {
-  return d ? new Date(d).toLocaleDateString("fr-FR") : "—";
+  return d ? formatDate(d) : "—";
 }
 
 function ColisageListPage() {

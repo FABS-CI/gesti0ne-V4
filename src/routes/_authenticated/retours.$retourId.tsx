@@ -34,7 +34,7 @@ import {
 import { usePermissions } from "@/hooks/use-permissions";
 import { invalidateRetour } from "@/lib/cache-invalidation";
 import { friendlyError } from "@/lib/friendly-error";
-import { formatFCFA } from "@/lib/format";
+import { formatDate, formatFCFA } from "@/lib/format";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -74,7 +74,7 @@ export const Route = createFileRoute("/_authenticated/retours/$retourId")({
 });
 
 function frDate(d: string | null | undefined) {
-  return d ? new Date(d).toLocaleDateString("fr-FR") : "—";
+  return d ? formatDate(d) : "—";
 }
 
 const WORKFLOW_STEPS = [

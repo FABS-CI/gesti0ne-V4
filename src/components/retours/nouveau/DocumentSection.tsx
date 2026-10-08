@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { formatFCFA } from "@/lib/format";
+import { formatDate, formatFCFA } from "@/lib/format";
 
 import type { UseFormReturn, UseFieldArrayReturn } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
@@ -109,7 +109,7 @@ export function DocumentSection({ form, fa }: Props) {
                 )}
               >
                 {selected
-                  ? `${selected.reference} — ${new Date(selected.date_facture).toLocaleDateString("fr-FR")} — ${formatFCFA(selected.montant_total, false)} FCFA`
+                  ? `${selected.reference} — ${formatDate(selected.date_facture)} — ${formatFCFA(selected.montant_total, false)} FCFA`
                   : clientId
                     ? "Rechercher une facture…"
                     : "Sélectionnez d'abord un client"}
@@ -139,7 +139,7 @@ export function DocumentSection({ form, fa }: Props) {
                         <div className="flex-1">
                           <div className="font-medium">{f.reference}</div>
                           <div className="text-xs text-muted-foreground">
-                            {new Date(f.date_facture).toLocaleDateString("fr-FR")} —{" "}
+                            {formatDate(f.date_facture)} —{" "}
                             {formatFCFA(f.montant_total, false)} FCFA — {f.statut}
                           </div>
                         </div>

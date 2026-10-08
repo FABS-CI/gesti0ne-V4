@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ShieldAlert, User as UserIcon, Calendar, FileText } from "lucide-react";
 
 import { getPaiementAnnulationAudit, getPaiement } from "@/lib/paiements-api";
-import { formatFCFA } from "@/lib/format";
+import { formatDateTime, formatFCFA } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_authenticated/admin/audit-paiements/$aud
 });
 
 function frDateTime(d: string) {
-  return new Date(d).toLocaleString("fr-FR");
+  return formatDateTime(d);
 }
 
 function AuditPaiementDetailPage() {

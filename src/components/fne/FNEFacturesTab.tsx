@@ -17,7 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { listFNEInvoices } from "@/lib/fne-api";
-import { formatFCFA } from "@/lib/format";
+import { formatDateTime, formatFCFA } from "@/lib/format";
 import { FneStatusBadge } from "@/components/fne/FneStatusBadge";
 
 const FNE_ORANGE = "#FF6200";
@@ -132,7 +132,7 @@ export function FNEFacturesTab() {
                       {formatFCFA(Number(r.montant ?? 0))}
                     </TableCell>
                     <TableCell className="text-xs">
-                      {r.created_at ? new Date(r.created_at).toLocaleString("fr-FR") : "—"}
+                      {r.created_at ? formatDateTime(r.created_at) : "—"}
                     </TableCell>
                     <TableCell>
                       <FneStatusBadge statut={r.statut ?? "pending"} />

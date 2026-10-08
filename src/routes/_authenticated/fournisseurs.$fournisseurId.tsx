@@ -4,7 +4,7 @@ import { ArrowLeft, Building2, Mail, MapPin, Phone, User } from "lucide-react";
 
 import { getFournisseur, getFournisseurAchats } from "@/lib/fournisseurs-api";
 import { STATUT_ACHAT_LABEL, type Achat } from "@/lib/achats-api";
-import { formatFCFA } from "@/lib/format";
+import { formatDate, formatFCFA } from "@/lib/format";
 import { useReportANouveau } from "@/hooks/use-report-a-nouveau";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/_authenticated/fournisseurs/$fournisseurI
 });
 
 function frDate(d: string | null | undefined) {
-  return d ? new Date(d).toLocaleDateString("fr-FR") : "—";
+  return d ? formatDate(d) : "—";
 }
 
 function FournisseurDetailPage() {

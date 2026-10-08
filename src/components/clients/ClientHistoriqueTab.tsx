@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getClientHistorique } from "@/lib/crm-api";
-import { formatFCFA } from "@/lib/format";
+import { formatDate, formatFCFA } from "@/lib/format";
 import { exportCsv } from "@/lib/export-csv";
 import { Download } from "lucide-react";
 import { useExercice } from "@/contexts/ExerciceContext";
@@ -101,7 +101,7 @@ export function ClientHistoriqueTab({ clientId }: { clientId: string }) {
           label="Période d'activité"
           value={
             stats.premiere
-              ? `${new Date(stats.premiere).toLocaleDateString("fr-FR")} → ${new Date(stats.derniere!).toLocaleDateString("fr-FR")}`
+              ? `${formatDate(stats.premiere)} → ${new Date(stats.derniere!).toLocaleDateString("fr-FR")}`
               : "—"
           }
         />
@@ -144,7 +144,7 @@ export function ClientHistoriqueTab({ clientId }: { clientId: string }) {
               ) : (
                 data.map((l) => (
                   <TableRow key={l.commande_id + l.produit_titre + l.date_commande}>
-                    <TableCell>{new Date(l.date_commande).toLocaleDateString("fr-FR")}</TableCell>
+                    <TableCell>{formatDate(l.date_commande)}</TableCell>
                     <TableCell className="font-mono text-xs">{l.commande_reference}</TableCell>
                     <TableCell>{l.produit_titre}</TableCell>
                     <TableCell>

@@ -25,7 +25,7 @@ import { fr } from "date-fns/locale";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { formatFCFA, formatDateTime } from "@/lib/format";
+import { formatDateTime, formatFCFA } from "@/lib/format";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -705,7 +705,7 @@ function ApprovalCard({
                 <Badge
                   variant={slaOver ? "destructive" : "secondary"}
                   className="gap-1"
-                  title={new Date(row.sla_deadline).toLocaleString("fr-FR")}
+                  title={formatDateTime(row.sla_deadline)}
                 >
                   <Clock className="h-3 w-3" />
                   {slaOver ? "SLA dépassé " : "SLA "}

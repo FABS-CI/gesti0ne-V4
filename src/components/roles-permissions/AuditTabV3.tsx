@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -66,7 +67,7 @@ export function AuditTabV3() {
               {rows.map((r) => (
                 <tr key={r.id} className="border-t align-top">
                   <td className="whitespace-nowrap py-2 text-xs text-muted-foreground">
-                    {new Date(r.created_at).toLocaleString("fr-FR")}
+                    {formatDateTime(r.created_at)}
                   </td>
                   <td className="py-2 text-xs">{r.acteur_email ?? "—"}</td>
                   <td className="py-2"><Badge variant="outline">{r.action}</Badge></td>

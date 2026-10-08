@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { FileText, Receipt, Truck, RotateCcw, Search, Loader2 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
-import { formatFCFA } from "@/lib/format";
+import { formatDate, formatFCFA } from "@/lib/format";
 import {
   generateUnifiedCommercialPDF,
   generateUnifiedStatementPDF,
@@ -317,7 +317,7 @@ function DocList({ kind, search }: { kind: DocKind; search: string }) {
             <TableRow key={row.id}>
               <TableCell className="font-mono text-xs">{formatDocumentReference(row.reference)}</TableCell>
               <TableCell>
-                {row.date ? new Date(row.date).toLocaleDateString("fr-FR") : "—"}
+                {row.date ? formatDate(row.date) : "—"}
               </TableCell>
               <TableCell>{row.client}</TableCell>
               <TableCell className="text-right">

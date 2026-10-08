@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import {
   Dialog,
   DialogContent,
@@ -46,7 +47,7 @@ export function EventDetailDialog({ selected, onClose }: Props) {
           <DialogDescription asChild>
             {selected ? (
               <div className="flex flex-wrap items-center gap-2 text-sm">
-                <span>{new Date(selected.occurred_at).toLocaleString("fr-FR")}</span>
+                <span>{formatDateTime(selected.occurred_at)}</span>
                 <span>·</span>
                 <span className="font-medium">{selected.user_email || "—"}</span>
                 <span>·</span>

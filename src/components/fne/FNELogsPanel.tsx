@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Download, Search } from "lucide-react";
@@ -153,7 +154,7 @@ export function FNELogsPanel() {
                 {filtered.map((r) => (
                   <TableRow key={r.id}>
                     <TableCell className="text-xs whitespace-nowrap">
-                      {r.created_at ? new Date(r.created_at).toLocaleString("fr-FR") : "—"}
+                      {r.created_at ? formatDateTime(r.created_at) : "—"}
                     </TableCell>
                     <TableCell className="text-xs">—</TableCell>
                     <TableCell className="font-mono text-xs">{r.fne_facture_id ?? "—"}</TableCell>

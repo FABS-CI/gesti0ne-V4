@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/table";
 import { ResponsiveTable } from "@/components/layout/ResponsiveTable";
 import { getLignesPeriode } from "@/lib/compta-api";
-import { formatFCFA } from "@/lib/format";
+import { formatDate, formatFCFA } from "@/lib/format";
 import { exportCsv } from "@/lib/export-csv";
 import { generateGrandLivrePDF } from "@/lib/pdf/pdfGenerator";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
@@ -213,7 +213,7 @@ function GrandLivrePage() {
                       <TableCell className="font-mono text-xs">{l.compte}</TableCell>
                       <TableCell>
                         {l.date_ecriture
-                          ? new Date(l.date_ecriture).toLocaleDateString("fr-FR")
+                          ? formatDate(l.date_ecriture)
                           : "—"}
                       </TableCell>
                       <TableCell>{l.journal}</TableCell>

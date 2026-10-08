@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import {
   Dialog,
   DialogContent,
@@ -49,7 +50,7 @@ export function OnlineUserDialog({
               </Badge>
               <span className="capitalize">{selectedUserEvents[0].table_name}</span>
               <span className="text-muted-foreground">
-                · {new Date(selectedUserEvents[0].occurred_at).toLocaleString("fr-FR")}
+                · {formatDateTime(selectedUserEvents[0].occurred_at)}
               </span>
             </div>
           </div>
@@ -68,7 +69,7 @@ export function OnlineUserDialog({
               {selectedUserEvents.map((r) => (
                 <TableRow key={r.id}>
                   <TableCell className="whitespace-nowrap text-xs">
-                    {new Date(r.occurred_at).toLocaleString("fr-FR")}
+                    {formatDateTime(r.occurred_at)}
                   </TableCell>
                   <TableCell>
                     <Badge variant={ACTION_VARIANT(r.action)} className="text-xs">

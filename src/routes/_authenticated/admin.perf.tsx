@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -175,7 +176,7 @@ function PerfPage() {
               >
                 <div className="font-mono">{e.query_key ?? "—"}</div>
                 <div className="text-muted-foreground text-xs">
-                  {new Date(e.created_at).toLocaleString("fr-FR")} — {e.duration_ms}ms
+                  {formatDateTime(e.created_at)} — {e.duration_ms}ms
                 </div>
                 <div className="text-destructive text-xs">{e.error}</div>
               </div>

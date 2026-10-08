@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatFCFA } from "@/lib/format";
+import { formatDate, formatFCFA } from "@/lib/format";
 import { buildMonthlyStats } from "@/lib/client-detail-helpers";
 import type { Client, ClientRelations } from "@/lib/clients-api";
 
@@ -28,7 +28,7 @@ interface ClientStatsTabProps {
 function fmtDate(d?: string | null) {
   if (!d) return "—";
   try {
-    return new Date(d).toLocaleDateString("fr-FR");
+    return formatDate(d);
   } catch {
     return "—";
   }

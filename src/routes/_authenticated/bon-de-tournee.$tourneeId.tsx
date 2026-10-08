@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
-import { formatFCFA, formatDate } from "@/lib/format";
+import { formatDate, formatDateTime, formatFCFA } from "@/lib/format";
 
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, FileDown, Printer } from "lucide-react";
@@ -442,7 +442,7 @@ function FeuilleTourneePage() {
     });
   };
 
-  const dateEdition = new Date().toLocaleDateString("fr-FR");
+  const dateEdition = formatDate(new Date());
   const heureEdition = new Date().toLocaleTimeString("fr-FR", {
     hour: "2-digit",
     minute: "2-digit",
@@ -527,7 +527,7 @@ function FeuilleTourneePage() {
           />
           <Field
             label="Créé le"
-            value={t.created_at ? new Date(t.created_at).toLocaleString("fr-FR") : undefined}
+            value={t.created_at ? formatDateTime(t.created_at) : undefined}
           />
           <Field label="Statut" value={STATUT_META[t.statut]?.label ?? t.statut} />
         </div>

@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -239,7 +240,7 @@ function BonDeSortiePage() {
             {t.statut === "terminee" && t.cloture_mode && (
               <div className="text-xs text-muted-foreground mt-0.5">
                 Clôture {t.cloture_mode === "auto" ? "automatique" : "manuelle"}
-                {t.cloture_at ? ` — ${new Date(t.cloture_at).toLocaleString("fr-FR")}` : ""}
+                {t.cloture_at ? ` — ${formatDateTime(t.cloture_at)}` : ""}
               </div>
             )}
           </div>
