@@ -257,7 +257,7 @@ function NouveauPaiementPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Button asChild variant="ghost" size="icon">
+        <Button aria-label="Retour" asChild variant="ghost" size="icon">
           <Link to="/paiements">
             <ArrowLeft className="h-4 w-4" />
           </Link>

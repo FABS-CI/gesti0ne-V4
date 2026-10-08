@@ -130,7 +130,7 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" asChild>
+          <Button aria-label="Retour" variant="ghost" size="icon" asChild>
             <Link to="/clients">
               <ArrowLeft className="h-5 w-5" />
             </Link>

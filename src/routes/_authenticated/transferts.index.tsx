@@ -214,7 +214,7 @@ function TransfertsPage() {
                           <PackageCheck className="h-4 w-4 text-success" />
                         </Button>
                       )}
-                      <Button variant="ghost" size="icon" asChild>
+                      <Button aria-label="Voir" variant="ghost" size="icon" asChild>
                         <Link
                           to="/transferts/$transfertId"
                           params={{ transfertId: t.transfert_id }}

@@ -120,7 +120,7 @@ function NouvelleEcriturePage() {
   return (
     <div className="space-y-4 pb-24">
       <div className="flex items-center gap-3">
-        <Button asChild variant="ghost" size="icon">
+        <Button aria-label="Retour" asChild variant="ghost" size="icon">
           <Link to="/comptabilite">
             <ArrowLeft className="h-5 w-5" />
           </Link>

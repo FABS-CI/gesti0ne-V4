@@ -62,7 +62,7 @@ function AuditPaiementDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Button asChild variant="ghost" size="icon">
+        <Button aria-label="Retour" asChild variant="ghost" size="icon">
           <Link to="/admin/audit-paiements">
             <ArrowLeft className="h-5 w-5" />
           </Link>
