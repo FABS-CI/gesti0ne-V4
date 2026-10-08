@@ -24,7 +24,7 @@ function AccesRefusePage() {
       <div className="rounded-full bg-destructive/10 p-4 text-destructive">
         <ShieldAlert className="h-10 w-10" />
       </div>
-      <h1 className="text-2xl font-semibold">Accès refusé (403)</h1>
+      <h1 className="ds-page-title">Accès refusé (403)</h1>
       <p className="text-muted-foreground">
         Vous n'avez pas les droits nécessaires pour accéder à cette page.
       </p>

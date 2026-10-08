@@ -173,7 +173,7 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h1 className="truncate text-2xl font-bold">
+          <h1 className="ds-page-title truncate">
             {editing ? `Modifier — ${employe!.nom_complet}` : "Nouvel employé"}
           </h1>
           <p className="text-sm text-muted-foreground">

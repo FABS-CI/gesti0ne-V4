@@ -39,7 +39,7 @@ function AuditPaiementsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="flex items-center gap-2 text-2xl font-bold">
+        <h1 className="ds-page-title flex items-center gap-2">
           <ShieldAlert className="h-6 w-6 text-primary" /> Journal d'audit — Annulations de paiement
         </h1>
         <p className="text-sm text-muted-foreground">

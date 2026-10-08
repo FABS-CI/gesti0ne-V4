@@ -77,7 +77,7 @@ function GrandLivrePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
+          <h1 className="ds-page-title flex items-center gap-2">
             <FileText className="h-6 w-6" /> Grand livre
           </h1>
           <p className="text-sm text-muted-foreground">Détail des écritures par compte</p>

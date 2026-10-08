@@ -332,7 +332,7 @@ export function ResourceManager({ config }: { config: ResourceConfig }) {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold">
+          <h1 className="ds-page-title flex items-center gap-2">
             <Icon className="h-6 w-6 text-primary" /> {config.title}
           </h1>
           {config.subtitle && <p className="text-sm text-muted-foreground">{config.subtitle}</p>}

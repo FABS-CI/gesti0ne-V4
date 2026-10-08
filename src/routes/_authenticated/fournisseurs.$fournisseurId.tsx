@@ -66,7 +66,7 @@ function FournisseurDetailPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-xl font-bold">{fournisseur.raison_sociale}</h1>
+            <h1 className="ds-page-title">{fournisseur.raison_sociale}</h1>
             <p className="text-sm text-muted-foreground">{fournisseur.ville ?? "—"}</p>
           </div>
         </div>

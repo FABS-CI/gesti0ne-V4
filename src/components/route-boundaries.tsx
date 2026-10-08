@@ -11,7 +11,7 @@ export function RouteNotFound() {
   return (
     <div className="flex min-h-dvh items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
+        <h1 className="ds-page-title text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">Page introuvable</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           La page demandée n'existe pas ou a été déplacée.
@@ -56,7 +56,7 @@ export function RouteError({ error, reset }: { error: Error; reset: () => void }
   return (
     <div className="flex min-h-dvh items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
+        <h1 className="ds-page-title text-foreground">
           Cette page n'a pas pu charger
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">

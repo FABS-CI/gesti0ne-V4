@@ -105,7 +105,7 @@ function LivraisonSuiviIndex() {
       <div className="flex items-center gap-3">
         <Truck className="h-7 w-7 text-primary" />
         <div>
-          <h1 className="text-2xl font-bold">Suivi des livraisons</h1>
+          <h1 className="ds-page-title">Suivi des livraisons</h1>
           <p className="text-sm text-muted-foreground">
             Pilotage temps réel des livraisons — responsable logistique
           </p>

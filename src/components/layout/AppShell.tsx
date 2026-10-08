@@ -148,7 +148,7 @@ function AccessDenied() {
   return (
     <div className="mx-auto flex max-w-md flex-col items-center justify-center gap-3 py-20 text-center">
       <ShieldAlert className="h-12 w-12 text-destructive" />
-      <h1 className="text-xl font-semibold">403 — Accès interdit</h1>
+      <h1 className="ds-page-title">403 — Accès interdit</h1>
       <p className="text-sm text-muted-foreground">
         Vous n'avez pas l'autorisation d'accéder à cette section.
       </p>

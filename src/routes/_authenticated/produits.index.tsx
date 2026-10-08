@@ -201,7 +201,7 @@ function ProduitsPage() {
       <div className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold">Produits</h1>
+            <h1 className="ds-page-title">Produits</h1>
             <p className="text-sm text-muted-foreground">{total} produit(s)</p>
           </div>
           <div className="flex gap-2">

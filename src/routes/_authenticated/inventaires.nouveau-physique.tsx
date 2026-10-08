@@ -102,7 +102,7 @@ function NouveauPhysiquePage() {
         </Button>
         <ClipboardList className="h-6 w-6 text-primary" />
         <div>
-          <h1 className="text-2xl font-bold">Nouvel inventaire physique</h1>
+          <h1 className="ds-page-title">Nouvel inventaire physique</h1>
           <p className="text-sm text-muted-foreground">
             Génère la liste des produits du dépôt avec leur stock théorique actuel
           </p>

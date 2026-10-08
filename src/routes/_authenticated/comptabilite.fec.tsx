@@ -114,7 +114,7 @@ function FecExportPage() {
           <FileText className="h-6 w-6 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold">Export FEC</h1>
+          <h1 className="ds-page-title">Export FEC</h1>
           <p className="text-sm text-muted-foreground">
             Fichier des Écritures Comptables — format légal DGI (18 colonnes, séparateur « | »)
           </p>

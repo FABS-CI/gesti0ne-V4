@@ -105,7 +105,7 @@ function ExercicesPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold">
+          <h1 className="ds-page-title flex items-center gap-2">
             <CalendarRange className="h-6 w-6 text-primary" />
             Exercices comptables
           </h1>

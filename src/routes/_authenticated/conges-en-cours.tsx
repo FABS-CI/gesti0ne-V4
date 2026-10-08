@@ -159,7 +159,7 @@ function CongesEnCoursPage() {
               </Link>
             </Button>
           </div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold">
+          <h1 className="ds-page-title flex items-center gap-2">
             <Plane className="h-6 w-6 shrink-0 text-sky-500" /> Employés en congé
           </h1>
           <p className="text-sm text-muted-foreground">

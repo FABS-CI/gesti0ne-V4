@@ -94,7 +94,7 @@ function ExportsPage() {
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Export & sauvegarde</h1>
+        <h1 className="ds-page-title">Export & sauvegarde</h1>
         <p className="text-sm text-muted-foreground">
           Téléchargez vos données au format PDF ou Excel, ou créez une sauvegarde complète.
         </p>

@@ -147,7 +147,7 @@ function SpecimensListPage() {
         <div className="flex items-center gap-3">
           <Gift className="h-7 w-7 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold">Gestion des Spécimens</h1>
+            <h1 className="ds-page-title">Gestion des Spécimens</h1>
             <p className="text-muted-foreground text-sm">
               Remises gratuites d'ouvrages aux établissements — décrémentation directe du stock
             </p>

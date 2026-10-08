@@ -266,7 +266,7 @@ function NouvelApprovisionnementPage() {
         </Button>
         <ShoppingBag className="h-6 w-6 text-primary" />
         <div>
-          <h1 className="text-2xl font-bold">
+          <h1 className="ds-page-title">
             {isEdit ? "Modifier l'approvisionnement" : "Nouvel Approvisionnement"}
           </h1>
           <p className="text-sm text-muted-foreground">

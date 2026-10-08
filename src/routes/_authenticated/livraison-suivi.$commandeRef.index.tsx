@@ -239,7 +239,7 @@ function SuiviDetail() {
           </Link>
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">Suivi — {formatDocumentReference(suivi.commande?.reference)}</h1>
+          <h1 className="ds-page-title">Suivi — {formatDocumentReference(suivi.commande?.reference)}</h1>
           <p className="text-sm text-muted-foreground">
             {suivi.commande?.client_nom} · {suivi.commande?.ville ?? ""}
           </p>

@@ -114,7 +114,7 @@ function CommandeDetailPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-xl font-bold">Commande {formatDocumentReference(commande.reference)}</h1>
+            <h1 className="ds-page-title">Commande {formatDocumentReference(commande.reference)}</h1>
             <p className="text-sm text-muted-foreground">
               {commande.client_nom ?? "Client non renseigné"}
             </p>

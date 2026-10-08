@@ -197,7 +197,7 @@ function NouvelIncidentPage() {
         </Button>
         <AlertTriangle className="h-6 w-6 text-amber-600" />
         <div>
-          <h1 className="text-2xl font-bold">Nouvel Incident de Stock</h1>
+          <h1 className="ds-page-title">Nouvel Incident de Stock</h1>
           <p className="text-sm text-muted-foreground">
             Déclaration d'une perte, détérioration ou autre sortie exceptionnelle
           </p>

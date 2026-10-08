@@ -183,7 +183,7 @@ function InventaireDetailPage() {
           </Button>
           <ClipboardList className="h-7 w-7 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold">{inv.numero}</h1>
+            <h1 className="ds-page-title">{inv.numero}</h1>
             <p className="text-sm text-muted-foreground capitalize">
               Inventaire {inv.type_inventaire} ·{" "}
               {new Date(inv.date_inventaire).toLocaleDateString("fr-FR")} ·{" "}

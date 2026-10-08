@@ -145,7 +145,7 @@ function RpcErrorsPage() {
     <div className="container mx-auto space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-3xl font-bold">
+          <h1 className="ds-page-title flex items-center gap-2">
             <AlertTriangle className="h-7 w-7 text-destructive" />
             Erreurs RPC — 7 derniers jours
           </h1>

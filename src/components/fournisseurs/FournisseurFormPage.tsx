@@ -92,7 +92,7 @@ export function FournisseurFormPage({ existing }: { existing?: Fournisseur | nul
         </Button>
         <Truck className="h-6 w-6 text-primary" />
         <div>
-          <h1 className="text-2xl font-bold">
+          <h1 className="ds-page-title">
             {isEdit ? "Modifier le fournisseur" : "Nouveau fournisseur"}
           </h1>
           <p className="text-sm text-muted-foreground">

@@ -61,7 +61,7 @@ function ProduitDetailPage() {
   if (isAssistanteOnly) {
     return (
       <div className="p-8 text-center">
-        <h1 className="text-lg font-semibold">Accès refusé</h1>
+        <h1 className="ds-page-title">Accès refusé</h1>
         <p className="text-sm text-muted-foreground mt-2">
           Vous n'avez pas l'autorisation de consulter la fiche détaillée d'un produit.
         </p>
@@ -95,7 +95,7 @@ function ProduitDetailPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-xl font-bold">{produit.titre}</h1>
+            <h1 className="ds-page-title">{produit.titre}</h1>
             <p className="text-sm text-muted-foreground">
               {produit.reference} · {produit.categorie}
             </p>

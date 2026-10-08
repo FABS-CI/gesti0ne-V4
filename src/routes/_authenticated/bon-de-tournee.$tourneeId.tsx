@@ -472,7 +472,7 @@ function FeuilleTourneePage() {
         {/* En-tête entreprise + QR + Barcode */}
         <div className="flex justify-between items-start mb-4 border-b-2 border-slate-800 pb-3">
           <div className="max-w-[55%]">
-            <h1 className="text-lg font-bold tracking-tight">{COMPANY.nom}</h1>
+            <h1 className="ds-page-title">{COMPANY.nom}</h1>
             <p className="text-[10px] text-muted-foreground leading-snug">{COMPANY.adresse}</p>
             <p className="text-[10px] text-muted-foreground">
               Tél : {COMPANY.telephones.join(" / ")}

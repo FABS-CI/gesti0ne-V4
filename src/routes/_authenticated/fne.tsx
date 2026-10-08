@@ -53,7 +53,7 @@ function FNEModule() {
         <div className="flex items-center gap-3">
           <ShieldCheck className="h-8 w-8" style={{ color: FNE_ORANGE }} />
           <div>
-            <h1 className="text-2xl font-bold">FNE — Facture Normalisée Électronique</h1>
+            <h1 className="ds-page-title">FNE — Facture Normalisée Électronique</h1>
             <div className="text-sm text-muted-foreground flex items-center gap-2">
               Certification DGI Côte d'Ivoire —{" "}
               {sticker?.mode === "sandbox" ? (

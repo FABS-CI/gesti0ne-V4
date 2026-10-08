@@ -85,7 +85,7 @@ function PerfPage() {
     <div className="container mx-auto space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-3xl font-bold">
+          <h1 className="ds-page-title flex items-center gap-2">
             <Activity className="h-8 w-8" /> Suivi performance requêtes
           </h1>
           <p className="text-muted-foreground">

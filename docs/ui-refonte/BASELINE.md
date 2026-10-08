@@ -36,3 +36,8 @@ Note : le compteur « Dégradés » inclut le masque radial de la trame de la pa
 | 2 | `text-lg font-bold tracking-tight` |
 | 2 | `text-2xl font-semibold flex items-center gap-2` |
 | 2 | `flex items-center gap-2 text-3xl font-bold` |
+
+## Sprint 2 (8 octobre 2026)
+- 128 titres de page normalisés sur une seule variante `ds-page-title` (22 px / 600), couleurs brutes retirées.
+- Composant `src/components/common/PageHeader.tsx` créé (title, description, breadcrumbs, badge, actions, backTo).
+- Reste : migration page par page des titres + boutons voisins vers `PageHeader`, et règle de lint interdisant `<h1>` brut.

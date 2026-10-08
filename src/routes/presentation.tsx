@@ -103,7 +103,7 @@ function PresentationPage() {
             <span className="h-1.5 w-1.5 rounded-full bg-accent" />
             ERP Made in Côte d'Ivoire — Conforme FNE / DGI
           </div>
-          <h1 className="mt-6 max-w-3xl text-4xl font-bold leading-tight tracking-tight md:text-6xl">
+          <h1 className="ds-page-title mt-6 max-w-3xl">
             L'ERP qui gère votre PME <span className="text-primary">de A à Z</span>.
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl">

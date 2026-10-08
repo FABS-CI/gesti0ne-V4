@@ -125,7 +125,7 @@ function SeuilsPage() {
         <div className="flex items-center gap-3">
           <Sliders className="w-6 h-6 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold">Seuils d'approbation</h1>
+            <h1 className="ds-page-title">Seuils d'approbation</h1>
             <p className="text-sm text-muted-foreground">
               Configuration des niveaux d'urgence et SLA par module métier
             </p>

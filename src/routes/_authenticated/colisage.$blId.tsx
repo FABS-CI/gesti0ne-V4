@@ -81,7 +81,7 @@ function ColisageDetailPage() {
             <Package className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-xl font-bold">Colisage — {formatDocumentReference(bl.reference)}</h1>
+            <h1 className="ds-page-title">Colisage — {formatDocumentReference(bl.reference)}</h1>
             <p className="text-sm text-muted-foreground">{bl.client_nom ?? "—"}</p>
           </div>
         </div>

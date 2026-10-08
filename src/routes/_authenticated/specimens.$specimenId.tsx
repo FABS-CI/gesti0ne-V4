@@ -115,7 +115,7 @@ function SpecimenDetailPage() {
           </Button>
           <Gift className="h-6 w-6 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold">{data.numero}</h1>
+            <h1 className="ds-page-title">{data.numero}</h1>
             <p className="text-sm text-muted-foreground">
               {new Date(data.date_envoi).toLocaleDateString("fr-FR")} — {data.etablissement}
             </p>

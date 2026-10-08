@@ -173,7 +173,7 @@ export function ClientForm({ clientId }: ClientFormProps) {
       <form onSubmit={onSubmit} className="space-y-6 pb-24">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold">
+            <h1 className="ds-page-title">
               {editing ? `Modifier ${existing?.nom ?? "le client"}` : "Nouveau client"}
             </h1>
             {existing?.reference ? (

@@ -100,7 +100,7 @@ function BonsLivraisonListPage() {
             <Truck className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-xl font-bold">Bons de livraison</h1>
+            <h1 className="ds-page-title">Bons de livraison</h1>
             <p className="text-sm text-muted-foreground">
               Consultation — les BL sont générés automatiquement à la validation d'une commande
             </p>

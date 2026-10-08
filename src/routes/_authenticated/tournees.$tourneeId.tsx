@@ -454,7 +454,7 @@ function EditTourneePage() {
           <div className="flex items-center gap-2">
             <Navigation className="h-5 w-5 text-primary" />
             <div>
-              <h1 className="text-lg font-semibold leading-none">
+              <h1 className="ds-page-title">
                 Tournée <span className="font-mono text-primary">{form.reference}</span>
               </h1>
               <p className="text-xs text-muted-foreground mt-1">

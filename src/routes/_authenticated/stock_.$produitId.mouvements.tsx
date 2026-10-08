@@ -141,7 +141,7 @@ function AjustementPage() {
           </Link>
         </Button>
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold">
+          <h1 className="ds-page-title flex items-center gap-2">
             <Sliders className="h-6 w-6 text-[#10B981]" /> Ajustement manuel de stock
           </h1>
           <p className="text-sm text-muted-foreground">

@@ -64,7 +64,7 @@ function ComptaDashboard() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">Tableau de bord comptable</h1>
+          <h1 className="ds-page-title">Tableau de bord comptable</h1>
           <p className="text-sm text-muted-foreground">Vue d'ensemble des comptes</p>
         </div>
         <div className="flex flex-wrap gap-2">

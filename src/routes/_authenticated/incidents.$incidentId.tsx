@@ -127,7 +127,7 @@ function IncidentDetailPage() {
           </Button>
           <AlertTriangle className="h-6 w-6 text-amber-600" />
           <div>
-            <h1 className="text-xl font-bold">Incident {incident.numero ?? incident.reference}</h1>
+            <h1 className="ds-page-title">Incident {incident.numero ?? incident.reference}</h1>
             <p className="text-sm text-muted-foreground">{typeLabel}</p>
           </div>
         </div>
@@ -199,7 +199,7 @@ function IncidentDetailPage() {
       <div className="rounded-md border bg-card p-6 space-y-4 print:border-none print:p-0">
         <div className="hidden print:flex items-center justify-between border-b pb-4 mb-4">
           <div>
-            <h1 className="text-2xl font-bold">FABS-CI</h1>
+            <h1 className="ds-page-title">FABS-CI</h1>
             <p className="text-sm">Fiche d'Incident de Stock</p>
           </div>
           <div className="text-right text-xs">

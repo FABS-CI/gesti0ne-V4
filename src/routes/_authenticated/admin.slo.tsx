@@ -76,7 +76,7 @@ function SloPage() {
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard SLO / Production</h1>
+          <h1 className="ds-page-title">Dashboard SLO / Production</h1>
           <p className="text-sm text-muted-foreground">
             Indicateurs de santé temps réel — refresh auto 30 s
           </p>

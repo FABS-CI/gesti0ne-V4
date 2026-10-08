@@ -345,7 +345,7 @@ function SanteSystemePage() {
       {/* Header */}
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl md:text-3xl font-bold">
+          <h1 className="ds-page-title flex items-center gap-2">
             <Activity className="h-7 w-7" /> Santé du système
           </h1>
           <p className="text-muted-foreground text-sm">

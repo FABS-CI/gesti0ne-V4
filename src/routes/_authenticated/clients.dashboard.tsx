@@ -44,7 +44,7 @@ function CrmDashboardPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold">
+          <h1 className="ds-page-title flex items-center gap-2">
             <BarChart3 className="h-6 w-6 text-primary" /> CRM & Analyses commerciales
           </h1>
           <p className="text-sm text-muted-foreground">
