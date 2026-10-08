@@ -33,7 +33,7 @@ type Tile = {
 };
 
 const TILES: Tile[] = [
-  { key: "today", label: "Aujourd'hui", icon: Calendar, color: "text-[#F97316]" },
+  { key: "today", label: "Aujourd'hui", icon: Calendar, color: "text-warning" },
   { key: "week", label: "Cette semaine", icon: CalendarDays, color: "text-info" },
   { key: "month", label: "Ce mois", icon: CalendarRange, color: "text-indigo-500" },
   { key: "active_users_today", label: "Utilisateurs actifs", icon: Users, color: "text-success" },
@@ -62,7 +62,7 @@ export function AuditStats({ kpi, totalEvents }: Props) {
       {typeof totalEvents === "number" && (
         <Card>
           <CardContent className="flex items-center gap-3 p-4">
-            <Activity className="h-6 w-6 text-[#F97316]" />
+            <Activity className="h-6 w-6 text-warning" />
             <div className="text-sm text-muted-foreground">Événements sur la période</div>
             <div className="ml-auto text-2xl font-bold tabular-nums">
               {formatFCFA(totalEvents, false)}

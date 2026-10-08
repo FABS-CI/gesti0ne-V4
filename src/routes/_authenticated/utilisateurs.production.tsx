@@ -142,7 +142,7 @@ function UtilisateursProductionPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Users className="h-6 w-6 text-[#F97316]" />
+          <Users className="h-6 w-6 text-warning" />
           <div>
             <h1 className="ds-page-title">Utilisateurs — Mise en production</h1>
             <p className="text-sm text-muted-foreground">

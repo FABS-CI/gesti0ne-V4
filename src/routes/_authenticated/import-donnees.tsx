@@ -156,7 +156,7 @@ function ImportDonneesPage() {
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Database className="h-6 w-6 text-[#F97316]" />
+          <Database className="h-6 w-6 text-warning" />
           <div>
             <h1 className="ds-page-title">Import de données</h1>
             <p className="text-sm text-muted-foreground">

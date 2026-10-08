@@ -154,7 +154,7 @@ function IntegritePage() {
             </CardHeader>
             <CardContent>
               {data.problemes.length === 0 ? (
-                <div className="flex items-center gap-2 rounded-lg bg-[#10B981]/10 p-4 text-[#10B981]">
+                <div className="flex items-center gap-2 rounded-lg bg-success/10 p-4 text-success">
                   <CheckCircle2 className="h-5 w-5" />
                   Tous les articles du catalogue sont conformes.
                 </div>
