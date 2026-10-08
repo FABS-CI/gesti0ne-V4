@@ -150,7 +150,7 @@ export function FloatingCalculator() {
         type="button"
         size="sm"
         onClick={() => setOpen(true)}
-        className="fixed bottom-4 right-4 z-40 shadow-lg"
+        className="fixed bottom-4 right-4 z-40 shadow-sm"
         aria-label="Ouvrir la calculatrice"
       >
         <Calculator className="h-4 w-4 mr-2" />
@@ -172,7 +172,7 @@ export function FloatingCalculator() {
       ref={panelRef}
       role="dialog"
       aria-label="Calculatrice"
-      className="fixed z-40 w-[min(240px,calc(100vw-16px))] rounded-lg border bg-card text-card-foreground shadow-2xl select-none"
+      className="fixed z-40 w-[min(240px,calc(100vw-16px))] rounded-lg border bg-card text-card-foreground shadow-md select-none"
       style={pos ? { left: pos.x, top: pos.y } : { right: 16, bottom: 16 }}
     >
       <div

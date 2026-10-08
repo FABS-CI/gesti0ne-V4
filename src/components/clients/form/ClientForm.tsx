@@ -345,7 +345,7 @@ export function ClientForm({ clientId }: ClientFormProps) {
         </div>
 
         {/* Barre d'actions sticky */}
-        <div className="sticky bottom-0 -mx-4 flex flex-wrap items-center justify-end gap-2 border-t bg-background/95 px-4 py-3 backdrop-blur sm:mx-0 sm:rounded-lg sm:border sm:px-4">
+        <div className="sticky bottom-0 -mx-4 flex flex-wrap items-center justify-end gap-2 border-t bg-background px-4 py-3 sm:mx-0 sm:rounded-lg sm:border sm:px-4">
           <Button
             type="button"
             variant="ghost"

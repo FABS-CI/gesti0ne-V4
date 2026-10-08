@@ -41,7 +41,7 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 text-center",
+        "flex flex-col items-center justify-center rounded-lg border border-dashed border-border/60 text-center",
         rich ? "gap-5 py-16 px-6" : "gap-3 py-10 px-4",
         className,
       )}
@@ -53,7 +53,7 @@ export function EmptyState({
               aria-hidden
               className="absolute inset-0 -m-3 rounded-full bg-primary/10 blur-2xl"
             />
-            <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-border/60 bg-card shadow-sm">
+            <div className="relative flex h-16 w-16 items-center justify-center rounded-md border border-border/60 bg-card">
               <Icon className="h-7 w-7 text-primary" aria-hidden />
             </div>
           </div>

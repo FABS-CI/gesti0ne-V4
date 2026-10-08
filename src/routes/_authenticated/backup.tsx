@@ -238,7 +238,7 @@ function BackupPage() {
             size="lg" 
             onClick={() => handleBackup("GLOBAL")} 
             disabled={running}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-sm"
           >
             {running ? (
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />

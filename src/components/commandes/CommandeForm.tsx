@@ -715,7 +715,7 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
       </div>
 
       {/* Barre récap mobile / tablette */}
-      <div className="2xl:hidden fixed inset-x-0 bottom-[calc(56px+env(safe-area-inset-bottom))] md:bottom-0 z-40 border-t bg-background/95 backdrop-blur p-3 space-y-2 shadow-lg">
+      <div className="2xl:hidden fixed inset-x-0 bottom-[calc(56px+env(safe-area-inset-bottom))] md:bottom-0 z-40 border-t bg-background p-3 space-y-2 shadow-lg">
         <div className="flex items-center justify-between text-xs">
           <span className="text-muted-foreground">
             {totalArticles} art. · Qté {totalQuantite}

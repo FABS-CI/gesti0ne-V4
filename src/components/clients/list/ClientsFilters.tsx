@@ -45,7 +45,7 @@ export function ClientsFilters(p: Props) {
     };
   return (
     <>
-      <div className="flex flex-wrap items-center gap-3 sticky top-0 z-20 rounded-xl border bg-card/95 p-3 shadow-sm backdrop-blur">
+      <div className="flex flex-wrap items-center gap-3 sticky top-0 z-20 rounded-lg border bg-card p-3">
         <div className="relative min-w-[200px] flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input

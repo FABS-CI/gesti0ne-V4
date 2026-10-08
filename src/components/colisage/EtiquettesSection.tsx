@@ -34,7 +34,7 @@ export function EtiquettesSection({ etiquettes, blReference }: EtiquettesSection
   };
 
   return (
-    <Card className="shadow-lg border-primary/20">
+    <Card className="shadow-sm border-primary/20">
       <CardHeader className="flex flex-row items-center justify-between print:hidden border-b pb-4">
         <div>
           <CardTitle className="text-xl font-bold text-primary">Étiquettes générées</CardTitle>
