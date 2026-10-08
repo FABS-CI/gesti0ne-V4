@@ -92,7 +92,6 @@ const MODULES: ModuleDef[] = [
       "/utilisateurs",
       "/import-donnees",
       "/exports",
-      "/roles-permissions",
       "/audit",
       "/exercices",
       "/profil",

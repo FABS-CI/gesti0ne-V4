@@ -187,7 +187,7 @@ export function SecurityDashboard() {
                 <Link to="/utilisateurs">Gérer les utilisateurs</Link>
               </Button>
               <Button asChild size="sm" variant="outline">
-                <Link to="/roles-permissions">Rôles & permissions</Link>
+                <Link to="/admin/roles-v3">Rôles & permissions</Link>
               </Button>
               <Button asChild size="sm" variant="outline">
                 <Link to="/audit">Journal d'audit</Link>

@@ -5,7 +5,7 @@
  * Codes de permission : `${sous_module}.${action}` (ex : `commandes.voir`).
  * Le seed produit `sous_module × action` = ~57 sous-modules × 20 actions.
  * Cette source TS sert :
- *  - à la matrice d'admin (`/roles-permissions`) pour afficher les libellés
+ *  - à la matrice d'admin (`/admin/roles-v3`) pour afficher les libellés
  *    et regrouper par module,
  *  - aux composants `<Can>` (autocomplétion des clés existantes).
  */
