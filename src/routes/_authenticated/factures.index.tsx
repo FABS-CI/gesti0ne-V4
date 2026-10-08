@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/common/PageHeader";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { ClientLink } from "@/components/common/ClientLink";
 import { createFileRoute } from "@tanstack/react-router";
@@ -227,16 +228,11 @@ function FacturesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-        <div className="min-w-0">
-          <h1 className="ds-page-title flex items-center gap-2">
-            <FileText className="h-6 w-6 shrink-0 text-primary" /> Factures
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Consultation — les factures sont générées automatiquement à la validation d'une commande
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        className="mb-0"
+        title="Factures"
+        description="Consultation — les factures sont générées automatiquement à la validation d'une commande"
+      />
 
       <FacturesKpis {...totals} />
 

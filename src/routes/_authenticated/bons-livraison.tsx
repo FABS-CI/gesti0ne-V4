@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/common/PageHeader";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
@@ -94,26 +95,20 @@ function BonsLivraisonListPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-primary/10 p-2">
-            <Truck className="h-6 w-6 text-primary" />
-          </div>
-          <div>
-            <h1 className="ds-page-title">Bons de livraison</h1>
-            <p className="text-sm text-muted-foreground">
-              Consultation — les BL sont générés automatiquement à la validation d'une commande
-            </p>
-          </div>
-        </div>
-        <Can permission="colisage.voir">
-          <Button asChild variant="outline">
-            <Link to="/colisage">
-              <Package className="mr-2 h-4 w-4" /> Aller au colisage
-            </Link>
-          </Button>
-        </Can>
-      </div>
+      <PageHeader
+        className="mb-0"
+        title="Bons de livraison"
+        description="Consultation — les BL sont générés automatiquement à la validation d'une commande"
+        actions={
+          <Can permission="colisage.voir">
+            <Button asChild variant="outline">
+              <Link to="/colisage">
+                <Package className="mr-2 h-4 w-4" /> Aller au colisage
+              </Link>
+            </Button>
+          </Can>
+        }
+      />
 
       <Card className="p-4">
         <div className="flex flex-wrap items-center gap-3">

@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/common/PageHeader";
 import { ClientLink } from "@/components/common/ClientLink";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
@@ -173,27 +174,25 @@ function RetoursListPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <RotateCcw className="h-6 w-6 text-primary" />
-          <div>
-            <h1 className="ds-page-title">Retours</h1>
-            <p className="text-sm text-muted-foreground">Gestion des retours produits</p>
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={onExport}>
-            <Download className="h-4 w-4 mr-2" />
-            Exporter PDF
-          </Button>
-          <Can permission="retours.creer">
-            <Button onClick={() => navigate({ to: "/retours/nouveau", search: { clientId: undefined, type_retour: "physique" } as any })}>
-              <Plus className="h-4 w-4 mr-2" />
-              Nouveau retour
+      <PageHeader
+        className="mb-0"
+        title="Retours"
+        description="Gestion des retours produits"
+        actions={
+          <>
+            <Button variant="outline" onClick={onExport}>
+              <Download className="h-4 w-4 mr-2" />
+              Exporter PDF
             </Button>
-          </Can>
-        </div>
-      </div>
+            <Can permission="retours.creer">
+              <Button onClick={() => navigate({ to: "/retours/nouveau", search: { clientId: undefined, type_retour: "physique" } as any })}>
+                <Plus className="h-4 w-4 mr-2" />
+                Nouveau retour
+              </Button>
+            </Can>
+          </>
+        }
+      />
 
       <div className="rounded-md border bg-card p-4 space-y-4">
         <div className="flex flex-wrap gap-3">
