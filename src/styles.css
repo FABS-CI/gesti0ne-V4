@@ -392,3 +392,19 @@ a[href*="lovable.dev"][target="_blank"],
     min-height: 44px;
   }
 }
+
+/* Icônes monochromes dans tout l'ERP : une icône ne porte jamais de couleur propre,
+   elle prend la couleur du texte qui l'entoure. Exception explicite : data-status-icon
+   (icône qui signale un état ou une alerte). */
+svg.lucide:not([data-status-icon]):is(
+  [class*="text-primary"], [class*="text-success"], [class*="text-warning"],
+  [class*="text-destructive"], [class*="text-info"], [class*="text-accent"],
+  [class*="text-fabsci"], [class*="text-orange-"], [class*="text-amber-"],
+  [class*="text-yellow-"], [class*="text-green-"], [class*="text-emerald-"],
+  [class*="text-red-"], [class*="text-rose-"], [class*="text-blue-"],
+  [class*="text-sky-"], [class*="text-violet-"], [class*="text-purple-"],
+  [class*="text-indigo-"], [class*="text-teal-"], [class*="text-cyan-"],
+  [class*="text-pink-"], [class*="text-lime-"]
+) {
+  color: inherit !important;
+}

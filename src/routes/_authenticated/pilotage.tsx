@@ -6,13 +6,11 @@ import {
   ArrowRight,
   Boxes,
   ClipboardList,
-  Gauge,
   PackageOpen,
   RefreshCw,
   RotateCcw,
   Truck,
   Wallet,
-  Lightbulb,
 } from "lucide-react";
 
 import { useExerciceConsulteId } from "@/contexts/ExerciceContext";
@@ -80,7 +78,7 @@ function Pilotage() {
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="ds-page-title flex items-center gap-2">
-            <Gauge className="h-6 w-6 text-primary" /> Centre de pilotage
+            Centre de pilotage
           </h1>
           <p className="text-sm text-muted-foreground">
             Que se passe-t-il aujourd'hui ? {data ? `— situation au ${fmtDate(data.today)}` : ""}
@@ -95,7 +93,7 @@ function Pilotage() {
       {isError ? (
         <Card>
           <CardContent className="flex flex-col items-center gap-3 py-12 text-center">
-            <AlertTriangle className="h-8 w-8 text-destructive" />
+            <AlertTriangle data-status-icon className="h-8 w-8 text-destructive" />
             <p className="font-medium">Impossible de charger le centre de pilotage</p>
             <p className="text-sm text-muted-foreground">{error?.message}</p>
             <Button onClick={() => refetch()}>Réessayer</Button>
@@ -208,7 +206,7 @@ function CockpitContent({ data }: { data: CockpitData }) {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
-            <Lightbulb className="h-5 w-5 text-warning" /> Actions recommandées
+            Actions recommandées
           </CardTitle>
         </CardHeader>
         <CardContent>
