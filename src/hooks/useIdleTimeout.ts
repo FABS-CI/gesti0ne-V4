@@ -10,6 +10,10 @@ export function useIdleTimeout() {
   const countdownInterval = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const [showWarning, setShowWarning] = useState(false);
   const [countdown, setCountdown] = useState(120);
+  const warningRef = useRef(false);
+  useEffect(() => {
+    warningRef.current = showWarning;
+  }, [showWarning]);
 
   const handleLogout = useCallback(() => {
     clearTimeout(idleTimer.current);
@@ -51,7 +55,7 @@ export function useIdleTimeout() {
     const events = ["mousedown", "mousemove", "keydown", "scroll", "touchstart", "click"];
     const onActivity = () => {
       // Ne pas réinitialiser tant que l'avertissement est affiché (sauf via "Rester connecté")
-      if (!showWarning) resetTimers();
+      if (!warningRef.current) resetTimers();
     };
     events.forEach((e) => document.addEventListener(e, onActivity, { passive: true }));
     resetTimers();
@@ -61,7 +65,7 @@ export function useIdleTimeout() {
       clearTimeout(warningTimer.current);
       clearInterval(countdownInterval.current);
     };
-  }, [resetTimers, showWarning]);
+  }, [resetTimers]);
 
   return { showWarning, countdown, extendSession, handleLogout };
 }
