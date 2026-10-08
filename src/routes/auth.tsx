@@ -237,7 +237,14 @@ function AuthPage() {
       setTimeout(prefetchHotRoutes, 0);
 
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Échec de l'authentification");
+      const msg = err instanceof Error ? err.message : "";
+      setError(
+        /invalid login credentials/i.test(msg)
+          ? "Adresse e-mail ou mot de passe incorrect."
+          : /email not confirmed/i.test(msg)
+            ? "Adresse e-mail non confirmée."
+            : msg || "Échec de l'authentification",
+      );
     } finally {
       setSubmitting(false);
     }
