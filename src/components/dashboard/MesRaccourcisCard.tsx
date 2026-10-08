@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Pin, PinOff, X, Settings2, Sparkles } from "lucide-react";
+import { Pin, PinOff, X, Settings2, Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +23,7 @@ export function MesRaccourcisCard() {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
-          <Sparkles className="h-4 w-4 text-primary" />
+          <Star className="h-4 w-4 text-primary" />
           Mes raccourcis
         </CardTitle>
         <Button variant="ghost" size="sm" onClick={() => setOpen(true)}>

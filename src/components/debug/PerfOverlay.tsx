@@ -157,7 +157,7 @@ export function PerfOverlay() {
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-        <strong style={{ color: "#38bdf8" }}>⚡ perf overlay</strong>
+        <strong style={{ color: "#38bdf8" }}> perf overlay</strong>
         <span style={{ opacity: 0.6 }}>Ctrl+Shift+P</span>
       </div>
       <div style={{ marginBottom: 4 }}>

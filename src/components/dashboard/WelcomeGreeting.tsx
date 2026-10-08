@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useUserRoles } from "@/hooks/use-user-roles";
 import { supabase } from "@/integrations/supabase/client";
-import { Sun, CloudSun, Moon, Sparkles } from "lucide-react";
+import { Sun, CloudSun, Moon, Star } from "lucide-react";
 import { useAvatarUrl } from "@/hooks/use-avatar-url";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -111,7 +111,7 @@ export function WelcomeGreeting() {
           </p>
           {pick ? (
             <p className="mt-0.5 inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              <Sparkles className="h-3 w-3" aria-hidden />
+              <Star className="h-3 w-3" aria-hidden />
               {pick.roleLabel}
             </p>
           ) : null}

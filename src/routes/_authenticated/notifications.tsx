@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Bell, Check, CheckCheck, RefreshCw, Trash2, Wand2 } from "lucide-react";
+import { Bell, Check, CheckCheck, RefreshCw, Trash2, ListChecks } from "lucide-react";
 import { toast } from "sonner";
 
 import { NotificationPreferencesPanel } from "@/components/NotificationPreferencesPanel";
@@ -133,7 +133,7 @@ function NotificationsCentre() {
             Actualiser
           </Button>
           <Button variant="outline" onClick={() => generer.mutate()} disabled={generer.isPending}>
-            <Wand2 className="mr-2 h-4 w-4" />
+            <ListChecks className="mr-2 h-4 w-4" />
             {generer.isPending ? "Analyse…" : "Générer alertes"}
           </Button>
           <Button

@@ -693,11 +693,11 @@ function FeuilleTourneePage() {
           )}
           <div className="grid grid-cols-2 gap-2 text-[10px] text-muted-foreground">
             <div className="border rounded p-2 min-h-[50px]">
-              ☐ Incident&nbsp;&nbsp;&nbsp;☐ Produit manquant&nbsp;&nbsp;&nbsp;☐ Produit cassé
+               Incident&nbsp;&nbsp;&nbsp; Produit manquant&nbsp;&nbsp;&nbsp; Produit cassé
               <br />
-              ☐ Refus client&nbsp;&nbsp;&nbsp;☐ Retour&nbsp;&nbsp;&nbsp;☐ Paiement partiel
+               Refus client&nbsp;&nbsp;&nbsp; Retour&nbsp;&nbsp;&nbsp; Paiement partiel
               <br />
-              ☐ Paiement refusé
+               Paiement refusé
             </div>
             <div className="border rounded p-2 min-h-[50px]">
               <span className="italic">Autres remarques :</span>

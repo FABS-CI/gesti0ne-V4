@@ -226,7 +226,7 @@ function RpcErrorsPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
-              Total ({periode}) {rows.length >= seuil && "🚨"}
+              Total ({periode}) {rows.length >= seuil && ""}
             </CardTitle>
           </CardHeader>
           <CardContent
@@ -251,7 +251,7 @@ function RpcErrorsPage() {
         </CardHeader>
         <CardContent>
           {rows.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Aucune erreur enregistrée ✅</p>
+            <p className="text-sm text-muted-foreground">Aucune erreur enregistrée </p>
           ) : (
             <Table>
               <TableHeader>

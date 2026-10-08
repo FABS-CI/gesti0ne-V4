@@ -103,24 +103,24 @@ export function FNESettingsPanel() {
 
   const runPing = async () => {
     const r = await pingDGI();
-    setPingResult(`${r.ok ? "✓" : "✗"} ${r.message} (${r.elapsed_ms} ms)`);
+    setPingResult(`${r.ok ? "" : ""} ${r.message} (${r.elapsed_ms} ms)`);
   };
 
   const runCertCheck = () => {
     const exp = (draft.certificat_expiration ?? settings.certificat_expiration ?? "").trim();
     if (!exp) {
-      setCertResult("✗ Aucune date d'expiration configurée");
+      setCertResult(" Aucune date d'expiration configurée");
       return;
     }
     const d = new Date(exp);
     if (Number.isNaN(d.getTime())) {
-      setCertResult("✗ Date invalide (format AAAA-MM-JJ)");
+      setCertResult(" Date invalide (format AAAA-MM-JJ)");
       return;
     }
     const days = Math.floor((d.getTime() - Date.now()) / 86400000);
-    if (days < 0) setCertResult(`✗ Certificat expiré depuis ${Math.abs(days)} j`);
+    if (days < 0) setCertResult(` Certificat expiré depuis ${Math.abs(days)} j`);
     else if (days <= 30) setCertResult(`! Certificat expire dans ${days} j`);
-    else setCertResult(`✓ Certificat valide (${days} j restants)`);
+    else setCertResult(` Certificat valide (${days} j restants)`);
   };
 
   const runTest = async (template: "B2C" | "B2B" | "B2G") => {
@@ -142,9 +142,9 @@ export function FNESettingsPanel() {
           },
         ],
       });
-      setTestResult(`✓ Certifiée — code ${r.code_dgi}`);
+      setTestResult(` Certifiée — code ${r.code_dgi}`);
     } catch (e) {
-      setTestResult(`✗ ${(e as Error).message}`);
+      setTestResult(` ${(e as Error).message}`);
     }
   };
 
