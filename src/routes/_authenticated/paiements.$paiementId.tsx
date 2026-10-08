@@ -13,7 +13,7 @@ import {
   STATUT_PAIEMENT_LABEL,
   supprimerPaiementDefinitif,
 } from "@/lib/paiements-api";
-import { formatFCFA } from "@/lib/format";
+import { formatDate, formatFCFA } from "@/lib/format";
 import { invalidatePaiement } from "@/lib/cache-invalidation";
 import { useUserRoles } from "@/hooks/use-user-roles";
 import { useNavigate } from "@tanstack/react-router";
@@ -45,7 +45,7 @@ export const Route = createFileRoute("/_authenticated/paiements/$paiementId")({
 });
 
 function frDate(d: string | null | undefined) {
-  return d ? new Date(d).toLocaleDateString("fr-FR") : "—";
+  return d ? formatDate(d) : "—";
 }
 
 function PaiementDetailPage() {

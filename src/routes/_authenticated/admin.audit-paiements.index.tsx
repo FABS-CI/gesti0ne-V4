@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ShieldAlert, Search } from "lucide-react";
 
 import { listPaiementAnnulationsAudit } from "@/lib/paiements-api";
-import { formatFCFA } from "@/lib/format";
+import { formatDateTime, formatFCFA } from "@/lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/_authenticated/admin/audit-paiements/")({
 });
 
 function frDateTime(d: string) {
-  return new Date(d).toLocaleString("fr-FR");
+  return formatDateTime(d);
 }
 
 function AuditPaiementsPage() {

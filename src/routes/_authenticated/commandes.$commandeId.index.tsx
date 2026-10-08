@@ -22,7 +22,7 @@ import {
   STATUT_LABEL,
 } from "@/lib/commandes-api";
 import { friendlyError } from "@/lib/friendly-error";
-import { formatFCFA } from "@/lib/format";
+import { formatDate, formatFCFA } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -58,7 +58,7 @@ export const Route = createFileRoute("/_authenticated/commandes/$commandeId/")({
 
 
 function frDate(d: string | null | undefined) {
-  return d ? new Date(d).toLocaleDateString("fr-FR") : "—";
+  return d ? formatDate(d) : "—";
 }
 
 function CommandeDetailPage() {

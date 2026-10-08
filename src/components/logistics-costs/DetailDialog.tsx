@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { Printer } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -79,7 +80,7 @@ export function DetailDialog({
             {row.validation_at && (
               <div>
                 <span className="text-muted-foreground">Validé le : </span>
-                {new Date(row.validation_at).toLocaleString("fr-FR")}
+                {formatDateTime(row.validation_at)}
               </div>
             )}
           </div>

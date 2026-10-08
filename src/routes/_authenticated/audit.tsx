@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { History, ShieldAlert, Download, Circle } from "lucide-react";
@@ -351,7 +352,7 @@ function AuditPage() {
       "journal-audit",
       ["Date", "Utilisateur", "Action", "Module", "Référence"],
       rows.map((r) => [
-        new Date(r.occurred_at).toLocaleString("fr-FR"),
+        formatDateTime(r.occurred_at),
         r.user_email ?? "",
         ACTION_LABEL[r.action] ?? r.action,
         r.table_name,
@@ -526,7 +527,7 @@ function AuditPage() {
                       </div>
                     </div>
                     <div className="whitespace-nowrap text-xs text-muted-foreground">
-                      {new Date(a.created_at).toLocaleString("fr-FR")}
+                      {formatDateTime(a.created_at)}
                     </div>
                   </li>
                 ))}

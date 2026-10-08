@@ -1,3 +1,4 @@
+import { formatDate } from "@/lib/format";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -186,7 +187,7 @@ function InventaireDetailPage() {
             <h1 className="ds-page-title">{inv.numero}</h1>
             <p className="text-sm text-muted-foreground capitalize">
               Inventaire {inv.type_inventaire} ·{" "}
-              {new Date(inv.date_inventaire).toLocaleDateString("fr-FR")} ·{" "}
+              {formatDate(inv.date_inventaire)} ·{" "}
               {inv.depots?.nom ?? "Tous dépôts"}
             </p>
           </div>

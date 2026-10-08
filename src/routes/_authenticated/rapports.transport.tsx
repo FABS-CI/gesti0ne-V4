@@ -32,7 +32,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
-import { formatFCFA } from "@/lib/format";
+import { formatDate, formatFCFA } from "@/lib/format";
 import { exportCsv } from "@/lib/export-csv";
 import { useExerciceConsulteId } from "@/contexts/ExerciceContext";
 import {
@@ -68,7 +68,7 @@ export const Route = createFileRoute("/_authenticated/rapports/transport")({
 });
 
 const frDate = (v?: string | null) =>
-  v ? new Date(v).toLocaleDateString("fr-FR") : "—";
+  v ? formatDate(v) : "—";
 
 const LABEL_TYPE: Record<string, string> = {
   livraison: "Livraison",

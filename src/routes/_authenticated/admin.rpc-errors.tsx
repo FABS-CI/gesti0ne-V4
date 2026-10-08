@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { useEffect, useMemo, useRef } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
@@ -267,7 +268,7 @@ function RpcErrorsPage() {
                 {rows.map((r) => (
                   <TableRow key={r.id}>
                     <TableCell className="whitespace-nowrap text-xs">
-                      {new Date(r.created_at).toLocaleString("fr-FR")}
+                      {formatDateTime(r.created_at)}
                     </TableCell>
                     <TableCell className="font-mono text-xs">{r.query_key ?? "—"}</TableCell>
                     <TableCell>

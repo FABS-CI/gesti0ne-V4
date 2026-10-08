@@ -17,7 +17,7 @@ import {
 import { usePdfDownload } from "@/hooks/use-pdf-download";
 
 import { supabase } from "@/integrations/supabase/client";
-import { formatFCFA } from "@/lib/format";
+import { formatDate, formatFCFA } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -39,7 +39,7 @@ export const Route = createFileRoute("/_authenticated/proformas/$proformaId")({
 });
 
 function frDate(d: string | null | undefined) {
-  return d ? new Date(d).toLocaleDateString("fr-FR") : "—";
+  return d ? formatDate(d) : "—";
 }
 
 async function getProforma(id: string) {

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { FileText, Search, Download, FileDown, Bug } from "lucide-react";
 import { toast } from "sonner";
 
-import { formatFCFA } from "@/lib/format";
+import { formatDateTime, formatFCFA } from "@/lib/format";
 import { exportCsv } from "@/lib/export-csv";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { buildEtatCompteClientPDF } from "@/lib/pdf/etat-compte-builder";
@@ -102,7 +102,7 @@ function EtatComptePage() {
           { label: "Nombre de clients", value: String(clients.length) },
           { label: "Clients débiteurs", value: String(nbDebiteurs) },
           { label: "Total impayé (FCFA)", value: formatFCFA(totalImpaye) },
-          { label: "Date d'export", value: new Date().toLocaleString("fr-FR") },
+          { label: "Date d'export", value: formatDateTime(new Date()) },
         ],
       },
     );
@@ -137,7 +137,7 @@ function EtatComptePage() {
         { label: "Clients débiteurs", valeur: String(nbDebiteurs) },
         { label: "Clients soldés", valeur: String(nbSoldes) },
         { label: "Total dû", valeur: `${formatFCFA(totalDuExport)} FCFA` },
-        { label: "Généré le", valeur: new Date().toLocaleString("fr-FR") },
+        { label: "Généré le", valeur: formatDateTime(new Date()) },
       ],
       filename: `etat_compte_clients_${statutFilter}`,
     });

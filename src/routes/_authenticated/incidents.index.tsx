@@ -1,3 +1,4 @@
+import { formatDate } from "@/lib/format";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -62,7 +63,7 @@ export const Route = createFileRoute("/_authenticated/incidents/")({
 const PAGE_SIZE = 20;
 
 function frDate(d: string | null | undefined) {
-  return d ? new Date(d).toLocaleDateString("fr-FR") : "—";
+  return d ? formatDate(d) : "—";
 }
 
 function IncidentsPage() {
@@ -161,7 +162,7 @@ function IncidentsPage() {
                       statut: statut !== "all" ? statut : undefined,
                       type: type !== "all" ? type : undefined,
                       depot_id: depotId !== "all" ? depotId : undefined,
-                      periodeLabel: `Extraction du ${new Date().toLocaleDateString("fr-FR")}`,
+                      periodeLabel: `Extraction du ${formatDate(new Date())}`,
                       filtresLabel: filtres || undefined,
                     }),
                   { title: "Rapport d'incidents", filename: "Rapport_incidents.pdf" },

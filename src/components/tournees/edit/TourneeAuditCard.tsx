@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type AuditEntry = {
@@ -24,7 +25,7 @@ export function TourneeAuditCard({ rows }: { rows: AuditEntry[] }) {
                 <div className="flex items-center justify-between">
                   <span className="font-medium capitalize">{e.action}</span>
                   <span className="text-muted-foreground">
-                    {new Date(e.created_at).toLocaleString("fr-FR")}
+                    {formatDateTime(e.created_at)}
                   </span>
                 </div>
                 <div className="text-muted-foreground">{e.actor_email ?? "—"}</div>

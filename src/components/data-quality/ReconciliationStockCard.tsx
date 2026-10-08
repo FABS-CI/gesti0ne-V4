@@ -1,3 +1,4 @@
+import { formatDate } from "@/lib/format";
 import { useQuery } from "@tanstack/react-query";
 import { Boxes, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -81,7 +82,7 @@ export function ReconciliationStockCard() {
                           <TableCell className="text-right">{qte(d.stock_mouvements)}</TableCell>
                           <TableCell className="text-right text-destructive">{signe(d.ecart)}</TableCell>
                           <TableCell>
-                            {new Date(d.dernier_mouvement).toLocaleDateString("fr-FR")}
+                            {formatDate(d.dernier_mouvement)}
                             {d.document_reference ? ` · ${d.document_reference}` : ""}
                           </TableCell>
                         </TableRow>

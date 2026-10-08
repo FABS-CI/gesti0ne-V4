@@ -32,7 +32,7 @@ import {
   STATUT_FNE_COLOR,
   type FNEStatus,
 } from "@/lib/fne-api";
-import { formatFCFA } from "@/lib/format";
+import { formatDateTime, formatFCFA } from "@/lib/format";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 import { friendlyError } from "@/lib/friendly-error";
 
@@ -226,15 +226,15 @@ function FNEDetail() {
               </dd>
               <dt className="text-muted-foreground">Créée le</dt>
               <dd className="col-span-2">
-                {f.created_at ? new Date(f.created_at).toLocaleString("fr-FR") : "—"}
+                {f.created_at ? formatDateTime(f.created_at) : "—"}
               </dd>
               <dt className="text-muted-foreground">Soumise le</dt>
               <dd className="col-span-2">
-                {f.submitted_at ? new Date(f.submitted_at).toLocaleString("fr-FR") : "—"}
+                {f.submitted_at ? formatDateTime(f.submitted_at) : "—"}
               </dd>
               <dt className="text-muted-foreground">Certifiée le</dt>
               <dd className="col-span-2">
-                {f.validated_at ? new Date(f.validated_at).toLocaleString("fr-FR") : "—"}
+                {f.validated_at ? formatDateTime(f.validated_at) : "—"}
               </dd>
               {f.error_message && (
                 <>

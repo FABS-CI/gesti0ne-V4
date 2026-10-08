@@ -1,3 +1,4 @@
+import { formatDate } from "@/lib/format";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
@@ -151,7 +152,7 @@ function FileStoragePage() {
                       {formatSize(f.metadata?.size ?? 0)}
                     </TableCell>
                     <TableCell>
-                      {f.created_at ? new Date(f.created_at).toLocaleDateString("fr-FR") : "—"}
+                      {f.created_at ? formatDate(f.created_at) : "—"}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">

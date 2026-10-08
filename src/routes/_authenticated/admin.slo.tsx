@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { AlertTriangle, Database, Activity, Zap, RefreshCw, ExternalLink } from "lucide-react";
@@ -197,7 +198,7 @@ function SloPage() {
               {(alertsQ.data ?? []).map((a) => (
                 <TableRow key={a.id}>
                   <TableCell className="text-xs">
-                    {new Date(a.created_at).toLocaleString("fr-FR")}
+                    {formatDateTime(a.created_at)}
                   </TableCell>
                   <TableCell>
                     <Badge
@@ -237,7 +238,7 @@ function SloPage() {
 
       {m?.generated_at && (
         <p className="text-xs text-muted-foreground text-right">
-          Dernière mesure : {new Date(m.generated_at).toLocaleString("fr-FR")}
+          Dernière mesure : {formatDateTime(m.generated_at)}
         </p>
       )}
     </div>

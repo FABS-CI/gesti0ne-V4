@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -467,7 +468,7 @@ function VerificationPage() {
 
               {data.checked_at && (
                 <p className="text-xs text-muted-foreground text-center">
-                  Dernière vérification : {new Date(data.checked_at).toLocaleString('fr-FR')}
+                  Dernière vérification : {formatDateTime(data.checked_at)}
                 </p>
               )}
 

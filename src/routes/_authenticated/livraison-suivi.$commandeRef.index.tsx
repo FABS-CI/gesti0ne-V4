@@ -1,3 +1,4 @@
+import { formatDate, formatDateTime } from "@/lib/format";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
@@ -309,9 +310,9 @@ function SuiviDetail() {
             label="Date de livraison"
             value={
               colis?.bl_date_livraison
-                ? new Date(colis.bl_date_livraison).toLocaleDateString("fr-FR")
+                ? formatDate(colis.bl_date_livraison)
                 : colis?.date_envoi
-                  ? new Date(colis.date_envoi).toLocaleDateString("fr-FR")
+                  ? formatDate(colis.date_envoi)
                   : null
             }
           />
@@ -621,7 +622,7 @@ function HistoRow({
         <div className="text-xs text-muted-foreground flex gap-3 mt-1">
           <span className="inline-flex items-center gap-1">
             <Clock className="h-3 w-3" />
-            {new Date(h.created_at).toLocaleString("fr-FR")}
+            {formatDateTime(h.created_at)}
           </span>
           {h.user_nom && (
             <span className="inline-flex items-center gap-1">

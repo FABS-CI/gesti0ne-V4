@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -454,7 +455,7 @@ function SanteSystemePage() {
           <CardContent className="space-y-2 text-sm">
             {backups.data?.list[0] ? (
               <>
-                <Row label="Dernière" value={new Date(backups.data.list[0].created_at).toLocaleString("fr-FR")} />
+                <Row label="Dernière" value={formatDateTime(backups.data.list[0].created_at)} />
                 <Row label="Statut" value={backups.data.list[0].statut ?? "—"} />
                 <Row label="Taille" value={formatBytes(backups.data.list[0].taille_octets)} />
               </>
@@ -462,7 +463,7 @@ function SanteSystemePage() {
               <div className="text-muted-foreground">Aucune sauvegarde enregistrée</div>
             )}
             {backups.data?.next?.next_run_at && (
-              <Row label="Prochaine" value={new Date(backups.data.next.next_run_at).toLocaleString("fr-FR")} />
+              <Row label="Prochaine" value={formatDateTime(backups.data.next.next_run_at)} />
             )}
           </CardContent>
         </Card>
@@ -499,7 +500,7 @@ function SanteSystemePage() {
                   <div className="flex flex-col items-end gap-1">
                     <Badge variant={severityVariant(a.severity)}>{a.severity ?? "info"}</Badge>
                     <span className="text-xs text-muted-foreground">
-                      {new Date(a.created_at).toLocaleString("fr-FR")}
+                      {formatDateTime(a.created_at)}
                     </span>
                   </div>
                 </div>
@@ -531,7 +532,7 @@ function SanteSystemePage() {
                 {errors.data!.map((e: any) => (
                   <TableRow key={e.id}>
                     <TableCell className="whitespace-nowrap text-xs">
-                      {new Date(e.occurred_at).toLocaleString("fr-FR")}
+                      {formatDateTime(e.occurred_at)}
                     </TableCell>
                     <TableCell className="text-xs">{e.module ?? "—"}</TableCell>
                     <TableCell className="text-xs">{e.action ?? "—"}</TableCell>
@@ -565,7 +566,7 @@ function SanteSystemePage() {
               <TableBody>
                 {(lastLogins.data ?? []).map((l: any) => (
                   <TableRow key={l.id}>
-                    <TableCell className="text-xs">{new Date(l.created_at).toLocaleString("fr-FR")}</TableCell>
+                    <TableCell className="text-xs">{formatDateTime(l.created_at)}</TableCell>
                     <TableCell className="text-xs">{l.user_id ?? "—"}</TableCell>
                     <TableCell className="text-xs">{l.ip ?? "—"}</TableCell>
                     <TableCell>

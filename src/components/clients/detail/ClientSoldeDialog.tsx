@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { formatFCFA } from "@/lib/format";
+import { formatDate, formatFCFA } from "@/lib/format";
 import type { Client, ClientRelations } from "@/lib/clients-api";
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
 
 function frDate(d: string | null | undefined): string {
   if (!d) return "—";
-  return new Date(d).toLocaleDateString("fr-FR");
+  return formatDate(d);
 }
 
 export function ClientSoldeDialog({ open, onOpenChange, client, rel }: Props) {

@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -30,7 +31,7 @@ export const Route = createFileRoute("/_authenticated/utilisateurs/production")(
 type Row = Awaited<ReturnType<typeof listUsersForProduction>>[number];
 
 function fmtDate(v: string | null | undefined) {
-  return v ? new Date(v).toLocaleString("fr-FR") : "—";
+  return v ? formatDateTime(v) : "—";
 }
 
 function UtilisateursProductionPage() {
@@ -119,7 +120,7 @@ function UtilisateursProductionPage() {
           { label: "Comptes actifs", value: String(stats.actifs) },
           { label: "Comptes inactifs", value: String(stats.inactifs) },
           { label: "Rôles distincts", value: String(Object.keys(stats.perRole).length) },
-          { label: "Généré le", value: new Date().toLocaleString("fr-FR") },
+          { label: "Généré le", value: formatDateTime(new Date()) },
         ],
       },
     );

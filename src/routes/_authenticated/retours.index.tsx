@@ -1,3 +1,4 @@
+import { formatDate } from "@/lib/format";
 import { PageHeader } from "@/components/common/PageHeader";
 import { ClientLink } from "@/components/common/ClientLink";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
@@ -66,7 +67,7 @@ export const Route = createFileRoute("/_authenticated/retours/")({
 });
 
 function frDate(d: string | null | undefined) {
-  return d ? new Date(d).toLocaleDateString("fr-FR") : "—";
+  return d ? formatDate(d) : "—";
 }
 
 function RetoursListPage() {
@@ -306,7 +307,7 @@ function RetoursListPage() {
                         {r.numero || r.reference}
                       </TableCell>
                       <TableCell className="text-xs whitespace-nowrap">
-                        {new Date(r.date_retour).toLocaleDateString("fr-FR")}
+                        {formatDate(r.date_retour)}
                       </TableCell>
                       <TableCell>
                         <div className="font-medium text-sm leading-tight break-words max-w-[200px]">

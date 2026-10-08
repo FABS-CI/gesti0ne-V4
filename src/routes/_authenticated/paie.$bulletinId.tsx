@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Calendar, FileDown, Loader2, Minus, User, Wallet } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
-import { formatFCFA } from "@/lib/format";
+import { formatDate, formatFCFA } from "@/lib/format";
 import {
   generateBulletinPaieCIPDF,
   bulletinFileName,
@@ -51,7 +51,7 @@ async function getBulletin(id: string) {
 }
 
 function frDate(d: string | null | undefined) {
-  return d ? new Date(d).toLocaleDateString("fr-FR") : "—";
+  return d ? formatDate(d) : "—";
 }
 
 function BulletinDetailPage() {

@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -1203,7 +1204,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 function fmt(iso: string | null): string {
   if (!iso) return "—";
   try {
-    return new Date(iso).toLocaleString("fr-FR");
+    return formatDateTime(iso);
   } catch {
     return iso;
   }

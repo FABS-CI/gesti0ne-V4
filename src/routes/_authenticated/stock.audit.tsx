@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ShieldCheck, AlertTriangle, RefreshCw, CheckCircle2 } from "lucide-react";
@@ -116,7 +117,7 @@ function StockAuditPage() {
               />
               <Kpi
                 label="Généré le"
-                value={new Date(r.generated_at).toLocaleString("fr-FR")}
+                value={formatDateTime(r.generated_at)}
               />
             </div>
           </CardContent>

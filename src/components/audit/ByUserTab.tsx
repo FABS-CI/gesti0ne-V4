@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format";
 import React from "react";
 import {
   Table,
@@ -42,7 +43,7 @@ const Row = React.memo(function Row({
         </div>
       </TableCell>
       <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
-        {new Date(u.last).toLocaleString("fr-FR")}
+        {formatDateTime(u.last)}
       </TableCell>
       <TableCell>
         <Button variant="outline" size="sm" onClick={() => onView(u.email)}>

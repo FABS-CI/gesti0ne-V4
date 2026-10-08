@@ -27,7 +27,7 @@ import {
   RETOUR_STATUS_META,
   STATUT_FACTURE_LABEL,
 } from "@/lib/factures-api";
-import { formatFCFA } from "@/lib/format";
+import { formatDate, formatFCFA } from "@/lib/format";
 import { fileNameFor } from "@/lib/pdf/fabsTemplates";
 import { generateUnifiedCommercialPDF } from "@/lib/pdf/unified-generator";
 import {
@@ -70,7 +70,7 @@ export const Route = createFileRoute("/_authenticated/factures/$factureId")({
 });
 
 function frDate(d: string | null | undefined) {
-  return d ? new Date(d).toLocaleDateString("fr-FR") : "—";
+  return d ? formatDate(d) : "—";
 }
 
 function FactureDetailPage() {

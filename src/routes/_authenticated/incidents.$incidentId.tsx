@@ -1,3 +1,4 @@
+import { formatDate } from "@/lib/format";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -55,7 +56,7 @@ export const Route = createFileRoute("/_authenticated/incidents/$incidentId")({
 });
 
 function frDate(d: string | null | undefined) {
-  return d ? new Date(d).toLocaleDateString("fr-FR") : "—";
+  return d ? formatDate(d) : "—";
 }
 
 function IncidentDetailPage() {

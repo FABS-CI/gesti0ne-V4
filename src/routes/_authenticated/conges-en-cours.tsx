@@ -131,7 +131,7 @@ function CongesEnCoursPage() {
       pageTitle: "EMPLOYÉS ACTUELLEMENT EN CONGÉ",
       summary: [
         { label: "Effectif en congé", value: String(sorted.length) },
-        { label: "Date d'édition", value: new Date().toLocaleDateString("fr-FR") },
+        { label: "Date d'édition", value: formatDate(new Date()) },
       ],
     });
   }

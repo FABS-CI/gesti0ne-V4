@@ -44,7 +44,7 @@ import {
   verrouillerInventaire,
   deverrouillerInventaire,
 } from "@/lib/inventaires-api";
-import { formatFCFA } from "@/lib/format";
+import { formatDate, formatFCFA } from "@/lib/format";
 import { useExerciceConsulteId } from "@/contexts/ExerciceContext";
 import { describeSupabaseError } from "@/lib/rbac-api";
 
@@ -329,7 +329,7 @@ function InventairesPage() {
                       <TableCell className="font-mono text-xs">{i.numero}</TableCell>
                       <TableCell className="capitalize">{i.type_inventaire}</TableCell>
                       <TableCell>
-                        {new Date(i.date_inventaire).toLocaleDateString("fr-FR")}
+                        {formatDate(i.date_inventaire)}
                       </TableCell>
                       <TableCell>{i.depots?.nom ?? "—"}</TableCell>
                       <TableCell className="text-right">{i.nb_produits}</TableCell>
