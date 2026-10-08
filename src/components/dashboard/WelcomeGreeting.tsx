@@ -1,47 +1,20 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
+import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
-import { useUserRoles } from "@/hooks/use-user-roles";
 import { supabase } from "@/integrations/supabase/client";
-import { Sun, CloudSun, Moon, Star } from "lucide-react";
-import { useAvatarUrl } from "@/hooks/use-avatar-url";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  pickWelcomeMessage,
-  roleKeyFromAppRoles,
-  type WelcomePick,
-} from "@/lib/welcome-messages";
+import { formatDateLong } from "@/lib/format";
+import { usePermissions } from "@/hooks/use-permissions";
 
-function getGreeting(hour: number) {
-  if (hour >= 5 && hour < 12) {
-    return {
-      Icon: Sun,
-      salutation: (name: string) => `Bonjour, ${name}`,
-      message: "Excellente journée de travail.",
-                };
-  }
-  if (hour >= 12 && hour < 18) {
-    return {
-      Icon: CloudSun,
-      salutation: (name: string) => `Bon après-midi, ${name}`,
-      message: "Heureux de vous retrouver — bonne continuation.",
-                };
-  }
-  return {
-    Icon: Moon,
-    salutation: (name: string) => `Bonsoir, ${name}`,
-    message: "Bienvenue dans GESTI-one — agréable soirée de travail.",
-          };
-}
+type Props = {
+  nbRetards?: number;
+  nbStockBas?: number;
+};
 
-export function WelcomeGreeting() {
+/** Bandeau d'information : prénom, date, et points en attente (données déjà chargées). */
+export function WelcomeGreeting({ nbRetards = 0, nbStockBas = 0 }: Props) {
   const { user } = useAuth();
-  const [hour, setHour] = useState(() => new Date().getHours());
-
-  useEffect(() => {
-    const id = setInterval(() => setHour(new Date().getHours()), 60_000);
-    return () => clearInterval(id);
-  }, []);
+  const { has } = usePermissions();
 
   const { data: profile } = useQuery({
     queryKey: ["profile-name", user?.id],
@@ -56,74 +29,38 @@ export function WelcomeGreeting() {
       return data;
     },
   });
-  const { data: avatarUrl } = useAvatarUrl(profile?.avatar_url);
 
   const name = useMemo(() => {
     const meta = (user?.user_metadata ?? {}) as Record<string, unknown>;
-    const candidates = [
-      profile?.nom_complet,
-      meta.prenom,
-      meta.first_name,
-      meta.full_name,
-      meta.name,
-      user?.email?.split("@")[0],
-    ];
-    const found = candidates.find((v): v is string => typeof v === "string" && v.trim().length > 0);
-    const raw = found ?? "Utilisateur";
-    // Prénom uniquement pour un rendu naturel
-    return raw.split(/\s+/)[0];
+    const found = [profile?.nom_complet, meta.prenom, meta.first_name, meta.full_name, meta.name, user?.email?.split("@")[0]]
+      .find((v): v is string => typeof v === "string" && v.trim().length > 0);
+    return (found ?? "").split(/\s+/)[0];
   }, [user, profile]);
 
-  const fallbackInitials = useMemo(() => {
-    return name.slice(0, 2).toUpperCase();
-  }, [name]);
-
-  const { roles } = useUserRoles();
-
-  // Pioche une citation motivante adaptée au rôle, avec rotation anti-répétition.
-  // Recalculée à chaque session (identité user) — pas à chaque render.
-  const [pick, setPick] = useState<WelcomePick | null>(null);
-  useEffect(() => {
-    if (!user?.id) return;
-    const roleKey = roleKeyFromAppRoles(roles);
-    setPick(pickWelcomeMessage(roleKey));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id, roles.join(",")]);
-
-  const g = getGreeting(hour);
+  const points: { label: string; to: string }[] = [];
+  if (nbRetards > 0 && has("factures.voir"))
+    points.push({ label: `${nbRetards} facture${nbRetards > 1 ? "s" : ""} en retard`, to: "/factures" });
+  if (nbStockBas > 0 && has("stock.voir"))
+    points.push({ label: `${nbStockBas} produit${nbStockBas > 1 ? "s" : ""} sous le seuil`, to: "/alertes-stock" });
 
   return (
-    <div
-      className="relative rounded-lg border bg-card p-4 text-card-foreground"
-      role="status"
-      aria-live="polite"
-    >
-      <div className="relative flex items-start gap-4">
-        <Avatar className="h-12 w-12 shrink-0 border">
-          {avatarUrl ? <AvatarImage src={avatarUrl} alt={name} /> : null}
-          <AvatarFallback className="bg-muted text-sm font-semibold">
-            {fallbackInitials}
-          </AvatarFallback>
-        </Avatar>
-        <div className="min-w-0 flex-1">
-          <p className="text-lg font-bold leading-tight tracking-tight sm:text-xl">
-            {g.salutation(name)}
-          </p>
-          {pick ? (
-            <p className="mt-0.5 inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              <Star className="h-3 w-3" aria-hidden />
-              {pick.roleLabel}
-            </p>
-          ) : null}
-          <p className="mt-2 text-sm leading-relaxed text-foreground">
-            {pick ? `« ${pick.message} »` : g.message}
-          </p>
-          <p className="mt-1 text-xs italic text-muted-foreground">
-            {g.message}
-          </p>
-        </div>
-        <g.Icon className={`h-7 w-7 shrink-0 text-muted-foreground`} aria-hidden />
-      </div>
+    <div className="flex flex-col gap-1 rounded-lg border bg-card px-4 py-3 text-card-foreground sm:flex-row sm:items-center sm:justify-between" role="status">
+      <p className="text-sm">
+        <span className="font-semibold">{name ? `Bonjour, ${name}` : "Bonjour"}</span>
+        <span className="text-muted-foreground"> · {formatDateLong(new Date())}</span>
+      </p>
+      <p className="text-sm text-muted-foreground">
+        {points.length === 0
+          ? "Aucun point en attente"
+          : points.map((p, i) => (
+              <span key={p.to}>
+                {i > 0 && " · "}
+                <Link to={p.to} className="font-medium text-foreground underline-offset-4 hover:underline">
+                  {p.label}
+                </Link>
+              </span>
+            ))}
+      </p>
     </div>
   );
 }
