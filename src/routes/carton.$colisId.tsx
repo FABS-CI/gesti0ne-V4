@@ -96,7 +96,7 @@ function CartonPublicPage() {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-slate-50 p-6 text-center">
         <Package className="h-12 w-12 text-slate-400" />
-        <h1 className="ds-page-title text-slate-800">Carton introuvable</h1>
+        <h1 className="ds-page-title text-foreground">Carton introuvable</h1>
         <p className="max-w-sm text-sm text-slate-500">
           Ce QR code ne correspond à aucun carton actif. Vérifiez que vous scannez bien un sticker
           imprimé par le service logistique.
@@ -115,7 +115,7 @@ function CartonPublicPage() {
         <div className="mx-auto flex max-w-2xl flex-col items-center gap-3 text-center">
           <img src={fabsLogoUrl} alt="Éditions FABS-CI" className="h-12 w-auto" />
           <div>
-            <h1 className="ds-page-title text-slate-900">SUIVI DU CARTON</h1>
+            <h1 className="ds-page-title text-foreground">SUIVI DU CARTON</h1>
             <p className="text-sm text-slate-500">Consultation logistique</p>
           </div>
           <span

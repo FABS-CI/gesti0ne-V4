@@ -11,7 +11,7 @@ export function RouteNotFound() {
   return (
     <div className="flex min-h-dvh items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="ds-page-title text-7xl text-foreground">404</h1>
+        <h1 className="ds-page-title text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">Page introuvable</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           La page demandée n'existe pas ou a été déplacée.
