@@ -44,6 +44,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { UnsavedIndicator, useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import {
   createEmployeAccount,
   detachEmployeAccount,
@@ -129,6 +130,8 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
   const qc = useQueryClient();
   const editing = !!employe;
   const [form, setForm] = useState<EmployeFormValues>(() => buildInitial(employe));
+  const [initialSnapshot, setInitialSnapshot] = useState(() => JSON.stringify(buildInitial(employe)));
+  const isDirty = JSON.stringify(form) !== initialSnapshot;
   const [tab, setTab] = useState("identite");
 
   const set = <K extends keyof EmployeFormValues>(k: K, v: EmployeFormValues[K]) =>
@@ -158,6 +161,7 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
       return editing ? updateEmploye(employe!.employe_id, input) : createEmploye(input);
     },
     onSuccess: (emp) => {
+      setInitialSnapshot(JSON.stringify(form));
       toast.success(editing ? "Employé modifié" : "Employé créé");
       qc.invalidateQueries({ queryKey: ["employes"] });
       qc.invalidateQueries({ queryKey: ["employe", emp.employe_id] });
@@ -170,6 +174,8 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
     },
     onError: (e: unknown) => toast.error(friendlyError(e, "Erreur")),
   });
+
+  useUnsavedChanges(isDirty && !save.isSuccess);
 
   return (
     <div className="space-y-6">
@@ -585,6 +591,7 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
       </Tabs>
 
       <div className="sticky bottom-0 -mx-4 flex flex-wrap items-center justify-end gap-2 border-t bg-background px-4 py-3 sm:mx-0 sm:rounded-lg sm:border">
+        <UnsavedIndicator dirty={isDirty} />
         <Button
           variant="ghost"
           onClick={() => navigate({ to: "/employes" })}

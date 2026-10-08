@@ -486,10 +486,9 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
 
         <div className="space-y-6 min-w-0">
           {/* 1. Client */}
-          <section className="relative overflow-hidden rounded-md border bg-card p-4 pl-5 sm:p-5 sm:pl-6 space-y-4">
-            <span aria-hidden className="absolute inset-y-0 left-0 w-1" style={{ backgroundColor: "#3B82F6" }} />
+          <section className="scroll-mt-20 rounded-md border bg-card p-4 sm:p-5 space-y-4">
             <h2 className="flex items-center gap-2 text-base sm:text-lg font-semibold">
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md text-white shadow-sm" style={{ backgroundColor: "#3B82F6" }}>
+              <span aria-hidden className="grid h-7 w-7 shrink-0 place-items-center text-muted-foreground">
                 <User className="h-4 w-4" />
               </span>
               1. Client
@@ -551,10 +550,9 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
           </section>
 
           {/* 2. Infos commande */}
-          <section className="relative overflow-hidden rounded-md border bg-card p-4 pl-5 sm:p-5 sm:pl-6 space-y-4">
-            <span aria-hidden className="absolute inset-y-0 left-0 w-1" style={{ backgroundColor: "#8B5CF6" }} />
+          <section className="scroll-mt-20 rounded-md border bg-card p-4 sm:p-5 space-y-4">
             <h2 className="flex items-center gap-2 text-base sm:text-lg font-semibold">
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md text-white shadow-sm" style={{ backgroundColor: "#8B5CF6" }}>
+              <span aria-hidden className="grid h-7 w-7 shrink-0 place-items-center text-muted-foreground">
                 <Info className="h-4 w-4" />
               </span>
               2. Informations Générales
@@ -595,10 +593,9 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
           />
 
           {/* 4. Remise globale */}
-          <section className="relative overflow-hidden rounded-md border bg-card p-4 pl-5 sm:p-5 sm:pl-6 space-y-3">
-            <span aria-hidden className="absolute inset-y-0 left-0 w-1" style={{ backgroundColor: "#10B981" }} />
+          <section className="scroll-mt-20 rounded-md border bg-card p-4 sm:p-5 space-y-3">
             <h2 className="flex items-center gap-2 text-base sm:text-lg font-semibold">
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md text-white shadow-sm" style={{ backgroundColor: "#10B981" }}>
+              <span aria-hidden className="grid h-7 w-7 shrink-0 place-items-center text-muted-foreground">
                 <Percent className="h-4 w-4" />
               </span>
               4. Remise globale
@@ -633,10 +630,10 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
           </section>
 
           {/* 5. Frais de transport */}
-          <section className="relative overflow-hidden rounded-md border bg-card p-4 pl-5 sm:p-5 sm:pl-6 space-y-3">
+          <section className="scroll-mt-20 rounded-md border bg-card p-4 sm:p-5 space-y-3">
             <span aria-hidden className="absolute inset-y-0 left-0 w-1 bg-primary" />
             <h2 className="flex items-center gap-2 text-base sm:text-lg font-semibold">
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground shadow-sm">
+              <span aria-hidden className="grid h-7 w-7 shrink-0 place-items-center text-muted-foreground">
                 <Truck className="h-4 w-4" />
               </span>
               5. Frais de transport
