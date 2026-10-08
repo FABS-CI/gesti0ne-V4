@@ -137,7 +137,7 @@ function PresentationPage() {
       {/* MODULES */}
       <section id="modules" className="mx-auto max-w-6xl px-6 py-24">
         <div className="max-w-2xl">
-          <div className="text-sm font-semibold uppercase tracking-wider text-accent">
+          <div className="text-sm font-semibold text-accent">
             Modules intégrés
           </div>
           <h2 className="mt-2 text-3xl font-bold md:text-4xl">
@@ -169,7 +169,7 @@ function PresentationPage() {
       <section id="atouts" className="border-y border-border/60 bg-card/30">
         <div className="mx-auto grid max-w-6xl gap-12 px-6 py-24 md:grid-cols-2">
           <div>
-            <div className="text-sm font-semibold uppercase tracking-wider text-accent">
+            <div className="text-sm font-semibold text-accent">
               Atouts
             </div>
             <h2 className="mt-2 text-3xl font-bold md:text-4xl">

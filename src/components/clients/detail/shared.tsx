@@ -63,7 +63,7 @@ export function Kpi({
         style={{ backgroundColor: bar }}
       />
       <CardHeader className="pb-2 pl-5">
-        <CardTitle className="text-xs uppercase tracking-wider text-muted-foreground">
+        <CardTitle className="text-xs text-muted-foreground">
           {label}
         </CardTitle>
       </CardHeader>

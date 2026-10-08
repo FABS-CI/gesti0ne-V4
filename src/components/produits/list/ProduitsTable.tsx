@@ -133,7 +133,7 @@ export function ProduitsTable({
                         <span className="leading-tight">{p.titre}</span>
                       )}
                       {p.auteur && (
-                        <span className="text-xs text-muted-foreground italic">par {p.auteur}</span>
+                        <span className="text-xs text-muted-foreground">par {p.auteur}</span>
                       )}
                     </div>
                   </TableCell>
@@ -224,7 +224,7 @@ export function ProduitsTable({
               <TableCell colSpan={4} />
             </TableRow>
             <TableRow className="hover:bg-transparent">
-              <TableCell colSpan={colSpan} className="text-center py-2 text-xs text-muted-foreground uppercase font-bold tracking-widest">
+              <TableCell colSpan={colSpan} className="text-center py-2 text-xs text-muted-foreground font-bold">
                 Valeur totale du stock au prix de vente
               </TableCell>
             </TableRow>

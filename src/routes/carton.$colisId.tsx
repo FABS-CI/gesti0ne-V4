@@ -119,7 +119,7 @@ function CartonPublicPage() {
             <p className="text-sm text-muted-foreground">Consultation logistique</p>
           </div>
           <span
-            className="inline-flex items-center gap-2 rounded-full bg-success/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-success"
+            className="inline-flex items-center gap-2 rounded-full bg-success/10 px-3 py-1 text-xs font-semibold text-success"
             aria-label="Statut du carton"
           >
             <span className="h-2 w-2 rounded-full bg-success" />
@@ -145,7 +145,7 @@ function CartonPublicPage() {
         <Card>
           <div className="space-y-4 px-4 py-4">
             <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <div className="text-xs font-semibold text-muted-foreground">
                 Client
               </div>
               <div
@@ -158,7 +158,7 @@ function CartonPublicPage() {
 
             {(data.destinataire || data.telephone) && (
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <div className="text-xs font-semibold text-muted-foreground">
                   Responsable / Contact
                 </div>
                 {data.destinataire && (
@@ -173,7 +173,7 @@ function CartonPublicPage() {
             )}
 
             <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <div className="text-xs font-semibold text-muted-foreground">
                 Destination
               </div>
               <div className="break-words text-lg font-bold uppercase" style={{ color: BLUE }}>
@@ -282,7 +282,7 @@ function BlDownload({
         type="button"
         onClick={handleDownload}
         disabled={busy}
-        className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-4 text-center text-sm font-bold uppercase tracking-wide text-white shadow-sm transition disabled:opacity-70"
+        className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-4 text-center text-sm font-bold text-white shadow-sm transition disabled:opacity-70"
         style={{ backgroundColor: BLUE }}
       >
         {busy ? <Loader2 className="h-5 w-5 animate-spin" /> : <FileDown className="h-5 w-5" />}
@@ -320,7 +320,7 @@ function Card({ title, children }: { title?: string; children: React.ReactNode }
   return (
     <section className="overflow-hidden rounded-xl border border-border bg-white shadow-sm">
       {title && (
-        <div className="border-b bg-muted px-4 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        <div className="border-b bg-muted px-4 py-2 text-xs font-semibold text-muted-foreground">
           {title}
         </div>
       )}
@@ -343,7 +343,7 @@ function Row({
   if (!value) return null;
   return (
     <div className="flex items-start justify-between gap-3 px-4 py-3 text-sm">
-      <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className="text-xs font-semibold text-muted-foreground">{label}</div>
       <div
         className={`break-all text-right font-bold ${mono ? "font-mono" : ""}`}
         style={accent ? { color: BLUE } : undefined}

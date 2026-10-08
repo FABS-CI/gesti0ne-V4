@@ -130,7 +130,7 @@ function CockpitContent({ data }: { data: CockpitData }) {
   return (
     <>
       <section aria-label="Activité du jour">
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+        <h2 className="mb-3 text-sm font-semibold text-muted-foreground">
           Activité du jour
         </h2>
         {!hasAny ? (

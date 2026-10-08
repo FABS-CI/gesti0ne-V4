@@ -49,7 +49,7 @@ export function Apercu({ t }: { t: PdfTemplate }) {
             >
               EDITIONS FABS-CI
             </div>
-            <div className="text-xs italic text-muted-foreground">Une innovation…</div>
+            <div className="text-xs text-muted-foreground">Une innovation…</div>
             <div className="mx-auto my-1 h-[2px] w-8" style={{ background: accent }} />
             <div
               className="text-xs font-bold"
@@ -67,7 +67,7 @@ export function Apercu({ t }: { t: PdfTemplate }) {
                 <div className="text-xs font-bold" style={{ color: rgb(t.companyColor) }}>
                   EDITIONS FABS-CI
                 </div>
-                <div className="text-xs italic text-muted-foreground">Une innovation…</div>
+                <div className="text-xs text-muted-foreground">Une innovation…</div>
               </div>
               <div className="text-xs font-bold" style={{ color: rgb(t.titleColor) }}>
                 FACTURE

@@ -179,7 +179,7 @@ export function LignesSection({
                           <p className="text-xs text-destructive mt-0.5 leading-tight">{err.remise_pct.message}</p>
                         )}
                         {remiseEnLigneDisabled && (
-                          <p className="text-xs text-warning mt-0.5 leading-tight italic">Bloqué (RG active)</p>
+                          <p className="text-xs text-warning mt-0.5 leading-tight">Bloqué (RG active)</p>
                         )}
                       </TableCell>
                       <TableCell className="text-right">
@@ -308,7 +308,7 @@ export function LignesSection({
                         <p className="text-xs text-destructive mt-0.5 leading-tight">{err.remise_pct.message}</p>
                       )}
                       {remiseEnLigneDisabled && (
-                        <p className="text-xs text-warning mt-0.5 leading-tight italic">Bloqué (RG active)</p>
+                        <p className="text-xs text-warning mt-0.5 leading-tight">Bloqué (RG active)</p>
                       )}
                     </div>
                     <div>
