@@ -26,6 +26,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ExerciceSelector } from "./ExerciceSelector";
+import { TopbarBreadcrumb } from "./TopbarBreadcrumb";
 
 function initials(value: string) {
   return value
@@ -67,7 +68,8 @@ function TopbarImpl() {
 
   return (
     <div className="flex flex-1 items-center gap-2 sm:gap-3">
-      <div className="flex-1 max-w-xl transition-all duration-300 focus-within:max-w-2xl">
+      <TopbarBreadcrumb />
+      <div className="flex-1 max-w-xl transition-[max-width] duration-200 focus-within:max-w-2xl">
         <Suspense fallback={<div className="h-10 w-full animate-pulse rounded-full bg-muted" />}>
           <GlobalSearch />
         </Suspense>
