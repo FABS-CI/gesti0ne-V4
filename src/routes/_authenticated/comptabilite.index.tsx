@@ -262,7 +262,7 @@ function ComptabilitePage() {
       </div>
 
       {filterError && (
-        <div className="rounded-md border border-amber-400/50 bg-amber-100/40 px-4 py-2 text-sm text-amber-700 dark:text-amber-400">
+        <div className="rounded-md border border-warning/50 bg-warning/10 px-4 py-2 text-sm text-warning">
           {filterError}
         </div>
       )}

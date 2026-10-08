@@ -23,9 +23,9 @@ export function DraftRestoreBanner({ updatedAt, onRestore, onDiscard, label }: P
   })();
 
   return (
-    <div className="flex flex-col gap-3 rounded-md border border-amber-400/60 bg-amber-50 p-4 text-sm dark:bg-amber-950/30 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-3 rounded-md border border-warning/60 bg-warning/10 p-4 text-sm sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-start gap-2">
-        <FileClock className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+        <FileClock className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
         <div>
           <p className="font-medium">
             Un brouillon non terminé a été trouvé

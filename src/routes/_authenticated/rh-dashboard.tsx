@@ -31,9 +31,9 @@ export const Route = createFileRoute("/_authenticated/rh-dashboard")({
 });
 
 const SEVERITE_STYLE: Record<string, string> = {
-  info: "border-l-4 border-l-blue-500 bg-blue-500/5",
-  warning: "border-l-4 border-l-orange-500 bg-orange-500/5",
-  danger: "border-l-4 border-l-red-500 bg-red-500/5",
+  info: "border-l-4 border-l-blue-500 bg-info/5",
+  warning: "border-l-4 border-l-orange-500 bg-warning/5",
+  danger: "border-l-4 border-l-red-500 bg-destructive/5",
 };
 
 function RHDashboardPage() {
@@ -160,7 +160,7 @@ function RHDashboardPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
-              <AlertCircle className="h-5 w-5 text-orange-500" /> Alertes
+              <AlertCircle className="h-5 w-5 text-warning" /> Alertes
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">

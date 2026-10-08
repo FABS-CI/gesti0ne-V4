@@ -169,7 +169,7 @@ function UtilisateursProductionPage() {
         ))}
       </div>
 
-      <div className="rounded-md border bg-yellow-50 p-3 text-xs text-yellow-900">
+      <div className="rounded-md border bg-warning/10 p-3 text-xs text-warning">
         <strong>Sécurité :</strong> les mots de passe sont stockés chiffrés et ne peuvent jamais
         être affichés. Utilisez le bouton « Lien reset » pour générer un lien temporaire de
         réinitialisation à remettre à l'utilisateur — il devra définir son mot de passe à la

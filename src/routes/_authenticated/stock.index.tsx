@@ -243,7 +243,7 @@ function StockPage() {
                       <TableCell className="text-muted-foreground">{p.niveau ?? "—"}</TableCell>
                       <TableCell className="text-muted-foreground">{p.categorie ?? "—"}</TableCell>
                       <TableCell className="text-right font-bold">{p.stock}</TableCell>
-                      <TableCell className="text-right font-medium text-emerald-600">
+                      <TableCell className="text-right font-medium text-success">
                         {formatFCFA((p.stock ?? 0) * (p.prix_vente ?? 0))}
                       </TableCell>
                       <TableCell className="text-right text-muted-foreground">

@@ -470,7 +470,7 @@ function FeuilleTourneePage() {
 
       <div className="mx-auto max-w-[210mm] bg-white p-8 text-sm print:p-6 print:max-w-none">
         {/* En-tête entreprise + QR + Barcode */}
-        <div className="flex justify-between items-start mb-4 border-b-2 border-slate-800 pb-3">
+        <div className="flex justify-between items-start mb-4 border-b-2 border-border pb-3">
           <div className="max-w-[55%]">
             <h1 className="ds-page-title">{COMPANY.nom}</h1>
             <p className="text-[10px] text-muted-foreground leading-snug">{COMPANY.adresse}</p>
@@ -502,7 +502,7 @@ function FeuilleTourneePage() {
         </div>
 
         {/* Informations tournée */}
-        <div className="grid grid-cols-4 gap-x-3 gap-y-2 mb-4 border rounded p-3 bg-slate-50">
+        <div className="grid grid-cols-4 gap-x-3 gap-y-2 mb-4 border rounded p-3 bg-muted">
           <Field label="Responsable" value={t.responsable_nom ?? "—"} />
           <Field label="Chauffeur" value={t.chauffeur_nom ?? "—"} />
           <Field label="Transporteur" value={lignes[0]?.transporteur ?? undefined} />
@@ -535,7 +535,7 @@ function FeuilleTourneePage() {
         {/* Tableau enrichi des livraisons */}
         <table className="w-full border-collapse text-[10px] table-zebra-orange table-print-borders">
           <thead>
-            <tr className="bg-slate-100">
+            <tr className="bg-muted">
               <th className="border p-1 text-left">N°</th>
               <th className="border p-1 text-left">Cmd / Facture</th>
               <th className="border p-1 text-left">Client</th>
@@ -596,7 +596,7 @@ function FeuilleTourneePage() {
             )}
           </tbody>
           <tfoot>
-            <tr className="bg-slate-50 font-semibold">
+            <tr className="bg-muted font-semibold">
               <td className="border p-1" colSpan={6}>
                 Total ({nbLivraisons} livraison{nbLivraisons > 1 ? "s" : ""})
               </td>
@@ -611,7 +611,7 @@ function FeuilleTourneePage() {
         </table>
 
         {/* Récapitulatif */}
-        <div className="mt-4 border rounded p-3 bg-slate-50">
+        <div className="mt-4 border rounded p-3 bg-muted">
           <div className="text-xs font-semibold mb-2 uppercase tracking-wide">
             Récapitulatif automatique
           </div>
@@ -647,7 +647,7 @@ function FeuilleTourneePage() {
             </div>
             <table className="w-full border-collapse text-[10px] table-zebra-orange table-print-borders">
               <thead>
-                <tr className="bg-slate-100">
+                <tr className="bg-muted">
                   <th className="border p-1 text-left">Réf. colis</th>
                   <th className="border p-1 text-left">Client</th>
                   <th className="border p-1 text-left">Destinataire</th>
@@ -687,7 +687,7 @@ function FeuilleTourneePage() {
             Observations / Incidents
           </div>
           {t.notes && (
-            <p className="whitespace-pre-wrap text-[11px] mb-2 border-l-2 border-slate-400 pl-2 italic">
+            <p className="whitespace-pre-wrap text-[11px] mb-2 border-l-2 border-border pl-2 italic">
               {t.notes}
             </p>
           )}

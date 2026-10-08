@@ -465,8 +465,8 @@ function EditTourneePage() {
                   <Badge
                     className={
                       form.cloture_mode === "auto"
-                        ? "bg-emerald-600 hover:bg-emerald-600"
-                        : "bg-sky-600 hover:bg-sky-600"
+                        ? "bg-success hover:bg-success"
+                        : "bg-info hover:bg-info"
                     }
                   >
                     {form.cloture_mode === "auto"
@@ -579,7 +579,7 @@ function EditTourneePage() {
                   Ajouter des colis prêts non affectés
                   <Badge variant="secondary">{dispoFiltered.length}</Badge>
                   {toAdd.size > 0 && (
-                    <Badge className="bg-emerald-600">+{toAdd.size} à ajouter</Badge>
+                    <Badge className="bg-success">+{toAdd.size} à ajouter</Badge>
                   )}
                 </CardTitle>
                 <div className="flex items-center gap-2">

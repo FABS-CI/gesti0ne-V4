@@ -252,7 +252,7 @@ function ColisageListPage() {
                                 size="sm"
                                 onClick={() => handlePrintEtiquettes(r.bl_id)}
                                 disabled={printingBlId === r.bl_id}
-                                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                                className="bg-success hover:bg-success text-white"
                               >
                                 {printingBlId === r.bl_id ? (
                                   <span className="flex items-center gap-1.5">

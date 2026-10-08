@@ -70,11 +70,11 @@ export function ColisageCartonsSection({
         <div className="mb-2 flex items-center justify-between">
           <h3 className="text-sm font-semibold">Répartition des articles</h3>
           {compositionValide ? (
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-800">
+            <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 text-xs font-semibold text-success">
               <CheckCircle2 className="h-3 w-3" /> Répartition complète
             </span>
           ) : (
-            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">
+            <span className="rounded-full bg-warning/10 px-2 py-0.5 text-xs font-semibold text-warning">
               Répartition incomplète
             </span>
           )}
@@ -96,7 +96,7 @@ export function ColisageCartonsSection({
                   <TableCell className="text-right">{r.commande}</TableCell>
                   <TableCell className="text-right">{r.reparti}</TableCell>
                   <TableCell
-                    className={`text-right font-semibold ${r.reste === 0 ? "text-emerald-600" : r.reste < 0 ? "text-destructive" : "text-amber-600"}`}
+                    className={`text-right font-semibold ${r.reste === 0 ? "text-success" : r.reste < 0 ? "text-destructive" : "text-warning"}`}
                   >
                     {r.reste}
                   </TableCell>

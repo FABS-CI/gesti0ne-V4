@@ -125,7 +125,7 @@ function IncidentDetailPage() {
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
-          <AlertTriangle className="h-6 w-6 text-amber-600" />
+          <AlertTriangle className="h-6 w-6 text-warning" />
           <div>
             <h1 className="ds-page-title">Incident {incident.numero ?? incident.reference}</h1>
             <p className="text-sm text-muted-foreground">{typeLabel}</p>
@@ -151,7 +151,7 @@ function IncidentDetailPage() {
           </Button>
           {canCancel && incident.statut !== "annule" && (
             <Button variant="outline" size="sm" onClick={() => setConfirmCancel(true)}>
-              <XCircle className="h-4 w-4 mr-2 text-red-600" /> Annuler l'incident
+              <XCircle className="h-4 w-4 mr-2 text-destructive" /> Annuler l'incident
             </Button>
           )}
         </div>

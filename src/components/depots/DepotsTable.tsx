@@ -68,7 +68,7 @@ export function DepotsTable({ isLoading, items, stockCounts, onEdit, onPromote, 
                   <TableCell className="font-medium">
                     <span className="inline-flex items-center gap-1.5">
                       {d.nom}
-                      {d.is_principal && <Star className="h-3.5 w-3.5 text-amber-500" />}
+                      {d.is_principal && <Star className="h-3.5 w-3.5 text-warning" />}
                     </span>
                   </TableCell>
                   <TableCell className="capitalize text-sm">{d.type_depot}</TableCell>
@@ -90,7 +90,7 @@ export function DepotsTable({ isLoading, items, stockCounts, onEdit, onPromote, 
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          <MapPin className="h-4 w-4 text-blue-600" />
+                          <MapPin className="h-4 w-4 text-info" />
                         </a>
                       </Button>
                     )}
@@ -101,7 +101,7 @@ export function DepotsTable({ isLoading, items, stockCounts, onEdit, onPromote, 
                         title="Définir comme dépôt principal"
                         onClick={() => onPromote(d.depot_id, d.nom)}
                       >
-                        <Star className="h-4 w-4 text-muted-foreground hover:text-amber-500" />
+                        <Star className="h-4 w-4 text-muted-foreground hover:text-warning" />
                       </Button>
                     )}
                     <Button aria-label="Modifier" variant="ghost" size="icon" onClick={() => onEdit(d)} title="Modifier">
@@ -115,7 +115,7 @@ export function DepotsTable({ isLoading, items, stockCounts, onEdit, onPromote, 
                         title={d.is_principal ? "Dépôt principal — non supprimable" : "Supprimer"}
                         onClick={() => onDelete(d.depot_id)}
                       >
-                        <Trash2 className="h-4 w-4 text-red-500" />
+                        <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </Can>
                   </TableCell>

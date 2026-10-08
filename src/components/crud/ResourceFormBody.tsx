@@ -44,7 +44,7 @@ export function ResourceFormBody({
   return (
     <>
       {!editing && Object.keys(defaultSources).length > 0 && (
-        <div className="rounded-md border border-blue-300 bg-blue-50 p-3 text-xs text-blue-900 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-100">
+        <div className="rounded-md border border-info/40 bg-info/10 p-3 text-xs text-info">
           <div className="mb-1 font-medium">Champs préremplis automatiquement :</div>
           <ul className="list-disc pl-5 space-y-0.5">
             {Object.entries(defaultSources).map(([k, src]) => {
@@ -69,7 +69,7 @@ export function ResourceFormBody({
               {!editing && defaultSources[fd.name] && (
                 <Badge
                   variant="outline"
-                  className="text-[10px] font-normal border-blue-300 text-blue-700 dark:border-blue-800 dark:text-blue-300"
+                  className="text-[10px] font-normal border-info/40 text-info"
                 >
                   {defaultSources[fd.name]}
                 </Badge>

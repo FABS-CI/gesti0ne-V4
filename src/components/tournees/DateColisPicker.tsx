@@ -77,7 +77,7 @@ export function DateColisPicker({ value, onChange, colisCount }: Props) {
             (w.level === "error"
               ? "border-destructive/50 bg-destructive/10 text-destructive"
               : w.level === "warn"
-                ? "border-amber-500/50 bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                ? "border-warning/50 bg-warning/10 text-warning"
                 : "border-muted bg-muted/40 text-muted-foreground")
           }
         >

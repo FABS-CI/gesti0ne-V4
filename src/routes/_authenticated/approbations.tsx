@@ -475,8 +475,8 @@ function ApprovalsList({
             <KpiCard label="Montant cumulé" value={formatFCFA(kpis.montantTotal)} />
           </div>
           {kpis.slaDepasse > 0 && (
-            <div className="flex flex-wrap items-center gap-2 rounded-md border border-orange-300 bg-orange-50 p-2.5 text-sm dark:bg-orange-950/30">
-              <AlertTriangle className="h-4 w-4 text-orange-500" />
+            <div className="flex flex-wrap items-center gap-2 rounded-md border border-warning/40 bg-warning/10 p-2.5 text-sm">
+              <AlertTriangle className="h-4 w-4 text-warning" />
               <span>
                 {kpis.slaDepasse} demande{kpis.slaDepasse > 1 ? "s" : ""} au-delà du délai
                 d&apos;approbation.

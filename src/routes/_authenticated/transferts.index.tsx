@@ -180,7 +180,7 @@ function TransfertsPage() {
                             workflowMutation.mutate({ id: t.transfert_id, action: "executer" })
                           }
                         >
-                          <Send className="h-4 w-4 text-blue-600" />
+                          <Send className="h-4 w-4 text-info" />
                         </Button>
                       )}
                       {t.statut === "brouillon" && canAnnuler && (
@@ -199,7 +199,7 @@ function TransfertsPage() {
                             workflowMutation.mutate({ id: t.transfert_id, action: "annuler" });
                           }}
                         >
-                          <Ban className="h-4 w-4 text-red-500" />
+                          <Ban className="h-4 w-4 text-destructive" />
                         </Button>
                       )}
                       {t.statut === "expedie" && canReceptionner && (
@@ -211,7 +211,7 @@ function TransfertsPage() {
                             workflowMutation.mutate({ id: t.transfert_id, action: "receptionner" })
                           }
                         >
-                          <PackageCheck className="h-4 w-4 text-green-600" />
+                          <PackageCheck className="h-4 w-4 text-success" />
                         </Button>
                       )}
                       <Button variant="ghost" size="icon" asChild>

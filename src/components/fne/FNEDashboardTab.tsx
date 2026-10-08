@@ -71,7 +71,7 @@ export function FNEDashboardTab() {
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
-        <Card className={stickerLow ? "border-red-400" : undefined}>
+        <Card className={stickerLow ? "border-destructive" : undefined}>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <Sticker className="h-4 w-4" /> Stickers fiscaux
@@ -84,7 +84,7 @@ export function FNEDashboardTab() {
           </CardHeader>
           <CardContent>
             {sticker?.mode === "sandbox" ? (
-              <div className="rounded border border-orange-300 bg-orange-50 p-3 text-sm text-orange-900 dark:bg-orange-950 dark:text-orange-100">
+              <div className="rounded border border-warning/40 bg-warning/10 p-3 text-sm text-warning">
                 <AlertTriangle className="h-4 w-4 inline mr-1" />
                 {sticker.warning}
               </div>
@@ -96,7 +96,7 @@ export function FNEDashboardTab() {
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground">Seuil alerte</div>
-                  <div className="text-2xl font-bold text-amber-600">{STICKER_SEUIL}</div>
+                  <div className="text-2xl font-bold text-warning">{STICKER_SEUIL}</div>
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground">NCC</div>

@@ -247,7 +247,7 @@ function BonDeSortiePage() {
 
         <table className="w-full border-collapse text-xs table-zebra-orange table-print-borders">
           <thead>
-            <tr className="bg-slate-100">
+            <tr className="bg-muted">
               <th className="border p-1 text-left">Réf. colis</th>
               <th className="border p-1 text-left">Client</th>
               <th className="border p-1 text-left">Destinataire</th>
@@ -281,7 +281,7 @@ function BonDeSortiePage() {
             )}
           </tbody>
           <tfoot>
-            <tr className="bg-slate-50 font-semibold">
+            <tr className="bg-muted font-semibold">
               <td className="border p-2" colSpan={5}>
                 TOTAUX
               </td>

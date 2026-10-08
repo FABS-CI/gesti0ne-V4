@@ -131,8 +131,8 @@ export function ClientsTable({
                     )}
                     <TableCell>
                       {c.actif ? (
-                        <span className="inline-flex items-center gap-1 text-xs text-emerald-600">
-                          <span className="h-2 w-2 rounded-full bg-emerald-500" /> Actif
+                        <span className="inline-flex items-center gap-1 text-xs text-success">
+                          <span className="h-2 w-2 rounded-full bg-success" /> Actif
                         </span>
                       ) : (
                         <Badge variant="secondary">Désactivé</Badge>

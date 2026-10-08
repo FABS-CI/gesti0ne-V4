@@ -102,7 +102,7 @@ export function CommandeActions({
           onClick={() => onValider(c.commande_id)}
           disabled={validerPending}
         >
-          <CheckCircle className="h-4 w-4 text-emerald-600" />
+          <CheckCircle className="h-4 w-4 text-success" />
         </Button>
       )}
 

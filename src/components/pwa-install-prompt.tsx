@@ -96,12 +96,12 @@ export function PWAInstallPrompt() {
 
   return (
     <Dialog open={showPrompt} onOpenChange={setShowPrompt}>
-      <DialogContent className="sm:max-w-md border-orange-500/20">
+      <DialogContent className="sm:max-w-md border-warning/20">
         <DialogHeader>
           <div className="flex justify-center mb-4">
             <img src="/fabs-logo.png" alt="GESTI-ONE" className="h-16 w-auto" />
           </div>
-          <DialogTitle className="text-2xl font-bold text-center text-orange-600">
+          <DialogTitle className="text-2xl font-bold text-center text-warning">
             Installer GESTI-ONE
           </DialogTitle>
           <DialogDescription className="text-center text-base pt-2">
@@ -112,8 +112,8 @@ export function PWAInstallPrompt() {
         <div className="space-y-4 py-4">
           <div className="grid grid-cols-1 gap-3">
             <div className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
-              <div className="bg-orange-100 p-2 rounded-full">
-                <Monitor className="h-5 w-5 text-orange-600" />
+              <div className="bg-warning/10 p-2 rounded-full">
+                <Monitor className="h-5 w-5 text-warning" />
               </div>
               <div>
                 <p className="font-medium text-sm">Accès direct</p>
@@ -121,8 +121,8 @@ export function PWAInstallPrompt() {
               </div>
             </div>
             <div className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
-              <div className="bg-orange-100 p-2 rounded-full">
-                <Smartphone className="h-5 w-5 text-orange-600" />
+              <div className="bg-warning/10 p-2 rounded-full">
+                <Smartphone className="h-5 w-5 text-warning" />
               </div>
               <div>
                 <p className="font-medium text-sm">Plein écran</p>
@@ -132,11 +132,11 @@ export function PWAInstallPrompt() {
           </div>
 
           {platform === 'ios' && (
-            <div className="mt-4 p-4 border border-orange-200 bg-orange-50 rounded-xl space-y-3">
-              <p className="font-semibold text-orange-800 text-sm flex items-center gap-2">
+            <div className="mt-4 p-4 border border-warning/40 bg-warning/10 rounded-xl space-y-3">
+              <p className="font-semibold text-warning text-sm flex items-center gap-2">
                 <PlusSquare className="h-4 w-4" /> Instructions pour iPhone / iPad :
               </p>
-              <ol className="text-sm text-orange-700 space-y-2 list-decimal ml-4">
+              <ol className="text-sm text-warning space-y-2 list-decimal ml-4">
                 <li>Appuyez sur le bouton <strong>Partager</strong> <Share className="inline h-4 w-4 mx-1" /> en bas de l'écran.</li>
                 <li>Faites défiler et choisissez <strong>"Sur l'écran d'accueil"</strong>.</li>
                 <li>Appuyez sur <strong>Ajouter</strong> en haut à droite.</li>
@@ -149,14 +149,14 @@ export function PWAInstallPrompt() {
           {platform !== 'ios' ? (
             <Button 
               onClick={handleInstall} 
-              className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold"
+              className="w-full bg-warning hover:bg-warning text-white font-bold"
             >
               <Download className="mr-2 h-4 w-4" /> Installer maintenant
             </Button>
           ) : (
             <Button 
               onClick={handleDismiss} 
-              className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold"
+              className="w-full bg-warning hover:bg-warning text-white font-bold"
             >
               J'ai compris
             </Button>

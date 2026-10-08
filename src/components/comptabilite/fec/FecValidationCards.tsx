@@ -65,9 +65,9 @@ export function FecValidationCards({
         </Card>
       )}
       {warnings.length > 0 && (
-        <Card className="border-amber-400/40">
+        <Card className="border-warning/40">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2 text-amber-600 dark:text-amber-400">
+            <CardTitle className="text-base flex items-center gap-2 text-warning">
               <AlertTriangle className="h-4 w-4" /> Avertissements ({warnings.length})
             </CardTitle>
           </CardHeader>

@@ -163,8 +163,8 @@ function SpecimensListPage() {
 
       <div className="grid gap-4 md:grid-cols-4">
         <StatCard label="Total" value={stats.total} />
-        <StatCard label="Enregistrés" value={stats.enregistre} accent="text-emerald-600" />
-        <StatCard label="Annulés" value={stats.annule} accent="text-red-600" />
+        <StatCard label="Enregistrés" value={stats.enregistre} accent="text-success" />
+        <StatCard label="Annulés" value={stats.annule} accent="text-destructive" />
         <StatCard label="Quantité totale remise" value={stats.quantite} />
       </div>
 
@@ -308,7 +308,7 @@ function SpecimensListPage() {
                                 title="Annuler"
                                 onClick={() => setToCancel(s)}
                               >
-                                <Ban className="h-4 w-4 text-red-600" />
+                                <Ban className="h-4 w-4 text-destructive" />
                               </Button>
                             </Can>
                           )}

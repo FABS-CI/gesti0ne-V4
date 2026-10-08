@@ -306,7 +306,7 @@ function EmployesPage() {
                         aria-label="Supprimer l'employé"
                         onClick={() => setToDelete(emp)}
                       >
-                        <Trash2 className="h-4 w-4 text-red-500" />
+                        <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </Can>
                     <Button

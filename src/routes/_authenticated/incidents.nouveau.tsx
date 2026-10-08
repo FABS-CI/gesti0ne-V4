@@ -195,7 +195,7 @@ function NouvelIncidentPage() {
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </Button>
-        <AlertTriangle className="h-6 w-6 text-amber-600" />
+        <AlertTriangle className="h-6 w-6 text-warning" />
         <div>
           <h1 className="ds-page-title">Nouvel Incident de Stock</h1>
           <p className="text-sm text-muted-foreground">
@@ -313,7 +313,7 @@ function NouvelIncidentPage() {
                       min={1}
                       value={l.quantite}
                       onChange={(e) => updateLigne(i, { quantite: Number(e.target.value) || 0 })}
-                      className={`text-right h-9 ${over ? "text-red-600 border-red-500" : ""}`}
+                      className={`text-right h-9 ${over ? "text-destructive border-destructive" : ""}`}
                     />
                   </TableCell>
                   <TableCell>
@@ -328,7 +328,7 @@ function NouvelIncidentPage() {
                       }
                       disabled={lignes.length === 1}
                     >
-                      <Trash2 className="h-4 w-4 text-red-600" />
+                      <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
                   </TableCell>
                 </TableRow>

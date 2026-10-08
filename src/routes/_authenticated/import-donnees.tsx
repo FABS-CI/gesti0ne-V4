@@ -223,7 +223,7 @@ function ImportDonneesPage() {
                 <div key={col.key} className="space-y-1">
                   <label className="text-xs font-medium">
                     {col.label}
-                    {col.required && <span className="text-red-500"> *</span>}
+                    {col.required && <span className="text-destructive"> *</span>}
                   </label>
                   <Select
                     value={mapping[col.key] ?? "__none__"}
@@ -247,7 +247,7 @@ function ImportDonneesPage() {
               ))}
             </div>
             {requiredUnmapped.length > 0 && (
-              <p className="mt-4 flex items-center gap-2 text-sm text-amber-600">
+              <p className="mt-4 flex items-center gap-2 text-sm text-warning">
                 <AlertTriangle className="h-4 w-4" />
                 Colonnes obligatoires non mappées : {requiredUnmapped.join(", ")}
               </p>
@@ -263,7 +263,7 @@ function ImportDonneesPage() {
               <span>3. Aperçu &amp; validation</span>
               <div className="flex items-center gap-2 text-sm font-normal">
                 <Badge variant="secondary" className="gap-1">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> {validCount} valides
+                  <CheckCircle2 className="h-3.5 w-3.5 text-success" /> {validCount} valides
                 </Badge>
                 {errorCount > 0 && (
                   <Badge variant="destructive" className="gap-1">
@@ -288,11 +288,11 @@ function ImportDonneesPage() {
                 </TableHeader>
                 <TableBody>
                   {validated.slice(0, 50).map((v) => (
-                    <TableRow key={v.index} className={v.ok ? "" : "bg-red-500/5"}>
+                    <TableRow key={v.index} className={v.ok ? "" : "bg-destructive/5"}>
                       <TableCell className="text-muted-foreground">{v.index + 2}</TableCell>
                       <TableCell>
                         {v.ok ? (
-                          <Badge variant="outline" className="gap-1 text-emerald-700">
+                          <Badge variant="outline" className="gap-1 text-success">
                             <CheckCircle2 className="h-3 w-3" /> OK
                           </Badge>
                         ) : (
@@ -307,7 +307,7 @@ function ImportDonneesPage() {
                           </TableCell>
                         );
                       })}
-                      <TableCell className="text-xs text-red-600">{v.errors.join(" · ")}</TableCell>
+                      <TableCell className="text-xs text-destructive">{v.errors.join(" · ")}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

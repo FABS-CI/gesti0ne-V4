@@ -117,12 +117,12 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
   const statutEnrichi = !client.actif
     ? { label: "Inactif", cls: "bg-muted text-muted-foreground" }
     : facturesImpayees.length > 0 && tauxCredit > 90
-      ? { label: "Plafond critique", cls: "bg-red-500 text-white" }
+      ? { label: "Plafond critique", cls: "bg-destructive text-white" }
       : tauxCredit > 70
-        ? { label: "Encours élevé", cls: "bg-amber-500 text-white" }
+        ? { label: "Encours élevé", cls: "bg-warning text-white" }
         : facturesImpayees.length > 0
-          ? { label: "Impayés", cls: "bg-orange-500 text-white" }
-          : { label: "Actif", cls: "bg-emerald-500 text-white" };
+          ? { label: "Impayés", cls: "bg-warning text-white" }
+          : { label: "Actif", cls: "bg-success text-white" };
 
 
   return (
@@ -142,7 +142,7 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button
-            className="bg-orange-500 hover:bg-orange-600 text-white"
+            className="bg-warning hover:bg-warning text-white"
             onClick={() => setEditOpen(true)}
           >
             <Pencil className="mr-2 h-4 w-4" /> Modifier le client
@@ -183,7 +183,7 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
             <RotateCcw className="mr-2 h-4 w-4" /> Retour
           </Button>
           <Button
-            className="whitespace-nowrap bg-emerald-600 text-white shadow-sm transition-colors hover:bg-emerald-700"
+            className="whitespace-nowrap bg-success text-white shadow-sm transition-colors hover:bg-success"
             onClick={() => setReleveOpen(true)}
           >
             <FileText className="mr-2 h-4 w-4" /> Relevé de compte
@@ -214,7 +214,7 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {canSeeSolde && (
             <>
-              <Kpi label="Encours" value={formatFCFA(encours)} accent="text-red-600" />
+              <Kpi label="Encours" value={formatFCFA(encours)} accent="text-destructive" />
               <Kpi label="Plafond crédit" value={formatFCFA(plafond)} />
               <Kpi
                 label="Utilisation crédit"
@@ -223,7 +223,7 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
                     <div className="text-xl font-bold">{tauxCredit}%</div>
                     <div className="mt-1 h-1.5 w-full rounded-full bg-muted">
                       <div
-                        className={`h-1.5 rounded-full ${tauxCredit > 90 ? "bg-red-500" : tauxCredit > 70 ? "bg-amber-500" : "bg-emerald-500"}`}
+                        className={`h-1.5 rounded-full ${tauxCredit > 90 ? "bg-destructive" : tauxCredit > 70 ? "bg-warning" : "bg-success"}`}
                         style={{ width: `${tauxCredit}%` }}
                       />
                     </div>

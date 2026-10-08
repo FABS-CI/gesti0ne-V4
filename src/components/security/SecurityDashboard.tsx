@@ -96,16 +96,16 @@ export function SecurityDashboard() {
 
   const kpis = [
     { label: "Utilisateurs", value: data.users_total, icon: Users, tone: "text-primary" },
-    { label: "Actifs", value: data.users_actifs, icon: UserCheck, tone: "text-emerald-600" },
-    { label: "Suspendus", value: data.users_suspendus, icon: AlertTriangle, tone: "text-amber-600" },
+    { label: "Actifs", value: data.users_actifs, icon: UserCheck, tone: "text-success" },
+    { label: "Suspendus", value: data.users_suspendus, icon: AlertTriangle, tone: "text-warning" },
     { label: "Verrouillés", value: data.users_verrouilles, icon: Lock, tone: "text-destructive" },
     { label: "Rôles", value: data.roles_total, icon: ShieldCheck, tone: "text-indigo-500" },
-    { label: "Permissions", value: data.permissions_total, icon: KeyRound, tone: "text-sky-500" },
+    { label: "Permissions", value: data.permissions_total, icon: KeyRound, tone: "text-info" },
     {
       label: "Approbations en attente",
       value: data.approbations_en_attente,
       icon: Clock,
-      tone: "text-orange-500",
+      tone: "text-warning",
     },
     { label: "Connexions 24h", value: data.connexions_24h, icon: UserCog, tone: "text-violet-500" },
   ];
@@ -177,7 +177,7 @@ export function SecurityDashboard() {
                   key={c}
                   className="flex items-start gap-2 rounded-md border border-border bg-muted/40 p-2 text-sm"
                 >
-                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
                   <span>{c}</span>
                 </div>
               ))

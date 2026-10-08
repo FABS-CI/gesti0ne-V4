@@ -603,8 +603,8 @@ function computeOverall(m: {
 
 function OverallCard({ status }: { status: Overall }) {
   const cfg = {
-    excellent: { label: "Excellent", cls: "bg-emerald-500/10 border-emerald-500/40 text-emerald-600", icon: <CheckCircle2 className="h-6 w-6" /> },
-    attention: { label: "Attention", cls: "bg-amber-500/10 border-amber-500/40 text-amber-600", icon: <AlertCircle className="h-6 w-6" /> },
+    excellent: { label: "Excellent", cls: "bg-success/10 border-success/40 text-success", icon: <CheckCircle2 className="h-6 w-6" /> },
+    attention: { label: "Attention", cls: "bg-warning/10 border-warning/40 text-warning", icon: <AlertCircle className="h-6 w-6" /> },
     critique:  { label: "Critique", cls: "bg-destructive/10 border-destructive/40 text-destructive", icon: <XCircle className="h-6 w-6" /> },
   }[status];
   return (
@@ -623,14 +623,14 @@ function OverallCard({ status }: { status: Overall }) {
 }
 
 function StatusBadge({ status }: { status: ServiceStatus }) {
-  if (status === "online") return <Badge className="bg-emerald-600 hover:bg-emerald-700">En ligne</Badge>;
-  if (status === "degraded") return <Badge className="bg-amber-500 hover:bg-amber-600">Dégradé</Badge>;
+  if (status === "online") return <Badge className="bg-success hover:bg-success">En ligne</Badge>;
+  if (status === "degraded") return <Badge className="bg-warning hover:bg-warning">Dégradé</Badge>;
   if (status === "offline") return <Badge variant="destructive">Hors ligne</Badge>;
   return <Badge variant="secondary">Inconnu</Badge>;
 }
 
 function StatCard({ icon, label, value, tone }: { icon?: React.ReactNode; label: string; value: React.ReactNode; tone?: "error" | "warn" }) {
-  const color = tone === "error" ? "text-destructive" : tone === "warn" ? "text-amber-600" : "text-foreground";
+  const color = tone === "error" ? "text-destructive" : tone === "warn" ? "text-warning" : "text-foreground";
   return (
     <Card>
       <CardContent className="pt-6">

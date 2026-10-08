@@ -174,7 +174,7 @@ function NotificationsCentre() {
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground">Non lues</p>
-            <p className="text-2xl font-bold text-orange-600">{stats.nonLus}</p>
+            <p className="text-2xl font-bold text-warning">{stats.nonLus}</p>
           </CardContent>
         </Card>
         <Card>
@@ -277,10 +277,10 @@ function NotificationRow({
             title={n.lu ? "Marquer non lu" : "Marquer lu"}
             onClick={() => onToggleLu(!n.lu)}
           >
-            <Check className={`h-4 w-4 ${n.lu ? "text-muted-foreground" : "text-emerald-600"}`} />
+            <Check className={`h-4 w-4 ${n.lu ? "text-muted-foreground" : "text-success"}`} />
           </Button>
           <Button variant="ghost" size="icon" title="Supprimer" onClick={onDelete} aria-label="Supprimer">
-            <Trash2 className="h-4 w-4 text-red-500" />
+            <Trash2 className="h-4 w-4 text-destructive" />
           </Button>
         </div>
       </CardContent>

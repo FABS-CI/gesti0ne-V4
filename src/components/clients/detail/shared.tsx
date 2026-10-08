@@ -78,6 +78,6 @@ export function ReportANouveauKpi({ clientId }: { clientId: string }) {
   const { data } = useReportANouveau("client", clientId);
   const m = data?.montant ?? 0;
   const label = m < 0 ? "Report à-nouveau (avance)" : "Report à-nouveau";
-  const accent = m > 0 ? "text-red-600" : m < 0 ? "text-emerald-600" : undefined;
+  const accent = m > 0 ? "text-destructive" : m < 0 ? "text-success" : undefined;
   return <Kpi label={label} value={formatFCFA(Math.abs(m))} accent={accent} />;
 }

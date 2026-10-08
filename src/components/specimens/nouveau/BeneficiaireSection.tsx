@@ -24,7 +24,7 @@ export function BeneficiaireSection({ form, applyClient }: Props) {
           }}
         />
         {form.formState.errors.client_id && (
-          <p className="text-xs text-red-600 mt-1">{form.formState.errors.client_id.message}</p>
+          <p className="text-xs text-destructive mt-1">{form.formState.errors.client_id.message}</p>
         )}
       </div>
       <div className="grid gap-4 md:grid-cols-2">

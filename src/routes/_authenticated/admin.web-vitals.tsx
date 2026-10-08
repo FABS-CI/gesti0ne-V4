@@ -126,9 +126,9 @@ function WebVitalsPage() {
                 a.p75 <= th.good ? "good" : a.p75 <= th.poor ? "needs" : "poor";
               const color =
                 status === "good"
-                  ? "text-emerald-600"
+                  ? "text-success"
                   : status === "needs"
-                    ? "text-amber-600"
+                    ? "text-warning"
                     : "text-destructive";
               return (
                 <Card key={a.metric}>
@@ -146,10 +146,10 @@ function WebVitalsPage() {
                       p75 · {a.count} mesures
                     </div>
                     <div className="flex gap-1 pt-1">
-                      <Badge variant="outline" className="text-emerald-600">
+                      <Badge variant="outline" className="text-success">
                         {a.good}
                       </Badge>
-                      <Badge variant="outline" className="text-amber-600">
+                      <Badge variant="outline" className="text-warning">
                         {a.needs}
                       </Badge>
                       <Badge variant="outline" className="text-destructive">

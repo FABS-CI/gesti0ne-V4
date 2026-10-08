@@ -86,18 +86,18 @@ function CartonPublicPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-slate-50">
-        <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+      <div className="flex min-h-dvh items-center justify-center bg-muted">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-slate-50 p-6 text-center">
-        <Package className="h-12 w-12 text-slate-400" />
+      <div className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-muted p-6 text-center">
+        <Package className="h-12 w-12 text-muted-foreground" />
         <h1 className="ds-page-title text-foreground">Carton introuvable</h1>
-        <p className="max-w-sm text-sm text-slate-500">
+        <p className="max-w-sm text-sm text-muted-foreground">
           Ce QR code ne correspond à aucun carton actif. Vérifiez que vous scannez bien un sticker
           imprimé par le service logistique.
         </p>
@@ -109,20 +109,20 @@ function CartonPublicPage() {
   const destination = data.destination || data.ville || "—";
 
   return (
-    <div className="min-h-dvh bg-slate-50 pb-10">
+    <div className="min-h-dvh bg-muted pb-10">
       {/* En-tête premium */}
       <header className="bg-white px-4 pb-6 pt-7 shadow-sm">
         <div className="mx-auto flex max-w-2xl flex-col items-center gap-3 text-center">
           <img src={fabsLogoUrl} alt="Éditions FABS-CI" className="h-12 w-auto" />
           <div>
             <h1 className="ds-page-title text-foreground">SUIVI DU CARTON</h1>
-            <p className="text-sm text-slate-500">Consultation logistique</p>
+            <p className="text-sm text-muted-foreground">Consultation logistique</p>
           </div>
           <span
-            className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700"
+            className="inline-flex items-center gap-2 rounded-full bg-success/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-success"
             aria-label="Statut du carton"
           >
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            <span className="h-2 w-2 rounded-full bg-success" />
             {statutLabel(data.statut_logistique ?? data.bl_statut)}
           </span>
         </div>
@@ -145,7 +145,7 @@ function CartonPublicPage() {
         <Card>
           <div className="space-y-4 px-4 py-4">
             <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Client
               </div>
               <div
@@ -158,11 +158,11 @@ function CartonPublicPage() {
 
             {(data.destinataire || data.telephone) && (
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Responsable / Contact
                 </div>
                 {data.destinataire && (
-                  <div className="break-words font-semibold text-slate-900">{data.destinataire}</div>
+                  <div className="break-words font-semibold text-foreground">{data.destinataire}</div>
                 )}
                 {data.telephone && (
                   <a href={`tel:${data.telephone}`} className="font-semibold underline" style={{ color: BLUE }}>
@@ -173,16 +173,16 @@ function CartonPublicPage() {
             )}
 
             <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Destination
               </div>
               <div className="break-words text-lg font-bold uppercase" style={{ color: BLUE }}>
                 {destination}
               </div>
-              {data.adresse && <div className="text-sm text-slate-600">{data.adresse}</div>}
+              {data.adresse && <div className="text-sm text-muted-foreground">{data.adresse}</div>}
             </div>
 
-            <div className="flex items-center gap-2 text-sm text-slate-600">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Truck className="h-4 w-4 shrink-0" />
               {data.mode_acheminement === "expedition" ? "Expédition" : "Livraison"}
               {data.date_colisage && <span>· {formatDateFr(data.date_colisage)}</span>}
@@ -193,10 +193,10 @@ function CartonPublicPage() {
         {/* Contenu */}
         <Card title={`Contenu du carton — ${data.produits?.length ?? 0} article(s)`}>
           {(data.produits ?? []).length === 0 ? (
-            <p className="p-4 text-sm text-slate-500">Aucun détail produit disponible.</p>
+            <p className="p-4 text-sm text-muted-foreground">Aucun détail produit disponible.</p>
           ) : (
             <table className="w-full table-fixed text-sm">
-              <thead className="border-b bg-slate-50 text-left text-xs uppercase text-slate-500">
+              <thead className="border-b bg-muted text-left text-xs uppercase text-muted-foreground">
                 <tr>
                   <th className="w-2/3 p-3 font-semibold">Désignation</th>
                   <th className="p-3 text-right font-semibold">Quantité</th>
@@ -216,13 +216,13 @@ function CartonPublicPage() {
 
         <BlDownload colisId={colisId} blReference={data.bl_reference} clientNom={client} />
 
-        <div className="flex items-center justify-center gap-2 text-xs font-medium text-slate-500">
-          <ShieldCheck className="h-4 w-4 text-emerald-600" />
+        <div className="flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
+          <ShieldCheck className="h-4 w-4 text-success" />
           Référence du carton vérifiée — document identifié par QR code
         </div>
 
-        <footer className="pt-4 text-center text-xs leading-relaxed text-slate-400">
-          <div className="font-semibold text-slate-500">EDITIONS FABS-CI</div>
+        <footer className="pt-4 text-center text-xs leading-relaxed text-muted-foreground">
+          <div className="font-semibold text-muted-foreground">EDITIONS FABS-CI</div>
           <div>Consultation logistique — Lecture seule</div>
           <div>© FABS-CI — Tous droits réservés</div>
         </footer>
@@ -294,7 +294,7 @@ function BlDownload({
       </button>
 
       {unavailable && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+        <div className="rounded-xl border border-warning/40 bg-warning/10 p-4 text-sm text-warning">
           <div className="font-semibold">Bon de livraison indisponible</div>
           <p>
             Le document correspondant à ce carton n'est actuellement pas disponible au
@@ -307,7 +307,7 @@ function BlDownload({
         href={SITE_OFFICIEL}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+        className="flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-white px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-muted"
       >
         <Globe className="h-4 w-4" />
         Aller sur le site officiel
@@ -318,9 +318,9 @@ function BlDownload({
 
 function Card({ title, children }: { title?: string; children: React.ReactNode }) {
   return (
-    <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <section className="overflow-hidden rounded-xl border border-border bg-white shadow-sm">
       {title && (
-        <div className="border-b bg-slate-50 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <div className="border-b bg-muted px-4 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           {title}
         </div>
       )}
@@ -343,7 +343,7 @@ function Row({
   if (!value) return null;
   return (
     <div className="flex items-start justify-between gap-3 px-4 py-3 text-sm">
-      <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">{label}</div>
+      <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</div>
       <div
         className={`break-all text-right font-bold ${mono ? "font-mono" : ""}`}
         style={accent ? { color: BLUE } : undefined}

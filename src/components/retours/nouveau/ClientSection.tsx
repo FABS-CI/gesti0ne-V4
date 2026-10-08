@@ -29,7 +29,7 @@ export function ClientSection({ form, applyClient }: Props) {
         />
       </div>
       {form.formState.errors.client_id && (
-        <p className="text-xs text-red-600">{form.formState.errors.client_id.message}</p>
+        <p className="text-xs text-destructive">{form.formState.errors.client_id.message}</p>
       )}
 
       <div className="grid gap-4 md:grid-cols-2">

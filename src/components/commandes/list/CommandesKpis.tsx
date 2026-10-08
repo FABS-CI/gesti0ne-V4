@@ -15,19 +15,19 @@ export function CommandesKpis({ kpis }: { kpis: Kpis }) {
       label: "Montant commandé",
       value: formatFCFA(kpis.ca),
       icon: Wallet,
-      tint: "text-emerald-600 bg-emerald-500/10",
+      tint: "text-success bg-success/10",
     },
     {
       label: "En attente",
       value: kpis.enAttente,
       icon: Clock,
-      tint: "text-amber-600 bg-amber-500/10",
+      tint: "text-warning bg-warning/10",
     },
     {
       label: "Livrées",
       value: kpis.livrees,
       icon: CheckCircle2,
-      tint: "text-sky-600 bg-sky-500/10",
+      tint: "text-info bg-info/10",
     },
   ];
   return (

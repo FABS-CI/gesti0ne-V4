@@ -130,7 +130,7 @@ function IncidentsPage() {
     <div className="space-y-6 p-1">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <AlertTriangle className="h-7 w-7 text-amber-600" />
+          <AlertTriangle className="h-7 w-7 text-warning" />
           <div>
             <h1 className="ds-page-title">Incidents de Stock</h1>
             <p className="text-sm text-muted-foreground">
@@ -373,7 +373,7 @@ function IncidentsPage() {
                               title="Annuler l'incident"
                               onClick={() => setCancelId(inc.incident_id)}
                             >
-                              <XCircle className="h-4 w-4 text-red-600" />
+                              <XCircle className="h-4 w-4 text-destructive" />
                             </Button>
                           )}
                         </div>

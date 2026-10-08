@@ -36,7 +36,7 @@ export function RubriquesCard({ result }: { result: EngineResult | null }) {
                 <TableCell>{l.libelle}</TableCell>
                 <TableCell className="text-right">{l.base ? formatFCFA(l.base) : "—"}</TableCell>
                 <TableCell className="text-right">{l.taux ? `${l.taux}%` : "—"}</TableCell>
-                <TableCell className="text-right text-emerald-600">
+                <TableCell className="text-right text-success">
                   {l.gain ? formatFCFA(l.gain) : "—"}
                 </TableCell>
                 <TableCell className="text-right text-destructive">

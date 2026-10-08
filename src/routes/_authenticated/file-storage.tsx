@@ -164,7 +164,7 @@ function FileStoragePage() {
                             size="icon"
                             onClick={() => deleteMutation.mutate(f.name)}
                           >
-                            <Trash2 className="h-4 w-4 text-red-500" />
+                            <Trash2 className="h-4 w-4 text-destructive" />
                           </Button>
                         </Can>
                       </div>

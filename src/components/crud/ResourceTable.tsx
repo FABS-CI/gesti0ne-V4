@@ -141,7 +141,7 @@ export function ResourceTable({ config, rows, isLoading, onEdit, onDelete }: Pro
                           if (confirm("Supprimer cet élément ?")) onDelete(row[config.idField]);
                         }}
                       >
-                        <Trash2 className="h-4 w-4 text-red-500" />
+                        <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </>
                   )}

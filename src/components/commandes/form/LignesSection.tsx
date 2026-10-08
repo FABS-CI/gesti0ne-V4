@@ -179,7 +179,7 @@ export function LignesSection({
                           <p className="text-[9px] text-destructive mt-0.5 leading-tight">{err.remise_pct.message}</p>
                         )}
                         {remiseEnLigneDisabled && (
-                          <p className="text-[9px] text-amber-600 mt-0.5 leading-tight italic">Bloqué (RG active)</p>
+                          <p className="text-[9px] text-warning mt-0.5 leading-tight italic">Bloqué (RG active)</p>
                         )}
                       </TableCell>
                       <TableCell className="text-right">
@@ -194,7 +194,7 @@ export function LignesSection({
                       <TableCell className="text-right text-muted-foreground py-3">
                         {formatFCFA(calc.montantRem)}
                       </TableCell>
-                      <TableCell className="text-right text-emerald-600 font-medium py-3">
+                      <TableCell className="text-right text-success font-medium py-3">
                         {formatFCFA(calc.brut)}
                       </TableCell>
                       <TableCell className="text-right font-medium py-3">
@@ -308,7 +308,7 @@ export function LignesSection({
                         <p className="text-[10px] text-destructive mt-0.5 leading-tight">{err.remise_pct.message}</p>
                       )}
                       {remiseEnLigneDisabled && (
-                        <p className="text-[9px] text-amber-600 mt-0.5 leading-tight italic">Bloqué (RG active)</p>
+                        <p className="text-[9px] text-warning mt-0.5 leading-tight italic">Bloqué (RG active)</p>
                       )}
                     </div>
                     <div>

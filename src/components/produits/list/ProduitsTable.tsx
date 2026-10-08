@@ -146,7 +146,7 @@ export function ProduitsTable({
                     <TableCell className="text-right">
                       {p.dernier_prix_achat && p.dernier_prix_achat.length > 0 ? (
                         <div className="flex flex-col items-end">
-                          <span className="font-medium text-blue-600">
+                          <span className="font-medium text-info">
                             {formatFCFA(p.dernier_prix_achat.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0].prix_unitaire)}
                           </span>
                           <span className="text-[10px] text-muted-foreground">
@@ -162,20 +162,20 @@ export function ProduitsTable({
                     <TableCell className="text-right">{formatFCFA(p.prix_vente)}</TableCell>
                   )}
                   {canSeeSensitive && (
-                    <TableCell className="text-right font-medium text-emerald-600">
+                    <TableCell className="text-right font-medium text-success">
                       {formatFCFA(p.stock * p.prix_vente)}
                     </TableCell>
                   )}
                   {canSeeSensitive && (
-                    <TableCell className={`text-right font-bold ${low ? "text-red-600" : ""}`}>
+                    <TableCell className={`text-right font-bold ${low ? "text-destructive" : ""}`}>
                       {p.stock}
                     </TableCell>
                   )}
                   {canSeeSensitive && (
                     <TableCell>
                       {p.actif ? (
-                        <span className="inline-flex items-center gap-1 text-xs text-emerald-600">
-                          <span className="h-2 w-2 rounded-full bg-emerald-500" /> Actif
+                        <span className="inline-flex items-center gap-1 text-xs text-success">
+                          <span className="h-2 w-2 rounded-full bg-success" /> Actif
                         </span>
                       ) : (
                         <Badge variant="secondary">Désactivé</Badge>
@@ -218,7 +218,7 @@ export function ProduitsTable({
           <tfoot className="border-t bg-muted/30">
             <TableRow>
               <TableCell colSpan={8} />
-              <TableCell className="text-right font-black text-blue-900 text-base">
+              <TableCell className="text-right font-black text-info text-base">
                 {formatFCFA(totalValeurVente)}
               </TableCell>
               <TableCell colSpan={4} />

@@ -142,7 +142,7 @@ export function DocumentActions({
           size="icon"
           title="Valider"
           onClick={onValidate}
-          className="text-emerald-600 hover:text-emerald-700"
+          className="text-success hover:text-success"
         >
           <CheckCircle2 className="h-4 w-4" />
         </Button>

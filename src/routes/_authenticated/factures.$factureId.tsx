@@ -471,7 +471,7 @@ function FactureDetailPage() {
                     </div>
                     <div>
                       <div className="text-muted-foreground">Total des retours</div>
-                      <div className="font-semibold text-orange-600">
+                      <div className="font-semibold text-warning">
                         − {formatFCFA(resume.totalMontantRetour)}
                       </div>
                     </div>

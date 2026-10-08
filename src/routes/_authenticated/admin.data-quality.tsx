@@ -143,7 +143,7 @@ function DataQualityPage() {
         <Card>
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-sm text-muted-foreground">Doublons clients</CardTitle>
-            <Users className="h-4 w-4 text-orange-500" />
+            <Users className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold">{dupQ.data?.length ?? "—"}</p>
@@ -153,7 +153,7 @@ function DataQualityPage() {
         <Card>
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-sm text-muted-foreground">BL orphelins</CardTitle>
-            <FileX className="h-4 w-4 text-red-500" />
+            <FileX className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold">{orphanQ.data?.length ?? "—"}</p>
@@ -163,7 +163,7 @@ function DataQualityPage() {
         <Card>
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-sm text-muted-foreground">Écarts stock</CardTitle>
-            <Package className="h-4 w-4 text-amber-500" />
+            <Package className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold">{stockQ.data?.length ?? "—"}</p>
@@ -184,7 +184,7 @@ function DataQualityPage() {
         </CardHeader>
         <CardContent>
           {!isSuperAdmin && (
-            <div className="flex items-center gap-2 text-xs text-amber-600 mb-3">
+            <div className="flex items-center gap-2 text-xs text-warning mb-3">
               <AlertCircle className="h-4 w-4" />
               La fusion est réservée aux super-admins.
             </div>
