@@ -41,3 +41,9 @@
 
 ## Accessibilité
 - Contraste ≥ 4.5:1 (texte), ≥ 3:1 (bordures de champs). Focus visible partout. Boutons-icônes avec `aria-label`.
+
+## Couleur = état, jamais décoration
+- Valeurs par défaut en `text-foreground`; une valeur à 0 est en `text-muted-foreground`.
+- `text-destructive` : rupture, retard, résultat/trésorerie négatifs. `text-warning` : sous seuil, contrats expirant, congés en attente. `text-success` : signe positif d'un résultat uniquement.
+- Une valeur colorée est toujours accompagnée d'un libellé texte (« À traiter », « En alerte », « Négatif »).
+- Aucune icône dans les cartes KPI ni dans les titres de section du tableau de bord; aucune icône colorée (voir `KpiCard`, `SectionHeader`).

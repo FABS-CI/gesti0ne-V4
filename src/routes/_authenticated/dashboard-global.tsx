@@ -1,29 +1,16 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import {
-  LayoutDashboard,
-  ShoppingCart,
-  FileText,
-  Package,
-  AlertTriangle,
-  Users,
-  Wallet,
-  TrendingUp,
-  TrendingDown,
-  Scale,
-  Briefcase,
-  CalendarClock,
-} from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { formatFCFA } from "@/lib/format";
 import { getDashboardCompta } from "@/lib/compta-api";
 import { getRHDashboard } from "@/lib/rh-api";
 import { useExerciceConsulteId } from "@/contexts/ExerciceContext";
 import { usePermissions } from "@/hooks/use-permissions";
+import { KpiCard } from "@/components/dashboard/KpiCard";
+import { SectionHeader } from "@/components/dashboard/SectionHeader";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
 export const Route = createFileRoute("/_authenticated/dashboard-global")({
@@ -118,160 +105,154 @@ function DashboardGlobal() {
 
   const loading = ventes.isLoading || stock.isLoading || rh.isLoading || compta.isLoading;
 
+  const caMois = ventes.data?.caMois ?? 0;
+  const impayees = ventes.data?.facturesImpayees ?? 0;
+  const montantImpaye = ventes.data?.montantImpaye ?? 0;
+  const ruptures = stock.data?.produitsRupture ?? 0;
+  const alertes = stock.data?.produitsAlerte ?? 0;
+  const conges = rh.data?.congesEnAttente ?? 0;
+  const contrats = rh.data?.contratsExpirantBientot ?? 0;
+  const resultat = compta.data?.resultat ?? 0;
+  const tresorerie = compta.data?.tresorerie ?? 0;
+
   return (
     <div className="theme-dashboard space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <LayoutDashboard className="h-6 w-6 text-primary" /> Tableau de bord global
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Vue consolidée ventes, stock, RH et comptabilité
-          </p>
-        </div>
+      <div>
+        <h1 className="ds-page-title">Tableau de bord global</h1>
+        <p className="text-sm text-muted-foreground">
+          Vue consolidée ventes, stock, RH et comptabilité
+        </p>
       </div>
 
       {loading && <p className="text-muted-foreground">Chargement…</p>}
 
-      {/* VENTES */}
-      <Section
-        title="Ventes"
-        icon={ShoppingCart}
-        color="var(--primary)"
-        action={{ label: "Commandes", to: "/commandes" }}
-      >
-        <Kpi
+      <SectionHeader title="Ventes" action={{ label: "Voir les commandes", to: "/commandes" }}>
+        <KpiCard
           label="Commandes en cours"
           value={ventes.data?.commandesEnCours ?? 0}
-          icon={ShoppingCart}
-          color="var(--primary)"
+          isZero={(ventes.data?.commandesEnCours ?? 0) === 0}
+          to="/commandes"
         />
-        <Kpi
+        <KpiCard
           label="CA du mois"
-          value={canSeeCA ? formatFCFA(ventes.data?.caMois ?? 0) : "—"}
-          icon={TrendingUp}
-          color="var(--success)"
+          value={canSeeCA ? formatFCFA(caMois) : "—"}
+          isZero={canSeeCA && caMois === 0}
         />
-        <Kpi
+        <KpiCard
           label="Factures impayées"
-          value={ventes.data?.facturesImpayees ?? 0}
-          icon={FileText}
-          color="var(--warning)"
+          value={impayees}
+          isZero={impayees === 0}
+          to="/factures"
         />
-        <Kpi
+        <KpiCard
           label="Montant impayé"
-          value={formatFCFA(ventes.data?.montantImpaye ?? 0)}
-          icon={Wallet}
-          color="var(--destructive)"
+          value={formatFCFA(montantImpaye)}
+          isZero={montantImpaye === 0}
+          to="/factures"
         />
-      </Section>
+      </SectionHeader>
 
-      {/* STOCK */}
-      <Section
+      <SectionHeader
         title="Stock & logistique"
-        icon={Package}
-        color="var(--primary)"
-        action={{ label: "Produits", to: "/produits" }}
+        action={{ label: "Voir les produits", to: "/produits" }}
       >
-        <Kpi
+        <KpiCard
           label="Produits actifs"
           value={stock.data?.totalProduits ?? 0}
-          icon={Package}
-          color="var(--primary)"
+          isZero={(stock.data?.totalProduits ?? 0) === 0}
+          to="/produits"
         />
-        <Kpi
+        <KpiCard
           label="Ruptures"
-          value={stock.data?.produitsRupture ?? 0}
-          icon={AlertTriangle}
-          color="var(--destructive)"
+          value={ruptures}
+          isZero={ruptures === 0}
+          tone="destructive"
+          stateLabel="À traiter"
+          to="/stock"
         />
-        <Kpi
+        <KpiCard
           label="Sous seuil d'alerte"
-          value={stock.data?.produitsAlerte ?? 0}
-          icon={AlertTriangle}
-          color="var(--warning)"
+          value={alertes}
+          isZero={alertes === 0}
+          tone="warning"
+          stateLabel="En alerte"
+          to="/stock"
         />
-        <Kpi
+        <KpiCard
           label="Valeur du stock"
           value={formatFCFA(stock.data?.valeurStock ?? 0)}
-          icon={Wallet}
-          color="var(--success)"
+          isZero={(stock.data?.valeurStock ?? 0) === 0}
         />
-      </Section>
+      </SectionHeader>
 
-      {/* RH */}
-      <Section
+      <SectionHeader
         title="Ressources humaines"
-        icon={Briefcase}
-        color="var(--primary)"
-        action={{ label: "RH", to: "/rh-dashboard" }}
+        action={{ label: "Voir les employés", to: "/rh-dashboard" }}
       >
-        <Kpi
+        <KpiCard
           label="Employés actifs"
           value={rh.data?.employesActifs ?? 0}
-          icon={Users}
-          color="var(--primary)"
+          isZero={(rh.data?.employesActifs ?? 0) === 0}
+          to="/employes"
         />
-        <Kpi
+        <KpiCard
           label="Masse salariale"
           value={formatFCFA(rh.data?.masseSalariale ?? 0)}
-          icon={Wallet}
-          color="var(--primary)"
+          isZero={(rh.data?.masseSalariale ?? 0) === 0}
+          to="/paie"
         />
-        <Kpi
+        <KpiCard
           label="Congés en attente"
-          value={rh.data?.congesEnAttente ?? 0}
-          icon={CalendarClock}
-          color="var(--warning)"
+          value={conges}
+          isZero={conges === 0}
+          tone="warning"
+          stateLabel="À traiter"
+          to="/conges"
         />
-        <Kpi
+        <KpiCard
           label="Contrats expirant (30j)"
-          value={rh.data?.contratsExpirantBientot ?? 0}
-          icon={AlertTriangle}
-          color="var(--destructive)"
+          value={contrats}
+          isZero={contrats === 0}
+          tone="warning"
+          stateLabel="En alerte"
+          to="/contrats"
         />
-      </Section>
+      </SectionHeader>
 
-      {/* COMPTA */}
-      <Section
+      <SectionHeader
         title="Comptabilité"
-        icon={Scale}
-        color="var(--success)"
-        action={{ label: "Compta", to: "/compta-dashboard" }}
+        action={{ label: "Voir la comptabilité", to: "/compta-dashboard" }}
       >
-        <Kpi
+        <KpiCard
           label="Produits (cl. 7)"
           value={formatFCFA(compta.data?.produits ?? 0)}
-          icon={TrendingUp}
-          color="var(--success)"
+          isZero={(compta.data?.produits ?? 0) === 0}
         />
-        <Kpi
+        <KpiCard
           label="Charges (cl. 6)"
           value={formatFCFA(compta.data?.charges ?? 0)}
-          icon={TrendingDown}
-          color="var(--destructive)"
+          isZero={(compta.data?.charges ?? 0) === 0}
         />
-        <Kpi
+        <KpiCard
           label="Résultat"
-          value={formatFCFA(compta.data?.resultat ?? 0)}
-          icon={Scale}
-          color={(compta.data?.resultat ?? 0) >= 0 ? "var(--success)" : "var(--destructive)"}
+          value={formatFCFA(resultat)}
+          isZero={resultat === 0}
+          tone={resultat < 0 ? "destructive" : "success"}
+          stateLabel={resultat < 0 ? "Négatif" : "Positif"}
         />
-        <Kpi
+        <KpiCard
           label="Trésorerie"
-          value={formatFCFA(compta.data?.tresorerie ?? 0)}
-          icon={Wallet}
-          color="var(--warning)"
+          value={formatFCFA(tresorerie)}
+          isZero={tresorerie === 0}
+          tone={tresorerie < 0 ? "destructive" : "neutral"}
+          stateLabel="Négatif"
         />
-      </Section>
+      </SectionHeader>
 
-      {/* ALERTES */}
       {rh.data?.alertes && rh.data.alertes.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <AlertTriangle className="h-4 w-4 text-warning" /> Alertes RH
-            </CardTitle>
+            <CardTitle className="text-base">Alertes RH</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {rh.data.alertes.map((a, i) => (
@@ -294,62 +275,5 @@ function DashboardGlobal() {
         </Card>
       )}
     </div>
-  );
-}
-
-function Section({
-  title,
-  icon: Icon,
-  color,
-  action,
-  children,
-}: {
-  title: string;
-  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
-  color: string;
-  action?: { label: string; to: string };
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-lg font-semibold">
-          <Icon className="h-5 w-5" style={{ color }} />
-          {title}
-        </h2>
-        {action && (
-          <Button variant="ghost" size="sm" asChild>
-            <Link to={action.to}>{action.label} →</Link>
-          </Button>
-        )}
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{children}</div>
-    </section>
-  );
-}
-
-function Kpi({
-  label,
-  value,
-  icon: Icon,
-  color,
-}: {
-  label: string;
-  value: string | number;
-  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
-  color: string;
-}) {
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-xs font-medium text-muted-foreground">{label}</CardTitle>
-        <Icon className="h-4 w-4" style={{ color }} />
-      </CardHeader>
-      <CardContent>
-        <div className="text-xl font-bold" style={{ color }}>
-          {value}
-        </div>
-      </CardContent>
-    </Card>
   );
 }
