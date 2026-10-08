@@ -68,7 +68,7 @@ export function FecPreviewCard({
             Aucune écriture sur cette période — rien à exporter.
           </p>
         ) : (
-          <pre className="text-[11px] leading-relaxed bg-muted/40 rounded-md p-3 overflow-auto max-h-72 font-mono">
+          <pre className="text-xs leading-relaxed bg-muted/40 rounded-md p-3 overflow-auto max-h-72 font-mono">
             {previewLines.join("\n")}
             {"\n"}…
           </pre>

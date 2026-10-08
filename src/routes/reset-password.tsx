@@ -63,7 +63,7 @@ function ResetPasswordPage() {
   return (
     <div className="flex min-h-dvh items-center justify-center bg-background px-4 py-8">
       <div className="w-full max-w-[400px] rounded-[12px] border border-border bg-card p-8 shadow-sm">
-        <h1 className="mb-2 text-[20px] font-semibold text-foreground">
+        <h1 className="mb-2 text-xl font-semibold text-foreground">
           {recovery ? "Nouveau mot de passe" : "Mot de passe oublié"}
         </h1>
         <p className="mb-6 text-sm text-muted-foreground">

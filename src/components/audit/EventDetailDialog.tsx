@@ -31,7 +31,7 @@ function Meta({
 }) {
   return (
     <div className={className}>
-      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="truncate font-mono text-xs">{value || "—"}</div>
     </div>
   );
@@ -75,7 +75,7 @@ export function EventDetailDialog({ selected, onClose }: Props) {
                 value={selected.duration_ms != null ? `${selected.duration_ms} ms` : null}
               />
               <div>
-                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                <div className="text-xs uppercase tracking-wider text-muted-foreground">
                   Statut
                 </div>
                 <div className="font-mono text-xs">
@@ -93,7 +93,7 @@ export function EventDetailDialog({ selected, onClose }: Props) {
                 </div>
               </div>
               <div>
-                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                <div className="text-xs uppercase tracking-wider text-muted-foreground">
                   Niveau
                 </div>
                 <div className="font-mono text-xs">
@@ -111,7 +111,7 @@ export function EventDetailDialog({ selected, onClose }: Props) {
                 </div>
               </div>
               <div className="col-span-2 rounded border bg-muted/20 p-2">
-                <div className="mb-1 text-[10px] uppercase tracking-wider text-muted-foreground">
+                <div className="mb-1 text-xs uppercase tracking-wider text-muted-foreground">
                   Appareil / Localisation
                 </div>
                 <div className="flex flex-wrap items-center gap-2 text-xs">

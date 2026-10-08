@@ -192,7 +192,7 @@ function SubSection({
           <ChevronRight aria-hidden strokeWidth={1.75} className="h-3.5 w-3.5 shrink-0" />
         )}
         <span className="truncate">{name}</span>
-        <span className="ml-auto shrink-0 text-[11px] tabular-nums text-sidebar-foreground/40">
+        <span className="ml-auto shrink-0 text-xs tabular-nums text-sidebar-foreground/40">
           {items.length}
         </span>
       </button>

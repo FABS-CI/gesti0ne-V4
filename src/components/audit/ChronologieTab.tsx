@@ -88,7 +88,7 @@ const Row = React.memo(function Row({
           <DeviceIcon device={r.device} />
           {r.browser ? (
             <span
-              className={`inline-flex rounded px-1.5 py-0.5 text-[10px] font-medium ${
+              className={`inline-flex rounded px-1.5 py-0.5 text-xs font-medium ${
                 BROWSER_STYLE[r.browser] ?? "bg-muted text-muted-foreground"
               }`}
               title={navigateur}
@@ -100,7 +100,7 @@ const Row = React.memo(function Row({
             <span className="text-muted-foreground">—</span>
           )}
         </div>
-        <div className="text-[10px] text-muted-foreground">{r.os ?? ""}</div>
+        <div className="text-xs text-muted-foreground">{r.os ?? ""}</div>
       </TableCell>
       <TableCell className="text-xs">
         <div className="font-mono">{r.ip_address ?? "—"}</div>

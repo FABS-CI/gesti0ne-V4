@@ -474,7 +474,7 @@ function EditTourneePage() {
                       : "Clôture manuelle"}
                   </Badge>
                   {form.cloture_at && (
-                    <span className="text-[11px] text-muted-foreground">
+                    <span className="text-xs text-muted-foreground">
                       le {new Date(form.cloture_at).toLocaleString("fr-FR")}
                     </span>
                   )}
@@ -642,7 +642,7 @@ function EditTourneePage() {
                       {form.cloture_at
                         ? new Date(form.cloture_at).toLocaleString("fr-FR")
                         : "date inconnue"}
-                      <div className="text-[10px] text-muted-foreground">
+                      <div className="text-xs text-muted-foreground">
                         {form.cloture_mode === "auto"
                           ? "Système — tous les colis livrés"
                           : form.cloture_by

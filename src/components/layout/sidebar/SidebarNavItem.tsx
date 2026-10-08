@@ -11,7 +11,7 @@ function BadgeApprobations() {
     <span
       aria-label={`${total} approbation${total > 1 ? "s" : ""} en attente`}
       className={cn(
-        "ml-auto min-w-5 shrink-0 rounded-md px-1.5 py-0.5 text-center text-[11px] font-medium tabular-nums",
+        "ml-auto min-w-5 shrink-0 rounded-md px-1.5 py-0.5 text-center text-xs font-medium tabular-nums",
         isCritical ? "bg-destructive text-destructive-foreground" : "bg-warning text-sidebar-primary-foreground",
       )}
     >

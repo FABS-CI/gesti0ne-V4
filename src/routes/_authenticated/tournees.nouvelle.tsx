@@ -479,7 +479,7 @@ function NouvelleTourneePage() {
             Valider la tournée
           </Button>
           {missingFields.length > 0 && !saving && (
-            <p className="text-[11px] text-destructive text-right max-w-xs">
+            <p className="text-xs text-destructive text-right max-w-xs">
               À compléter : {missingFields.join(", ")}.
             </p>
           )}
@@ -576,7 +576,7 @@ function NouvelleTourneePage() {
                   )}
                 </div>
               </div>
-              <p className="mt-1 text-[11px] text-muted-foreground">
+              <p className="mt-1 text-xs text-muted-foreground">
                 Tous les colis dont le colisage est terminé et non affectés à une tournée sont
                 affichés en temps réel. La date est un filtre optionnel.
               </p>

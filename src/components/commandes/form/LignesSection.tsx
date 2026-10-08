@@ -139,15 +139,15 @@ export function LignesSection({
                             onChange={(_id, produit) => onProduitChange(i, produit)}
                           />
                           {err?.produit_id && (
-                            <p className="text-[10px] text-destructive mt-0.5">{err.produit_id.message}</p>
+                            <p className="text-xs text-destructive mt-0.5">{err.produit_id.message}</p>
                           )}
                         </div>
                       </TableCell>
 
-                      <TableCell className="font-mono text-[11px] select-all py-3" title="Référence produit">
+                      <TableCell className="font-mono text-xs select-all py-3" title="Référence produit">
                         {form.watch(`lignes.${i}.reference_produit`) || "—"}
                       </TableCell>
-                      <TableCell className="text-right text-[11px] py-3">
+                      <TableCell className="text-right text-xs py-3">
                         {stock == null ? (
                           "—"
                         ) : (
@@ -176,10 +176,10 @@ export function LignesSection({
                           disabled={remiseEnLigneDisabled}
                         />
                         {err?.remise_pct && (
-                          <p className="text-[9px] text-destructive mt-0.5 leading-tight">{err.remise_pct.message}</p>
+                          <p className="text-xs text-destructive mt-0.5 leading-tight">{err.remise_pct.message}</p>
                         )}
                         {remiseEnLigneDisabled && (
-                          <p className="text-[9px] text-warning mt-0.5 leading-tight italic">Bloqué (RG active)</p>
+                          <p className="text-xs text-warning mt-0.5 leading-tight italic">Bloqué (RG active)</p>
                         )}
                       </TableCell>
                       <TableCell className="text-right">
@@ -246,7 +246,7 @@ export function LignesSection({
                       className="mt-5"
                     />
                     <div className="min-w-0 space-y-1">
-                      <Label className="text-[11px] uppercase text-muted-foreground">
+                      <Label className="text-xs uppercase text-muted-foreground">
                         Article #{i + 1}
                       </Label>
                       <ProductSearchSelect
@@ -284,7 +284,7 @@ export function LignesSection({
 
                   <div className="grid grid-cols-3 gap-2">
                     <div>
-                      <Label className="text-[11px]">P.U.</Label>
+                      <Label className="text-xs">P.U.</Label>
                       <NumberField
                         control={form.control}
                         name={`lignes.${i}.prix_unitaire`}
@@ -294,7 +294,7 @@ export function LignesSection({
                       />
                     </div>
                     <div>
-                      <Label className="text-[11px]">Rem. %</Label>
+                      <Label className="text-xs">Rem. %</Label>
                       <NumberField
                         control={form.control}
                         name={`lignes.${i}.remise_pct`}
@@ -305,14 +305,14 @@ export function LignesSection({
                         disabled={remiseEnLigneDisabled}
                       />
                       {err?.remise_pct && (
-                        <p className="text-[10px] text-destructive mt-0.5 leading-tight">{err.remise_pct.message}</p>
+                        <p className="text-xs text-destructive mt-0.5 leading-tight">{err.remise_pct.message}</p>
                       )}
                       {remiseEnLigneDisabled && (
-                        <p className="text-[9px] text-warning mt-0.5 leading-tight italic">Bloqué (RG active)</p>
+                        <p className="text-xs text-warning mt-0.5 leading-tight italic">Bloqué (RG active)</p>
                       )}
                     </div>
                     <div>
-                      <Label className="text-[11px]">Qté</Label>
+                      <Label className="text-xs">Qté</Label>
                       <NumberField
                         control={form.control}
                         name={`lignes.${i}.quantite`}

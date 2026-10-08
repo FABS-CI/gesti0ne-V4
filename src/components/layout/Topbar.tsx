@@ -93,7 +93,7 @@ function TopbarImpl() {
               </Avatar>
               <div className="hidden lg:block text-left leading-tight">
                 <p className="max-w-[120px] truncate text-sm font-semibold">{label}</p>
-                <p className="max-w-[120px] truncate text-[11px] text-muted-foreground">
+                <p className="max-w-[120px] truncate text-xs text-muted-foreground">
                   {user?.email}
                 </p>
               </div>

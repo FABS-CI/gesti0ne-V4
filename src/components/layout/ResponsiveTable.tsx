@@ -97,7 +97,7 @@ function ScrollableTable({
         />
       )}
       {hint && edges.right && (
-        <div className="pointer-events-none absolute right-1 top-1 rounded bg-muted/80 px-1.5 py-0.5 text-[10px] text-muted-foreground sm:hidden">
+        <div className="pointer-events-none absolute right-1 top-1 rounded bg-muted/80 px-1.5 py-0.5 text-xs text-muted-foreground sm:hidden">
           ← faites glisser →
         </div>
       )}

@@ -69,7 +69,7 @@ export function ResourceFormBody({
               {!editing && defaultSources[fd.name] && (
                 <Badge
                   variant="outline"
-                  className="text-[10px] font-normal border-info/40 text-info"
+                  className="text-xs font-normal border-info/40 text-info"
                 >
                   {defaultSources[fd.name]}
                 </Badge>

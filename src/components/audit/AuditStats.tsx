@@ -79,7 +79,7 @@ export function AuditStats({ kpi, totalEvents }: Props) {
                 <div className="text-lg font-bold tabular-nums leading-tight">
                   {formatFCFA(v(key), false)}
                 </div>
-                <div className="truncate text-[11px] text-muted-foreground">{label}</div>
+                <div className="truncate text-xs text-muted-foreground">{label}</div>
               </div>
             </CardContent>
           </Card>

@@ -49,7 +49,7 @@ function CommandeCardInner({
             </Link>
             <Badge
               variant="outline"
-              className="shrink-0 border-transparent text-[10px] font-medium"
+              className="shrink-0 border-transparent text-xs font-medium"
               style={{ background: `${st?.color}1a`, color: st?.color }}
             >
               {st?.label ?? c.statut}

@@ -113,7 +113,7 @@ const Row = React.memo(function Row({
           {u.fonction ? ` · ${u.fonction}` : ""}
         </div>
         {u.connected_at && (
-          <div className="text-[10px] text-muted-foreground">
+          <div className="text-xs text-muted-foreground">
             Depuis {new Date(u.connected_at).toLocaleTimeString("fr-FR")}
           </div>
         )}

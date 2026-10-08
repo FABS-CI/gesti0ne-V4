@@ -302,7 +302,7 @@ function RetoursListPage() {
                       const st = STATUT_RETOUR_LABEL[r.statut];
                       return (
                     <TableRow key={r.retour_id} className="hover:bg-muted/30 transition-colors">
-                      <TableCell className="font-mono font-medium text-[10px] md:text-xs whitespace-nowrap">
+                      <TableCell className="font-mono font-medium text-xs md:text-xs whitespace-nowrap">
                         {r.numero || r.reference}
                       </TableCell>
                       <TableCell className="text-xs whitespace-nowrap">
@@ -322,7 +322,7 @@ function RetoursListPage() {
                         {st && (
                           <Badge
                             variant="outline"
-                            className="text-[10px] px-2 py-0 h-5 whitespace-nowrap inline-flex text-white border-none"
+                            className="text-xs px-2 py-0 h-5 whitespace-nowrap inline-flex text-white border-none"
                             style={{ backgroundColor: st.color }}
                           >
                             {st.label}

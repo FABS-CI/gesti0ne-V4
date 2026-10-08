@@ -355,8 +355,8 @@ function fmt(n: number): string {
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
   if (value === null || value === undefined || value === "" || value === "—") return null;
   return (
-    <div className="text-[11px] leading-tight">
-      <div className="text-muted-foreground uppercase text-[9px] tracking-wide">{label}</div>
+    <div className="text-xs leading-tight">
+      <div className="text-muted-foreground uppercase text-xs tracking-wide">{label}</div>
       <div className="font-semibold">{value}</div>
     </div>
   );
@@ -473,24 +473,24 @@ function FeuilleTourneePage() {
         <div className="flex justify-between items-start mb-4 border-b-2 border-border pb-3">
           <div className="max-w-[55%]">
             <h1 className="ds-page-title">{COMPANY.nom}</h1>
-            <p className="text-[10px] text-muted-foreground leading-snug">{COMPANY.adresse}</p>
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground leading-snug">{COMPANY.adresse}</p>
+            <p className="text-xs text-muted-foreground">
               Tél : {COMPANY.telephones.join(" / ")}
             </p>
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Email : {COMPANY.email}
             </p>
-            <p className="text-[9px] italic text-muted-foreground mt-0.5">{COMPANY.slogan}</p>
+            <p className="text-xs italic text-muted-foreground mt-0.5">{COMPANY.slogan}</p>
           </div>
           <div className="text-right">
             <h2 className="text-xl font-bold uppercase tracking-wide">Bon de tournée</h2>
             <p className="text-sm font-mono">{bonRef}</p>
-            <p className="text-[11px]">N° tournée : <b>{t.reference}</b></p>
-            {t.date_tournee && <p className="text-[11px]">Date : {formatDate(t.date_tournee)}</p>}
+            <p className="text-xs">N° tournée : <b>{t.reference}</b></p>
+            {t.date_tournee && <p className="text-xs">Date : {formatDate(t.date_tournee)}</p>}
             <div className="flex justify-end gap-2 mt-2 items-start">
               <div className="text-center">
                 <QrCode value={`${bonRef}|${t.reference}`} size={64} />
-                <div className="text-[8px] text-muted-foreground mt-0.5">QR bon</div>
+                <div className="text-xs text-muted-foreground mt-0.5">QR bon</div>
               </div>
             </div>
           </div>
@@ -533,7 +533,7 @@ function FeuilleTourneePage() {
         </div>
 
         {/* Tableau enrichi des livraisons */}
-        <table className="w-full border-collapse text-[10px] table-zebra-orange table-print-borders">
+        <table className="w-full border-collapse text-xs table-zebra-orange table-print-borders">
           <thead>
             <tr className="bg-muted">
               <th className="border p-1 text-left">N°</th>
@@ -565,21 +565,21 @@ function FeuilleTourneePage() {
                   <td className="border p-1 font-mono">
                     {l.commande_reference ?? "—"}
                     {l.facture_reference ? (
-                      <div className="text-[9px] text-muted-foreground">{l.facture_reference}</div>
+                      <div className="text-xs text-muted-foreground">{l.facture_reference}</div>
                     ) : null}
                   </td>
                   <td className="border p-1">{l.client_nom ?? "—"}</td>
                   <td className="border p-1">
                     {l.contact ?? "—"}
                     {l.telephone ? (
-                      <div className="text-[9px] text-muted-foreground">{l.telephone}</div>
+                      <div className="text-xs text-muted-foreground">{l.telephone}</div>
                     ) : null}
                   </td>
                   <td className="border p-1">{l.adresse ?? "—"}</td>
                   <td className="border p-1">
                     {[l.ville_livraison, l.commune].filter(Boolean).join(" · ") || "—"}
                     {l.gare_nom ? (
-                      <div className="text-[9px] italic">Gare : {l.gare_nom}</div>
+                      <div className="text-xs italic">Gare : {l.gare_nom}</div>
                     ) : null}
                   </td>
                   <td className="border p-1 text-right">{l.nb_cartons || 0}</td>
@@ -615,7 +615,7 @@ function FeuilleTourneePage() {
           <div className="text-xs font-semibold mb-2 uppercase tracking-wide">
             Récapitulatif automatique
           </div>
-          <div className="grid grid-cols-4 md:grid-cols-6 gap-2 text-[11px]">
+          <div className="grid grid-cols-4 md:grid-cols-6 gap-2 text-xs">
             <Field label="Clients" value={String(clientsSet.size)} />
             <Field label="Livraisons" value={String(nbLivraisons)} />
             <Field label="Commandes" value={String(commandesSet.size)} />
@@ -641,11 +641,11 @@ function FeuilleTourneePage() {
           <div className="mt-4">
             <div className="flex items-baseline justify-between mb-1">
               <h3 className="text-sm font-semibold">Colis affectés ({colis.length})</h3>
-              <span className="text-[11px] text-muted-foreground">
+              <span className="text-xs text-muted-foreground">
                 Total cartons : <b>{totalCartonsColis}</b>
               </span>
             </div>
-            <table className="w-full border-collapse text-[10px] table-zebra-orange table-print-borders">
+            <table className="w-full border-collapse text-xs table-zebra-orange table-print-borders">
               <thead>
                 <tr className="bg-muted">
                   <th className="border p-1 text-left">Réf. colis</th>
@@ -687,11 +687,11 @@ function FeuilleTourneePage() {
             Observations / Incidents
           </div>
           {t.notes && (
-            <p className="whitespace-pre-wrap text-[11px] mb-2 border-l-2 border-border pl-2 italic">
+            <p className="whitespace-pre-wrap text-xs mb-2 border-l-2 border-border pl-2 italic">
               {t.notes}
             </p>
           )}
-          <div className="grid grid-cols-2 gap-2 text-[10px] text-muted-foreground">
+          <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
             <div className="border rounded p-2 min-h-[50px]">
                Incident&nbsp;&nbsp;&nbsp; Produit manquant&nbsp;&nbsp;&nbsp; Produit cassé
               <br />
@@ -706,7 +706,7 @@ function FeuilleTourneePage() {
         </div>
 
         {/* Signatures 5 blocs */}
-        <div className="grid grid-cols-5 gap-2 mt-6 text-[10px]">
+        <div className="grid grid-cols-5 gap-2 mt-6 text-xs">
           {[
             "Resp. logistique",
             "Préparateur",
@@ -715,11 +715,11 @@ function FeuilleTourneePage() {
             "Client",
           ].map((label) => (
             <div key={label} className="border rounded p-2 min-h-[70px]">
-              <div className="font-semibold text-[9px] uppercase tracking-wide text-muted-foreground">
+              <div className="font-semibold text-xs uppercase tracking-wide text-muted-foreground">
                 {label}
               </div>
-              <div className="mt-1 text-[9px]">Nom : ______________</div>
-              <div className="mt-6 border-t pt-1 text-[9px] text-muted-foreground">
+              <div className="mt-1 text-xs">Nom : ______________</div>
+              <div className="mt-6 border-t pt-1 text-xs text-muted-foreground">
                 Date / Heure : ____ / ____
               </div>
             </div>
@@ -727,7 +727,7 @@ function FeuilleTourneePage() {
         </div>
 
         {/* Pied de page */}
-        <div className="mt-6 pt-2 border-t text-[9px] text-muted-foreground flex justify-between">
+        <div className="mt-6 pt-2 border-t text-xs text-muted-foreground flex justify-between">
           <div>
             <div>
               {COMPANY.nom} — {COMPANY.adresse}

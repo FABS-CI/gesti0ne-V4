@@ -304,7 +304,7 @@ function PaiementsPage() {
                             p.statut === "en_attente_validation") && (
                             <Link
                               to="/approbations"
-                              className="inline-flex items-center rounded-full border border-warning px-2 py-0.5 text-[10px] font-medium text-warning hover:bg-warning/10"
+                              className="inline-flex items-center rounded-full border border-warning px-2 py-0.5 text-xs font-medium text-warning hover:bg-warning/10"
                               title="En attente d'approbation — voir le centre"
                             >
                               ⏳ Approbation

@@ -117,7 +117,7 @@ export function LivraisonsTable({ rows, isLoading, onAdvance }: Props) {
                             {r.commande?.reference ?? "—"}
                           </Link>
                           {r.commande?.montant_total != null && (
-                            <div className="text-[11px] text-muted-foreground">
+                            <div className="text-xs text-muted-foreground">
                               {formatFCFA(r.commande.montant_total)}
                             </div>
                           )}
@@ -146,7 +146,7 @@ export function LivraisonsTable({ rows, isLoading, onAdvance }: Props) {
                         "—"
                       )}
                       {r.ordre_passage != null && (
-                        <div className="text-[10px] text-muted-foreground">#{r.ordre_passage}</div>
+                        <div className="text-xs text-muted-foreground">#{r.ordre_passage}</div>
                       )}
                     </TableCell>
                     <TableCell className="text-xs">
@@ -155,13 +155,13 @@ export function LivraisonsTable({ rows, isLoading, onAdvance }: Props) {
                     <TableCell className="text-xs">
                       <div>{livreur ?? "—"}</div>
                       {vehicule && (
-                        <div className="text-[11px] text-muted-foreground">{vehicule}</div>
+                        <div className="text-xs text-muted-foreground">{vehicule}</div>
                       )}
                     </TableCell>
                     <TableCell className="text-xs">
                       <div>1 colis</div>
                       {r.nb_cartons != null && (
-                        <div className="text-[11px] text-muted-foreground">
+                        <div className="text-xs text-muted-foreground">
                           {r.nb_cartons} carton{r.nb_cartons > 1 ? "s" : ""}
                         </div>
                       )}
@@ -173,7 +173,7 @@ export function LivraisonsTable({ rows, isLoading, onAdvance }: Props) {
                     </TableCell>
                     <TableCell>
                       <Progress value={pct} className="h-2" />
-                      <div className="text-[10px] text-muted-foreground mt-1">
+                      <div className="text-xs text-muted-foreground mt-1">
                         {idx + 1} / {steps.length}
                       </div>
                     </TableCell>

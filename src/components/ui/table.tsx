@@ -19,7 +19,7 @@ const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableE
       <table
         ref={ref}
         className={cn(
-          "w-full caption-bottom text-sm border-collapse min-w-[600px] md:min-w-0",
+          "w-full caption-bottom text-sm tabular-nums border-collapse min-w-[600px] md:min-w-0",
           "border-spacing-0", // Anti-overlap
           className
         )}
@@ -37,7 +37,7 @@ const TableHeader = React.forwardRef<
   <thead
     ref={ref}
     className={cn(
-      "sticky top-0 z-10 bg-muted/40 backdrop-blur supports-[backdrop-filter]:bg-muted/30",
+      "sticky top-0 z-10 bg-muted",
       "[&_tr]:border-b [&_tr]:border-border/60",
       "h-11", // Largeur fixe cohérente pour les headers
       className,
@@ -83,7 +83,7 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
     <tr
       ref={ref}
       className={cn(
-        "border-b border-border/40 transition-colors hover:bg-accent/40 data-[state=selected]:bg-accent/60",
+        "border-b border-border/40 transition-colors hover:bg-muted/50 data-[state=selected]:bg-primary/5",
         className,
       )}
       {...props}
@@ -99,7 +99,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      "h-11 px-3 text-left align-middle text-[11px] font-semibold uppercase tracking-wider text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+      "h-10 px-3 text-left align-middle text-xs font-semibold text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
       className,
     )}
     {...props}
@@ -114,7 +114,7 @@ const TableCell = React.forwardRef<
   <td
     ref={ref}
     className={cn(
-      "px-3 py-3 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+      "h-10 px-3 py-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
       className,
     )}
     {...props}

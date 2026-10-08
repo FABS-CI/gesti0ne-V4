@@ -82,7 +82,7 @@ export function CertificationCard({ reference }: { reference: string }) {
               Version {active.version}
               {active.certified_at ? ` • Émise le ${formatDate(active.certified_at)}` : ""}
             </div>
-            <div className="font-mono text-[11px] break-all text-muted-foreground">
+            <div className="font-mono text-xs break-all text-muted-foreground">
               {active.canonical_hash}
             </div>
             {active.revoked_at && (

@@ -25,7 +25,7 @@ export function TourneeCoutsCard({
       </CardHeader>
       <CardContent className="space-y-2">
         {vs !== "en_attente" && (
-          <div className="text-[11px] rounded bg-muted/40 border px-2 py-1">
+          <div className="text-xs rounded bg-muted/40 border px-2 py-1">
             Statut : <b>{vs}</b>
             {locked && " — édition verrouillée"}
           </div>

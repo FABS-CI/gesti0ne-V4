@@ -460,7 +460,7 @@ function ApprovisionnementsPage() {
                             />
                           ))}
                           {ls.length > 3 && (
-                            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-muted text-[10px] font-bold ring-2 ring-background">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-muted text-xs font-bold ring-2 ring-background">
                               +{ls.length - 3}
                             </div>
                           )}

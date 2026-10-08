@@ -48,7 +48,7 @@ export function LogoAndPerTypeCard({
               className="h-14 w-14 rounded border bg-white object-contain p-1"
             />
           ) : (
-            <div className="flex h-14 w-14 items-center justify-center rounded border bg-muted text-[10px] text-muted-foreground">
+            <div className="flex h-14 w-14 items-center justify-center rounded border bg-muted text-xs text-muted-foreground">
               Aucun
             </div>
           )}

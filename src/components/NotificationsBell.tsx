@@ -79,7 +79,7 @@ export function NotificationsBell() {
         >
           <Bell className="h-[18px] w-[18px]" />
           {unread > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-white ring-2 ring-card">
+            <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-destructive px-1 text-xs font-bold text-white ring-2 ring-card">
               {display}
             </span>
           )}
@@ -126,7 +126,7 @@ export function NotificationsBell() {
                         <div className="flex items-center gap-2">
                           <p className="text-sm font-medium truncate">{n.titre}</p>
                           {!n.lu && (
-                            <Badge variant="secondary" className="text-[10px] h-4 px-1">
+                            <Badge variant="secondary" className="text-xs h-4 px-1">
                               Nouveau
                             </Badge>
                           )}
@@ -136,7 +136,7 @@ export function NotificationsBell() {
                             {n.message}
                           </p>
                         )}
-                        <p className="text-[11px] text-muted-foreground mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                           {formatDistanceToNow(new Date(n.created_at), {
                             addSuffix: true,
                             locale: fr,

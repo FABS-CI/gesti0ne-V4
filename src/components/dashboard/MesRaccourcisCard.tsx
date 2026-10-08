@@ -58,7 +58,7 @@ export function MesRaccourcisCard() {
                     </div>
                     <span className="text-sm font-medium leading-tight">{def.label}</span>
                     {usage >= 20 && (
-                      <Badge variant="secondary" className="text-[10px]">
+                      <Badge variant="secondary" className="text-xs">
                         Favori
                       </Badge>
                     )}
