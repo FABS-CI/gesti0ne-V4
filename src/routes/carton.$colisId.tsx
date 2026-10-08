@@ -113,7 +113,7 @@ function CartonPublicPage() {
       {/* En-tête premium */}
       <header className="bg-white px-4 pb-6 pt-7 shadow-sm">
         <div className="mx-auto flex max-w-2xl flex-col items-center gap-3 text-center">
-          <img src={fabsLogoUrl} alt="Éditions FABS-CI" className="h-12 w-auto" />
+          <img src={fabsLogoUrl} alt="Éditions FABS-CI" height={48} decoding="async" className="h-12 w-auto" />
           <div>
             <h1 className="ds-page-title text-foreground">SUIVI DU CARTON</h1>
             <p className="text-sm text-muted-foreground">Consultation logistique</p>
