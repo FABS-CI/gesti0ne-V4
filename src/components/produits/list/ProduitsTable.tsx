@@ -185,7 +185,7 @@ export function ProduitsTable({
                   {canMutate && (
                     <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex justify-end gap-1 opacity-60 transition-opacity group-hover:opacity-100">
-                        <Button variant="ghost" size="icon" asChild title="Voir">
+                        <Button aria-label="Voir" variant="ghost" size="icon" asChild title="Voir">
                           <Link to="/produits/$produitId" params={{ produitId: p.produit_id }}>
                             <Eye className="h-4 w-4" />
                           </Link>

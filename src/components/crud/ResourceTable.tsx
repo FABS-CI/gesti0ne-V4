@@ -101,7 +101,7 @@ export function ResourceTable({ config, rows, isLoading, onEdit, onDelete }: Pro
                     }
                     if (action.to) {
                       return (
-                        <Button
+                        <Button aria-label={action.label}
                           key={action.label}
                           asChild
                           variant="ghost"
@@ -115,7 +115,7 @@ export function ResourceTable({ config, rows, isLoading, onEdit, onDelete }: Pro
                       );
                     }
                     return (
-                      <Button
+                      <Button aria-label={action.label}
                         key={action.label}
                         variant="ghost"
                         size="icon"

@@ -26,7 +26,7 @@ export function DocActionsMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" title={label}>
+        <Button aria-label={label} variant="ghost" size="icon" title={label}>
           <Icon className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
