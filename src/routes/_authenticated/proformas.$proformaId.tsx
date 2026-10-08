@@ -135,19 +135,12 @@ function ProformaDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <Button asChild variant="ghost" size="icon">
-            <Link to="/proformas">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-          <div>
-            <h1 className="ds-page-title">Proforma {formatDocumentReference(proforma.reference)}</h1>
-            <p className="text-sm text-muted-foreground">
-              {proforma.client_nom ?? "Client non renseigné"}
-            </p>
-          </div>
-        </div>
+        <PageHeader
+          className="mb-0 border-0 pb-0"
+          backTo="/proformas"
+          title={`Proforma ${formatDocumentReference(proforma.reference)}`}
+          description={proforma.client_nom ?? "Client non renseigné"}
+        />
         <div className="flex items-center gap-2">
           <Button
             size="sm"

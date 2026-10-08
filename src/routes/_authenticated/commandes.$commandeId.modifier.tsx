@@ -138,20 +138,12 @@ function CommandeModifierPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <div className="flex items-center gap-3">
-        <Button asChild variant="ghost" size="icon">
-          <Link to="/commandes">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </Button>
-        <ShoppingCart className="h-6 w-6 text-primary" />
-        <div>
-          <h1 className="ds-page-title">Modifier la commande {formatDocumentReference(commande.reference)}</h1>
-          <p className="text-sm text-muted-foreground">
-            Toutes les modifications recalculent automatiquement les totaux et les documents liés.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        className="mb-0"
+        backTo="/commandes"
+        title={`Modifier la commande ${formatDocumentReference(commande.reference)}`}
+        description="Toutes les modifications recalculent automatiquement les totaux et les documents liés."
+      />
       <CommandeForm mode="edit" commandeId={commandeId} initialValues={initialValues} />
       <FloatingCalculator />
     </div>
