@@ -1,3 +1,4 @@
+import { askConfirm } from "@/components/common/GlobalConfirm";
 import { formatDateTime } from "@/lib/format";
 import { useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
@@ -1174,9 +1175,9 @@ function AccountTab({ employeId, defaultEmail }: { employeId: string; defaultEma
           </Button>
           <Button
             variant="ghost"
-            onClick={() => {
+            onClick={async () => {
               if (
-                confirm(
+                await askConfirm(
                   "Détacher le compte de la fiche employé ? Le compte auth ne sera pas supprimé.",
                 )
               )

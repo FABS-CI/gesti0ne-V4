@@ -1,3 +1,4 @@
+import { askConfirm } from "@/components/common/GlobalConfirm";
 import { getCurrentUser } from "@/lib/current-user";
 import { formatDateTime, formatTime } from "@/lib/format";
 
@@ -175,7 +176,7 @@ function BackupPage() {
   }
 
   async function handleRestore(backup: BackupRow) {
-    if (!confirm(`ATTENTION : Vous allez restaurer l'ERP à l'état du ${formatDateTime(backup.created_at)}. Cette action peut écraser des données récentes. Continuer ?`)) return;
+    if (!await askConfirm(`ATTENTION : Vous allez restaurer l'ERP à l'état du ${formatDateTime(backup.created_at)}. Cette action peut écraser des données récentes. Continuer ?`)) return;
     
     setRestoring(backup.backup_id);
     try {
@@ -489,7 +490,7 @@ function BackupPage() {
                 onChange={async (e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
-                  if (!confirm("Attention : l'import d'un fichier externe va modifier les données de l'ERP. Continuer ?")) return;
+                  if (!await askConfirm("Attention : l'import d'un fichier externe va modifier les données de l'ERP. Continuer ?")) return;
                   
                   const reader = new FileReader();
                   reader.onload = async () => {

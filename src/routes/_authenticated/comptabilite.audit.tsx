@@ -1,3 +1,4 @@
+import { askConfirm } from "@/components/common/GlobalConfirm";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -176,8 +177,8 @@ function ComptaAuditPage() {
           </Button>
           {canRecalcAll && nbAnomalies > 0 && (
             <Button
-              onClick={() => {
-                if (confirm(`Recalculer et corriger ${nbAnomalies} anomalie(s) ?`)) {
+              onClick={async () => {
+                if (await askConfirm(`Recalculer et corriger ${nbAnomalies} anomalie(s) ?`)) {
                   recalcAll.mutate();
                 }
               }}

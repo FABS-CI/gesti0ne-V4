@@ -1,3 +1,4 @@
+import { GlobalConfirmHost } from "@/components/common/GlobalConfirm";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   ClientOnly,
@@ -244,6 +245,7 @@ function RootComponent() {
           <AppActionTracker />
           <PdfPreviewHost />
           <Toaster />
+          <GlobalConfirmHost />
 
         </Suspense>
       </ClientOnly>

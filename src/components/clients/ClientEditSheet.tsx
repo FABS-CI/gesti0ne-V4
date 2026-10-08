@@ -100,7 +100,7 @@ export function ClientEditSheet({
       qc.invalidateQueries({ queryKey: ["clients"] });
       onOpenChange(false);
     },
-    onError: (e) => toast.error(`Échec : ${friendlyError(e, "Erreur inconnue")}`),
+    onError: (e) => toast.error(`Échec : ${friendlyError(e, "cause non précisée par le serveur. Réessayez dans un instant")}`),
   });
 
   const handleCancel = () => {

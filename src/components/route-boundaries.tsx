@@ -60,7 +60,7 @@ export function RouteError({ error, reset }: { error: Error; reset: () => void }
           Cette page n'a pas pu charger
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Une erreur est survenue. Vous pouvez réessayer plus tard.
+          Cette page n'a pas pu s'afficher. Rechargez-la ; si le problème revient, signalez-le à un administrateur.
         </p>
         <p className="mt-3 text-xs text-muted-foreground">
           Trace ID:{" "}

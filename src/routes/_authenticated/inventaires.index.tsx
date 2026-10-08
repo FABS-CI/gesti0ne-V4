@@ -1,3 +1,4 @@
+import { askConfirm } from "@/components/common/GlobalConfirm";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -393,8 +394,8 @@ function InventairesPage() {
                             size="icon"
                             variant="ghost"
                             title="Supprimer"
-                            onClick={() => {
-                              if (confirm(`Supprimer l'inventaire ${i.numero} ?`)) {
+                            onClick={async () => {
+                              if (await askConfirm(`Supprimer l'inventaire ${i.numero} ?`)) {
                                 supprimerMut.mutate(i.inventaire_id);
                               }
                             }}

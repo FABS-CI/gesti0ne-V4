@@ -1,3 +1,4 @@
+import { askConfirm } from "@/components/common/GlobalConfirm";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -174,9 +175,9 @@ function DepotsPage() {
         items={pageItems}
         stockCounts={stockCounts}
         onEdit={openEdit}
-        onPromote={(id, nom) => {
+        onPromote={async (id, nom) => {
           if (
-            window.confirm(
+            await askConfirm(
               `Définir « ${nom} » comme dépôt principal ?\n\nLes sorties de stock se feront depuis ce dépôt.`,
             )
           ) {

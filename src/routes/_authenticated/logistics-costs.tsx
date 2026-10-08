@@ -1,3 +1,4 @@
+import { askConfirm } from "@/components/common/GlobalConfirm";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { formatFCFA } from "@/lib/format";
 
@@ -429,7 +430,7 @@ function LogisticsCostsPage() {
                               size="icon"
                               title="Annuler la validation"
                               onClick={async () => {
-                                if (!confirm("Annuler la validation et supprimer l'écriture ?"))
+                                if (!await askConfirm("Annuler la validation et supprimer l'écriture ?"))
                                   return;
                                 const { error } = await supabase.rpc("annuler_validation_tournee", {
                                   _tournee_id: r.tournee_id,

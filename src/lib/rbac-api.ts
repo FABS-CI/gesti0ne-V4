@@ -348,7 +348,7 @@ export function describeSupabaseError(error: unknown): {
     return { kind: "business", title: "Règle métier", message: raw };
   }
 
-  return { kind: "unknown", title: "Erreur", message: raw || "Une erreur est survenue." };
+  return { kind: "unknown", title: "Erreur", message: raw || "La demande a été refusée sans cause précise. Réessayez, puis contactez un administrateur si le problème persiste." };
 }
 
 /**
