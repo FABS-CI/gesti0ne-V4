@@ -136,7 +136,7 @@ function EtatComptePage() {
         { label: "Nombre de clients", valeur: String(clients.length) },
         { label: "Clients débiteurs", valeur: String(nbDebiteurs) },
         { label: "Clients soldés", valeur: String(nbSoldes) },
-        { label: "Total dû", valeur: `${formatFCFA(totalDuExport)} FCFA` },
+        { label: "Total dû", valeur: formatFCFA(totalDuExport) },
         { label: "Généré le", valeur: formatDateTime(new Date()) },
       ],
       filename: `etat_compte_clients_${statutFilter}`,

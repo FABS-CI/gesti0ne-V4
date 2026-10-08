@@ -140,7 +140,7 @@ export function DocumentSection({ form, fa }: Props) {
                           <div className="font-medium">{f.reference}</div>
                           <div className="text-xs text-muted-foreground">
                             {formatDate(f.date_facture)} —{" "}
-                            {formatFCFA(f.montant_total, false)} FCFA — {f.statut}
+                            {formatFCFA(f.montant_total)} — {f.statut}
                           </div>
                         </div>
                       </CommandItem>

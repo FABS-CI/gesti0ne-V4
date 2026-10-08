@@ -1,3 +1,4 @@
+import { formatNumber } from "@/lib/format";
 import { formatDate } from "@/lib/format";
 import { useQuery } from "@tanstack/react-query";
 import { Boxes, RefreshCw } from "lucide-react";
@@ -22,7 +23,7 @@ export type StockReport = {
   }[];
 };
 
-const qte = (n: number) => Number(n).toLocaleString("fr-FR").replace(/\u202f|\u00a0/g, " ");
+const qte = (n: number) => formatNumber(n);
 const signe = (n: number) => (n > 0 ? `+${qte(n)}` : qte(n));
 
 /** Contrôle en lecture seule : stock des dépôts comparé au dernier mouvement enregistré. */
