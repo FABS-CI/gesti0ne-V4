@@ -379,6 +379,13 @@
       "when": 1791194182229,
       "tag": "0053_rbac3_bascule_controles",
       "breakpoints": true
+    },
+    {
+      "idx": 54,
+      "version": "7",
+      "when": 1791540588953,
+      "tag": "0054_carton_public_reference_produit",
+      "breakpoints": true
     }
   ]
 }
