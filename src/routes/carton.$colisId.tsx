@@ -58,7 +58,7 @@ type CartonPublic = {
   date_colisage: string | null;
   preparateur: string | null;
   observations: string | null;
-  produits: { designation: string | null; quantite: number }[];
+  produits: { reference?: string | null; designation: string | null; quantite: number }[];
 };
 
 function formatDateFr(iso: string): string {
@@ -111,7 +111,7 @@ function CartonPublicPage() {
   return (
     <div className="min-h-dvh bg-muted pb-10">
       {/* En-tête premium */}
-      <header className="bg-white px-4 pb-6 pt-7 shadow-sm">
+      <header className="bg-card px-4 pb-6 pt-7 shadow-sm">
         <div className="mx-auto flex max-w-2xl flex-col items-center gap-3 text-center">
           <img src={fabsLogoUrl} alt="Éditions FABS-CI" height={48} decoding="async" className="h-12 w-auto" />
           <div>
@@ -156,6 +156,13 @@ function CartonPublicPage() {
               </div>
             </div>
 
+            {data.etablissement && data.client_nom && data.client_nom !== data.etablissement && (
+              <div>
+                <div className="text-xs font-semibold text-muted-foreground">Nom du client</div>
+                <div className="break-words font-semibold text-foreground">{data.client_nom}</div>
+              </div>
+            )}
+
             {(data.destinataire || data.telephone) && (
               <div>
                 <div className="text-xs font-semibold text-muted-foreground">
@@ -179,7 +186,10 @@ function CartonPublicPage() {
               <div className="break-words text-lg font-bold uppercase" style={{ color: BLUE }}>
                 {destination}
               </div>
-              {data.adresse && <div className="text-sm text-muted-foreground">{data.adresse}</div>}
+              {data.adresse && <div className="break-words text-sm text-muted-foreground">{data.adresse}</div>}
+              {data.ville && data.ville !== destination && (
+                <div className="break-words text-sm text-muted-foreground">Ville du client : {data.ville}</div>
+              )}
             </div>
 
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -187,6 +197,20 @@ function CartonPublicPage() {
               {data.mode_acheminement === "expedition" ? "Expédition" : "Livraison"}
               {data.date_colisage && <span>· {formatDateFr(data.date_colisage)}</span>}
             </div>
+
+            {data.preparateur && (
+              <div>
+                <div className="text-xs font-semibold text-muted-foreground">Préparé par</div>
+                <div className="break-words font-semibold text-foreground">{data.preparateur}</div>
+              </div>
+            )}
+
+            {data.observations && (
+              <div>
+                <div className="text-xs font-semibold text-muted-foreground">Observations</div>
+                <div className="whitespace-pre-line break-words text-sm text-foreground">{data.observations}</div>
+              </div>
+            )}
           </div>
         </Card>
 
@@ -195,22 +219,26 @@ function CartonPublicPage() {
           {(data.produits ?? []).length === 0 ? (
             <p className="p-4 text-sm text-muted-foreground">Aucun détail produit disponible.</p>
           ) : (
-            <table className="w-full table-fixed text-sm">
+            <div className="overflow-x-auto">
+            <table className="w-full text-sm">
               <thead className="border-b bg-muted text-left text-xs uppercase text-muted-foreground">
                 <tr>
-                  <th className="w-2/3 p-3 font-semibold">Désignation</th>
+                  <th className="whitespace-nowrap p-3 font-semibold">Réf.</th>
+                  <th className="p-3 font-semibold">Désignation</th>
                   <th className="p-3 text-right font-semibold">Quantité</th>
                 </tr>
               </thead>
               <tbody>
                 {data.produits.map((p, i) => (
                   <tr key={i} className="border-b last:border-0">
-                    <td className="break-words p-3">{p.designation ?? "—"}</td>
+                    <td className="whitespace-nowrap p-3 font-mono text-xs text-muted-foreground">{p.reference ?? "—"}</td>
+                    <td className="break-words p-3 text-foreground">{p.designation ?? "—"}</td>
                     <td className="p-3 text-right font-semibold">{p.quantite}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </Card>
 
@@ -307,7 +335,7 @@ function BlDownload({
         href={SITE_OFFICIEL}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-white px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-muted"
+        className="flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-muted"
       >
         <Globe className="h-4 w-4" />
         Aller sur le site officiel
@@ -318,7 +346,7 @@ function BlDownload({
 
 function Card({ title, children }: { title?: string; children: React.ReactNode }) {
   return (
-    <section className="overflow-hidden rounded-xl border border-border bg-white shadow-sm">
+    <section className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       {title && (
         <div className="border-b bg-muted px-4 py-2 text-xs font-semibold text-muted-foreground">
           {title}
@@ -345,7 +373,7 @@ function Row({
     <div className="flex items-start justify-between gap-3 px-4 py-3 text-sm">
       <div className="text-xs font-semibold text-muted-foreground">{label}</div>
       <div
-        className={`break-all text-right font-bold ${mono ? "font-mono" : ""}`}
+        className={`min-w-0 break-words text-right font-bold text-foreground ${mono ? "font-mono" : ""}`}
         style={accent ? { color: BLUE } : undefined}
       >
         {value}
