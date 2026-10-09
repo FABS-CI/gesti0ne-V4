@@ -1014,11 +1014,160 @@ export type Database = {
         }
         Relationships: []
       }
+      client_renommage_docs: {
+        Row: {
+          ancien_client_nom: string | null
+          doc_id: string
+          id: number
+          lot_id: string
+          table_name: string
+        }
+        Insert: {
+          ancien_client_nom?: string | null
+          doc_id: string
+          id?: number
+          lot_id: string
+          table_name: string
+        }
+        Update: {
+          ancien_client_nom?: string | null
+          doc_id?: string
+          id?: number
+          lot_id?: string
+          table_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_renommage_docs_lot_id_fkey"
+            columns: ["lot_id"]
+            isOneToOne: false
+            referencedRelation: "client_renommage_lots"
+            referencedColumns: ["lot_id"]
+          },
+        ]
+      }
+      client_renommage_exclusions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          motif: string | null
+          reference: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          motif?: string | null
+          reference: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          motif?: string | null
+          reference?: string
+        }
+        Relationships: []
+      }
+      client_renommage_journal: {
+        Row: {
+          ancien_nom: string
+          ancien_nom_sauve_avant: string | null
+          client_id: string
+          created_at: string
+          id: number
+          lot_id: string
+          nouveau_nom: string
+          reference: string | null
+          type_avant: string | null
+        }
+        Insert: {
+          ancien_nom: string
+          ancien_nom_sauve_avant?: string | null
+          client_id: string
+          created_at?: string
+          id?: number
+          lot_id: string
+          nouveau_nom: string
+          reference?: string | null
+          type_avant?: string | null
+        }
+        Update: {
+          ancien_nom?: string
+          ancien_nom_sauve_avant?: string | null
+          client_id?: string
+          created_at?: string
+          id?: number
+          lot_id?: string
+          nouveau_nom?: string
+          reference?: string | null
+          type_avant?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_renommage_journal_lot_id_fkey"
+            columns: ["lot_id"]
+            isOneToOne: false
+            referencedRelation: "client_renommage_lots"
+            referencedColumns: ["lot_id"]
+          },
+        ]
+      }
+      client_renommage_lots: {
+        Row: {
+          annule_le: string | null
+          annule_par: string | null
+          created_at: string
+          created_by: string | null
+          created_by_email: string | null
+          lot_id: string
+          nb_clients_apres: number | null
+          nb_clients_avant: number | null
+          nb_debiteurs_apres: number | null
+          nb_debiteurs_avant: number | null
+          nb_renommes: number
+          statut: string
+          total_impaye_apres: number | null
+          total_impaye_avant: number | null
+        }
+        Insert: {
+          annule_le?: string | null
+          annule_par?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          lot_id?: string
+          nb_clients_apres?: number | null
+          nb_clients_avant?: number | null
+          nb_debiteurs_apres?: number | null
+          nb_debiteurs_avant?: number | null
+          nb_renommes?: number
+          statut?: string
+          total_impaye_apres?: number | null
+          total_impaye_avant?: number | null
+        }
+        Update: {
+          annule_le?: string | null
+          annule_par?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          lot_id?: string
+          nb_clients_apres?: number | null
+          nb_clients_avant?: number | null
+          nb_debiteurs_apres?: number | null
+          nb_debiteurs_avant?: number | null
+          nb_renommes?: number
+          statut?: string
+          total_impaye_apres?: number | null
+          total_impaye_avant?: number | null
+        }
+        Relationships: []
+      }
       clients: {
         Row: {
           actif: boolean
           adresse: string | null
           ancien_code: string | null
+          ancien_nom: string | null
           bp: string | null
           categorie: string | null
           client_id: string
@@ -1045,6 +1194,7 @@ export type Database = {
           statut: string | null
           telephone: string | null
           type_client: string | null
+          type_renommage: string | null
           updated_at: string
           ville: string | null
         }
@@ -1052,6 +1202,7 @@ export type Database = {
           actif?: boolean
           adresse?: string | null
           ancien_code?: string | null
+          ancien_nom?: string | null
           bp?: string | null
           categorie?: string | null
           client_id?: string
@@ -1078,6 +1229,7 @@ export type Database = {
           statut?: string | null
           telephone?: string | null
           type_client?: string | null
+          type_renommage?: string | null
           updated_at?: string
           ville?: string | null
         }
@@ -1085,6 +1237,7 @@ export type Database = {
           actif?: boolean
           adresse?: string | null
           ancien_code?: string | null
+          ancien_nom?: string | null
           bp?: string | null
           categorie?: string | null
           client_id?: string
@@ -1111,6 +1264,7 @@ export type Database = {
           statut?: string | null
           telephone?: string | null
           type_client?: string | null
+          type_renommage?: string | null
           updated_at?: string
           ville?: string | null
         }
@@ -7662,6 +7816,14 @@ export type Database = {
         Args: { _client_id: string }
         Returns: number
       }
+      _renommage_controle: { Args: never; Returns: Json }
+      _renommage_doc_tables: {
+        Args: never
+        Returns: {
+          pk: string
+          t: string
+        }[]
+      }
       _resolve_exercice_id: { Args: { _d: string }; Returns: string }
       _retour_audit: {
         Args: { _action: string; _details?: Json; _retour_id: string }
@@ -9199,6 +9361,20 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      renommage_clients_annuler_lot: {
+        Args: { _lot_id: string }
+        Returns: number
+      }
+      renommage_clients_appliquer_lot: {
+        Args: { _items: Json; _lot_id: string }
+        Returns: number
+      }
+      renommage_clients_cloturer_lot: {
+        Args: { _lot_id: string }
+        Returns: Json
+      }
+      renommage_clients_controle: { Args: never; Returns: Json }
+      renommage_clients_ouvrir_lot: { Args: never; Returns: string }
       renumber_employes_matricules: {
         Args: { _prefix?: string }
         Returns: number

@@ -386,6 +386,20 @@
       "when": 1791540588953,
       "tag": "0054_carton_public_reference_produit",
       "breakpoints": true
+    },
+    {
+      "idx": 55,
+      "version": "7",
+      "when": 1791543479257,
+      "tag": "0055_renommage_clients",
+      "breakpoints": true
+    },
+    {
+      "idx": 56,
+      "version": "7",
+      "when": 1791543528090,
+      "tag": "0056_renommage_clients_pk_fix",
+      "breakpoints": true
     }
   ]
 }
