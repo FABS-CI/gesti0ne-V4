@@ -273,6 +273,7 @@ export const groups: Group[] = [
       { title: "Backup", url: "/backup", icon: Database, ready: true },
       { title: "Santé du système", url: "/admin/sante-systeme", icon: Shield, ready: true },
       { title: "Seuils d'approbation", url: "/admin/approbation-seuils", icon: Shield, ready: true },
+      { title: "Renommage des clients", url: "/admin/renommage-clients", icon: UserCog, ready: true },
 
     ],
   },
