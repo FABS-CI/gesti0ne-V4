@@ -7,7 +7,6 @@ const files = [
   ...readdirSync(dir)
     .filter((f) => f.endsWith(".tsx"))
     .map((f) => join(dir, f)),
-  "src/routes/_authenticated/dashboard-global.tsx",
 ];
 const COLOR = /text-(red|green|orange|yellow|amber|emerald)-\d+|text-(destructive|warning|success)/;
 const EMOJI = /\p{Extended_Pictographic}/u;

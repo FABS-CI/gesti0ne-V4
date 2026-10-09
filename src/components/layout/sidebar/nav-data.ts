@@ -86,9 +86,6 @@ export const groups: Group[] = [
     items: [
       { title: "Tableau de bord", url: "/dashboard", icon: LayoutDashboard, ready: true },
       { title: "Centre de pilotage", url: "/pilotage", icon: Gauge, ready: true },
-      { title: "Mon tableau de bord", url: "/mon-dashboard", icon: LayoutDashboard, ready: true },
-      { title: "Vue globale", url: "/dashboard-global", icon: LayoutDashboard, ready: true },
-      { title: "Business Intelligence", url: "/bi-analytics", icon: BarChart3, ready: true },
       { title: "Rapports", url: "/rapports", icon: BarChart3, ready: true },
       { title: "Analyse des ventes", url: "/rapports/analyse", icon: BarChart3, ready: true },
       { title: "Frais de transport", url: "/rapports/transport", icon: BarChart3, ready: true },

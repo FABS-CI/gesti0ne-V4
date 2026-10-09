@@ -32,7 +32,7 @@ const MATRIX: RoleMatrix[] = [
   },
   {
     role: "directeur_general",
-    allowed: ["/dashboard-global", "/bi-analytics", "/rapports", "/clients", "/commandes"],
+    allowed: ["/rapports", "/clients", "/commandes"],
     denied: ["/roles-permissions", "/paie-parametres"],
   },
   {

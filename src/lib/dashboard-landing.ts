@@ -7,7 +7,7 @@
  * `/compta-dashboard`, etc.
  *
  * Ordre de priorité (du plus spécifique au fallback) :
- *  1. Direction / super_admin → `/dashboard-global`
+ *  1. Direction / super_admin → `/dashboard` (Centre de pilotage)
  *  2. Logistique  → `/dashboard-logistique`
  *  3. Paie       → `/paie-dashboard`
  *  4. RH         → `/rh-dashboard`
@@ -16,7 +16,6 @@
  */
 export type LandingRoute =
   | "/dashboard"
-  | "/dashboard-global"
   | "/dashboard-logistique"
   | "/paie-dashboard"
   | "/rh-dashboard"
@@ -31,7 +30,7 @@ export function pickLandingRoute(
   const has = (k: string) => set.has(k);
 
   if (isSuperAdmin || has("dashboard_direction.voir") || has("dashboard_global.voir")) {
-    return "/dashboard-global";
+    return "/dashboard";
   }
   if (has("dashboard_logistique.voir")) return "/dashboard-logistique";
   if (has("paie.voir")) return "/paie-dashboard";

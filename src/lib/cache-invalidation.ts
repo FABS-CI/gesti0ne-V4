@@ -25,7 +25,6 @@ export function invalidateDashboards(qc: QueryClient): void {
     ["global-compta"],
     ["global-rh"],
     ["global-stock"],
-    ["bi-analytics"],
     ["widget"],
     ["balance"],
     ["grand-livre"],
