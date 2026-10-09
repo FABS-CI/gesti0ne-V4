@@ -19,3 +19,4 @@
 - Typecheck runs via `bun run typecheck` (tsgo from @typescript/native-preview); CI and scripts must call it, never `bunx tsgo`, because the bare "tsgo" npm package does not exist.
 - Scheduled backup routes (`/api/public/backup/cron`, `hooks/global-backup`, `hooks/run-schedules`) authenticate only via `rejectUnlessCronAuthorized` (`src/lib/cron-auth.server.ts`, header `x-backup-secret`) and backups run only through `orchestrateBackup`, so there is one secret and one backup chain.
 - Route guards use `ROUTE_TO_PERMISSION` keyed by real URLs (never file names like `stock_`); create/edit child routes require `.creer`/`.modifier`, and every route permission must be grantable through `expandRbac3Permissions`, enforced by `route-permissions.test.ts`.
+- Vite pre-bundles the late-discovered router modules (optimizeDeps.include in vite.config.ts) so a mid-session re-optimization never loads two router copies and blanks the preview.
