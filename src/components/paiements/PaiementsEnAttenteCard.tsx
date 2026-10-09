@@ -21,9 +21,19 @@ import {
   useValiderPaiement,
 } from "@/lib/paiements-validation";
 import { RejeterPaiementDialog } from "./RejeterPaiementDialog";
+import { inPeriode } from "@/lib/paiements-periode";
 
-export function PaiementsEnAttenteCard({ exerciceId }: { exerciceId?: string | null }) {
-  const { data: paiements = [], isLoading } = usePaiementsEnAttente(exerciceId);
+export function PaiementsEnAttenteCard({
+  exerciceId,
+  from,
+  to,
+}: {
+  exerciceId?: string | null;
+  from?: string;
+  to?: string;
+}) {
+  const { data: all = [], isLoading } = usePaiementsEnAttente(exerciceId);
+  const paiements = all.filter((p) => inPeriode(p.date_paiement, from, to));
   const valider = useValiderPaiement();
   const rejeter = useRejeterPaiement();
   const [toReject, setToReject] = useState<{ id: string; reference: string } | null>(null);
