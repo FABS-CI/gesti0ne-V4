@@ -164,6 +164,7 @@ export const ROUTE_TO_PERMISSION: Record<string, RoutePermissionRequirement> = {
   "/audit": "audit.voir",
   "/admin/slo": "audit.voir",
   "/admin/data-quality": "audit.voir",
+  "/admin/renommage-clients": "audit.voir",
   "/profil": null,
   "/documentation": null,
   "/parametres": "parametres.voir",

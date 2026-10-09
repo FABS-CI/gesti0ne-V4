@@ -20,6 +20,9 @@ export function ClientInfosTab({ client, typeLabel }: ClientInfosTabProps) {
           <CardTitle className="text-sm text-muted-foreground">Coordonnées</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 pt-2 sm:grid-cols-2 lg:grid-cols-3">
+          {client.ancien_nom && (
+            <Info icon={<User className="h-4 w-4" />} label="Ancien nom" value={client.ancien_nom} />
+          )}
           <Info
             icon={<User className="h-4 w-4" />}
             label="Représentant"
