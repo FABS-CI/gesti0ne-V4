@@ -41,7 +41,6 @@ import { Route as AuthenticatedPaieDeclarationsRouteImport } from './routes/_aut
 import { Route as AuthenticatedPaieDashboardRouteImport } from './routes/_authenticated/paie-dashboard'
 import { Route as AuthenticatedPaieRouteImport } from './routes/_authenticated/paie'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
-import { Route as AuthenticatedMonDashboardRouteImport } from './routes/_authenticated/mon-dashboard'
 import { Route as AuthenticatedModelesDocumentsRouteImport } from './routes/_authenticated/modeles-documents'
 import { Route as AuthenticatedMissionsRouteImport } from './routes/_authenticated/missions'
 import { Route as AuthenticatedLogisticsCostsRouteImport } from './routes/_authenticated/logistics-costs'
@@ -74,7 +73,6 @@ import { Route as AuthenticatedDocumentationRouteImport } from './routes/_authen
 import { Route as AuthenticatedDepotsRouteImport } from './routes/_authenticated/depots'
 import { Route as AuthenticatedDepartementsRouteImport } from './routes/_authenticated/departements'
 import { Route as AuthenticatedDashboardLogistiqueRouteImport } from './routes/_authenticated/dashboard-logistique'
-import { Route as AuthenticatedDashboardGlobalRouteImport } from './routes/_authenticated/dashboard-global'
 import { Route as AuthenticatedContratsRouteImport } from './routes/_authenticated/contrats'
 import { Route as AuthenticatedCongesEnCoursRouteImport } from './routes/_authenticated/conges-en-cours'
 import { Route as AuthenticatedCongesRouteImport } from './routes/_authenticated/conges'
@@ -86,7 +84,6 @@ import { Route as AuthenticatedClientsRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedCentreDocumentsRouteImport } from './routes/_authenticated/centre-documents'
 import { Route as AuthenticatedCatalogueIntegriteRouteImport } from './routes/_authenticated/catalogue-integrite'
 import { Route as AuthenticatedBonsLivraisonRouteImport } from './routes/_authenticated/bons-livraison'
-import { Route as AuthenticatedBiAnalyticsRouteImport } from './routes/_authenticated/bi-analytics'
 import { Route as AuthenticatedBalanceRouteImport } from './routes/_authenticated/balance'
 import { Route as AuthenticatedBackupRouteImport } from './routes/_authenticated/backup'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
@@ -391,12 +388,6 @@ const AuthenticatedNotificationsRoute =
     path: '/notifications',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedMonDashboardRoute =
-  AuthenticatedMonDashboardRouteImport.update({
-    id: '/mon-dashboard',
-    path: '/mon-dashboard',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedModelesDocumentsRoute =
   AuthenticatedModelesDocumentsRouteImport.update({
     id: '/modeles-documents',
@@ -576,12 +567,6 @@ const AuthenticatedDashboardLogistiqueRoute =
     path: '/dashboard-logistique',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedDashboardGlobalRoute =
-  AuthenticatedDashboardGlobalRouteImport.update({
-    id: '/dashboard-global',
-    path: '/dashboard-global',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedContratsRoute = AuthenticatedContratsRouteImport.update({
   id: '/contrats',
   path: '/contrats',
@@ -641,12 +626,6 @@ const AuthenticatedBonsLivraisonRoute =
   AuthenticatedBonsLivraisonRouteImport.update({
     id: '/bons-livraison',
     path: '/bons-livraison',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedBiAnalyticsRoute =
-  AuthenticatedBiAnalyticsRouteImport.update({
-    id: '/bi-analytics',
-    path: '/bi-analytics',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedBalanceRoute = AuthenticatedBalanceRouteImport.update({
@@ -1427,7 +1406,6 @@ export interface FileRoutesByFullPath {
   '/audit': typeof AuthenticatedAuditRoute
   '/backup': typeof AuthenticatedBackupRoute
   '/balance': typeof AuthenticatedBalanceRoute
-  '/bi-analytics': typeof AuthenticatedBiAnalyticsRoute
   '/bons-livraison': typeof AuthenticatedBonsLivraisonRoute
   '/catalogue-integrite': typeof AuthenticatedCatalogueIntegriteRoute
   '/centre-documents': typeof AuthenticatedCentreDocumentsRoute
@@ -1439,7 +1417,6 @@ export interface FileRoutesByFullPath {
   '/conges': typeof AuthenticatedCongesRouteWithChildren
   '/conges-en-cours': typeof AuthenticatedCongesEnCoursRoute
   '/contrats': typeof AuthenticatedContratsRouteWithChildren
-  '/dashboard-global': typeof AuthenticatedDashboardGlobalRoute
   '/dashboard-logistique': typeof AuthenticatedDashboardLogistiqueRoute
   '/departements': typeof AuthenticatedDepartementsRoute
   '/depots': typeof AuthenticatedDepotsRoute
@@ -1472,7 +1449,6 @@ export interface FileRoutesByFullPath {
   '/logistics-costs': typeof AuthenticatedLogisticsCostsRoute
   '/missions': typeof AuthenticatedMissionsRoute
   '/modeles-documents': typeof AuthenticatedModelesDocumentsRoute
-  '/mon-dashboard': typeof AuthenticatedMonDashboardRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/paie': typeof AuthenticatedPaieRouteWithChildren
   '/paie-dashboard': typeof AuthenticatedPaieDashboardRoute
@@ -1634,13 +1610,11 @@ export interface FileRoutesByTo {
   '/audit': typeof AuthenticatedAuditRoute
   '/backup': typeof AuthenticatedBackupRoute
   '/balance': typeof AuthenticatedBalanceRoute
-  '/bi-analytics': typeof AuthenticatedBiAnalyticsRoute
   '/bons-livraison': typeof AuthenticatedBonsLivraisonRoute
   '/catalogue-integrite': typeof AuthenticatedCatalogueIntegriteRoute
   '/centre-documents': typeof AuthenticatedCentreDocumentsRoute
   '/compta-dashboard': typeof AuthenticatedComptaDashboardRoute
   '/conges-en-cours': typeof AuthenticatedCongesEnCoursRoute
-  '/dashboard-global': typeof AuthenticatedDashboardGlobalRoute
   '/dashboard-logistique': typeof AuthenticatedDashboardLogistiqueRoute
   '/departements': typeof AuthenticatedDepartementsRoute
   '/depots': typeof AuthenticatedDepotsRoute
@@ -1666,7 +1640,6 @@ export interface FileRoutesByTo {
   '/logistics-costs': typeof AuthenticatedLogisticsCostsRoute
   '/missions': typeof AuthenticatedMissionsRoute
   '/modeles-documents': typeof AuthenticatedModelesDocumentsRoute
-  '/mon-dashboard': typeof AuthenticatedMonDashboardRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/paie-dashboard': typeof AuthenticatedPaieDashboardRoute
   '/paie-declarations': typeof AuthenticatedPaieDeclarationsRoute
@@ -1823,7 +1796,6 @@ export interface FileRoutesById {
   '/_authenticated/audit': typeof AuthenticatedAuditRoute
   '/_authenticated/backup': typeof AuthenticatedBackupRoute
   '/_authenticated/balance': typeof AuthenticatedBalanceRoute
-  '/_authenticated/bi-analytics': typeof AuthenticatedBiAnalyticsRoute
   '/_authenticated/bons-livraison': typeof AuthenticatedBonsLivraisonRoute
   '/_authenticated/catalogue-integrite': typeof AuthenticatedCatalogueIntegriteRoute
   '/_authenticated/centre-documents': typeof AuthenticatedCentreDocumentsRoute
@@ -1835,7 +1807,6 @@ export interface FileRoutesById {
   '/_authenticated/conges': typeof AuthenticatedCongesRouteWithChildren
   '/_authenticated/conges-en-cours': typeof AuthenticatedCongesEnCoursRoute
   '/_authenticated/contrats': typeof AuthenticatedContratsRouteWithChildren
-  '/_authenticated/dashboard-global': typeof AuthenticatedDashboardGlobalRoute
   '/_authenticated/dashboard-logistique': typeof AuthenticatedDashboardLogistiqueRoute
   '/_authenticated/departements': typeof AuthenticatedDepartementsRoute
   '/_authenticated/depots': typeof AuthenticatedDepotsRoute
@@ -1868,7 +1839,6 @@ export interface FileRoutesById {
   '/_authenticated/logistics-costs': typeof AuthenticatedLogisticsCostsRoute
   '/_authenticated/missions': typeof AuthenticatedMissionsRoute
   '/_authenticated/modeles-documents': typeof AuthenticatedModelesDocumentsRoute
-  '/_authenticated/mon-dashboard': typeof AuthenticatedMonDashboardRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/paie': typeof AuthenticatedPaieRouteWithChildren
   '/_authenticated/paie-dashboard': typeof AuthenticatedPaieDashboardRoute
@@ -2033,7 +2003,6 @@ export interface FileRouteTypes {
     | '/audit'
     | '/backup'
     | '/balance'
-    | '/bi-analytics'
     | '/bons-livraison'
     | '/catalogue-integrite'
     | '/centre-documents'
@@ -2045,7 +2014,6 @@ export interface FileRouteTypes {
     | '/conges'
     | '/conges-en-cours'
     | '/contrats'
-    | '/dashboard-global'
     | '/dashboard-logistique'
     | '/departements'
     | '/depots'
@@ -2078,7 +2046,6 @@ export interface FileRouteTypes {
     | '/logistics-costs'
     | '/missions'
     | '/modeles-documents'
-    | '/mon-dashboard'
     | '/notifications'
     | '/paie'
     | '/paie-dashboard'
@@ -2240,13 +2207,11 @@ export interface FileRouteTypes {
     | '/audit'
     | '/backup'
     | '/balance'
-    | '/bi-analytics'
     | '/bons-livraison'
     | '/catalogue-integrite'
     | '/centre-documents'
     | '/compta-dashboard'
     | '/conges-en-cours'
-    | '/dashboard-global'
     | '/dashboard-logistique'
     | '/departements'
     | '/depots'
@@ -2272,7 +2237,6 @@ export interface FileRouteTypes {
     | '/logistics-costs'
     | '/missions'
     | '/modeles-documents'
-    | '/mon-dashboard'
     | '/notifications'
     | '/paie-dashboard'
     | '/paie-declarations'
@@ -2428,7 +2392,6 @@ export interface FileRouteTypes {
     | '/_authenticated/audit'
     | '/_authenticated/backup'
     | '/_authenticated/balance'
-    | '/_authenticated/bi-analytics'
     | '/_authenticated/bons-livraison'
     | '/_authenticated/catalogue-integrite'
     | '/_authenticated/centre-documents'
@@ -2440,7 +2403,6 @@ export interface FileRouteTypes {
     | '/_authenticated/conges'
     | '/_authenticated/conges-en-cours'
     | '/_authenticated/contrats'
-    | '/_authenticated/dashboard-global'
     | '/_authenticated/dashboard-logistique'
     | '/_authenticated/departements'
     | '/_authenticated/depots'
@@ -2473,7 +2435,6 @@ export interface FileRouteTypes {
     | '/_authenticated/logistics-costs'
     | '/_authenticated/missions'
     | '/_authenticated/modeles-documents'
-    | '/_authenticated/mon-dashboard'
     | '/_authenticated/notifications'
     | '/_authenticated/paie'
     | '/_authenticated/paie-dashboard'
@@ -2869,13 +2830,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/mon-dashboard': {
-      id: '/_authenticated/mon-dashboard'
-      path: '/mon-dashboard'
-      fullPath: '/mon-dashboard'
-      preLoaderRoute: typeof AuthenticatedMonDashboardRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/modeles-documents': {
       id: '/_authenticated/modeles-documents'
       path: '/modeles-documents'
@@ -3100,13 +3054,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardLogistiqueRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/dashboard-global': {
-      id: '/_authenticated/dashboard-global'
-      path: '/dashboard-global'
-      fullPath: '/dashboard-global'
-      preLoaderRoute: typeof AuthenticatedDashboardGlobalRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/contrats': {
       id: '/_authenticated/contrats'
       path: '/contrats'
@@ -3182,13 +3129,6 @@ declare module '@tanstack/react-router' {
       path: '/bons-livraison'
       fullPath: '/bons-livraison'
       preLoaderRoute: typeof AuthenticatedBonsLivraisonRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/bi-analytics': {
-      id: '/_authenticated/bi-analytics'
-      path: '/bi-analytics'
-      fullPath: '/bi-analytics'
-      preLoaderRoute: typeof AuthenticatedBiAnalyticsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/balance': {
@@ -4522,7 +4462,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
   AuthenticatedBackupRoute: typeof AuthenticatedBackupRoute
   AuthenticatedBalanceRoute: typeof AuthenticatedBalanceRoute
-  AuthenticatedBiAnalyticsRoute: typeof AuthenticatedBiAnalyticsRoute
   AuthenticatedBonsLivraisonRoute: typeof AuthenticatedBonsLivraisonRoute
   AuthenticatedCatalogueIntegriteRoute: typeof AuthenticatedCatalogueIntegriteRoute
   AuthenticatedCentreDocumentsRoute: typeof AuthenticatedCentreDocumentsRoute
@@ -4534,7 +4473,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCongesRoute: typeof AuthenticatedCongesRouteWithChildren
   AuthenticatedCongesEnCoursRoute: typeof AuthenticatedCongesEnCoursRoute
   AuthenticatedContratsRoute: typeof AuthenticatedContratsRouteWithChildren
-  AuthenticatedDashboardGlobalRoute: typeof AuthenticatedDashboardGlobalRoute
   AuthenticatedDashboardLogistiqueRoute: typeof AuthenticatedDashboardLogistiqueRoute
   AuthenticatedDepartementsRoute: typeof AuthenticatedDepartementsRoute
   AuthenticatedDepotsRoute: typeof AuthenticatedDepotsRoute
@@ -4567,7 +4505,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedLogisticsCostsRoute: typeof AuthenticatedLogisticsCostsRoute
   AuthenticatedMissionsRoute: typeof AuthenticatedMissionsRoute
   AuthenticatedModelesDocumentsRoute: typeof AuthenticatedModelesDocumentsRoute
-  AuthenticatedMonDashboardRoute: typeof AuthenticatedMonDashboardRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedPaieRoute: typeof AuthenticatedPaieRouteWithChildren
   AuthenticatedPaieDashboardRoute: typeof AuthenticatedPaieDashboardRoute
@@ -4641,7 +4578,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAuditRoute: AuthenticatedAuditRoute,
   AuthenticatedBackupRoute: AuthenticatedBackupRoute,
   AuthenticatedBalanceRoute: AuthenticatedBalanceRoute,
-  AuthenticatedBiAnalyticsRoute: AuthenticatedBiAnalyticsRoute,
   AuthenticatedBonsLivraisonRoute: AuthenticatedBonsLivraisonRoute,
   AuthenticatedCatalogueIntegriteRoute: AuthenticatedCatalogueIntegriteRoute,
   AuthenticatedCentreDocumentsRoute: AuthenticatedCentreDocumentsRoute,
@@ -4653,7 +4589,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCongesRoute: AuthenticatedCongesRouteWithChildren,
   AuthenticatedCongesEnCoursRoute: AuthenticatedCongesEnCoursRoute,
   AuthenticatedContratsRoute: AuthenticatedContratsRouteWithChildren,
-  AuthenticatedDashboardGlobalRoute: AuthenticatedDashboardGlobalRoute,
   AuthenticatedDashboardLogistiqueRoute: AuthenticatedDashboardLogistiqueRoute,
   AuthenticatedDepartementsRoute: AuthenticatedDepartementsRoute,
   AuthenticatedDepotsRoute: AuthenticatedDepotsRoute,
@@ -4687,7 +4622,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedLogisticsCostsRoute: AuthenticatedLogisticsCostsRoute,
   AuthenticatedMissionsRoute: AuthenticatedMissionsRoute,
   AuthenticatedModelesDocumentsRoute: AuthenticatedModelesDocumentsRoute,
-  AuthenticatedMonDashboardRoute: AuthenticatedMonDashboardRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedPaieRoute: AuthenticatedPaieRouteWithChildren,
   AuthenticatedPaieDashboardRoute: AuthenticatedPaieDashboardRoute,
