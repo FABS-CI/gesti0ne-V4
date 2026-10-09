@@ -32,6 +32,8 @@ export type PublicDocument = {
   certified_at?: string | null;
   canonical_hash?: string | null;
   signature_algorithm?: string | null;
+  /** Relevés uniquement : contenu complet, mêmes données que le PDF. */
+  releve?: PublicReleve | null;
   /** Factures uniquement : état de paiement recalculé à chaque lecture. */
   paiement?: {
     totalAPayer: number;
@@ -39,6 +41,18 @@ export type PublicDocument = {
     resteAPayer: number;
     statut: string;
   } | null;
+};
+
+export type PublicReleve = {
+  edite_le: string;
+  periode: string;
+  client: { nom: string; code: string | null; ville: string | null; telephone: string | null; representant: string | null };
+  lignes: Array<{ date: string; reference: string; libelle: string; debit: number; paiement: number; retour: number; solde: number }>;
+  totalDebit: number;
+  totalPaiement: number;
+  totalRetours: number;
+  totalTransport: number;
+  solde: number;
 };
 
 export function sha256Hex(value: string): string {
@@ -223,6 +237,34 @@ async function loadReleveDocument(
       representant_nom: r.client.representant,
       montant: r.solde,
       statut_document: r.solde > 0 ? "Solde débiteur" : r.solde < 0 ? "Solde créditeur" : "Soldé",
+      releve: {
+        edite_le: new Date().toISOString(),
+        periode: "Relevé complet",
+        client: {
+          nom: r.client.nom,
+          code: r.client.code,
+          ville: r.client.ville,
+          telephone: r.client.telephone,
+          representant: r.client.representant,
+        },
+        lignes: r.lignes.map((l) => {
+          const credit = Number(l.credit || 0);
+          return {
+            date: String(l.date ?? "").slice(0, 10),
+            reference: l.reference ?? "",
+            libelle: l.libelle ?? l.type ?? "",
+            debit: Number(l.debit || 0),
+            paiement: l.type === "Paiement" ? credit : 0,
+            retour: l.type === "Avoir" ? credit : 0,
+            solde: Number(l.soldeProgressif ?? l.solde ?? 0),
+          };
+        }),
+        totalDebit: r.totalDebit,
+        totalPaiement: r.totalPaiement,
+        totalRetours: r.totalRetours,
+        totalTransport: r.totalTransport,
+        solde: r.solde,
+      },
     },
     canonicalInput: {
       type: "RELEVE",
