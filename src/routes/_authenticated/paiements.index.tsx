@@ -60,6 +60,12 @@ import {
 import { authRouteHead } from "@/lib/route-head";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 import { friendlyError } from "@/lib/friendly-error";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  PERIODES_PAIEMENT,
+  computePeriode,
+  type PeriodeKey,
+} from "@/lib/paiements-periode";
 export const Route = createFileRoute("/_authenticated/paiements/")({
   head: () => authRouteHead("Paiements"),
   component: PaiementsPage,
@@ -70,6 +76,37 @@ export const Route = createFileRoute("/_authenticated/paiements/")({
 function PaiementsPage() {
   const [search, setSearch] = useState("");
   const [statutFilter, setStatutFilter] = useState<string>("all");
+  const [periode, setPeriode] = useState<PeriodeKey>("all");
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
+  const [applied, setApplied] = useState<{ from?: string; to?: string }>({});
+  function choosePeriode(k: PeriodeKey) {
+    setPeriode(k);
+    if (k !== "custom") setApplied(computePeriode(k));
+  }
+  function applyCustom() {
+    if (!customFrom || !customTo) {
+      toast.error("Choisissez une date de début et une date de fin");
+      return;
+    }
+    if (customFrom > customTo) {
+      toast.error("La date de début doit précéder la date de fin");
+      return;
+    }
+    setApplied({ from: customFrom, to: customTo });
+  }
+  function resetPeriode() {
+    setPeriode("all");
+    setCustomFrom("");
+    setCustomTo("");
+    setApplied({});
+  }
+  const periodeLabel =
+    applied.from && applied.to
+      ? applied.from === applied.to
+        ? `le ${formatDate(applied.from)}`
+        : `du ${formatDate(applied.from)} au ${formatDate(applied.to)}`
+      : "";
   const q = useDebouncedValue(search, 300);
   const exerciceId = useExerciceConsulteId();
   const { isSuperAdmin, hasRole } = useUserRoles();
@@ -92,15 +129,50 @@ function PaiementsPage() {
   });
 
   const { data: paiements = [], isLoading } = useQuery({
-    queryKey: ["paiements", exerciceId, q, statutFilter],
+    queryKey: ["paiements", exerciceId, q, statutFilter, applied.from, applied.to],
     enabled: !!exerciceId,
-    queryFn: () => listPaiements(q, statutFilter === "all" ? undefined : statutFilter, exerciceId),
+    queryFn: () =>
+      listPaiements(
+        q,
+        statutFilter === "all" ? undefined : statutFilter,
+        exerciceId,
+        applied.from,
+        applied.to,
+      ),
   });
 
-  const hasActiveFilters = !!q || statutFilter !== "all";
+  // Total encaissé : calculé en base sur la période (validés uniquement), indépendant du statut choisi.
+  const { data: totalValide = 0 } = useQuery({
+    queryKey: ["paiements", "total-valide", exerciceId, q, applied.from, applied.to],
+    enabled: !!exerciceId,
+    queryFn: async () => {
+      const rows = await listPaiements(q, "valide", exerciceId, applied.from, applied.to);
+      return rows.reduce((s, p) => s + Number(p.montant), 0);
+    },
+  });
+  const { data: nbEnAttente = 0 } = useQuery({
+    queryKey: ["paiements", "nb-attente", exerciceId, q, applied.from, applied.to],
+    enabled: !!exerciceId,
+    queryFn: async () => {
+      let qq = supabase
+        .from("paiements")
+        .select("paiement_id", { count: "exact", head: true })
+        .in("statut", ["en_attente", "en_attente_validation"]);
+      if (exerciceId) qq = qq.eq("exercice_id", exerciceId);
+      if (applied.from) qq = qq.gte("date_paiement", applied.from);
+      if (applied.to) qq = qq.lte("date_paiement", applied.to);
+      const { count, error } = await qq;
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
+  const hasPeriode = !!applied.from;
+  const hasActiveFilters = !!q || statutFilter !== "all" || hasPeriode;
   function resetAllFilters() {
     setSearch("");
     setStatutFilter("all");
+    resetPeriode();
   }
 
   const total = useMemo(
@@ -110,7 +182,7 @@ function PaiementsPage() {
 
   function handleExport() {
     exportCsv(
-      "paiements.csv",
+      hasPeriode ? `paiements_${applied.from}_${applied.to}.csv` : "paiements.csv",
       ["Référence", "Date", "Client", "Montant", "Mode", "Statut"],
       paiements.map((p) => [
         p.reference,
@@ -121,8 +193,18 @@ function PaiementsPage() {
         STATUT_PAIEMENT_LABEL[p.statut]?.label ?? p.statut,
       ]),
       {
-        pageTitle: "RELEVÉ DES PAIEMENTS",
+        pageTitle: hasPeriode
+          ? `RELEVÉ DES PAIEMENTS — ${periodeLabel.toUpperCase()}`
+          : "RELEVÉ DES PAIEMENTS",
         summary: [
+          { label: "Période", value: hasPeriode ? periodeLabel : "Toutes les dates" },
+          {
+            label: "Statut",
+            value:
+              statutFilter === "all"
+                ? "Tous les statuts"
+                : (STATUT_PAIEMENT_LABEL[statutFilter]?.label ?? statutFilter),
+          },
           { label: "Nombre de règlements", value: String(paiements.length) },
           {
             label: "Règlements validés",
@@ -159,14 +241,63 @@ function PaiementsPage() {
         </div>
       </div>
 
-      <Card>
-        <CardContent className="p-4">
-          <p className="text-xs text-muted-foreground">Total encaissé (validé)</p>
-          <p className="text-xl font-bold text-success">{formatFCFA(total)}</p>
-        </CardContent>
-      </Card>
+      <div className="flex flex-wrap items-end gap-2 rounded-lg border bg-card p-3">
+        <div className="space-y-1">
+          <Label className="text-xs text-muted-foreground">Période</Label>
+          <Select value={periode} onValueChange={(v) => choosePeriode(v as PeriodeKey)}>
+            <SelectTrigger className="w-56" aria-label="Période">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {PERIODES_PAIEMENT.map((p) => (
+                <SelectItem key={p.value} value={p.value}>
+                  {p.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        {periode === "custom" && (
+          <>
+            <div className="space-y-1">
+              <Label htmlFor="pf-from" className="text-xs text-muted-foreground">Date de début</Label>
+              <Input id="pf-from" type="date" className="w-40" value={customFrom} onChange={(e) => setCustomFrom(e.target.value)} />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="pf-to" className="text-xs text-muted-foreground">Date de fin</Label>
+              <Input id="pf-to" type="date" className="w-40" value={customTo} onChange={(e) => setCustomTo(e.target.value)} />
+            </div>
+            <Button onClick={applyCustom}>Appliquer</Button>
+          </>
+        )}
+        {(periode !== "all" || hasPeriode) && (
+          <Button variant="ghost" onClick={resetPeriode}>
+            <RotateCcw className="mr-1 h-3 w-3" /> Réinitialiser
+          </Button>
+        )}
+        <p className="ml-auto text-sm text-muted-foreground">
+          {hasPeriode ? `Période : ${periodeLabel}` : "Toutes les dates"}
+        </p>
+      </div>
 
-      <PaiementsEnAttenteCard exerciceId={exerciceId} />
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Card>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground">Total encaissé (validé)</p>
+            <p className="text-xl font-bold tabular-nums text-success">{formatFCFA(totalValide)}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground">Paiements en attente de validation</p>
+            <p className={`text-xl font-bold tabular-nums ${nbEnAttente > 0 ? "text-warning" : "text-muted-foreground"}`}>
+              {nbEnAttente}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <PaiementsEnAttenteCard exerciceId={exerciceId} from={applied.from} to={applied.to} />
 
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative max-w-sm flex-1">
@@ -203,6 +334,19 @@ function PaiementsPage() {
                 onClick={() => setSearch("")}
                 className="ml-1 rounded-full hover:bg-muted"
                 aria-label="Retirer le filtre de recherche"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          )}
+          {hasPeriode && (
+            <Badge variant="secondary" className="gap-1">
+              Période : {periodeLabel}
+              <button
+                type="button"
+                onClick={resetPeriode}
+                className="ml-1 rounded-full hover:bg-muted"
+                aria-label="Retirer le filtre de période"
               >
                 <X className="h-3 w-3" />
               </button>
