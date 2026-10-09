@@ -1,3 +1,5 @@
+import { COMPANY } from "@/lib/company";
+import { formatDocumentReference } from "@/lib/document-reference";
 import { formatDateTime } from "@/lib/format";
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
@@ -74,6 +76,17 @@ type VerifyResponse = {
     statut: string;
   } | null;
   statut_document?: string | null;
+  releve?: {
+    edite_le: string;
+    periode: string;
+    client: { nom: string; code: string | null; ville: string | null; telephone: string | null; representant: string | null };
+    lignes: Array<{ date: string; reference: string; libelle: string; debit: number; paiement: number; retour: number; solde: number }>;
+    totalDebit: number;
+    totalPaiement: number;
+    totalRetours: number;
+    totalTransport: number;
+    solde: number;
+  } | null;
   certification_id?: string | null;
   certified_at?: string | null;
   canonical_hash?: string | null;
@@ -288,7 +301,7 @@ function VerificationPage() {
 
   return (
     <div className="min-h-screen bg-muted flex flex-col items-center px-4 py-8">
-      <div className="w-full max-w-md space-y-4">
+      <div className={`w-full ${data?.releve ? "max-w-4xl" : "max-w-md"} space-y-4`}>
         {/* En-tête */}
         <header className="text-center space-y-2">
           <img
@@ -399,7 +412,9 @@ function VerificationPage() {
                     EDITIONS FABS-CI
                   </Row>
 
-                  {typeof data.montant === 'number' && (
+                  {data.releve && <ReleveDetail releve={data.releve} />}
+
+                  {!data.releve && typeof data.montant === 'number' && (
                     <div className="pt-3 border-t border-border flex items-center justify-between">
                       <p className="text-muted-foreground text-sm font-medium">Montant total</p>
                       <p className="text-xl font-black text-info">
@@ -522,6 +537,111 @@ function VerificationPage() {
             © {new Date().getFullYear()} Tous droits réservés.
           </p>
         </footer>
+      </div>
+    </div>
+  );
+}
+
+const RC_RCCM = "CI-ABJ-2020-B-12345";
+const RC_NCC = "2302562N";
+
+function fmtDay(d: string) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(d);
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : d || "—";
+}
+
+function ReleveDetail({ releve }: { releve: NonNullable<VerifyResponse["releve"]> }) {
+  const r = releve;
+  const edit = new Date(r.edite_le);
+  const sumDebit = r.lignes.reduce((a, l) => a + l.debit, 0);
+  const sumPaie = r.lignes.reduce((a, l) => a + l.paiement, 0);
+  const sumRet = r.lignes.reduce((a, l) => a + l.retour, 0);
+  const ecarts: string[] = [];
+  if (r.lignes.length === 0) ecarts.push("Aucune opération n'est enregistrée sur ce relevé.");
+  if (Math.abs(sumDebit - r.totalDebit) > 1) ecarts.push("Le total débit ne correspond pas à la somme des lignes.");
+  if (Math.abs(sumPaie - r.totalPaiement) > 1) ecarts.push("Le total des paiements ne correspond pas à la somme des lignes.");
+  if (Math.abs(sumRet - r.totalRetours) > 1) ecarts.push("Le total des retours ne correspond pas à la somme des lignes.");
+  const money = (v: number) => (v ? formatFCFA(v) : "");
+  const recap: Array<[string, number, boolean?]> = [["Total débit", r.totalDebit]];
+  if (r.totalPaiement) recap.push(["Total des paiements", r.totalPaiement]);
+  if (r.totalRetours) recap.push(["Total des retours", r.totalRetours]);
+  if (r.totalTransport) recap.push(["Frais de transport compris dans les factures", r.totalTransport]);
+  recap.push([r.solde < 0 ? "Solde créditeur" : "Solde débiteur", Math.abs(r.solde), true]);
+  if (r.solde > 0) recap.push(["Montant total impayé", r.solde]);
+
+  return (
+    <div className="pt-3 border-t border-border space-y-4">
+      <div className="text-center">
+        <p className="text-base font-black tracking-wide text-foreground">RELEVÉ DE COMPTE</p>
+        <p className="text-xs text-muted-foreground">
+          Édité le {fmtDay(r.edite_le)} à {edit.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} · {r.periode}
+        </p>
+      </div>
+
+      <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+        {([
+          ["Client", r.client.nom],
+          ["Code client", r.client.code],
+          ["Ville", r.client.ville],
+          ["Représentant", r.client.representant],
+          ["Téléphone", r.client.telephone],
+        ] as const).filter(([, v]) => v).map(([k, v]) => (
+          <div key={k}>
+            <dt className="text-xs font-bold text-muted-foreground">{k}</dt>
+            <dd className="font-semibold text-foreground break-words">{v}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <div className="overflow-x-auto rounded-md border border-border">
+        <table className="w-full min-w-[640px] text-xs tabular-nums">
+          <thead className="bg-muted text-muted-foreground">
+            <tr>
+              <th className="px-2 py-2 text-left">Date</th>
+              <th className="px-2 py-2 text-left">Référence</th>
+              <th className="px-2 py-2 text-left">Libellé</th>
+              <th className="px-2 py-2 text-right">Débit</th>
+              <th className="px-2 py-2 text-right">Paiement</th>
+              <th className="px-2 py-2 text-right">Retour</th>
+              <th className="px-2 py-2 text-right">Solde</th>
+            </tr>
+          </thead>
+          <tbody>
+            {r.lignes.map((l, i) => (
+              <tr key={i} className="border-t border-border">
+                <td className="px-2 py-2 whitespace-nowrap">{fmtDay(l.date)}</td>
+                <td className="px-2 py-2 font-mono whitespace-nowrap">{formatDocumentReference(l.reference)}</td>
+                <td className="px-2 py-2">{l.libelle}</td>
+                <td className="px-2 py-2 text-right whitespace-nowrap">{money(l.debit)}</td>
+                <td className="px-2 py-2 text-right whitespace-nowrap">{money(l.paiement)}</td>
+                <td className="px-2 py-2 text-right whitespace-nowrap">{money(l.retour)}</td>
+                <td className="px-2 py-2 text-right whitespace-nowrap font-semibold">{formatFCFA(l.solde)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="sm:ml-auto sm:max-w-sm space-y-1.5">
+        {recap.map(([k, v, strong]) => (
+          <div key={k} className={`flex justify-between gap-3 text-sm ${strong ? "pt-1.5 border-t border-border font-black" : ""}`}>
+            <span className="text-muted-foreground">{k}</span>
+            <span className="tabular-nums text-foreground">{formatFCFA(v)}</span>
+          </div>
+        ))}
+      </div>
+
+      {ecarts.length > 0 && (
+        <div className="rounded-md border border-warning p-3 text-xs text-warning space-y-1">
+          {ecarts.map((e) => <p key={e}>{e}</p>)}
+        </div>
+      )}
+
+      <div className="pt-3 border-t border-border text-xs text-muted-foreground text-center space-y-0.5">
+        <p className="font-bold text-foreground">{COMPANY.nom}</p>
+        <p>{COMPANY.adresse}</p>
+        <p>Tél. : {COMPANY.telephones.join(" / ")} · {COMPANY.email}</p>
+        <p>RCCM : {RC_RCCM} · NCC : {RC_NCC}</p>
       </div>
     </div>
   );
