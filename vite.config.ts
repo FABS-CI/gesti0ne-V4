@@ -25,5 +25,16 @@ export default defineConfig({
   },
   vite: {
     plugins: [mcpPlugin()],
+    // Pré-optimise les modules du routeur découverts tardivement : sinon Vite
+    // les ré-optimise en cours de session, deux copies du routeur coexistent
+    // et l'aperçu tombe sur « Expected to find a match below the root match ».
+    optimizeDeps: {
+      include: [
+        "@tanstack/router-core",
+        "@tanstack/router-core/isServer",
+        "@tanstack/router-core/ssr/client",
+        "seroval",
+      ],
+    },
   },
 });
