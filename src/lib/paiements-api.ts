@@ -47,11 +47,19 @@ export type Paiement = {
 };
 
 
-export async function listPaiements(q?: string, statut?: string, exerciceId?: string | null) {
+export async function listPaiements(
+  q?: string,
+  statut?: string,
+  exerciceId?: string | null,
+  from?: string,
+  to?: string,
+) {
   let query = supabase.from("paiements").select("*");
   if (exerciceId) query = query.eq("exercice_id", exerciceId);
   if (q) query = query.or(`reference.ilike.%${pgSafe(q)}%,client_nom.ilike.%${pgSafe(q)}%`);
   if (statut) query = query.eq("statut", statut);
+  if (from) query = query.gte("date_paiement", from);
+  if (to) query = query.lte("date_paiement", to);
   query = query.order("created_at", { ascending: false });
   const { data, error } = await query;
   if (error) throw error;
