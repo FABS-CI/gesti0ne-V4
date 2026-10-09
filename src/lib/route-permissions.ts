@@ -23,11 +23,8 @@ export const ROUTE_TO_PERMISSION: Record<string, RoutePermissionRequirement> = {
   // Accès libre à tout utilisateur authentifié : le tableau de bord principal
   // et « Mon tableau de bord » sont considérés comme des pages d'accueil.
   "/dashboard": null,
-  "/mon-dashboard": null,
   // Centre de pilotage : chaque bloc est filtré côté serveur par permission.
   "/pilotage": null,
-  "/dashboard-global": ["dashboard_global.voir", "dashboard_direction.voir", "dashboard.voir"],
-  "/bi-analytics": "bi_analytics.voir",
   "/rapports": "rapports.voir",
 
   "/clients": "clients.voir",

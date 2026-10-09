@@ -16,9 +16,6 @@ const MODULES: ModuleDef[] = [
     color: "#3B82F6", // Tableau de bord
     prefixes: [
       "/dashboard",
-      "/mon-dashboard",
-      "/dashboard-global",
-      "/bi-analytics",
       "/rapports/analyse",
       "/rapports",
     ],
