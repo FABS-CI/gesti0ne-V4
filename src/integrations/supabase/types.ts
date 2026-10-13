@@ -2941,6 +2941,7 @@ export type Database = {
           created_at: string
           date_echeance: string | null
           date_facture: string
+          exception_ecart_commande: string | null
           exercice_id: string | null
           facture_id: string
           montant_frais_transport: number | null
@@ -2959,6 +2960,7 @@ export type Database = {
           created_at?: string
           date_echeance?: string | null
           date_facture?: string
+          exception_ecart_commande?: string | null
           exercice_id?: string | null
           facture_id?: string
           montant_frais_transport?: number | null
@@ -2977,6 +2979,7 @@ export type Database = {
           created_at?: string
           date_echeance?: string | null
           date_facture?: string
+          exception_ecart_commande?: string | null
           exercice_id?: string | null
           facture_id?: string
           montant_frais_transport?: number | null

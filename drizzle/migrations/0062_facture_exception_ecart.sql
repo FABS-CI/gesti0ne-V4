@@ -1,0 +1,2 @@
+ALTER TABLE public.factures ADD COLUMN IF NOT EXISTS exception_ecart_commande text;
+COMMENT ON COLUMN public.factures.exception_ecart_commande IS 'Motif si la facture est volontairement différente de commande + frais de transport (exception acceptée).';
