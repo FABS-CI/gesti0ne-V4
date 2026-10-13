@@ -9,7 +9,6 @@
  */
 import {
   buildVerificationUrl,
-  verifyByReference,
   verifyByToken,
   loadDocumentData,
   type DocType,
@@ -65,10 +64,9 @@ export async function loadPublicPdfPayload(
   segment: string,
   tokenParam: string | null,
 ): Promise<PublicPdfPayload | null> {
-  let result = await verifyByToken(tokenParam ?? segment);
-  if (result.status === "INVALID" && !tokenParam) {
-    result = await verifyByReference(segment);
-  }
+  // Point 2.4 : le téléchargement du document complet exige le jeton secret ;
+  // une simple référence ne donne jamais accès au contenu.
+  const result = await verifyByToken(tokenParam ?? segment);
   if (result.status !== "AUTHENTIC") return null;
 
   const verifiedToken = tokenParam ?? segment;
