@@ -17,10 +17,7 @@ export const rapportAnalyseSearchSchema = z.object({
   types: list,
   villes: list,
   produits: list,
-  onglet: z
-    .enum(["produits", "top", "niveaux", "categories", "geo", "evolution"])
-    .optional()
-    .catch(undefined),
+  dim: z.enum(["produits", "niveau", "categorie", "ville", "type"]).optional().catch(undefined),
   tri: z.string().max(30).optional().catch(undefined),
   sens: z.enum(["asc", "desc"]).optional().catch(undefined),
   page: z.number().int().min(1).optional().catch(undefined),
@@ -28,6 +25,16 @@ export const rapportAnalyseSearchSchema = z.object({
   cmp: z.boolean().optional().catch(undefined),
   gran: z.enum(["jour", "semaine", "mois", "annee"]).optional().catch(undefined),
 });
+
+export type AnalyseDim = "produits" | "niveau" | "categorie" | "ville" | "type";
+
+/** Dimension d'agrégat → clé du filtre correspondant. */
+export const DIM_FILTER_KEY = {
+  niveau: "niveaux",
+  categorie: "categories",
+  ville: "villes",
+  type: "types",
+} as const;
 
 export type RapportAnalyseSearch = z.infer<typeof rapportAnalyseSearchSchema>;
 
