@@ -64,6 +64,9 @@ export const Route = createFileRoute('/api/public/verify-doc/$uuid')({
           }
 
           const doc = result.document
+          // Point 2.4 : sans jeton secret (vérification par simple référence),
+          // on ne révèle que l'existence, la référence, la date et la certification.
+          const full = usedToken
           return Response.json(
             {
               status: result.status,
@@ -71,12 +74,13 @@ export const Route = createFileRoute('/api/public/verify-doc/$uuid')({
               docType: doc.docType,
               reference: doc.reference,
               date: doc.date,
-              client_nom: doc.client_nom,
-              representant_nom: doc.representant_nom ?? null,
-              montant: doc.montant,
+              limited: !full,
+              client_nom: full ? doc.client_nom : null,
+              representant_nom: full ? doc.representant_nom ?? null : null,
+              montant: full ? doc.montant : null,
               statut_document: doc.statut_document ?? null,
-              paiement: doc.paiement ?? null,
-              releve: doc.releve ?? null,
+              paiement: full ? doc.paiement ?? null : null,
+              releve: full ? doc.releve ?? null : null,
               certification_id: doc.certification_id ?? null,
               certified_at: doc.certified_at ?? null,
               canonical_hash: doc.canonical_hash ?? null,
