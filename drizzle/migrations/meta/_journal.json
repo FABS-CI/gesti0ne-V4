@@ -407,6 +407,13 @@
       "when": 1791883433209,
       "tag": "0057_lot1_integrite_encaissements_retours_transferts",
       "breakpoints": true
+    },
+    {
+      "idx": 58,
+      "version": "7",
+      "when": 1791884138401,
+      "tag": "0058_fne_sign_locks",
+      "breakpoints": true
     }
   ]
 }
