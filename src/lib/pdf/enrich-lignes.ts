@@ -264,6 +264,7 @@ export type DocTotals = Pick<
   | "tvaPct"
   | "tva"
   | "totalTTC"
+  | "montantTotalStocke"
 > & {
   /** Frais de transport : un seul type possible (livraison OU expédition) ou aucun. */
   fraisTransportType?: "livraison" | "expedition" | null;
@@ -295,17 +296,22 @@ export async function loadCommandeTotals(commandeId: string): Promise<DocTotals>
     tvaPct: tvaPct || undefined,
     tva: tva || undefined,
     totalTTC: ttc || undefined,
+    montantTotalStocke: data.montant_total == null ? undefined : Number(data.montant_total),
   };
 }
 
 export async function loadFactureTotals(factureId: string): Promise<DocTotals> {
   const { data } = await supabase
     .from("factures")
-    .select("commande_id, type_frais_transport, montant_frais_transport")
+    .select("commande_id, type_frais_transport, montant_frais_transport, montant_total")
     .eq("facture_id", factureId)
     .maybeSingle();
   if (!data) return {};
-  const base = data.commande_id ? await loadCommandeTotals(data.commande_id) : {};
+  const loaded = data.commande_id ? await loadCommandeTotals(data.commande_id) : {};
+  const base: DocTotals = {
+    ...loaded,
+    montantTotalStocke: data.montant_total == null ? undefined : Number(data.montant_total),
+  };
   const type = (data.type_frais_transport as "livraison" | "expedition" | null) ?? null;
   const frais = Number(data.montant_frais_transport ?? 0);
   if (!type || frais <= 0) return base;

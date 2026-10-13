@@ -23,3 +23,5 @@
 - DGI/FNE signing goes only through `signInvoiceWithDGI({ fne_id })`: the server checks `fne.soumettre`, rebuilds the request from the database, takes a `fne_sign_locks` row and logs to `fne_logs`, so a browser can never sign arbitrary content or sign twice.
 - The persisted query cache (`fabs-query-cache`) is keyed per user via `queryCacheBuster` and wiped on logout/user change (`src/lib/query-cache-user.ts`), so one account never reads another's cached data.
 - HTTP security headers are added in `src/server.ts` via `src/lib/security-headers.ts`; never add X-Frame-Options DENY or frame-ancestors 'none' because the Lovable preview frames the app.
+- Document numbers come only from `_next_ref`, which increments `numerotation_compteurs` (type_doc, year) inside the caller's transaction; never compute MAX+1, so numbers are race-safe and never reused.
+- Saved sales PDFs show the stored document total (`montantTotalStocke`); local recomputation is only for unsaved previews, and mismatches are logged via `signaler_ecart_total_document`.
