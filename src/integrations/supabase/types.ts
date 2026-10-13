@@ -3247,6 +3247,30 @@ export type Database = {
         }
         Relationships: []
       }
+      fne_sign_locks: {
+        Row: {
+          created_at: string
+          doc_key: string
+          facture_id: string | null
+          fne_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          doc_key: string
+          facture_id?: string | null
+          fne_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          doc_key?: string
+          facture_id?: string | null
+          fne_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       fonctions: {
         Row: {
           actif: boolean
