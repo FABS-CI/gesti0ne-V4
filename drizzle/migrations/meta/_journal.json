@@ -421,6 +421,13 @@
       "when": 1791887358199,
       "tag": "0059_lot3_backup_table_helpers",
       "breakpoints": true
+    },
+    {
+      "idx": 60,
+      "version": "7",
+      "when": 1791887929497,
+      "tag": "0060_lot4_numerotation_validations",
+      "breakpoints": true
     }
   ]
 }

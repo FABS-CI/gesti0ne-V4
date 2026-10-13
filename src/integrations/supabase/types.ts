@@ -4365,6 +4365,27 @@ export type Database = {
         }
         Relationships: []
       }
+      numerotation_compteurs: {
+        Row: {
+          annee: number
+          dernier_numero: number
+          type_doc: string
+          updated_at: string
+        }
+        Insert: {
+          annee: number
+          dernier_numero?: number
+          type_doc: string
+          updated_at?: string
+        }
+        Update: {
+          annee?: number
+          dernier_numero?: number
+          type_doc?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       paiement_annulations_audit: {
         Row: {
           annule_le: string
@@ -9576,6 +9597,15 @@ export type Database = {
       security_admin_overview: { Args: never; Returns: Json }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      signaler_ecart_total_document: {
+        Args: {
+          _calcule: number
+          _reference: string
+          _stocke: number
+          _type: string
+        }
+        Returns: undefined
+      }
       soft_delete_employe: { Args: { _employe_id: string }; Returns: undefined }
       soumettre_commande: { Args: { _commande_id: string }; Returns: undefined }
       supprimer_achat: {
