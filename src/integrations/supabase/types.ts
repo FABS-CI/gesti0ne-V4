@@ -8879,6 +8879,19 @@ export type Database = {
       is_hr: { Args: { _uid: string }; Returns: boolean }
       is_sales: { Args: { _uid: string }; Returns: boolean }
       is_stock: { Args: { _uid: string }; Returns: boolean }
+      list_public_fk_dependencies: {
+        Args: never
+        Returns: {
+          depends_on: string
+          table_name: string
+        }[]
+      }
+      list_public_tables: {
+        Args: never
+        Returns: {
+          table_name: string
+        }[]
+      }
       list_user_permissions: {
         Args: { _user_id: string }
         Returns: {

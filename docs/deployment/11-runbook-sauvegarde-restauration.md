@@ -138,3 +138,13 @@ Un trimestre sans test réalisé doit être remonté en comité de direction.
 | Responsable SI | _à compléter_ | | Toute perte de données |
 | Référent ERP métier | _à compléter_ | | Écart de données après restauration |
 | Support hébergement | _à compléter_ | | Indisponibilité plateforme > 1 h |
+
+## Exercice de restauration sur un projet isolé (à refaire à chaque version majeure)
+
+1. Créer un projet de test isolé (jamais la production), avec le même schéma.
+2. Télécharger depuis l'historique une sauvegarde récente « succès » et noter son SHA-256.
+3. Dans le projet isolé, importer l'archive depuis Sauvegarde & Restauration : la **simulation** s'affiche (tables, lignes de l'archive, lignes en base, écart) sans rien écrire.
+4. Contrôler que les tables listées couvrent 100 % du manifeste (`tables_attendues`) et que la liste `non_embarques` est connue et acceptée.
+5. Saisir `RESTAURER` : une sauvegarde de sécurité est créée d'abord ; la restauration suit l'ordre des clés étrangères et s'arrête à la première erreur.
+6. Vérifier : nombre de clients, factures, paiements et solde total identiques à la production au moment de la sauvegarde ; connexion d'un compte test (mot de passe à réinitialiser).
+7. Consigner date, version, durée, SHA-256 et écarts dans le journal d'exploitation.
