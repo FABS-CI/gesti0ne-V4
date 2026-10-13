@@ -90,3 +90,45 @@ export function computeRapportPeriode(
     }
   }
 }
+
+const parseIso = (iso: string): Ymd => {
+  const [y, m, d] = iso.split("-").map(Number);
+  return { y, m, d };
+};
+const MOIS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+
+/** Libellé lisible d'une période : « 1 – 13 oct. 2026 ». */
+export function formatPeriodeLabel(from?: string, to?: string): string {
+  if (!from && !to) return "Toute la période";
+  const f = (v: Ymd, withMonth = true, withYear = true) =>
+    [String(v.d), withMonth ? MOIS[v.m - 1] : "", withYear ? String(v.y) : ""]
+      .filter(Boolean)
+      .join(" ");
+  if (from && !to) return `Depuis le ${f(parseIso(from))}`;
+  if (!from && to) return `Jusqu'au ${f(parseIso(to))}`;
+  const a = parseIso(from as string);
+  const b = parseIso(to as string);
+  if (a.y === b.y && a.m === b.m && a.d === b.d) return f(a);
+  if (a.y === b.y && a.m === b.m) return `${a.d} – ${f(b)}`;
+  if (a.y === b.y) return `${f(a, true, false)} – ${f(b)}`;
+  return `${f(a)} – ${f(b)}`;
+}
+
+/** Période précédente de même durée, juste avant la période choisie. */
+export function previousPeriode(from: string, to: string): { from: string; to: string } {
+  const a = toUtc(parseIso(from));
+  const b = toUtc(parseIso(to));
+  const days = Math.round((b.getTime() - a.getTime()) / 86_400_000) + 1;
+  const prevTo = addDays(parseIso(from), -1);
+  return { from: ymdToIso(addDays(prevTo, -(days - 1))), to: ymdToIso(prevTo) };
+}
+
+/** Retrouve le raccourci correspondant à une période, s'il y en a un. */
+export function matchPreset(from?: string, to?: string, now: Date = new Date()): PeriodePreset | null {
+  if (!from || !to) return null;
+  for (const p of PERIODE_PRESETS) {
+    const r = computeRapportPeriode(p.key, now);
+    if (r.from === from && r.to === to) return p.key;
+  }
+  return null;
+}
