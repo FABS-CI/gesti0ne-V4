@@ -164,6 +164,7 @@ function CongesListPage() {
                             variant="ghost"
                             size="icon"
                             aria-label="Approuver"
+                            disabled={statusMutation.isPending}
                             onClick={() =>
                               statusMutation.mutate({
                                 id: c.conge_id,
@@ -177,6 +178,7 @@ function CongesListPage() {
                             variant="ghost"
                             size="icon"
                             aria-label="Refuser"
+                            disabled={statusMutation.isPending}
                             onClick={() =>
                               statusMutation.mutate({
                                 id: c.conge_id,
@@ -206,6 +208,7 @@ function CongesListPage() {
                           variant="ghost"
                           size="icon"
                           aria-label="Supprimer"
+                          disabled={deleteMutation.isPending}
                           onClick={async () => {
                             const r = await confirm({
                               title: "Supprimer cette demande ?",
