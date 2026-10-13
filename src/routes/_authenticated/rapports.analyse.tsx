@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RapportFiltersPanel } from "@/components/rapports/RapportFiltersPanel";
+import { RapportFilterBar } from "@/components/rapports/analyse/filtres/RapportFilterBar";
 import {
   getRapportAgregat,
   getRapportEvolution,
@@ -120,9 +120,13 @@ function RapportsAnalysePage() {
         </div>
       </div>
 
-      <RapportFiltersPanel
+      <RapportFilterBar
         value={filters}
         onChange={(v) => update({ ...filtersToSearch(v), page: undefined })}
+        compare={!!search.cmp && !!filters.from && !!filters.to}
+        onCompareChange={(v) => update({ cmp: v || undefined })}
+        nbProduits={listQ.data?.total}
+        nbClients={kpiQ.data?.nb_clients}
       />
 
       <RapportKpisGrid data={kpiQ.data} />

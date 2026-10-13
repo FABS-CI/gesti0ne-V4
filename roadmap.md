@@ -70,5 +70,6 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 
 ## Refonte Analyse des ventes
 - [x] Lot 1 correctifs et fondations
-- [ ] Lot 2 barre de filtres compacte (attend validation)
+- [x] Lot 2 barre de filtres compacte
+- [ ] Lot 3 indicateurs (attend validation)
 - [ ] Lots 3 à 6
