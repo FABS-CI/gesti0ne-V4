@@ -63,4 +63,5 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Lot 1 : encaissements validés, retours, transferts
 - [x] Lot 2 : 2.1 sans objet, 2.2, 2.3, 2.5, 2.6 faits
 - [ ] Lot 2.4 : vérification publique — attend la décision de l'utilisateur
-- [ ] Lot 3 : sauvegarde et restauration — attend « OK »
+- [x] Lot 3 : sauvegarde et restauration (3.1, 3.2, 3.3)
+- [ ] Lot 4 : calculs, numérotation, documents — attend « OK »
