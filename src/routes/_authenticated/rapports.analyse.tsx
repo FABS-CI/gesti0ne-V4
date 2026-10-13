@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { BarChart3 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,20 +26,34 @@ import { AgregatCard } from "@/components/rapports/analyse/AgregatCard";
 import { ProduitsTab } from "@/components/rapports/analyse/ProduitsTab";
 import { TopFlopTab } from "@/components/rapports/analyse/TopFlopTab";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  rapportAnalyseSearchSchema,
+  searchToFilters,
+  filtersToSearch,
+  type RapportAnalyseSearch,
+} from "@/lib/rapports-search";
 
 export const Route = createFileRoute("/_authenticated/rapports/analyse")({
+  validateSearch: (s: Record<string, unknown>) => rapportAnalyseSearchSchema.parse(s),
   component: RapportsAnalysePage,
   errorComponent: RouteError,
   notFoundComponent: RouteNotFound,
 });
 
 function RapportsAnalysePage() {
-  const [filters, setFilters] = useState<RapportFilters>({});
-  const [tri, setTri] = useState("ca");
-  const [sens, setSens] = useState<"asc" | "desc">("desc");
-  const [page, setPage] = useState(1);
-  const [topN, setTopN] = useState(20);
-  const [granularite, setGranularite] = useState<"jour" | "semaine" | "mois" | "annee">("mois");
+  const search = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const update = (patch: Partial<RapportAnalyseSearch>) =>
+    navigate({ search: (prev) => ({ ...prev, ...patch }) });
+  const filters = searchToFilters(search);
+  const tri = search.tri ?? "ca";
+  const sens = search.sens ?? "desc";
+  const page = search.page ?? 1;
+  const topN = search.top ?? 20;
+  const granularite = search.gran ?? "mois";
+  const onglet = search.onglet ?? "produits";
+  const setPage = (p: number) => update({ page: p > 1 ? p : undefined });
 
   const kpiQ = useQuery({
     queryKey: ["rap-kpi", filters],
@@ -90,11 +103,8 @@ function RapportsAnalysePage() {
 
   const listRows = listQ.data?.items ?? [];
   const onSort = (key: string) => {
-    if (tri === key) setSens(sens === "asc" ? "desc" : "asc");
-    else {
-      setTri(key);
-      setSens("desc");
-    }
+    if (tri === key) update({ sens: sens === "asc" ? "desc" : "asc", page: undefined });
+    else update({ tri: key, sens: "desc", page: undefined });
   };
 
   return (
@@ -105,22 +115,24 @@ function RapportsAnalysePage() {
             <BarChart3 className="h-6 w-6 text-primary" /> Analyse des ventes & produits
           </h1>
           <p className="text-sm text-muted-foreground">
-            Rapports détaillés, classements, dimensions et évolution — temps réel FABS-CI
+            Chiffre d'affaires, produits et clients, par période et par dimension.
           </p>
         </div>
       </div>
 
       <RapportFiltersPanel
         value={filters}
-        onChange={(v) => {
-          setFilters(v);
-          setPage(1);
-        }}
+        onChange={(v) => update({ ...filtersToSearch(v), page: undefined })}
       />
 
       <RapportKpisGrid data={kpiQ.data} />
 
-      <Tabs defaultValue="produits">
+      <Tabs
+        value={onglet}
+        onValueChange={(v) =>
+          update({ onglet: v === "produits" ? undefined : (v as RapportAnalyseSearch["onglet"]) })
+        }
+      >
         <TabsList className="flex flex-wrap">
           <TabsTrigger value="produits">Produits (détail)</TabsTrigger>
           <TabsTrigger value="top">Top / Flop</TabsTrigger>
@@ -140,16 +152,17 @@ function RapportsAnalysePage() {
             onSort={onSort}
             page={page}
             onPage={setPage}
+            filters={filters}
           />
         </TabsContent>
 
         <TabsContent value="top">
-          <TopFlopTab topN={topN} onTopN={setTopN} top={topQ.data} flop={flopQ.data} />
+          <TopFlopTab topN={topN} onTopN={(n) => update({ top: n === 20 ? undefined : (n as 10 | 50) })} top={topQ.data} flop={flopQ.data} />
         </TabsContent>
 
         {/* NIVEAUX */}
         <TabsContent value="niveaux" className="space-y-4">
-          <AgregatCard title="Ventes par niveau scolaire" data={nivQ.data ?? []} />
+          <AgregatCard title="Ventes par niveau scolaire" data={nivQ.data ?? []} isLoading={nivQ.isLoading} />
           {nivQ.data && (
             <Card>
               <CardContent className="pt-4">
@@ -161,7 +174,7 @@ function RapportsAnalysePage() {
 
         {/* CATEGORIES */}
         <TabsContent value="categories" className="space-y-4">
-          <AgregatCard title="Ventes par catégorie" data={catQ.data ?? []} />
+          <AgregatCard title="Ventes par catégorie" data={catQ.data ?? []} isLoading={catQ.isLoading} />
           {catQ.data && (
             <Card>
               <CardContent className="pt-4">
@@ -174,8 +187,8 @@ function RapportsAnalysePage() {
         {/* GEO */}
         <TabsContent value="geo" className="space-y-4">
           <div className="grid gap-4 lg:grid-cols-2">
-            <AgregatCard title="Ventes par ville" data={vilQ.data ?? []} />
-            <AgregatCard title="Ventes par quartier / commune" data={quaQ.data ?? []} />
+            <AgregatCard title="Ventes par ville" data={vilQ.data ?? []} isLoading={vilQ.isLoading} />
+            <AgregatCard title="Ventes par quartier / commune" data={quaQ.data ?? []} isLoading={quaQ.isLoading} />
           </div>
           {vilQ.data && (
             <Card>
@@ -193,7 +206,7 @@ function RapportsAnalysePage() {
         <TabsContent value="evolution" className="space-y-4">
           <div className="flex items-center gap-2">
             <span className="text-sm">Granularité</span>
-            <Select value={granularite} onValueChange={(v) => setGranularite(v as "mois")}>
+            <Select value={granularite} onValueChange={(v) => update({ gran: v === "mois" ? undefined : (v as RapportAnalyseSearch["gran"]) })}>
               <SelectTrigger className="w-40">
                 <SelectValue />
               </SelectTrigger>
@@ -205,6 +218,7 @@ function RapportsAnalysePage() {
               </SelectContent>
             </Select>
           </div>
+          {evoQ.isLoading && <Skeleton className="h-72 w-full" />}
           {evoQ.data && (
             <Card>
               <CardHeader className="pb-2">
