@@ -1,12 +1,12 @@
 import { buildGlobalArchive, uploadArchiveToDrive, rotateDriveArchives } from "./global-backup.server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { verifyArchive } from "./backup-verify";
 
 /** Bucket privé où sont conservées les archives ZIP (source de restauration). */
 export const BACKUP_BUCKET = "erp-backups";
 const KEEP_ARCHIVES = 30;
 /** Au-delà de ce délai, une sauvegarde « en cours » est considérée bloquée. */
 const STALE_MS = 60 * 60 * 1000;
-const MIN_ZIP_BYTES = 1024;
 
 const db = () => supabaseAdmin.from("backups") as any;
 
@@ -23,32 +23,6 @@ export async function markStaleBackups() {
     })
     .eq("statut", "en_cours")
     .lt("created_at", limit);
-}
-
-/** Contrôle d'intégrité du ZIP avant de déclarer la sauvegarde réussie. */
-async function verifyArchive(bytes: Uint8Array, expectedTables: number) {
-  const JSZip = (await import("jszip")).default;
-  if (bytes.byteLength < MIN_ZIP_BYTES) throw new Error(`Archive trop petite (${bytes.byteLength} o)`);
-  const zip = await JSZip.loadAsync(bytes);
-  const files = Object.keys(zip.files).filter((p) => !zip.files[p].dir);
-  if (!zip.file("MANIFEST.json")) throw new Error("Contrôle : MANIFEST.json absent");
-  const manifest = JSON.parse(await zip.file("MANIFEST.json")!.async("string"));
-  const dataFiles = files.filter((p) => p.startsWith("data/") && p.endsWith(".json"));
-  if (dataFiles.length === 0) throw new Error("Contrôle : aucune table de données dans l'archive");
-  if (expectedTables && dataFiles.length < expectedTables * 0.5)
-    throw new Error(`Contrôle : ${dataFiles.length} tables présentes sur ${expectedTables} attendues`);
-  const leaked = files.filter((p) => p.split("/").pop() === "original.png");
-  if (leaked.length) throw new Error(`Contrôle : ${leaked.length} original.png présent(s)`);
-  // Lecture effective d'une table pour prouver que le contenu est exploitable.
-  JSON.parse(await zip.file(dataFiles[0])!.async("string"));
-  return {
-    ok: true,
-    fichiers: files.length,
-    tables: dataFiles.length,
-    original_png: 0,
-    manifest_ok: !!manifest?.contenu,
-    controle_at: new Date().toISOString(),
-  };
 }
 
 /** Ne conserve que les N dernières archives dans le bucket. */
@@ -116,7 +90,7 @@ export async function orchestrateBackup(opts: {
       projectName: opts.projectName,
     });
 
-    const verification = await verifyArchive(bytes, stats.tables_count);
+    const verification = await verifyArchive(bytes);
 
     const storagePath = `${new Date().toISOString().slice(0, 7)}/${stats.fileName}`;
     const { error: upErr } = await supabaseAdmin.storage
@@ -159,7 +133,7 @@ export async function orchestrateBackup(opts: {
         verifie: true,
         verifie_at: new Date().toISOString(),
         verifie_methode: "zip-integrite+relecture",
-        message: `Sauvegarde contrôlée : ${stats.tables_count} tables, ${stats.rows_count} enregistrements, ${stats.users_count} comptes, ${stats.files_embedded}/${stats.files_count} fichiers${driveNote}`,
+        message: `Sauvegarde contrôlée : ${stats.tables_count} tables, ${stats.rows_count} enregistrements, ${stats.users_count} comptes, ${stats.files_embedded}/${stats.files_count} fichiers${stats.files_not_embedded ? ` — AVERTISSEMENT : ${stats.files_not_embedded} fichier(s) non inclus dans l'archive (voir non_embarques du manifeste)` : ""}${driveNote}`,
       })
       .eq("backup_id", backupId);
 

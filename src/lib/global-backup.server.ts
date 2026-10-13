@@ -10,6 +10,7 @@
  */
 
 import { getOrCreateBackupFolder } from "@/lib/gdrive-folder";
+import { sha256Hex } from "@/lib/backup-verify";
 
 /** Taille maximale des fichiers Storage embarqués dans l'archive (octets). */
 const MAX_FILE_BYTES = 15 * 1024 * 1024;
@@ -25,16 +26,10 @@ export type GlobalBackupResult = {
   users_count: number;
   files_count: number;
   files_embedded: number;
+  files_not_embedded: number;
   drive?: { id: string; url: string | null } | null;
 };
 
-async function sha256Hex(bytes: Uint8Array): Promise<string> {
-  const digestInput = Uint8Array.from(bytes);
-  const buf = await crypto.subtle.digest("SHA-256", digestInput);
-  return Array.from(new Uint8Array(buf))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-}
 
 async function listAllPublicTables(supabaseAdmin: any, config: any): Promise<string[]> {
   const fromConfig = (config?.tables ?? [])
@@ -309,6 +304,7 @@ export async function buildGlobalArchive(
       users_count: users.length,
       files_count: filesCount,
       files_embedded: filesEmbedded,
+      files_not_embedded: nonEmbarques.length,
     },
   };
 }
