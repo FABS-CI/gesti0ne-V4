@@ -94,13 +94,20 @@ export async function generateUnifiedCommercialPDF(
     totalAPayer: 0,
     montantLettres: "",
   };
-  // Source de vérité unique : SOUS-TOTAL − remises + frais + TVA = TOTAL À PAYER.
+  // Le calcul local ne sert qu'à l'aperçu d'un document non enregistré :
+  // un document enregistré affiche toujours le total stocké en base.
   const computedTotal = Math.round(
     totals.sousTotal - totals.remiseLignes - totals.remiseGlobale + (Number((totals as any).frais) || 0) + totals.tva,
   );
-  totals.totalAPayer = totals.sousTotal > 0
-    ? Math.max(0, computedTotal)
-    : (data.totalTTC || data.montantHT || 0);
+  const stocke = (data as any).montantTotalStocke;
+  if (typeof stocke === "number" && Number.isFinite(stocke)) {
+    totals.totalAPayer = stocke;
+    if (totals.sousTotal > 0 && Math.abs(computedTotal - stocke) >= 1) {
+      void reportTotalMismatch(type, String((data as any).referenceStockee || docBase.id || ""), stocke, computedTotal);
+    }
+  } else {
+    totals.totalAPayer = totals.sousTotal > 0 ? computedTotal : (data.totalTTC || data.montantHT || 0);
+  }
   totals.montantLettres = numberToLetters(totals.totalAPayer);
 
   // Résoudre le paiement avant l'initialisation : l'en-tête et le tampon sont
@@ -301,4 +308,19 @@ export async function generateUnifiedRetourPDF(data: DataBase): Promise<Blob> {
   await doc.init();
   await doc.drawContent();
   return await doc.getBlob();
+}
+
+/** Alerte de cohérence (journaux de santé système), sans jamais bloquer le PDF. */
+async function reportTotalMismatch(type: string, reference: string, stocke: number, calcule: number) {
+  try {
+    const { supabase } = await import("@/integrations/supabase/client");
+    await supabase.rpc("signaler_ecart_total_document", {
+      _type: type,
+      _reference: reference,
+      _stocke: stocke,
+      _calcule: calcule,
+    });
+  } catch {
+    /* jamais bloquant */
+  }
 }

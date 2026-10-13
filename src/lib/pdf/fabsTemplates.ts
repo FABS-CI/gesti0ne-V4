@@ -80,6 +80,10 @@ export type DocBase = {
   tvaPct?: number;
   tva?: number;
   totalTTC?: number;
+  /** Total enregistré en base du document (source de vérité du PDF). */
+  montantTotalStocke?: number;
+  /** Numéro du document pour l'alerte de cohérence. */
+  referenceStockee?: string;
   /** Frais de transport : « livraison » OU « expedition », jamais les deux. */
   fraisTransportType?: "livraison" | "expedition" | null;
   fraisTransportMontant?: number;
