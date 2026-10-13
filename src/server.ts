@@ -2,6 +2,15 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
+import { applySecurityHeaders } from "./lib/security-headers";
+
+function requestHost(request: Request): string {
+  try {
+    return request.headers.get("host") ?? new URL(request.url).host;
+  } catch {
+    return "";
+  }
+}
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -90,7 +99,8 @@ export default {
       console.info(
         `[ssr-step:${requestId}] ${request.method} ${url} -> fetch:response:${response.status}:${response.headers.get("content-type") ?? ""}`,
       );
-      const normalized = await normalizeCatastrophicSsrResponse(response, requestId, request);
+      let normalized = await normalizeCatastrophicSsrResponse(response, requestId, request);
+      normalized = applySecurityHeaders(normalized, requestHost(request));
       if (!normalized.headers.has("x-request-id")) {
         normalized.headers.set("x-request-id", requestId);
       }
