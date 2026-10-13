@@ -57,3 +57,10 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Lot 4 : Confort d'utilisation / tablette (menu en tiroir < 1024 px, en-têtes qui passent à la ligne)
 - [x] Lot 5 : Fiabilité — réconciliation stock (lecture seule) dans Qualité des données; journal enrichi (résumé des changements champ par champ dans le détail d'un événement); messages techniques de débogage retirés (RouteGuard, use-permissions, use-visible-groups, EtiquettesSection); tests automatiques : transport (frais-transport.test.ts), journal (audit-helpers.test.ts), ajoutés aux tests existants facturation/paiements/retours/solde — 46 tests verts. En attente : validation par l'utilisateur des 2 écarts de stock (FABS-CI95, FABS-CI29)
 - [x] Lot 6 : Documents et finitions — contrôle automatique des PDF remis à jour; vraies factures FAC-2026-00068/00069 comparées avant/après; frais de livraison affichés une seule fois (bloc des totaux)
+
+## Audit file-71 (lot par lot, attendre « OK »)
+- [x] Lot 0 : vérifications en base
+- [x] Lot 1 : encaissements validés, retours, transferts
+- [x] Lot 2 : 2.1 sans objet, 2.2, 2.3, 2.5, 2.6 faits
+- [ ] Lot 2.4 : vérification publique — attend la décision de l'utilisateur
+- [ ] Lot 3 : sauvegarde et restauration — attend « OK »
