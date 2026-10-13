@@ -38,7 +38,10 @@ export const revokeCertificationFn = createServerFn({ method: "POST" })
  * Lot 2.3 : réservé aux utilisateurs pouvant lire le type de document, et
  * uniquement si le document existe et est visible avec leur propre session.
  */
-const CERT_READ_RULES: Record<string, { perm: string; table: "factures" | "proformas" | "commandes" }> = {
+const CERT_READ_RULES: Record<
+  string,
+  { perm: string; table: "factures" | "proformas" | "commandes" }
+> = {
   FACTURE: { perm: "factures.voir", table: "factures" },
   PROFORMA: { perm: "proformas.voir", table: "proformas" },
   COMMANDE: { perm: "commandes.voir", table: "commandes" },
@@ -46,7 +49,9 @@ const CERT_READ_RULES: Record<string, { perm: string; table: "factures" | "profo
 
 export const listCertificationsFn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { reference: string }) => ({ reference: String(input?.reference ?? "").trim() }))
+  .inputValidator((input: { reference: string }) => ({
+    reference: String(input?.reference ?? "").trim(),
+  }))
   .handler(async ({ data, context }) => {
     if (!data.reference) return [];
     // Types que l'utilisateur peut lire ET dont le document existe pour lui (RLS).

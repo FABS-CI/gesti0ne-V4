@@ -51,19 +51,23 @@ const code = (fn: () => unknown) => {
 
 describe("Lot 2.2 — signature DGI", () => {
   it("refuse une facture déjà signée (un seul appel DGI)", () => {
-    expect(code(() => assertFneRowSignable(row({ statut: "accepted" }), false))).toBe("deja_signee");
+    expect(code(() => assertFneRowSignable(row({ statut: "accepted" }), false))).toBe(
+      "deja_signee",
+    );
     expect(code(() => assertFneRowSignable(row(), true))).toBe("deja_signee");
     expect(code(() => assertFneRowSignable(row(), false))).toBeNull();
   });
 
   it("refuse une facture annulée", () => {
-    expect(code(() => buildPayloadFromFacture(row(), { ...facture, statut: "annulee" }, client))).toBe(
-      "annulee",
-    );
+    expect(
+      code(() => buildPayloadFromFacture(row(), { ...facture, statut: "annulee" }, client)),
+    ).toBe("annulee");
   });
 
   it("refuse un montant différent du total enregistré", () => {
-    expect(code(() => buildPayloadFromFacture(row({ montant: 811199 }), facture, client))).toBe("montant");
+    expect(code(() => buildPayloadFromFacture(row({ montant: 811199 }), facture, client))).toBe(
+      "montant",
+    );
   });
 
   it("ignore le contenu envoyé par le navigateur et relit la base", () => {
@@ -121,6 +125,8 @@ describe("Lot 2.6 — en-têtes de sécurité", () => {
     expect(isProductionHost("localhost:8080")).toBe(false);
     expect(isProductionHost("id-preview--abc.lovable.app")).toBe(false);
     expect(securityHeadersFor("localhost:8080")["Strict-Transport-Security"]).toBeUndefined();
-    expect(securityHeadersFor("gesti0ne.lovable.app")["Strict-Transport-Security"]).toContain("max-age");
+    expect(securityHeadersFor("gesti0ne.lovable.app")["Strict-Transport-Security"]).toContain(
+      "max-age",
+    );
   });
 });

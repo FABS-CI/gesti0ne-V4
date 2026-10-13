@@ -185,7 +185,8 @@ export const signInvoiceWithDGI = createServerFn({ method: "POST" })
       }
       const reference = body.reference ?? body.invoice?.reference ?? "";
       const token = body.token ?? body.invoice?.token ?? "";
-      if (!reference || !token) throw new Error("Réponse DGI incomplète (reference/token manquants)");
+      if (!reference || !token)
+        throw new Error("Réponse DGI incomplète (reference/token manquants)");
 
       await log("succes", { facture_id: row!.facture_id, http_status: resp.status, reference });
       return {

@@ -7,7 +7,6 @@ function clearLocalAuthState() {
   // (La page est rechargée juste après : le cache mémoire disparaît avec elle.)
   removePersistedQueryCache(window.localStorage);
 
-
   try {
     for (let index = window.localStorage.length - 1; index >= 0; index -= 1) {
       const key = window.localStorage.key(index);
