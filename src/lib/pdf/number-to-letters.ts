@@ -21,7 +21,7 @@ function convertirGroupe(n: number, pluriel: boolean): string {
 
   if (c > 0) {
     if (c === 1) parts.push("cent");
-    else parts.push(UNITES[c] + "-cent" + (du === 0 && pluriel ? "s" : ""));
+    else parts.push(UNITES[c] + " cent" + (du === 0 && pluriel ? "s" : ""));
   }
 
   if (du > 0) {
@@ -38,7 +38,7 @@ function convertirGroupe(n: number, pluriel: boolean): string {
     }
     parts.push(s);
   }
-  return parts.join("-");
+  return parts.join(" ");
 }
 
 export function numberToLetters(n: number): string {
@@ -62,7 +62,7 @@ export function numberToLetters(n: number): string {
       parts.push(convertirGroupe(millions, true) + " million" + (millions > 1 ? "s" : ""));
       if (milliers === 0 && reste === 0) de = true;
     }
-    if (milliers > 0) parts.push(milliers === 1 ? "mille" : convertirGroupe(milliers, false) + "-mille");
+    if (milliers > 0) parts.push(milliers === 1 ? "mille" : convertirGroupe(milliers, false) + " mille");
     if (reste > 0) parts.push(convertirGroupe(reste, true));
     words = parts.join(" ");
   }
