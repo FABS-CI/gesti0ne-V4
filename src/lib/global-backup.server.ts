@@ -193,7 +193,11 @@ export async function buildGlobalArchive(
       filesCount += 1;
       const size = Number(obj.metadata?.size ?? 0);
       let embedded = false;
-      if (size > 0 && size <= MAX_FILE_BYTES && embeddedBytes + size <= MAX_STORAGE_TOTAL_BYTES) {
+      let raison: string | null = null;
+      if (size <= 0) raison = "taille inconnue";
+      else if (size > MAX_FILE_BYTES) raison = `fichier trop gros (> ${MAX_FILE_BYTES} o)`;
+      else if (embeddedBytes + size > MAX_STORAGE_TOTAL_BYTES) raison = "budget total de l'archive dépassé";
+      else {
         const { data: blob, error } = await supabaseAdmin.storage
           .from(bucket.id)
           .download(obj.path);
@@ -202,10 +206,13 @@ export async function buildGlobalArchive(
           embedded = true;
           filesEmbedded += 1;
           embeddedBytes += size;
+        } else {
+          raison = `téléchargement impossible : ${error?.message ?? "vide"}`;
         }
       }
       let signedUrl: string | null = null;
       if (!embedded) {
+        nonEmbarques.push({ bucket: bucket.id, path: obj.path, taille: size, raison: raison ?? "inconnue" });
         const { data: signed } = await supabaseAdmin.storage
           .from(bucket.id)
           .createSignedUrl(obj.path, 60 * 60 * 24 * 7);
@@ -232,14 +239,17 @@ export async function buildGlobalArchive(
   // E. manifeste global
   const manifest = {
     application: "ERP FABS-CI",
-    version_archive: "1.0",
+    version_archive: "1.1",
     generated_at: startedAt.toISOString(),
     trigger: opts.trigger,
     author: opts.author ?? "system",
+    tables_attendues: tables,
+    lignes_par_table: lignesParTable,
+    non_embarques: nonEmbarques,
     contenu: {
       donnees_metier: { tables: tableStats.length, enregistrements: rowsCount, detail: tableStats },
       comptes: { count: users.length, note: "mots de passe non exportables (hachés côté Auth)" },
-      fichiers: { total: filesCount, inclus: filesEmbedded, budget_octets: MAX_STORAGE_TOTAL_BYTES },
+      fichiers: { total: filesCount, inclus: filesEmbedded, non_embarques: nonEmbarques.length, budget_octets: MAX_STORAGE_TOTAL_BYTES },
       configuration: {
         politiques: Array.isArray(config?.policies) ? config.policies.length : 0,
         fonctions: Array.isArray(config?.functions) ? config.functions.length : 0,
