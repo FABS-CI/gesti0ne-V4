@@ -72,5 +72,6 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Lot 1 correctifs et fondations
 - [x] Lot 2 barre de filtres compacte
 - [x] Lot 3 indicateurs et évolution
-- [ ] Lot 4 analyse unifiée (attend validation)
+- [x] Lot 4 analyse unifiée
+- [ ] Lot 5 tableau produits (attend validation)
 - [ ] Lots 3 à 6
