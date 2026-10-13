@@ -1,6 +1,6 @@
 import { COMPANY } from "@/lib/company";
 import { formatDocumentReference } from "@/lib/document-reference";
-import { formatDateTime } from "@/lib/format";
+import { formatDateTime, formatTime } from "@/lib/format";
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -574,7 +574,7 @@ function ReleveDetail({ releve }: { releve: NonNullable<VerifyResponse["releve"]
       <div className="text-center">
         <p className="text-base font-black tracking-wide text-foreground">RELEVÉ DE COMPTE</p>
         <p className="text-xs text-muted-foreground">
-          Édité le {fmtDay(r.edite_le)} à {edit.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} · {r.periode}
+          Édité le {fmtDay(r.edite_le)} à {formatTime(edit)} · {r.periode}
         </p>
       </div>
 
