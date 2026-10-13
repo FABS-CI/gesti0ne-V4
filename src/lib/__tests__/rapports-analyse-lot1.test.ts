@@ -66,7 +66,7 @@ describe("filtres dans l'adresse de la page", () => {
     expect(searchToFilters(rapportAnalyseSearchSchema.parse(filtersToSearch(f)))).toEqual(f);
   });
   it("ignore les valeurs invalides", () => {
-    const s = rapportAnalyseSearchSchema.parse({ from: "hier", page: -3, onglet: "x", sens: "haut" });
+    const s = rapportAnalyseSearchSchema.parse({ from: "hier", page: -3, dim: "x", sens: "haut" });
     expect(s).toEqual({});
   });
 });

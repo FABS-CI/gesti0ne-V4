@@ -50,9 +50,9 @@ export function ActiveFilters({
       })}
       {(nbProduits != null || nbClients != null) && (
         <span className="ml-auto tabular-nums text-muted-foreground" aria-live="polite">
-          {nbProduits != null && `${formatNumber(nbProduits)} produits`}
+          {nbProduits != null && `${formatNumber(nbProduits)} produit${nbProduits > 1 ? "s" : ""}`}
           {nbProduits != null && nbClients != null && " · "}
-          {nbClients != null && `${formatNumber(nbClients)} clients`}
+          {nbClients != null && `${formatNumber(nbClients)} client${nbClients > 1 ? "s" : ""}`}
         </span>
       )}
     </div>

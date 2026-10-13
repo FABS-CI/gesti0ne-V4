@@ -18,9 +18,11 @@ type Point = { periode: string; ca: number; prev?: number; prevPeriode?: string 
 export default function EvolutionChart({
   data,
   previous,
+  height = 260,
 }: {
   data: SerieTemp[];
   previous?: SerieTemp[];
+  height?: number;
 }) {
   const points: Point[] = data.map((d, i) => ({
     periode: d.periode,
@@ -29,7 +31,7 @@ export default function EvolutionChart({
     prevPeriode: previous?.[i]?.periode,
   }));
   return (
-    <ResponsiveContainer width="100%" height={260}>
+    <ResponsiveContainer width="100%" height={height}>
       <AreaChart data={points} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
         <CartesianGrid vertical={false} stroke="var(--border)" strokeOpacity={0.6} />
         <XAxis
