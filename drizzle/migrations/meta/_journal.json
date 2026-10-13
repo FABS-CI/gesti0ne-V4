@@ -428,6 +428,13 @@
       "when": 1791887929497,
       "tag": "0060_lot4_numerotation_validations",
       "breakpoints": true
+    },
+    {
+      "idx": 61,
+      "version": "7",
+      "when": 1791889956989,
+      "tag": "0061_lot4_decisions",
+      "breakpoints": true
     }
   ]
 }
