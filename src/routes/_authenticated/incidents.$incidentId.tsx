@@ -151,7 +151,7 @@ function IncidentDetailPage() {
             <Printer className="h-4 w-4 mr-2" /> Imprimer PDF
           </Button>
           {canCancel && incident.statut !== "annule" && (
-            <Button variant="outline" size="sm" onClick={() => setConfirmCancel(true)}>
+            <Button variant="outline" size="sm" disabled={cancelMut.isPending} onClick={() => setConfirmCancel(true)}>
               <XCircle className="h-4 w-4 mr-2 text-destructive" /> Annuler l'incident
             </Button>
           )}
@@ -311,7 +311,7 @@ function IncidentDetailPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Retour</AlertDialogCancel>
-            <AlertDialogAction onClick={() => cancelMut.mutate()}>
+            <AlertDialogAction disabled={cancelMut.isPending} onClick={() => cancelMut.mutate()}>
               Confirmer l'annulation
             </AlertDialogAction>
           </AlertDialogFooter>

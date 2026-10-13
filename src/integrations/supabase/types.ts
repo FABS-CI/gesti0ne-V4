@@ -369,6 +369,27 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_correction_f15: {
+        Row: {
+          ancien_montant_paye: number | null
+          ancien_statut: string | null
+          corrige_le: string
+          facture_id: string
+        }
+        Insert: {
+          ancien_montant_paye?: number | null
+          ancien_statut?: string | null
+          corrige_le?: string
+          facture_id: string
+        }
+        Update: {
+          ancien_montant_paye?: number | null
+          ancien_statut?: string | null
+          corrige_le?: string
+          facture_id?: string
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action: string
@@ -6008,6 +6029,7 @@ export type Database = {
       retours: {
         Row: {
           adresse: string | null
+          avoir_facture_id: string | null
           client_id: string | null
           client_nom: string | null
           commande_id: string | null
@@ -6049,6 +6071,7 @@ export type Database = {
         }
         Insert: {
           adresse?: string | null
+          avoir_facture_id?: string | null
           client_id?: string | null
           client_nom?: string | null
           commande_id?: string | null
@@ -6090,6 +6113,7 @@ export type Database = {
         }
         Update: {
           adresse?: string | null
+          avoir_facture_id?: string | null
           client_id?: string | null
           client_nom?: string | null
           commande_id?: string | null
@@ -6138,6 +6162,33 @@ export type Database = {
             referencedColumns: ["commande_id"]
           },
         ]
+      }
+      retours_suppression_audit: {
+        Row: {
+          id: string
+          instantane: Json
+          motif: string | null
+          retour_id: string
+          supprime_le: string
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          instantane: Json
+          motif?: string | null
+          retour_id: string
+          supprime_le?: string
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          instantane?: Json
+          motif?: string | null
+          retour_id?: string
+          supprime_le?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       rubriques_paie: {
         Row: {
@@ -8449,6 +8500,7 @@ export type Database = {
         Args: { _payload: Json }
         Returns: {
           adresse: string | null
+          avoir_facture_id: string | null
           client_id: string | null
           client_nom: string | null
           commande_id: string | null
@@ -8679,6 +8731,7 @@ export type Database = {
         }[]
       }
       export_config_snapshot: { Args: never; Returns: Json }
+      facture_encaisse: { Args: { _facture_id: string }; Returns: number }
       factures_impayees_client: {
         Args: { _client_id: string }
         Returns: {
