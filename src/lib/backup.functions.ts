@@ -76,4 +76,3 @@ export const runFullRestore = createServerFn({ method: "POST" })
       userId
     });
   });
-  });
