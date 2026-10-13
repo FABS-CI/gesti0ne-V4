@@ -83,7 +83,7 @@ export async function submitFNEInvoice(payload: FNEInvoicePayload) {
     .eq("fne_id", fneId);
 
   try {
-    const resp = await submitToDGI(payload, settings);
+    const resp = await submitToDGI(fneId, settings);
     const qr = await generateQR(resp.token).catch(() => null);
     await supabase
       .from("fne_factures")
