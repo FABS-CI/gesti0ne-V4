@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/table";
 import { Download, FileSpreadsheet } from "lucide-react";
 import { exportXlsx } from "@/lib/rapports-api";
-import { exportCsv as exportPdf } from "@/lib/export-csv";
 import { formatFCFA } from "@/lib/format";
+import { SkeletonTable } from "@/components/ui/skeletons";
 
 export type AgregatRow = {
   label: string;
@@ -22,7 +22,16 @@ export type AgregatRow = {
   nb_produits: number;
 };
 
-export function AgregatCard({ title, data }: { title: string; data: AgregatRow[] }) {
+export function AgregatCard({
+  title,
+  data,
+  isLoading = false,
+}: {
+  title: string;
+  data: AgregatRow[];
+  isLoading?: boolean;
+}) {
+  if (isLoading) return <SkeletonTable rows={6} cols={6} />;
   const headers = ["Libellé", "Quantité", "CA", "Clients", "Factures", "Produits"];
   const rows = data.map((d) => [d.label, d.qte, d.ca, d.nb_clients, d.nb_factures, d.nb_produits]);
   return (
@@ -33,7 +42,26 @@ export function AgregatCard({ title, data }: { title: string; data: AgregatRow[]
           <Button variant="outline" size="sm" onClick={() => exportXlsx(title, headers, rows)}>
             <FileSpreadsheet className="mr-1 h-4 w-4" /> Excel
           </Button>
-          <Button variant="outline" size="sm" onClick={() => exportPdf(title, headers, rows)}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={async () => {
+              const { exportListePDF } = await import("@/lib/pdf/exportListe");
+              await exportListePDF({
+                titre: title,
+                colonnes: headers,
+                lignes: data.map((d) => [
+                  d.label,
+                  d.qte,
+                  formatFCFA(d.ca),
+                  d.nb_clients,
+                  d.nb_factures,
+                  d.nb_produits,
+                ]),
+                filename: title,
+              });
+            }}
+          >
             <Download className="mr-1 h-4 w-4" /> PDF
           </Button>
         </div>
@@ -43,7 +71,9 @@ export function AgregatCard({ title, data }: { title: string; data: AgregatRow[]
           <TableHeader>
             <TableRow>
               {headers.map((h) => (
-                <TableHead key={h}>{h}</TableHead>
+                <TableHead key={h} className={h === "Libellé" ? "" : "text-right"}>
+                  {h}
+                </TableHead>
               ))}
             </TableRow>
           </TableHeader>
@@ -51,12 +81,12 @@ export function AgregatCard({ title, data }: { title: string; data: AgregatRow[]
             {data.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="py-4 text-center text-muted-foreground">
-                  Aucune donnée
+                  Aucune vente sur cette période pour les filtres choisis.
                 </TableCell>
               </TableRow>
             ) : (
               data.map((d, i) => (
-                <TableRow key={i}>
+                <TableRow key={i} className="tabular-nums">
                   <TableCell>{d.label}</TableCell>
                   <TableCell className="text-right">{d.qte}</TableCell>
                   <TableCell className="text-right font-medium">{formatFCFA(d.ca)}</TableCell>
