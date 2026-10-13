@@ -9,7 +9,6 @@
  */
 import {
   buildVerificationUrl,
-  verifyByReference,
   verifyByToken,
   loadDocumentData,
   type DocType,
