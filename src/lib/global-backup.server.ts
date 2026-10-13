@@ -114,19 +114,30 @@ export async function buildGlobalArchive(
   }
   zip.file("config/config_snapshot.json", JSON.stringify(config, null, 2));
 
-  // A. données métier
-  const tables = await listAllPublicTables(supabaseAdmin, config);
+  // A. données métier — une table illisible fait échouer toute la sauvegarde.
+  let tables = await listAllPublicTables(supabaseAdmin, config);
+  if (!tables.length) {
+    const { data, error } = await supabaseAdmin.rpc("list_public_tables");
+    if (error) throw new Error(`Liste des tables impossible : ${error.message}`);
+    tables = ((data ?? []) as Array<{ table_name: string }>)
+      .map((r) => r.table_name)
+      .filter((n) => !!n && !n.startsWith("pg_"));
+  }
+  if (!tables.length) throw new Error("Aucune table à sauvegarder : archive vide refusée");
   let rowsCount = 0;
-  const tableStats: Array<{ table: string; rows: number; error?: string }> = [];
+  const tableStats: Array<{ table: string; rows: number }> = [];
+  const lignesParTable: Record<string, number> = {};
   for (const t of tables) {
+    let rows: unknown[];
     try {
-      const rows = await fetchTable(supabaseAdmin, t);
-      rowsCount += rows.length;
-      tableStats.push({ table: t, rows: rows.length });
-      zip.file(`data/${t}.json`, JSON.stringify(rows));
+      rows = await fetchTable(supabaseAdmin, t);
     } catch (e) {
-      tableStats.push({ table: t, rows: 0, error: (e as Error).message });
+      throw new Error(`Lecture de la table impossible — ${(e as Error).message}`);
     }
+    rowsCount += rows.length;
+    tableStats.push({ table: t, rows: rows.length });
+    lignesParTable[t] = rows.length;
+    zip.file(`data/${t}.json`, JSON.stringify(rows));
   }
 
   // B. comptes utilisateurs
@@ -156,19 +167,17 @@ export async function buildGlobalArchive(
 
   // C. fichiers stockés
   const storageManifest: any = { buckets: [] };
+  const nonEmbarques: Array<{ bucket: string; path: string; taille: number; raison: string }> = [];
   let filesCount = 0;
   let filesEmbedded = 0;
   let embeddedBytes = 0;
-  const { data: buckets } = await supabaseAdmin.storage.listBuckets();
+  const { data: buckets, error: bucketsError } = await supabaseAdmin.storage.listBuckets();
+  if (bucketsError) throw new Error(`Liste des espaces de fichiers impossible : ${bucketsError.message}`);
   for (const bucket of buckets ?? []) {
     // Les archives de sauvegarde elles-mêmes ne sont jamais ré-archivées.
     if (bucket.id === "erp-backups") continue;
-    let objects: any[] = [];
-    try {
-      objects = await listAllObjects(supabaseAdmin, bucket.id);
-    } catch {
-      objects = [];
-    }
+    // Une erreur d'énumération fait échouer la sauvegarde.
+    const objects: any[] = await listAllObjects(supabaseAdmin, bucket.id);
     const entries: any[] = [];
     let excludedOriginalPng = 0;
     for (const obj of objects) {
