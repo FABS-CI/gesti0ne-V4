@@ -20,8 +20,10 @@ import {
   getRapportTopProduits,
   type RapportFilters,
 } from "@/lib/rapports-api";
-import { AgregatBar, AgregatPie, EvolutionLineChart } from "@/components/rapports/RapportCharts";
+import { AgregatBar, AgregatPie } from "@/components/rapports/RapportCharts";
 import { RapportKpisGrid } from "@/components/rapports/analyse/RapportKpisGrid";
+import { EvolutionCard } from "@/components/rapports/analyse/EvolutionCard";
+import { previousPeriode } from "@/lib/rapports-periode";
 import { AgregatCard } from "@/components/rapports/analyse/AgregatCard";
 import { ProduitsTab } from "@/components/rapports/analyse/ProduitsTab";
 import { TopFlopTab } from "@/components/rapports/analyse/TopFlopTab";
@@ -52,12 +54,28 @@ function RapportsAnalysePage() {
   const page = search.page ?? 1;
   const topN = search.top ?? 20;
   const granularite = search.gran ?? "mois";
-  const onglet = search.onglet ?? "produits";
+  const onglet = search.onglet && search.onglet !== "evolution" ? search.onglet : "produits";
+  const compare = !!search.cmp && !!filters.from && !!filters.to;
+  const prevFilters = compare
+    ? { ...filters, ...previousPeriode(filters.from as string, filters.to as string) }
+    : null;
   const setPage = (p: number) => update({ page: p > 1 ? p : undefined });
 
   const kpiQ = useQuery({
     queryKey: ["rap-kpi", filters],
     queryFn: () => getRapportKpi(filters),
+    staleTime: 60_000,
+  });
+  const kpiPrevQ = useQuery({
+    queryKey: ["rap-kpi", prevFilters],
+    queryFn: () => getRapportKpi(prevFilters ?? {}),
+    enabled: !!prevFilters,
+    staleTime: 60_000,
+  });
+  const evoPrevQ = useQuery({
+    queryKey: ["rap-evo", prevFilters, granularite],
+    queryFn: () => getRapportEvolution(prevFilters ?? {}, granularite),
+    enabled: !!prevFilters,
     staleTime: 60_000,
   });
   const listQ = useQuery({
@@ -123,13 +141,22 @@ function RapportsAnalysePage() {
       <RapportFilterBar
         value={filters}
         onChange={(v) => update({ ...filtersToSearch(v), page: undefined })}
-        compare={!!search.cmp && !!filters.from && !!filters.to}
+        compare={compare}
         onCompareChange={(v) => update({ cmp: v || undefined })}
         nbProduits={listQ.data?.total}
         nbClients={kpiQ.data?.nb_clients}
       />
 
-      <RapportKpisGrid data={kpiQ.data} />
+      <RapportKpisGrid data={kpiQ.data} previous={kpiPrevQ.data} compare={compare} />
+
+      <EvolutionCard
+        data={evoQ.data}
+        previous={compare ? evoPrevQ.data : undefined}
+        isLoading={evoQ.isLoading}
+        isError={evoQ.isError}
+        granularite={granularite}
+        onGranularite={(g) => update({ gran: g === "mois" ? undefined : g })}
+      />
 
       <Tabs
         value={onglet}
@@ -143,7 +170,6 @@ function RapportsAnalysePage() {
           <TabsTrigger value="niveaux">Niveaux</TabsTrigger>
           <TabsTrigger value="categories">Catégories</TabsTrigger>
           <TabsTrigger value="geo">Géographie</TabsTrigger>
-          <TabsTrigger value="evolution">Évolution</TabsTrigger>
         </TabsList>
 
         <TabsContent value="produits" className="space-y-4">
@@ -206,34 +232,6 @@ function RapportsAnalysePage() {
           )}
         </TabsContent>
 
-        {/* EVOLUTION */}
-        <TabsContent value="evolution" className="space-y-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm">Granularité</span>
-            <Select value={granularite} onValueChange={(v) => update({ gran: v === "mois" ? undefined : (v as RapportAnalyseSearch["gran"]) })}>
-              <SelectTrigger className="w-40">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="jour">Jour</SelectItem>
-                <SelectItem value="semaine">Semaine</SelectItem>
-                <SelectItem value="mois">Mois</SelectItem>
-                <SelectItem value="annee">Année</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          {evoQ.isLoading && <Skeleton className="h-72 w-full" />}
-          {evoQ.data && (
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base">Évolution des ventes</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <EvolutionLineChart data={evoQ.data} />
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
       </Tabs>
     </div>
   );
