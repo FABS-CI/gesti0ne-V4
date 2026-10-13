@@ -65,4 +65,5 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [ ] Lot 2.4 : vérification publique — attend la décision de l'utilisateur
 - [x] Lot 3 : sauvegarde et restauration (3.1, 3.2, 3.3)
 - [x] Lot 4 : 4.1, 4.2 (1-3), 4.3 (partiel), 4.4 faits
-- [ ] Lot 4 : décisions utilisateur (arrondi FCFA, quantités décimales, permission prix, TVA paramétrée, VALIDATE CONSTRAINT, règle 4.5, signature v2 4.6, suppression factures certifiées)
+- [x] Lot 4 : décisions utilisateur appliquées
+- [ ] Lot 4.5 : sort des 3 écarts CMD-2026-00010/00033/00040 — attend la réponse de l'utilisateur
