@@ -42,6 +42,15 @@ import { useServerFn } from "@tanstack/react-start";
 import { runFullBackup, runFullRestore } from "@/lib/backup.functions";
 import { friendlyError } from "@/lib/friendly-error";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+
+type RestoreSource = { backupId?: string; base64?: string; fileName?: string };
+type RestoreSimulation = {
+  source: RestoreSource;
+  label: string;
+  report: { sha256_ok: boolean | null; tables: Array<{ table: string; lignes_archive: number; lignes_base: number | null; difference: number | null }> };
+};
 
 export const Route = createFileRoute("/_authenticated/backup")({
   component: BackupPage,
@@ -175,13 +184,38 @@ function BackupPage() {
     }
   }
 
-  async function handleRestore(backup: BackupRow) {
-    if (!await askConfirm(`ATTENTION : Vous allez restaurer l'ERP à l'état du ${formatDateTime(backup.created_at)}. Cette action peut écraser des données récentes. Continuer ?`)) return;
-    
-    setRestoring(backup.backup_id);
+  const [simulation, setSimulation] = useState<RestoreSimulation | null>(null);
+  const [confirmText, setConfirmText] = useState("");
+
+  /** Étape 1 : simulation (aucune écriture), puis affichage du rapport. */
+  async function simulateRestore(source: RestoreSource, label: string) {
+    setRestoring(source.backupId ?? "external");
     try {
-      const result = await startRestore({ data: { backupId: backup.backup_id } });
-      toast.success(`Restauration terminée : ${result.tables.length} tables, ${result.users} comptes, ${result.files} fichiers.`);
+      const report = await startRestore({ data: { ...source, dryRun: true } });
+      setConfirmText("");
+      setSimulation({ source, label, report });
+    } catch (e) {
+      toast.error(friendlyError(e));
+    } finally {
+      setRestoring(null);
+    }
+  }
+
+  async function handleRestore(backup: BackupRow) {
+    await simulateRestore({ backupId: backup.backup_id }, `l'état du ${formatDateTime(backup.created_at)}`);
+  }
+
+  /** Étape 2 : restauration réelle, après saisie de « RESTAURER ». */
+  async function confirmRestore() {
+    if (!simulation || confirmText !== "RESTAURER") return;
+    const { source } = simulation;
+    setSimulation(null);
+    setRestoring(source.backupId ?? "external");
+    try {
+      const result = await startRestore({ data: { ...source, dryRun: false, confirmation: confirmText } });
+      const warn = result.errors.length ? ` — ${result.errors.length} avertissement(s)` : "";
+      toast.success(`Restauration terminée : ${result.restored_tables.length} tables, ${result.users.succes} comptes (${result.users.echecs} échecs), ${result.files} fichiers${warn}.`);
+      loadData();
     } catch (e) {
       toast.error(friendlyError(e));
     } finally {
@@ -490,21 +524,10 @@ function BackupPage() {
                 onChange={async (e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
-                  if (!await askConfirm("Attention : l'import d'un fichier externe va modifier les données de l'ERP. Continuer ?")) return;
-                  
                   const reader = new FileReader();
-                  reader.onload = async () => {
+                  reader.onload = () => {
                     const base64 = (reader.result as string).split(',')[1];
-                    setRestoring("external");
-                    try {
-                      const res = await startRestore({ data: { base64, fileName: file.name } });
-                      toast.success(`Import réussi : ${res.tables.length} tables restaurées.`);
-                      loadData();
-                    } catch (err) {
-                      toast.error(friendlyError(err));
-                    } finally {
-                      setRestoring(null);
-                    }
+                    void simulateRestore({ base64, fileName: file.name }, `le fichier ${file.name}`);
                   };
                   reader.readAsDataURL(file);
                 }}
@@ -513,6 +536,47 @@ function BackupPage() {
           </div>
         </CardContent>
       </Card>
+      <Dialog open={!!simulation} onOpenChange={(o) => !o && setSimulation(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Simulation de restauration</DialogTitle>
+            <DialogDescription>
+              Rien n'a encore été modifié. Restauration vers {simulation?.label}.
+              {simulation?.report.sha256_ok ? " Empreinte de l'archive vérifiée." : ""} Une sauvegarde de sécurité sera faite avant toute écriture.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="max-h-72 overflow-auto rounded border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Table</TableHead>
+                  <TableHead className="text-right">Archive</TableHead>
+                  <TableHead className="text-right">Base actuelle</TableHead>
+                  <TableHead className="text-right">Écart</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {simulation?.report.tables.map((t) => (
+                  <TableRow key={t.table}>
+                    <TableCell className="font-mono text-xs">{t.table}</TableCell>
+                    <TableCell className="text-right">{t.lignes_archive}</TableCell>
+                    <TableCell className="text-right">{t.lignes_base ?? "—"}</TableCell>
+                    <TableCell className="text-right">{t.difference ?? "—"}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          <label className="text-sm">
+            Pour lancer la restauration réelle, saisissez <strong>RESTAURER</strong> :
+            <Input className="mt-1" value={confirmText} onChange={(e) => setConfirmText(e.target.value)} aria-label="Confirmation de restauration" />
+          </label>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSimulation(null)}>Annuler</Button>
+            <Button variant="destructive" disabled={confirmText !== "RESTAURER"} onClick={confirmRestore}>Restaurer</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
