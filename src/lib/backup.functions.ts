@@ -50,7 +50,9 @@ export const runFullRestore = createServerFn({ method: "POST" })
     z.object({ 
       backupId: z.string().optional(), // Si on restaure depuis l'historique
       base64: z.string().optional(),   // Si on upload un fichier
-      fileName: z.string().optional()
+      fileName: z.string().optional(),
+      dryRun: z.boolean().default(true),
+      confirmation: z.string().optional(),
     }).parse(data)
   )
   .handler(async ({ data, context }) => {
@@ -69,6 +71,9 @@ export const runFullRestore = createServerFn({ method: "POST" })
       backupId: data.backupId,
       base64: data.base64,
       fileName: data.fileName,
+      dryRun: data.dryRun,
+      confirmation: data.confirmation,
       userId
     });
+  });
   });

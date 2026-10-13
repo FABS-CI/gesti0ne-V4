@@ -1,21 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { rejectUnlessCronAuthorized } from "@/lib/cron-auth.server";
-import { getOrCreateBackupFolder } from "@/lib/gdrive-folder";
-
-const TABLES = [
-  "clients",
-  "produits",
-  "commandes",
-  "commande_lignes",
-  "transactions",
-  "factures",
-  "paiements",
-  "fournisseurs",
-  "achats",
-  "employes",
-  "conges",
-  "stock_mouvements",
-];
 
 function nextRunFrom(frequence: string, from: Date): Date {
   const d = new Date(from);
@@ -35,50 +19,6 @@ function nextRunFrom(frequence: string, from: Date): Date {
       break;
   }
   return d;
-}
-
-async function sha256Hex(text: string) {
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
-  return Array.from(new Uint8Array(buf))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-}
-
-async function uploadJsonToDrive(fileName: string, json: string, description: string) {
-  const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
-  const GDRIVE_KEY = process.env.GOOGLE_DRIVE_API_KEY;
-  if (!LOVABLE_API_KEY || !GDRIVE_KEY) {
-    throw new Error("Connecteur Google Drive non configuré");
-  }
-  const folderId = await getOrCreateBackupFolder(LOVABLE_API_KEY, GDRIVE_KEY);
-  if (!folderId) {
-    throw new Error("Dossier « DONNEE GESTI-ONE » introuvable — upload annulé");
-  }
-  const boundary = `----lovable-${crypto.randomUUID()}`;
-  const meta = { name: fileName, mimeType: "application/json", description, parents: [folderId] };
-  const body =
-    `--${boundary}\r\n` +
-    `Content-Type: application/json; charset=UTF-8\r\n\r\n` +
-    JSON.stringify(meta) +
-    `\r\n--${boundary}\r\n` +
-    `Content-Type: application/json\r\n\r\n` +
-    json +
-    `\r\n--${boundary}--`;
-
-  const res = await fetch(
-    "https://connector-gateway.lovable.dev/google_drive/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink",
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "X-Connection-Api-Key": GDRIVE_KEY,
-        "Content-Type": `multipart/related; boundary=${boundary}`,
-      },
-      body,
-    },
-  );
-  if (!res.ok) throw new Error(`Drive upload ${res.status}: ${await res.text()}`);
-  return (await res.json()) as { id: string; name: string; webViewLink?: string };
 }
 
 export const Route = createFileRoute("/api/public/hooks/run-schedules")({
@@ -114,80 +54,22 @@ export const Route = createFileRoute("/api/public/hooks/run-schedules")({
 
         for (const s of schedules ?? []) {
           if (!s.created_by) continue;
-          const t0 = Date.now();
-          const { data: backup, error: insErr } = await supabaseAdmin
-            .from("backups")
-            .insert({
-              user_id: s.created_by,
-              user_email: "cron@system",
-              type: s.type_sauvegarde ?? "complete",
-              destination: s.destination ?? "local",
-              statut: "en_cours",
-              message: `Sauvegarde planifiée « ${s.nom} »`,
-              scope: { tables: TABLES, schedule_id: s.schedule_id },
-            })
-            .select("backup_id")
-            .single();
-          if (insErr || !backup) continue;
-          const backupId = backup.backup_id as string;
-
+          // Chaîne unique : archive complète contrôlée en stockage privé (erp-backups).
+          const { orchestrateBackup } = await import("@/lib/backup-orchestrator.server");
           let statut: "succes" | "echec" = "succes";
+          let backupId = "";
           let driveUrl: string | null = null;
-          let msg: string | null = null;
-          let totalRows = 0;
-          let size = 0;
-          let sha: string | null = null;
-          let fileName: string | null = null;
-
           try {
-            const dump: Record<string, unknown[]> = {};
-            for (const t of TABLES) {
-              const { data, error: e } = await supabaseAdmin
-                .from(t as never)
-                .select("*");
-              if (e) throw new Error(`${t}: ${e.message}`);
-              dump[t] = (data ?? []) as unknown[];
-              totalRows += dump[t].length;
-            }
-            const json = JSON.stringify(dump);
-            size = new TextEncoder().encode(json).length;
-            sha = await sha256Hex(json);
-            fileName = `backup_fabs_${now.toISOString().slice(0, 10)}_${backupId.slice(0, 8)}.json`;
-
-            if ((s.destination ?? "local") === "google_drive") {
-              const info = await uploadJsonToDrive(
-                fileName,
-                json,
-                `ERP FABS-CI backup ${backupId} sha256=${sha}`,
-              );
-              driveUrl = info.webViewLink ?? null;
-              await supabaseAdmin
-                .from("backups")
-                .update({ destination_ref: info.id, destination_url: driveUrl })
-                .eq("backup_id", backupId);
-            }
-          } catch (e) {
+            const r = await orchestrateBackup({
+              trigger: "planifie",
+              author: `planification:${s.nom}`,
+              userId: s.created_by,
+            });
+            backupId = r.backupId;
+            driveUrl = r.drive?.url ?? null;
+          } catch {
             statut = "echec";
-            msg = (e as Error).message;
           }
-
-          await supabaseAdmin
-            .from("backups")
-            .update({
-              statut,
-              finished_at: new Date().toISOString(),
-              duree_ms: Date.now() - t0,
-              taille_octets: size || null,
-              nb_tables: TABLES.length,
-              nb_enregistrements: totalRows,
-              sha256: sha,
-              fichier_nom: fileName,
-              verifie: statut === "succes",
-              verifie_at: statut === "succes" ? new Date().toISOString() : null,
-              verifie_methode: statut === "succes" ? "sha256-auto" : null,
-              message: msg,
-            })
-            .eq("backup_id", backupId);
 
           const next = nextRunFrom(s.frequence, now);
           await supabaseAdmin
@@ -198,11 +80,14 @@ export const Route = createFileRoute("/api/public/hooks/run-schedules")({
           if (s.retention_count && s.retention_count > 0) {
             const { data: olds } = await supabaseAdmin
               .from("backups")
-              .select("backup_id")
+              .select("backup_id, storage_path")
               .eq("user_id", s.created_by)
               .order("created_at", { ascending: false })
               .range(s.retention_count, s.retention_count + 500);
-            const ids = (olds ?? []).map((o: { backup_id: string }) => o.backup_id);
+            const list = (olds ?? []) as Array<{ backup_id: string; storage_path: string | null }>;
+            const ids = list.map((o) => o.backup_id);
+            const paths = list.map((o) => o.storage_path).filter((p): p is string => !!p);
+            if (paths.length) await supabaseAdmin.storage.from("erp-backups").remove(paths);
             if (ids.length) await supabaseAdmin.from("backups").delete().in("backup_id", ids);
           }
 
