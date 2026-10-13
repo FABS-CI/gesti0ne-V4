@@ -21,7 +21,6 @@ export const rapportAnalyseSearchSchema = z.object({
   tri: z.string().max(30).optional().catch(undefined),
   sens: z.enum(["asc", "desc"]).optional().catch(undefined),
   page: z.number().int().min(1).optional().catch(undefined),
-  top: z.union([z.literal(10), z.literal(20), z.literal(50)]).optional().catch(undefined),
   cmp: z.boolean().optional().catch(undefined),
   gran: z.enum(["jour", "semaine", "mois", "annee"]).optional().catch(undefined),
 });
