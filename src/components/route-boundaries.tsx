@@ -29,7 +29,8 @@ export function RouteNotFound() {
   );
 }
 
-export function RouteError({ error, reset }: { error: Error; reset: () => void }) {
+export function RouteError({ error: rawError, reset }: { error: unknown; reset: () => void }) {
+  const error = rawError instanceof Error ? rawError : new Error(String(rawError));
   const router = useRouter();
   const [ids] = useState(() => ({
     clientErrorId: newClientErrorId(),
