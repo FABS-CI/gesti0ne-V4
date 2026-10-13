@@ -3,27 +3,11 @@ import { applyCorrections, type FNEInvoicePayload } from "./types";
 import { loadFNESettings, isProductionReady, type FNESettings } from "./settings";
 import { getFNEInvoice } from "./reads";
 
-async function submitToDGI(_invoice: FNEInvoicePayload, settings: FNESettings) {
+async function submitToDGI(fneId: string, settings: FNESettings) {
   if (isProductionReady(settings)) {
+    // Le serveur relit la demande et la facture en base : seul l'identifiant est transmis.
     const { signInvoiceWithDGI } = await import("@/lib/fne.functions");
-    const resp = await signInvoiceWithDGI({
-      data: {
-        reference: _invoice.reference,
-        invoiceType: _invoice.invoiceType,
-        paymentMethod: _invoice.paymentMethod,
-        template: _invoice.template,
-        clientNcc: _invoice.clientNcc ?? null,
-        clientCompanyName: _invoice.clientCompanyName,
-        clientPhone: _invoice.clientPhone ?? null,
-        clientEmail: _invoice.clientEmail ?? null,
-        clientSellerName: _invoice.clientSellerName ?? null,
-        commercialMessage: _invoice.commercialMessage ?? null,
-        footer: _invoice.footer ?? null,
-        items: _invoice.items,
-        discount: _invoice.discount,
-      },
-    });
-    return resp;
+    return signInvoiceWithDGI({ data: { fne_id: fneId } });
   }
   await new Promise((r) => setTimeout(r, 350));
   const fneRef = `DGI-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
