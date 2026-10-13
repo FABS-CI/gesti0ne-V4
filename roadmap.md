@@ -62,7 +62,7 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Lot 0 : vérifications en base
 - [x] Lot 1 : encaissements validés, retours, transferts
 - [x] Lot 2 : 2.1 sans objet, 2.2, 2.3, 2.5, 2.6 faits
-- [ ] Lot 2.4 : vérification publique — attend la décision de l'utilisateur
+- [x] Lot 2.4 : vérification publique sans code secret — seuls référence, date et état de certification (fait)
 - [x] Lot 3 : sauvegarde et restauration (3.1, 3.2, 3.3)
 - [x] Lot 4 : 4.1, 4.2 (1-3), 4.3 (partiel), 4.4 faits
 - [x] Lot 4 : décisions utilisateur appliquées
