@@ -1,5 +1,12 @@
+import { removePersistedQueryCache } from "@/lib/query-cache-user";
+
 function clearLocalAuthState() {
   if (typeof window === "undefined") return;
+
+  // Lot 2.5 : aucune donnée métier du compte ne reste sur l'appareil.
+  // (La page est rechargée juste après : le cache mémoire disparaît avec elle.)
+  removePersistedQueryCache(window.localStorage);
+
 
   try {
     for (let index = window.localStorage.length - 1; index >= 0; index -= 1) {

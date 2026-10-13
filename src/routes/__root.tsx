@@ -15,6 +15,12 @@ import { getStoredTheme } from "../hooks/use-theme";
 import { persistQueryClient } from "@tanstack/react-query-persist-client";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import { RouteError, RouteNotFound } from "../components/route-boundaries";
+import {
+  QUERY_CACHE_STORAGE_KEY,
+  queryCacheBuster,
+  removePersistedQueryCache,
+  userChanged,
+} from "../lib/query-cache-user";
 
 
 const PWAInstallPrompt = lazy(() =>
@@ -210,29 +216,67 @@ function RootComponent() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const persister = createSyncStoragePersister({
-      storage: window.localStorage,
-      key: "fabs-query-cache",
-      throttleTime: 1000,
-    });
-    const [unsubscribe] = persistQueryClient({
-      queryClient,
-      persister,
-      maxAge: 24 * 60 * 60 * 1000, // 24 h
-      dehydrateOptions: {
-        shouldDehydrateQuery: (query) => {
-          const first = query.queryKey?.[0];
-          // Ne jamais persister une requête en cours (status='pending') :
-          // sa `promise` non résolue casse persistQueryClientRestore avec
-          // "promise.then is not a function" au prochain démarrage.
-          if (query.state.status !== "success") return false;
-          return typeof first === "string" && PERSISTED_QUERY_KEYS.has(first);
-        },
-      },
-      buster: "v2",
+    let cancelled = false;
+    let unsubscribePersist: (() => void) | undefined;
+    let unsubscribeAuth: (() => void) | undefined;
+    let currentUser: string | null | undefined;
 
+    const startPersist = (userId: string | null) => {
+      unsubscribePersist?.();
+      unsubscribePersist = undefined;
+      // Pas de cache persistant hors session : rien à relire après déconnexion.
+      if (!userId) return;
+      const persister = createSyncStoragePersister({
+        storage: window.localStorage,
+        key: QUERY_CACHE_STORAGE_KEY,
+        throttleTime: 1000,
+      });
+      const [unsubscribe] = persistQueryClient({
+        queryClient,
+        persister,
+        maxAge: 24 * 60 * 60 * 1000, // 24 h
+        dehydrateOptions: {
+          shouldDehydrateQuery: (query) => {
+            const first = query.queryKey?.[0];
+            // Ne jamais persister une requête en cours (status='pending') :
+            // sa `promise` non résolue casse persistQueryClientRestore avec
+            // "promise.then is not a function" au prochain démarrage.
+            if (query.state.status !== "success") return false;
+            return typeof first === "string" && PERSISTED_QUERY_KEYS.has(first);
+          },
+        },
+        // Le buster contient l'utilisateur : le cache d'un autre compte est ignoré.
+        buster: queryCacheBuster(userId),
+      });
+      unsubscribePersist = unsubscribe;
+    };
+
+    const onUser = (userId: string | null) => {
+      if (cancelled) return;
+      if (currentUser === userId) return;
+      if (userChanged(currentUser, userId)) {
+        queryClient.clear();
+        removePersistedQueryCache();
+      }
+      currentUser = userId;
+      startPersist(userId);
+    };
+
+    void import("@/integrations/supabase/client").then(async ({ supabase }) => {
+      const { data } = await supabase.auth.getSession();
+      onUser(data.session?.user?.id ?? null);
+      const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+        onUser(session?.user?.id ?? null);
+      });
+      unsubscribeAuth = () => sub.subscription.unsubscribe();
+      if (cancelled) unsubscribeAuth();
     });
-    return () => unsubscribe();
+
+    return () => {
+      cancelled = true;
+      unsubscribePersist?.();
+      unsubscribeAuth?.();
+    };
   }, [queryClient]);
 
   return (
