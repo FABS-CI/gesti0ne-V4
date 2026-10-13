@@ -33,13 +33,40 @@ export const revokeCertificationFn = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-/** Liste les certifications d'un document (lecture authentifiée, sans jeton en clair). */
+/**
+ * Liste les certifications d'un document (sans jeton en clair).
+ * Lot 2.3 : réservé aux utilisateurs pouvant lire le type de document, et
+ * uniquement si le document existe et est visible avec leur propre session.
+ */
+const CERT_READ_RULES: Record<string, { perm: string; table: "factures" | "proformas" | "commandes" }> = {
+  FACTURE: { perm: "factures.voir", table: "factures" },
+  PROFORMA: { perm: "proformas.voir", table: "proformas" },
+  COMMANDE: { perm: "commandes.voir", table: "commandes" },
+};
+
 export const listCertificationsFn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { reference: string }) => ({ reference: String(input?.reference ?? "") }))
-  .handler(async ({ data }) => {
-    // Lecture serveur : la table n'est plus lisible directement (jetons protégés).
-    // Seules les colonnes sans jeton sont renvoyées à l'utilisateur connecté.
+  .inputValidator((input: { reference: string }) => ({ reference: String(input?.reference ?? "").trim() }))
+  .handler(async ({ data, context }) => {
+    if (!data.reference) return [];
+    // Types que l'utilisateur peut lire ET dont le document existe pour lui (RLS).
+    const allowedTypes: string[] = [];
+    for (const [type, rule] of Object.entries(CERT_READ_RULES)) {
+      const { data: ok } = await context.supabase.rpc("has_permission_v2", {
+        _user_id: context.userId,
+        _perm_code: rule.perm,
+      });
+      if (ok !== true) continue;
+      const { count } = await context.supabase
+        .from(rule.table)
+        .select("reference", { count: "exact", head: true })
+        .eq("reference", data.reference);
+      if ((count ?? 0) > 0) allowedTypes.push(type);
+    }
+    if (allowedTypes.length === 0) throw new Error("Permission refusée : lecture du document");
+
+    // La table n'est pas lisible directement (jetons protégés) : lecture serveur,
+    // limitée aux types autorisés ci-dessus et aux colonnes sans jeton.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin
       .from("document_certifications" as never)
@@ -47,6 +74,7 @@ export const listCertificationsFn = createServerFn({ method: "POST" })
         "certification_id, document_type, document_reference, statut, version, certified_at, revoked_at, revocation_reason, canonical_hash",
       )
       .eq("document_reference", data.reference)
+      .in("document_type", allowedTypes)
       .order("version", { ascending: false });
     if (error) throw new Error(error.message);
     const list = (rows ?? []) as unknown as Array<Record<string, string | number | null>>;
