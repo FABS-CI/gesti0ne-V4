@@ -173,6 +173,7 @@ function TransfertsPage() {
                     <TableCell className="text-right">
                       {t.statut === "brouillon" && canExecuter && (
                         <Button aria-label="Exécuter le transfert (sortie + entrée stock)"
+                          disabled={workflowMutation.isPending}
                           variant="ghost"
                           size="icon"
                           title="Exécuter le transfert (sortie + entrée stock)"
@@ -185,6 +186,7 @@ function TransfertsPage() {
                       )}
                       {t.statut === "brouillon" && canAnnuler && (
                         <Button aria-label="Annuler le transfert"
+                          disabled={workflowMutation.isPending}
                           variant="ghost"
                           size="icon"
                           title="Annuler le transfert"
@@ -204,6 +206,7 @@ function TransfertsPage() {
                       )}
                       {t.statut === "expedie" && canReceptionner && (
                         <Button aria-label="Réceptionner le transfert"
+                          disabled={workflowMutation.isPending}
                           variant="ghost"
                           size="icon"
                           title="Réceptionner le transfert"
