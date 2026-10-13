@@ -67,3 +67,8 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Lot 4 : 4.1, 4.2 (1-3), 4.3 (partiel), 4.4 faits
 - [x] Lot 4 : décisions utilisateur appliquées
 - [x] Lot 4.5 : 3 écarts signalés comme exceptions acceptées
+
+## Refonte Analyse des ventes
+- [x] Lot 1 correctifs et fondations
+- [ ] Lot 2 barre de filtres compacte (attend validation)
+- [ ] Lots 3 à 6

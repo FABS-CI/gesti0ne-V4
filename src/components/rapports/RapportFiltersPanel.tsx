@@ -7,50 +7,16 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { X, Filter } from "lucide-react";
 import { getRapportFacets, type RapportFilters } from "@/lib/rapports-api";
+import { PERIODE_PRESETS, computeRapportPeriode } from "@/lib/rapports-periode";
+import { titleCaseVille, cleanSpaces } from "@/lib/rapports-labels";
 
-const PRESETS: {
-  label: string;
-  days?: number;
-  special?: "today" | "yesterday" | "year" | "quarter" | "month" | "week";
-}[] = [
-  { label: "Aujourd'hui", special: "today" },
-  { label: "Hier", special: "yesterday" },
-  { label: "7 jours", days: 7 },
-  { label: "Cette semaine", special: "week" },
-  { label: "Ce mois", special: "month" },
-  { label: "Ce trimestre", special: "quarter" },
-  { label: "Cette année", special: "year" },
-  { label: "12 mois", days: 365 },
-];
-
-function computePreset(p: (typeof PRESETS)[number]): { from: string; to: string } {
-  const now = new Date();
-  const iso = (d: Date) => d.toISOString().slice(0, 10);
-  if (p.special === "today") return { from: iso(now), to: iso(now) };
-  if (p.special === "yesterday") {
-    const y = new Date(now);
-    y.setDate(y.getDate() - 1);
-    return { from: iso(y), to: iso(y) };
-  }
-  if (p.special === "week") {
-    const d = new Date(now);
-    d.setDate(d.getDate() - d.getDay() + 1);
-    return { from: iso(d), to: iso(now) };
-  }
-  if (p.special === "month") {
-    return { from: iso(new Date(now.getFullYear(), now.getMonth(), 1)), to: iso(now) };
-  }
-  if (p.special === "quarter") {
-    const q = Math.floor(now.getMonth() / 3) * 3;
-    return { from: iso(new Date(now.getFullYear(), q, 1)), to: iso(now) };
-  }
-  if (p.special === "year") {
-    return { from: iso(new Date(now.getFullYear(), 0, 1)), to: iso(now) };
-  }
-  const start = new Date(now);
-  start.setDate(start.getDate() - (p.days ?? 30));
-  return { from: iso(start), to: iso(now) };
-}
+const FILTER_LABELS = {
+  niveaux: "Niveau",
+  categories: "Catégorie",
+  types: "Type de client",
+  villes: "Ville",
+  produits: "Produit",
+} as const;
 
 export function RapportFiltersPanel({
   value,
@@ -76,10 +42,18 @@ export function RapportFiltersPanel({
   const activeChips = useMemo(() => {
     const chips: { key: MultiValueKey; label: string; value: string }[] = [];
     (["niveaux", "categories", "types", "villes", "produits"] as const).forEach((k) => {
-      (value[k] ?? []).forEach((v) => chips.push({ key: k, label: `${k}: ${v}`, value: v }));
+      (value[k] ?? []).forEach((v) => {
+        const shown =
+          k === "produits"
+            ? (facets?.produits.find((p) => p.id === v)?.titre ?? "Produit")
+            : k === "villes"
+              ? titleCaseVille(v)
+              : cleanSpaces(v);
+        chips.push({ key: k, label: `${FILTER_LABELS[k]} : ${shown}`, value: v });
+      });
     });
     return chips;
-  }, [value]);
+  }, [value, facets]);
 
   return (
     <Card>
@@ -104,13 +78,13 @@ export function RapportFiltersPanel({
             />
           </div>
           <div className="flex flex-wrap gap-1">
-            {PRESETS.map((p) => (
+            {PERIODE_PRESETS.map((p) => (
               <Button
-                key={p.label}
+                key={p.key}
                 variant="outline"
                 size="sm"
                 type="button"
-                onClick={() => onChange({ ...value, ...computePreset(p) })}
+                onClick={() => onChange({ ...value, ...computeRapportPeriode(p.key) })}
               >
                 {p.label}
               </Button>
@@ -145,6 +119,7 @@ export function RapportFiltersPanel({
             items={facets?.villes ?? []}
             active={value.villes ?? []}
             onToggle={(v) => toggle("villes", v)}
+            format={titleCaseVille}
           />
           <FacetGroup
             label="Produit"
@@ -170,7 +145,7 @@ export function RapportFiltersPanel({
                 className="cursor-pointer"
                 onClick={() => toggle(c.key, c.value)}
               >
-                {c.label} <X className="ml-1 h-3 w-3" />
+                {c.label} <X className="ml-1 h-3 w-3" aria-label="Retirer ce filtre" />
               </Badge>
             ))}
           </div>
@@ -185,11 +160,13 @@ function FacetGroup({
   items,
   active,
   onToggle,
+  format = cleanSpaces,
 }: {
   label: string;
   items: string[];
   active: string[];
   onToggle: (v: string) => void;
+  format?: (v: string) => string;
 }) {
   if (items.length === 0) return null;
   return (
@@ -205,7 +182,7 @@ function FacetGroup({
               className="cursor-pointer"
               onClick={() => onToggle(it)}
             >
-              {it}
+              {format(it)}
             </Badge>
           );
         })}

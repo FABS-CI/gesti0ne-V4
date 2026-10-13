@@ -25,3 +25,4 @@
 - HTTP security headers are added in `src/server.ts` via `src/lib/security-headers.ts`; never add X-Frame-Options DENY or frame-ancestors 'none' because the Lovable preview frames the app.
 - Document numbers come only from `_next_ref`, which increments `numerotation_compteurs` (type_doc, year) inside the caller's transaction; never compute MAX+1, so numbers are race-safe and never reused.
 - Saved sales PDFs show the stored document total (`montantTotalStocke`); local recomputation is only for unsaved previews, and mismatches are logged via `signaler_ecart_total_document`.
+- The sales analysis page (/rapports/analyse) keeps filters, tab, sort and page in the URL via validateSearch (`src/lib/rapports-search.ts`), so views survive refresh and can be shared; period shortcuts come only from `src/lib/rapports-periode.ts` (Africa/Abidjan calendar).

@@ -1,4 +1,31 @@
-import type { ProduitLigneRapport } from "@/lib/rapports-api";
+import {
+  getRapportProduits,
+  type ProduitLigneRapport,
+  type RapportFilters,
+} from "@/lib/rapports-api";
+
+export const EXPORT_BATCH = 500;
+
+/** Charge tous les produits filtrés par lots de 500, pour un export complet. */
+export async function fetchAllProduitsRapport(
+  filters: RapportFilters,
+  tri: string,
+  sens: "asc" | "desc",
+  onProgress?: (loaded: number, total: number) => void,
+): Promise<ProduitLigneRapport[]> {
+  const all: ProduitLigneRapport[] = [];
+  let page = 1;
+  let total = 0;
+  do {
+    const r = await getRapportProduits(filters, tri, sens, page, EXPORT_BATCH);
+    total = r.total;
+    all.push(...r.items);
+    onProgress?.(all.length, total);
+    if (r.items.length < EXPORT_BATCH) break;
+    page += 1;
+  } while (all.length < total);
+  return all;
+}
 
 export const PRODUITS_HEADERS = [
   "Code",
