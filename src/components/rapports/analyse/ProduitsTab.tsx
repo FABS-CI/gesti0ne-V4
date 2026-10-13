@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -9,18 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { FileSpreadsheet, FileText } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { exportXlsx, type ProduitLigneRapport, type RapportFilters } from "@/lib/rapports-api";
+import type { ProduitLigneRapport } from "@/lib/rapports-api";
 import { SkeletonTable } from "@/components/ui/skeletons";
 import { formatFCFA } from "@/lib/format";
-import {
-  PRODUITS_COLUMNS,
-  PRODUITS_HEADERS,
-  produitsRowsForExport,
-  fetchAllProduitsRapport,
-} from "@/lib/rapports-analyse-helpers";
+import { PRODUITS_COLUMNS } from "@/lib/rapports-analyse-helpers";
 
 type Props = {
   rows: ProduitLigneRapport[];
@@ -31,7 +23,7 @@ type Props = {
   onSort: (key: string) => void;
   page: number;
   onPage: (page: number) => void;
-  filters: RapportFilters;
+  onOpen: (row: ProduitLigneRapport) => void;
 };
 
 const fmtN = (n: number) => n.toLocaleString("fr-FR").replace(/\u202f|\u00a0/g, " ");
@@ -45,56 +37,10 @@ export function ProduitsTab({
   onSort,
   page,
   onPage,
-  filters,
+  onOpen,
 }: Props) {
-  const [progress, setProgress] = useState<{ loaded: number; total: number } | null>(null);
-  const runExport = async (kind: "xlsx" | "pdf") => {
-    setProgress({ loaded: 0, total });
-    try {
-      const all = await fetchAllProduitsRapport(filters, tri, sens, (loaded, t) =>
-        setProgress({ loaded, total: t }),
-      );
-      if (kind === "xlsx") {
-        await exportXlsx("rapport_produits", PRODUITS_HEADERS, produitsRowsForExport(all));
-      } else {
-        const { exportRapportProduitsPdf } = await import("@/lib/pdf/rapport-produits-pdf");
-        await exportRapportProduitsPdf(all);
-      }
-      toast.success(`${fmtN(all.length)} lignes exportées`);
-    } catch {
-      toast.error("L'export n'a pas pu être réalisé. Réessayez ou contactez l'administrateur.");
-    } finally {
-      setProgress(null);
-    }
-  };
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-base">Rapport détaillé produits</CardTitle>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={!!progress || total === 0}
-            onClick={() => runExport("xlsx")}
-          >
-            <FileSpreadsheet className="mr-2 h-4 w-4" /> Excel
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={!!progress || total === 0}
-            onClick={() => runExport("pdf")}
-          >
-            <FileText className="mr-2 h-4 w-4" /> PDF
-          </Button>
-          {progress && (
-            <span className="self-center text-xs tabular-nums text-muted-foreground" aria-live="polite">
-              {fmtN(progress.loaded)} / {fmtN(progress.total)} lignes
-            </span>
-          )}
-        </div>
-      </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
           <Table>
@@ -127,7 +73,13 @@ export function ProduitsTab({
                 </TableRow>
               ) : (
                 rows.map((r) => (
-                  <TableRow key={r.produit_id} className="tabular-nums">
+                  <TableRow
+                    key={r.produit_id}
+                    tabIndex={0}
+                    onClick={() => onOpen(r)}
+                    onKeyDown={(e) => e.key === "Enter" && onOpen(r)}
+                    className="cursor-pointer tabular-nums focus-visible:bg-muted focus-visible:outline-none"
+                  >
                     <TableCell className="font-mono text-xs">{r.code ?? "—"}</TableCell>
                     <TableCell className="max-w-[280px] truncate">{r.titre}</TableCell>
                     <TableCell>
