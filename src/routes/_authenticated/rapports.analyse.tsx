@@ -39,6 +39,7 @@ function RapportsAnalysePage() {
   const tri = search.tri ?? "ca";
   const sens = search.sens ?? "desc";
   const page = search.page ?? 1;
+  const pageSize = search.ps ?? 50;
   const granularite = search.gran ?? "mois";
   const dim = search.dim ?? "produits";
   const compare = !!search.cmp && !!filters.from && !!filters.to;
@@ -70,8 +71,8 @@ function RapportsAnalysePage() {
   });
   // Toujours chargé : fournit aussi le nombre de produits affiché sous les filtres.
   const listQ = useQuery({
-    queryKey: ["rap-list", filters, tri, sens, page],
-    queryFn: () => getRapportProduits(filters, tri, sens, page, 50),
+    queryKey: ["rap-list", filters, tri, sens, page, pageSize],
+    queryFn: () => getRapportProduits(filters, tri, sens, page, pageSize),
     placeholderData: keepPreviousData,
     staleTime: 60_000,
   });
@@ -137,6 +138,8 @@ function RapportsAnalysePage() {
         onSort={onSort}
         page={page}
         onPage={(p) => update({ page: p > 1 ? p : undefined })}
+        pageSize={pageSize}
+        onPageSize={(n) => update({ ps: n === 50 ? undefined : (n as 25 | 50 | 100), page: undefined })}
       />
 
       <VentesEncart filters={filters} />

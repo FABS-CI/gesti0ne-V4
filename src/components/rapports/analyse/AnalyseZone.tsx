@@ -34,6 +34,8 @@ type Props = {
   onSort: (k: string) => void;
   page: number;
   onPage: (p: number) => void;
+  pageSize: number;
+  onPageSize: (n: number) => void;
 };
 
 export function AnalyseZone(p: Props) {
@@ -119,7 +121,14 @@ export function AnalyseZone(p: Props) {
           onSort={p.onSort}
           page={p.page}
           onPage={p.onPage}
+          pageSize={p.pageSize}
+          onPageSize={p.onPageSize}
           onOpen={(row) => setDetail({ kind: "produit", row })}
+          emptyAction={
+            <Button variant="outline" size="sm" onClick={p.onClearFilters}>
+              Effacer les filtres
+            </Button>
+          }
         />
       )}
 
