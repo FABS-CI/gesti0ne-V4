@@ -67,9 +67,9 @@ function useSeuils(ids: string[]) {
     enabled: ids.length > 0,
     staleTime: 300_000,
     queryFn: async () => {
-      const { data, error } = await supabase.from("produits").select("id, seuil_alerte").in("id", ids);
+      const { data, error } = await supabase.from("produits").select("produit_id, seuil_alerte").in("produit_id", ids);
       if (error) throw error;
-      return new Map((data ?? []).map((p) => [p.id as string, Number(p.seuil_alerte ?? 0)]));
+      return new Map((data ?? []).map((p) => [p.produit_id as string, Number(p.seuil_alerte ?? 0)]));
     },
   });
 }
