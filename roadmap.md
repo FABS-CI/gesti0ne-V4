@@ -75,3 +75,8 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Lot 4 analyse unifiée
 - [x] Lot 5 tableau produits
 - [ ] Lots 3 à 6
+
+## PDF Rapport produits
+- [ ] Refonte portrait et export complet, sans changer les autres documents
+- [ ] Tests purs et contrôles visuels avant/après (1, 25, 120 produits)
+- [ ] Rapport de livraison et propositions de corrections non exécutées
