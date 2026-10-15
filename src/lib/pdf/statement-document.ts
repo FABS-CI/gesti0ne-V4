@@ -162,11 +162,11 @@ export class StatementDocument extends BaseDocument {
     const PAD = 4;
     const top = y - 6;
     const boxH = rows.length * ROW_H + PAD * 2;
-    roundedRect(this.page, x, top - boxH, boxW, boxH, 6, { color: BODY.creme, borderColor: BODY.bord, borderWidth: 0.6 });
+    roundedRect(this.page, x, top - boxH, boxW, boxH, 6, { color: this.recapTheme.fond, borderColor: this.recapTheme.bordure, borderWidth: 0.6 });
     let curY = top - PAD;
     rows.forEach((r, i) => {
       if (r.total) {
-        roundedRect(this.page, x + 6, curY - ROW_H + 1, boxW - 12, ROW_H - 2, 4, { color: BODY.orange });
+        roundedRect(this.page, x + 6, curY - ROW_H + 1, boxW - 12, ROW_H - 2, 4, { color: this.recapTheme.total });
         this.page.drawText(r.label, { x: x + 12, y: curY - 13, size: 8, font: this.fonts.bold, color: BODY.blanc });
         const valText = formatFCFA(r.value);
         const valW = this.fonts.bold.widthOfTextAtSize(valText, 10);
@@ -177,7 +177,7 @@ export class StatementDocument extends BaseDocument {
         const valW = this.fonts.bold.widthOfTextAtSize(valText, 9);
         this.page.drawText(valText, { x: x + boxW - valW - 8, y: curY - 13, size: 9, font: this.fonts.bold, color: BODY.donnee });
         const next = rows[i + 1];
-        this.page.drawLine({ start: { x: x + 8, y: curY - ROW_H }, end: { x: x + boxW - 8, y: curY - ROW_H }, color: BODY.filetCreme, thickness: next?.total ? 0.6 : 0.4 });
+        this.page.drawLine({ start: { x: x + 8, y: curY - ROW_H }, end: { x: x + boxW - 8, y: curY - ROW_H }, color: this.recapTheme.filet, thickness: next?.total ? 0.6 : 0.4 });
       }
       curY -= ROW_H;
     });
