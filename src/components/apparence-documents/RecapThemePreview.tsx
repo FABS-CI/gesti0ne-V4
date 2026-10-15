@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { PdfCanvasViewer } from "@/components/pdf/PdfCanvasViewer";
 import { PdfPreviewModal } from "@/components/pdf/PdfPreviewModal";
 import { downloadBlob } from "@/lib/pdf/fabsTemplates";
 import {
@@ -112,9 +113,7 @@ export function RecapThemePreview({ docType, onDocTypeChange, theme }: Props) {
         </div>
       </div>
       <div className="relative h-[70vh] min-h-[480px] rounded-md border bg-muted/30">
-        {url && (
-          <iframe title="Aperçu du document" src={url} className="h-full w-full rounded-md" />
-        )}
+        {blob && url && <PdfCanvasViewer blob={blob} title="Aperçu du document" />}
         {(loading || !url) && !error && (
           <div className="absolute inset-0 flex items-center justify-center bg-background/60 text-sm text-muted-foreground">
             <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Génération de l'aperçu…

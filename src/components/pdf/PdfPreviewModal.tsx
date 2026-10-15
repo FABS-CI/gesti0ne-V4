@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Download, Printer } from "lucide-react";
 import { downloadBlob } from "@/lib/pdf/fabsTemplates";
 import { printBlob } from "@/lib/pdf/actions";
+import { PdfCanvasViewer } from "./PdfCanvasViewer";
 
 type Props = {
   open: boolean;
@@ -81,12 +82,12 @@ export function PdfPreviewModal({ open, onOpenChange, title, filename, load }: P
           </DialogTitle>
         </DialogHeader>
         <div className="flex-1 rounded border bg-muted/30">
-          {loading || !url ? (
+          {loading || !url || !blob ? (
             <div className="flex h-full items-center justify-center text-muted-foreground">
               <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Génération du PDF…
             </div>
           ) : (
-            <iframe title={title} src={url} className="h-full w-full rounded" />
+            <PdfCanvasViewer blob={blob} title={title} />
           )}
         </div>
       </DialogContent>
