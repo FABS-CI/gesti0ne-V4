@@ -463,6 +463,13 @@
       "when": 1792067677130,
       "tag": "0065_rapport_produits_valeur_stock",
       "breakpoints": true
+    },
+    {
+      "idx": 66,
+      "version": "7",
+      "when": 1792069517472,
+      "tag": "0066_document_theme_settings",
+      "breakpoints": true
     }
   ]
 }
