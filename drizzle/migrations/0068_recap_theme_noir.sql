@@ -1,0 +1,2 @@
+ALTER TABLE public.document_theme_settings DROP CONSTRAINT IF EXISTS document_theme_settings_theme_global_check;
+ALTER TABLE public.document_theme_settings ADD CONSTRAINT document_theme_settings_theme_global_check CHECK (theme_global IN ('bleu','ardoise','vert','indigo','noir'));
