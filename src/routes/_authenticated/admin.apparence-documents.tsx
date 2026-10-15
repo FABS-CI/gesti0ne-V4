@@ -160,7 +160,7 @@ function ApparencePage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="global">Utiliser le thème global</SelectItem>
+                      <SelectItem value="global">Thème global</SelectItem>
                       {RECAP_THEME_IDS.map((id) => (
                         <SelectItem key={id} value={id}>
                           {RECAP_THEMES[id].nom}
