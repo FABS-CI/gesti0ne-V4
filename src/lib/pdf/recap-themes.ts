@@ -2,7 +2,7 @@
 // Purement visuel : aucun montant n'en dépend.
 import { rgb, type RGB } from "pdf-lib";
 
-export type RecapThemeId = "bleu" | "ardoise" | "vert" | "indigo" | "bordeaux" | "cuivre";
+export type RecapThemeId = "bleu" | "ardoise" | "vert" | "indigo" | "noir";
 
 export type RecapThemeDocType =
   | "facture"
@@ -82,19 +82,12 @@ export const RECAP_THEMES: Record<RecapThemeId, RecapTheme> = {
     total: "#4F46E5",
     texte: "#312E81",
   }),
-  bordeaux: make("bordeaux", "Bordeaux", {
-    fond: "#FDF2F4",
-    filet: "#F5C2CC",
-    bordure: "#F5C2CC",
-    total: "#9F1239",
-    texte: "#4C0519",
-  }),
-  cuivre: make("cuivre", "Cuivre", {
-    fond: "#FDF6EE",
-    filet: "#EBCBA8",
-    bordure: "#EBCBA8",
-    total: "#B45309",
-    texte: "#451A03",
+  noir: make("noir", "Noir et gris", {
+    fond: "#F5F5F5",
+    filet: "#D4D4D4",
+    bordure: "#D4D4D4",
+    total: "#262626",
+    texte: "#0A0A0A",
   }),
 };
 
