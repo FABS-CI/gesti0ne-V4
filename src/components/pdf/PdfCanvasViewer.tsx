@@ -19,8 +19,8 @@ export function PdfCanvasViewer({ blob, title }: { blob: Blob; title: string }) 
 
     (async () => {
       try {
-        const pdfjs = await import("pdfjs-dist");
-        const worker = await import("pdfjs-dist/build/pdf.worker.min.mjs?url");
+        const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+        const worker = await import("pdfjs-dist/legacy/build/pdf.worker.min.mjs?url");
         pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
         const data = new Uint8Array(await blob.arrayBuffer());
         const task = pdfjs.getDocument({ data });
