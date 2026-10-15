@@ -133,8 +133,9 @@ export async function exportRapportProduitsPdf(
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
     doc.setTextColor(70, 70, 70);
-    doc.text(safe(infos.join("   -   ")), pageW / 2, y + 5, { align: "center" });
-    return y + 10;
+    const lines = doc.splitTextToSize(safe(infos.join("   -   ")), pageW - MARGIN_X * 2) as string[];
+    lines.forEach((ln, i) => doc.text(ln, pageW / 2, y + 5 + i * 3.8, { align: "center" }));
+    return y + 7 + lines.length * 3.8;
   };
 
   // Première page
