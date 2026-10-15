@@ -43,7 +43,21 @@ export const Route = createFileRoute('/api/public/verify-doc/$uuid/document')({
             )
           }
 
-          return Response.json(payload, {
+          // Thème du récap (purement visuel), lu côté serveur ; bleu par défaut.
+          let recapTheme: unknown = null
+          try {
+            const { supabaseAdmin } = await import('@/integrations/supabase/client.server')
+            const { data } = await supabaseAdmin
+              .from('document_theme_settings')
+              .select('theme_global, theme_par_type')
+              .eq('id', 1)
+              .maybeSingle()
+            recapTheme = data ?? null
+          } catch {
+            recapTheme = null
+          }
+
+          return Response.json({ ...payload, recapTheme }, {
             status: 200,
             headers: { 'Cache-Control': 'no-store' },
           })

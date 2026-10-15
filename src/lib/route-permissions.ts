@@ -186,6 +186,7 @@ export const ROUTE_TO_PERMISSION: Record<string, RoutePermissionRequirement> = {
   "/admin/securite": "audit.voir",
   "/admin/rpc-errors": "audit.voir",
   "/admin/approbation-seuils": "workflows.acceder_parametres",
+  "/admin/apparence-documents": "modeles_documents.voir",
   "/admin/roles-v3": "roles_permissions.voir",
   "/admin/sante-systeme": "audit.voir",
   "/admin/web-vitals": "audit.voir",

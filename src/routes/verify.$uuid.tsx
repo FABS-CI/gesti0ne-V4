@@ -278,11 +278,14 @@ function VerificationPage() {
         label: 'Facture' | 'Proforma' | 'Commande' | 'Reçu' | 'Relevé';
         reference: string;
         data: Record<string, unknown>;
+        recapTheme?: unknown;
       };
-      const [{ generateUnifiedCommercialPDF, generateUnifiedReceiptPDF, generateUnifiedStatementPDF }, { downloadBlob }] = await Promise.all([
+      const [{ generateUnifiedCommercialPDF, generateUnifiedReceiptPDF, generateUnifiedStatementPDF }, { downloadBlob }, { setRecapThemeSettings }] = await Promise.all([
         import('@/lib/pdf/unified-generator'),
         import('@/lib/pdf/fabsTemplates'),
+        import('@/lib/pdf/recap-themes'),
       ]);
+      setRecapThemeSettings(payload.recapTheme ?? {});
       const blob =
         payload.label === 'Relevé'
           ? await generateUnifiedStatementPDF(payload.data)
