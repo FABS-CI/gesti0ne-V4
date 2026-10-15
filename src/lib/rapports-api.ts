@@ -35,6 +35,8 @@ export type ProduitLigneRapport = {
   stock_actuel: number;
   stock_initial: number;
   stock_restant: number;
+  /** stock_actuel × prix de vente catalogue, sans remise */
+  valeur_stock_restant?: number;
   pct_ca: number;
   rang: number;
 };
