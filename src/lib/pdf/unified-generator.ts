@@ -59,6 +59,7 @@ export async function generateUnifiedCommercialPDF(
     date: data.date,
     commercial: (data as any).commercialNom || (data as any).representant || "",
     certification: data.certification ?? null,
+    recapThemeOverride: (data as any).recapThemeOverride ?? null,
     client: {
       nom: data.clientNom || "",
       ville: data.villeClient || "",
@@ -198,6 +199,7 @@ export async function generateUnifiedStatementPDF(data: any): Promise<Blob> {
     id: data.client_id || "statement",
     type: "Relevé de Compte",
     reference: data.reference || "RELEVÉ",
+    recapThemeOverride: data.recapThemeOverride ?? null,
     date: new Date().toISOString(), // On garde l'ISO ici, il sera formaté par BaseDocument.drawHeader
 
     client: {
@@ -236,6 +238,7 @@ export async function generateUnifiedReceiptPDF(data: DataBase): Promise<Blob> {
       telephone: data.clientTel || "",
       code: data.codeClient || "",
     },
+    recapThemeOverride: (data as any).recapThemeOverride ?? null,
     balanceBefore: (data as any).balanceBefore, // Transmit historical balance if present
     certification: (data as any).certification ?? null,
   };
@@ -285,6 +288,7 @@ export async function generateUnifiedRetourPDF(data: DataBase): Promise<Blob> {
     reference: data.reference,
     date: data.date,
     notes: data.notes || data.observations,
+    recapThemeOverride: (data as any).recapThemeOverride ?? null,
     client: {
       nom: data.clientNom || "",
       ville: data.villeClient || "",
