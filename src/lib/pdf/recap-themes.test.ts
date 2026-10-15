@@ -37,7 +37,9 @@ describe("getRecapTheme", () => {
   });
   it("bleu par défaut si réglage vide ou invalide", () => {
     expect(getRecapTheme("facture", null, normalizeRecapSettings(null)).id).toBe("bleu");
-    expect(getRecapTheme("facture", null, normalizeRecapSettings({ theme_global: "orange" })).id).toBe("bleu");
+    expect(
+      getRecapTheme("facture", null, normalizeRecapSettings({ theme_global: "orange" })).id,
+    ).toBe("bleu");
   });
   it("libellés du moteur PDF reconnus", () => {
     expect(recapDocTypeFromLabel("Reçu de Paiement")).toBe("recu");

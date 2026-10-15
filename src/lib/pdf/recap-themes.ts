@@ -54,10 +54,34 @@ function make(id: RecapThemeId, nom: string, hex: RecapTheme["hex"]): RecapTheme
 }
 
 export const RECAP_THEMES: Record<RecapThemeId, RecapTheme> = {
-  bleu: make("bleu", "Bleu clair", { fond: "#EFF6FF", filet: "#BFDBFE", bordure: "#BFDBFE", total: "#2563EB", texte: "#1E3A8A" }),
-  ardoise: make("ardoise", "Gris ardoise", { fond: "#F1F5F9", filet: "#CBD5E1", bordure: "#CBD5E1", total: "#475569", texte: "#1F2937" }),
-  vert: make("vert", "Vert émeraude", { fond: "#ECFDF5", filet: "#A7F3D0", bordure: "#A7F3D0", total: "#059669", texte: "#064E3B" }),
-  indigo: make("indigo", "Indigo", { fond: "#EEF2FF", filet: "#C7D2FE", bordure: "#C7D2FE", total: "#4F46E5", texte: "#312E81" }),
+  bleu: make("bleu", "Bleu clair", {
+    fond: "#EFF6FF",
+    filet: "#BFDBFE",
+    bordure: "#BFDBFE",
+    total: "#2563EB",
+    texte: "#1E3A8A",
+  }),
+  ardoise: make("ardoise", "Gris ardoise", {
+    fond: "#F1F5F9",
+    filet: "#CBD5E1",
+    bordure: "#CBD5E1",
+    total: "#475569",
+    texte: "#1F2937",
+  }),
+  vert: make("vert", "Vert émeraude", {
+    fond: "#ECFDF5",
+    filet: "#A7F3D0",
+    bordure: "#A7F3D0",
+    total: "#059669",
+    texte: "#064E3B",
+  }),
+  indigo: make("indigo", "Indigo", {
+    fond: "#EEF2FF",
+    filet: "#C7D2FE",
+    bordure: "#C7D2FE",
+    total: "#4F46E5",
+    texte: "#312E81",
+  }),
 };
 
 export const RECAP_THEME_IDS = Object.keys(RECAP_THEMES) as RecapThemeId[];
@@ -117,7 +141,8 @@ export function recapDocTypeFromLabel(label?: string | null): RecapThemeDocType 
   if (l.startsWith("bon de retour")) return "bon_retour";
   if (l.startsWith("spécimen") || l.startsWith("specimen")) return "specimen";
   if (l.startsWith("reçu") || l.startsWith("recu")) return "recu";
-  if (l.startsWith("relevé") || l.startsWith("releve") || l.startsWith("état de compte")) return "releve";
+  if (l.startsWith("relevé") || l.startsWith("releve") || l.startsWith("état de compte"))
+    return "releve";
   return null;
 }
 

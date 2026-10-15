@@ -26,10 +26,30 @@ export const SAMPLE_DOC_TYPES: { id: SampleDocType; label: string }[] = [
 ];
 
 const LIGNES = [
-  { codeArticle: "FABS-CI92", designation: "Mon Livret de Révision CM2", qte: 351, prixUnitaire: 3000 },
-  { codeArticle: "FABS-CI54", designation: "Mon Livret de Révision CM1", qte: 251, prixUnitaire: 3000 },
-  { codeArticle: "FABS-CI15", designation: "Réussir mes Sujets de Composition CM2", qte: 150, prixUnitaire: 2500 },
-  { codeArticle: "FABS-CI08", designation: "Réussir mes Sujets de Composition CM1", qte: 1000, prixUnitaire: 2500 },
+  {
+    codeArticle: "FABS-CI92",
+    designation: "Mon Livret de Révision CM2",
+    qte: 351,
+    prixUnitaire: 3000,
+  },
+  {
+    codeArticle: "FABS-CI54",
+    designation: "Mon Livret de Révision CM1",
+    qte: 251,
+    prixUnitaire: 3000,
+  },
+  {
+    codeArticle: "FABS-CI15",
+    designation: "Réussir mes Sujets de Composition CM2",
+    qte: 150,
+    prixUnitaire: 2500,
+  },
+  {
+    codeArticle: "FABS-CI08",
+    designation: "Réussir mes Sujets de Composition CM1",
+    qte: 1000,
+    prixUnitaire: 2500,
+  },
 ].map((l) => ({ ...l, reference: l.designation, remisePct: 0, montant: l.qte * l.prixUnitaire }));
 
 export const SAMPLE_SOUS_TOTAL = LIGNES.reduce((s, l) => s + l.montant, 0);
@@ -89,8 +109,24 @@ export async function generateSamplePdf(
       periodeDebut: TODAY.split("-").reverse().join("/"),
       periodeFin: TODAY.split("-").reverse().join("/"),
       lignes: [
-        { date: TODAY, reference: "APERÇU", libelle: "Facture (exemple)", debit: SAMPLE_TOTAL, credit: 0, type: "Facture", soldeProgressif: SAMPLE_TOTAL },
-        { date: TODAY, reference: "APERÇU", libelle: "Paiement (exemple)", debit: 0, credit: paye, type: "Paiement", soldeProgressif: SAMPLE_TOTAL - paye },
+        {
+          date: TODAY,
+          reference: "APERÇU",
+          libelle: "Facture (exemple)",
+          debit: SAMPLE_TOTAL,
+          credit: 0,
+          type: "Facture",
+          soldeProgressif: SAMPLE_TOTAL,
+        },
+        {
+          date: TODAY,
+          reference: "APERÇU",
+          libelle: "Paiement (exemple)",
+          debit: 0,
+          credit: paye,
+          type: "Paiement",
+          soldeProgressif: SAMPLE_TOTAL - paye,
+        },
       ],
       totalDebit: SAMPLE_TOTAL,
       totalPaiement: paye,
@@ -101,20 +137,24 @@ export async function generateSamplePdf(
 
   const montantPaye =
     payment === "solde" ? SAMPLE_TOTAL : payment === "partiel" ? Math.round(SAMPLE_TOTAL * 0.4) : 0;
-  return gen.generateUnifiedCommercialPDF(COMMERCIAL_LABEL[type] as never, {
-    id: "apercu",
-    reference: "APERÇU",
-    date: TODAY,
-    ...client,
-    lignes: type === "bon_retour"
-      ? LIGNES.map((l) => ({ ...l, qteCommandee: l.qte, qteRetournee: Math.ceil(l.qte / 10) }))
-      : LIGNES,
-    totalVente: SAMPLE_SOUS_TOTAL,
-    remiseGlobale: SAMPLE_REMISE,
-    remiseGlobalePct: SAMPLE_REMISE_PCT,
-    montantTotalStocke: SAMPLE_TOTAL,
-    paiement: type === "facture" ? { totalAPayer: SAMPLE_TOTAL, montantPaye } : undefined,
-    certification: FAKE_CERT,
-    recapThemeOverride: theme,
-  } as never);
+  return gen.generateUnifiedCommercialPDF(
+    COMMERCIAL_LABEL[type] as never,
+    {
+      id: "apercu",
+      reference: "APERÇU",
+      date: TODAY,
+      ...client,
+      lignes:
+        type === "bon_retour"
+          ? LIGNES.map((l) => ({ ...l, qteCommandee: l.qte, qteRetournee: Math.ceil(l.qte / 10) }))
+          : LIGNES,
+      totalVente: SAMPLE_SOUS_TOTAL,
+      remiseGlobale: SAMPLE_REMISE,
+      remiseGlobalePct: SAMPLE_REMISE_PCT,
+      montantTotalStocke: SAMPLE_TOTAL,
+      paiement: type === "facture" ? { totalAPayer: SAMPLE_TOTAL, montantPaye } : undefined,
+      certification: FAKE_CERT,
+      recapThemeOverride: theme,
+    } as never,
+  );
 }

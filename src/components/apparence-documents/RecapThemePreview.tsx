@@ -2,7 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { Loader2, Maximize2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { PdfPreviewModal } from "@/components/pdf/PdfPreviewModal";
 import { downloadBlob } from "@/lib/pdf/fabsTemplates";
 import {
@@ -49,7 +55,12 @@ export function RecapThemePreview({ docType, onDocTypeChange, theme }: Props) {
     return () => clearTimeout(timer);
   }, [docType, theme, payment]);
 
-  useEffect(() => () => { if (url) URL.revokeObjectURL(url); }, [url]);
+  useEffect(
+    () => () => {
+      if (url) URL.revokeObjectURL(url);
+    },
+    [url],
+  );
 
   const filename = `exemple-${docType}-${theme}.pdf`;
 
@@ -59,10 +70,14 @@ export function RecapThemePreview({ docType, onDocTypeChange, theme }: Props) {
         <div className="space-y-1">
           <Label className="text-xs">Type de document</Label>
           <Select value={docType} onValueChange={(v) => onDocTypeChange(v as SampleDocType)}>
-            <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-48">
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               {SAMPLE_DOC_TYPES.map((t) => (
-                <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>
+                <SelectItem key={t.id} value={t.id}>
+                  {t.label}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -71,7 +86,9 @@ export function RecapThemePreview({ docType, onDocTypeChange, theme }: Props) {
           <div className="space-y-1">
             <Label className="text-xs">Simuler un paiement</Label>
             <Select value={payment} onValueChange={(v) => setPayment(v as SamplePayment)}>
-              <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="w-36">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="aucun">Aucun</SelectItem>
                 <SelectItem value="partiel">Partiel</SelectItem>
@@ -84,13 +101,20 @@ export function RecapThemePreview({ docType, onDocTypeChange, theme }: Props) {
           <Button size="sm" variant="outline" disabled={!blob} onClick={() => setBig(true)}>
             <Maximize2 className="mr-2 h-4 w-4" /> Ouvrir en grand
           </Button>
-          <Button size="sm" variant="outline" disabled={!blob} onClick={() => blob && downloadBlob(blob, filename)}>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={!blob}
+            onClick={() => blob && downloadBlob(blob, filename)}
+          >
             <Download className="mr-2 h-4 w-4" /> Télécharger l'exemple
           </Button>
         </div>
       </div>
       <div className="relative h-[70vh] min-h-[480px] rounded-md border bg-muted/30">
-        {url && <iframe title="Aperçu du document" src={url} className="h-full w-full rounded-md" />}
+        {url && (
+          <iframe title="Aperçu du document" src={url} className="h-full w-full rounded-md" />
+        )}
         {(loading || !url) && !error && (
           <div className="absolute inset-0 flex items-center justify-center bg-background/60 text-sm text-muted-foreground">
             <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Génération de l'aperçu…
