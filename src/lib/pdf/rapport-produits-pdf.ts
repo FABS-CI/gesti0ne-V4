@@ -15,23 +15,14 @@ const COLUMNS: Array<{
   width: number;
   align: "left" | "right" | "center";
 }> = [
-  { header: "Code", width: 18, align: "left" },
-  { header: "Désignation", width: 40, align: "left" },
-  { header: "Niveau", width: 14, align: "left" },
-  { header: "Catégorie", width: 26, align: "left" },
-  { header: "PU", width: 14, align: "right" },
-  { header: "Qté vend.", width: 14, align: "right" },
-  { header: "Qté fact.", width: 14, align: "right" },
-  { header: "Nb fact.", width: 12, align: "right" },
-  { header: "Clients", width: 12, align: "right" },
-  { header: "CA", width: 22, align: "right" },
-  { header: "Remises", width: 16, align: "right" },
-  { header: "Retours", width: 13, align: "right" },
-  { header: "Stock act.", width: 13, align: "right" },
-  { header: "Stock init.", width: 13, align: "right" },
-  { header: "Stock rest.", width: 13, align: "right" },
-  { header: "% CA", width: 12, align: "right" },
-  { header: "Rang", width: 11, align: "center" },
+  { header: "Code", width: 21, align: "left" },
+  { header: "Désignation", width: 54, align: "left" },
+  { header: "PU", width: 18, align: "right" },
+  { header: "Qté vend.", width: 18, align: "right" },
+  { header: "Clients", width: 14, align: "right" },
+  { header: "CA (net de remises)", width: 28, align: "right" },
+  { header: "Stock act.", width: 17, align: "right" },
+  { header: "Stock init.", width: 17, align: "right" },
 ];
 
 const MARGIN_X = 10;
@@ -53,36 +44,36 @@ function money(v: number | null | undefined): string {
   return formatFCFA(v ?? 0, false);
 }
 
-function pct(v: number | null | undefined): string {
-  const n = Number(v ?? 0);
-  return `${(Math.round(n * 100) / 100).toString().replace(".", ",")} %`;
-}
-
-function rowCells(r: ProduitLigneRapport): string[] {
+export function rowCells(r: ProduitLigneRapport): string[] {
   return [
-    r.code ?? "—",
-    r.titre ?? "—",
-    r.niveau ?? "—",
-    r.categorie ?? "—",
+    r.code ?? "-",
+    r.titre ?? "-",
     money(r.prix_unitaire),
     num(r.qte_vendue),
-    num(r.qte_facturee),
-    num(r.nb_factures),
     num(r.nb_clients),
     money(r.ca),
-    money(r.remises),
-    num(r.qte_retournee),
     num(r.stock_actuel),
     num(r.stock_initial),
-    num(r.stock_restant),
-    pct(r.pct_ca),
-    String(r.rang ?? "—"),
   ];
 }
 
+/** Totaux du récapitulatif : produits, quantité, CA, prix d'achat, stock restant. */
+export function rapportProduitsTotaux(rows: ProduitLigneRapport[]) {
+  return rows.reduce(
+    (acc, r) => {
+      acc.qte += Number(r.qte_vendue ?? 0);
+      acc.ca += Number(r.ca ?? 0);
+      acc.achat += Number(r.cout_achat ?? Number(r.qte_vendue ?? 0) * Number(r.prix_achat ?? 0));
+      acc.stock += Number(r.stock_actuel ?? 0);
+      return acc;
+    },
+    { produits: rows.length, qte: 0, ca: 0, achat: 0, stock: 0 },
+  );
+}
+
 /**
- * Rapport produits — PDF A4 paysage dédié.
- * En-tête compact (date d'édition, période, filtres), 17 colonnes à largeurs
+ * Rapport produits — PDF A4 portrait dédié.
+ * En-tête compact (date d'édition, période, filtres), 8 colonnes à largeurs
  * calibrées, en-têtes répétés à chaque page, pagination « Page X / Y »,
  * récapitulatif final et pied de page simplifié (sans coordonnées bancaires).
  */
@@ -94,14 +85,14 @@ export async function exportRapportProduitsPdf(
   await ensurePdfLogo();
   const t = getActiveTemplate();
 
-  const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
   const tableW = COLUMNS.reduce((s, c) => s + c.width, 0);
   const scale = (pageW - MARGIN_X * 2) / tableW;
   const widths = COLUMNS.map((c) => c.width * scale);
 
-  const HEAD_H = 9;
+  const HEAD_H = 10;
   const LINE_H = 4.2;
   const PAD = 1.6;
   const bottomLimit = pageH - FOOTER_H - 6;
@@ -115,7 +106,7 @@ export async function exportRapportProduitsPdf(
     let x = MARGIN_X;
     COLUMNS.forEach((c, i) => {
       const w = widths[i];
-      const lines = doc.splitTextToSize(c.header, w - PAD * 2) as string[];
+      const lines = doc.splitTextToSize(safe(c.header), w - PAD * 2) as string[];
       const startY = y + HEAD_H / 2 - ((lines.length - 1) * 2.6) / 2 + 1;
       lines.forEach((ln, li) => {
         const ty = startY + li * 2.6;
@@ -156,7 +147,7 @@ export async function exportRapportProduitsPdf(
   for (const r of rows) {
     const cells = rowCells(r).map(safe);
     const wrapped = cells.map((v, i) =>
-      i === 1 || i === 3 ? (doc.splitTextToSize(v, widths[i] - PAD * 2) as string[]) : [v],
+      COLUMNS[i].align === "left" ? (doc.splitTextToSize(v, widths[i] - PAD * 2) as string[]) : [v],
     );
     const nLines = Math.max(...wrapped.map((w) => w.length));
     const rowH = Math.max(6, nLines * LINE_H + 2);
@@ -176,11 +167,13 @@ export async function exportRapportProduitsPdf(
     doc.setLineWidth(0.1);
     doc.line(MARGIN_X, y + rowH, pageW - MARGIN_X, y + rowH);
 
-    doc.setFontSize(7);
+    doc.setFontSize(7.5);
     doc.setTextColor(20, 20, 20);
     let x = MARGIN_X;
     COLUMNS.forEach((c, i) => {
       const w = widths[i];
+      const fit = c.align !== "left" && doc.getTextWidth(wrapped[i][0]) > w - PAD * 2;
+      doc.setFontSize(fit ? 6.2 : 7.5);
       wrapped[i].forEach((ln, li) => {
         const ty = y + 4 + li * LINE_H;
         if (c.align === "right") doc.text(ln, x + w - PAD, ty, { align: "right" });
@@ -193,22 +186,13 @@ export async function exportRapportProduitsPdf(
   }
 
   // Récapitulatif
-  const totals = rows.reduce(
-    (acc, r) => {
-      acc.qte += Number(r.qte_vendue ?? 0);
-      acc.ca += Number(r.ca ?? 0);
-      acc.remises += Number(r.remises ?? 0);
-      acc.retours += Number(r.qte_retournee ?? 0);
-      return acc;
-    },
-    { qte: 0, ca: 0, remises: 0, retours: 0 },
-  );
+  const totals = rapportProduitsTotaux(rows);
   const summary: Array<[string, string]> = [
-    ["Nombre de produits", String(rows.length)],
+    ["Nombre de produits", String(totals.produits)],
     ["Quantité vendue", num(totals.qte)],
     ["Chiffre d'affaires", `${money(totals.ca)} FCFA`],
-    ["Remises", `${money(totals.remises)} FCFA`],
-    ["Retours", num(totals.retours)],
+    ["Prix d'achat", `${money(totals.achat)} FCFA`],
+    ["Quantité restante en stock", num(totals.stock)],
   ];
   const boxW = 90;
   const boxH = 8 + summary.length * 6;
@@ -227,9 +211,9 @@ export async function exportRapportProduitsPdf(
   summary.forEach(([label, value], i) => {
     const ry = by + 7 + i * 6;
     doc.setFont("helvetica", "normal");
-    doc.text(label, bx + 4, ry);
+    doc.text(safe(label), bx + 4, ry);
     doc.setFont("helvetica", "bold");
-    doc.text(value, bx + boxW - 4, ry, { align: "right" });
+    doc.text(safe(value), bx + boxW - 4, ry, { align: "right" });
   });
 
   // Pied de page simplifié + pagination sur toutes les pages
@@ -242,7 +226,7 @@ export async function exportRapportProduitsPdf(
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7.5);
     doc.setTextColor(110, 110, 110);
-    doc.text("EDITIONS FABS-CI — Rapport produits", MARGIN_X, pageH - FOOTER_H + 5);
+    doc.text("EDITIONS FABS-CI - Rapport produits", MARGIN_X, pageH - FOOTER_H + 5);
     doc.text(`Page ${p} / ${total}`, pageW - MARGIN_X, pageH - FOOTER_H + 5, { align: "right" });
   }
 
