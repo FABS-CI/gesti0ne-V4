@@ -449,6 +449,13 @@
       "when": 1792054002172,
       "tag": "0063_rapport_produits_prix_achat",
       "breakpoints": true
+    },
+    {
+      "idx": 64,
+      "version": "7",
+      "when": 1792054594906,
+      "tag": "0064_rapport_produits_retours_receptionnes",
+      "breakpoints": true
     }
   ]
 }
