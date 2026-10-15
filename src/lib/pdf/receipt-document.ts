@@ -160,7 +160,7 @@ export class ReceiptDocument extends BaseDocument {
     y -= 20;
 
     roundedRect(this.page, MARGINS.x, y - boxH, boxW, boxH, 6, {
-      color: BODY.creme, borderColor: BODY.bord, borderWidth: 0.6,
+      color: this.recapTheme.fond, borderColor: this.recapTheme.bordure, borderWidth: 0.6,
     });
 
     let curY = y - 25;
@@ -236,13 +236,13 @@ export class ReceiptDocument extends BaseDocument {
     this.page.drawLine({
       start: { x: MARGINS.x + 10, y: curY + 5 },
       end: { x: PAGE.w - MARGINS.x - 10, y: curY + 5 },
-      color: BODY.filetCreme,
+      color: this.recapTheme.filet,
       thickness: 0.6,
     });
     curY -= 10;
 
-    // Montant reçu : bandeau orange plein
-    roundedRect(this.page, MARGINS.x + 6, curY - 8, boxW - 12, 26, 4, { color: BODY.orange });
+    // Montant reçu : bandeau plein, couleur du thème
+    roundedRect(this.page, MARGINS.x + 6, curY - 8, boxW - 12, 26, 4, { color: this.recapTheme.total });
     this.page.drawText("MONTANT REÇU", { 
       x: MARGINS.x + 15, 
       y: curY, 
@@ -291,13 +291,13 @@ export class ReceiptDocument extends BaseDocument {
     y -= 15;
     
     const pillW = this.fonts.bold.widthOfTextAtSize(statusText, 11) + 20;
-    roundedRect(this.page, MARGINS.x, y - 6, pillW, 19, 9.5, { color: BODY.peche });
+    roundedRect(this.page, MARGINS.x, y - 6, pillW, 19, 9.5, { color: this.recapTheme.fond });
     this.page.drawText(statusText, { 
       x: MARGINS.x + 10, 
       y: y, 
       size: 11, 
       font: this.fonts.bold, 
-      color: BODY.orange 
+      color: this.recapTheme.texte 
     });
     y -= 25;
 

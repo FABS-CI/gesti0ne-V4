@@ -23,6 +23,8 @@ const formatDocDate = (d: string) => {
   return out === "—" ? d : out;
 };
 import { buildQrUrl, QR_COLOR_OPTS } from "./qr-logic";
+import { getRecapTheme, recapDocTypeFromLabel, type RecapTheme, type RecapThemeId } from "./recap-themes";
+import { buildPaymentRows } from "./payment-rows";
 
 // --- Configuration & Couleurs ---
 
@@ -182,7 +184,13 @@ export class BaseDocument {
   paidImg: PDFImage | null = null;
   data: DocBase;
   totals: DocTotals;
-  
+
+  /** Thème du récapitulatif : override d'aperçu > type > global > bleu. */
+  get recapTheme(): RecapTheme {
+    const override = (this.data as { recapThemeOverride?: RecapThemeId | null }).recapThemeOverride;
+    return getRecapTheme(recapDocTypeFromLabel(this.data.type), override ?? null);
+  }
+
   constructor(data: DocBase, totals: DocTotals) {
     this.data = data;
     this.totals = totals;
@@ -812,14 +820,10 @@ export class BaseDocument {
       rows.push({ label: "TVA", value: this.totals.tva });
     }
 
-    const payRows: typeof rows = [];
-    if (this.data.type === "Facture" && paiement) {
-      const paye = Math.max(0, paiement.montantPaye || 0);
-      payRows.push({ label: "MONTANT PAYÉ", value: paye });
-      payRows.push({ label: "RESTE À PAYER", value: Math.max(0, this.totals.totalAPayer - paye) });
-    }
+    const payRows: typeof rows = buildPaymentRows(this.data.type, paiement, this.totals.totalAPayer);
+    const theme = this.recapTheme;
 
-    // Modèle F : carte crème, bandeau TOTAL orange plein.
+    // Carte du récap aux couleurs du thème ; bandeau TOTAL blanc bordé.
     const ROW_H = 18, TOTAL_H = 30, PAD = 4, BAND_H = 26;
 
     // Hauteur réelle : cadre des totaux + mention « Arrêté… » (aucun saut au milieu)
@@ -833,12 +837,12 @@ export class BaseDocument {
     }
 
     const boxTop = curY;
-    roundedRect(this.page, x, boxTop - boxH, boxW, boxH, 6, { color: BODY.creme });
+    roundedRect(this.page, x, boxTop - boxH, boxW, boxH, 6, { color: theme.fond });
     curY = boxTop - PAD;
 
     const drawRow = (row: (typeof rows)[number], idx = 0, style?: { labelColor: RGB; valueColor: RGB; bold?: boolean }) => {
-      if (idx > 0 && !style) {
-        this.page.drawLine({ start: { x: x + 8, y: curY }, end: { x: x + boxW - 8, y: curY }, color: BODY.filetCreme, thickness: 0.4 });
+      if (idx > 0) {
+        this.page.drawLine({ start: { x: x + 8, y: curY }, end: { x: x + boxW - 8, y: curY }, color: theme.filet, thickness: 0.4 });
       }
       const ty = curY - 12;
       let labelX = x + 8;
@@ -867,11 +871,11 @@ export class BaseDocument {
     };
     rows.forEach((r, i) => drawRow(r, i));
     curY -= PAD;
-    this.page.drawLine({ start: { x: x + 8, y: curY }, end: { x: x + boxW - 8, y: curY }, color: BODY.filetCreme, thickness: 0.6 });
+    this.page.drawLine({ start: { x: x + 8, y: curY }, end: { x: x + boxW - 8, y: curY }, color: theme.filet, thickness: 0.6 });
 
-    // TOTAL À PAYER : bandeau orange plein, coins arrondis.
+    // TOTAL À PAYER : bandeau blanc, bordure couleur du thème.
     const bandY = curY - (TOTAL_H + BAND_H) / 2;
-    roundedRect(this.page, x + 6, bandY, boxW - 12, BAND_H, 4, { color: BODY.peche, borderColor: BODY.orange, borderWidth: 0.8 });
+    roundedRect(this.page, x + 6, bandY, boxW - 12, BAND_H, 4, { color: BODY.blanc, borderColor: theme.total, borderWidth: 1.2 });
     // Zones gauche (libellé) / droite (montant) indépendantes : tailles adaptées pour ne jamais se chevaucher.
     const totalLabel = "TOTAL À PAYER (FCFA)";
     const totalVal = `${formatFCFA(this.totals.totalAPayer, false)} FCFA`;
@@ -889,14 +893,12 @@ export class BaseDocument {
       const isReste = r.label === "RESTE À PAYER";
       if (isReste) {
         const last = i === payRows.length - 1;
-        roundedRect(this.page, x, curY - ROW_H, boxW, ROW_H, last ? { bl: 6, br: 6 } : 0, { color: BODY.grisClair });
+        roundedRect(this.page, x, curY - ROW_H, boxW, ROW_H, last ? { bl: 6, br: 6 } : 0, { color: BODY.blanc });
       }
-      drawRow(r, 1, isReste
-        ? { labelColor: BODY.donnee, valueColor: BODY.donnee, bold: true }
-        : { labelColor: BODY.donnee, valueColor: BODY.donnee });
+      drawRow(r, 1, { labelColor: BODY.donnee, valueColor: BODY.donnee, bold: isReste });
     });
 
-    roundedRect(this.page, x, curY, boxW, boxTop - curY, 6, { borderColor: BODY.bord, borderWidth: 0.6 });
+    roundedRect(this.page, x, curY, boxW, boxTop - curY, 6, { borderColor: theme.bordure, borderWidth: 0.6 });
     this.drawPaidStamp({ x: MARGINS.x, yBottom: curY, w: x - MARGINS.x - 16, h: boxTop - curY });
     curY -= 16;
 

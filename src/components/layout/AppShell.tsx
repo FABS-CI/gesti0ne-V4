@@ -8,6 +8,7 @@ import { Topbar } from "./Topbar";
 import { useIdleTimeout } from "@/hooks/useIdleTimeout";
 import { IdleWarningModal } from "@/components/IdleWarningModal";
 import { loadDocumentSettings } from "@/lib/document-settings-api";
+import { loadRecapThemeSettings } from "@/lib/recap-theme-api";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouteRestrictions } from "@/hooks/use-route-restrictions";
 import { useNotificationsRealtime } from "@/hooks/use-notifications-realtime";
@@ -74,6 +75,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     loadDocumentSettings().catch(() => {
       /* silencieux : fallback local */
     });
+    void loadRecapThemeSettings();
   }, []);
 
   // Préchargement intelligent (Lot 7 perf) : à l'idle, on chauffe les

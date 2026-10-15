@@ -2310,6 +2310,30 @@ export type Database = {
         }
         Relationships: []
       }
+      document_theme_settings: {
+        Row: {
+          id: number
+          theme_global: string
+          theme_par_type: Json
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          id?: number
+          theme_global?: string
+          theme_par_type?: Json
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          id?: number
+          theme_global?: string
+          theme_par_type?: Json
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       document_verification_logs: {
         Row: {
           certification_id: string | null
@@ -8901,6 +8925,7 @@ export type Database = {
       is_finance: { Args: { _uid: string }; Returns: boolean }
       is_global_scope: { Args: { _user_id: string }; Returns: boolean }
       is_hr: { Args: { _uid: string }; Returns: boolean }
+      is_rbac3_super_admin: { Args: { _uid: string }; Returns: boolean }
       is_sales: { Args: { _uid: string }; Returns: boolean }
       is_stock: { Args: { _uid: string }; Returns: boolean }
       list_public_fk_dependencies: {

@@ -274,6 +274,7 @@ export const groups: Group[] = [
       { title: "Santé du système", url: "/admin/sante-systeme", icon: Shield, ready: true },
       { title: "Seuils d'approbation", url: "/admin/approbation-seuils", icon: Shield, ready: true },
       { title: "Renommage des clients", url: "/admin/renommage-clients", icon: UserCog, ready: true },
+      { title: "Apparence des documents", url: "/admin/apparence-documents", icon: FileText, ready: true },
 
     ],
   },
