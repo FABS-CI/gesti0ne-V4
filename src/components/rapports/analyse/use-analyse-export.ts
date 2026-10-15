@@ -30,7 +30,16 @@ export function useAnalyseExport() {
         await exportXlsx("rapport_produits", PRODUITS_HEADERS, produitsRowsForExport(all));
       } else {
         const { exportRapportProduitsPdf } = await import("@/lib/pdf/rapport-produits-pdf");
-        await exportRapportProduitsPdf(all);
+        await exportRapportProduitsPdf(all, {
+          periode: formatPeriodeLabel(filters.from, filters.to),
+          filtres: [
+            { label: "Niveaux", value: (filters.niveaux ?? []).join(", ") },
+            { label: "Catégories", value: (filters.categories ?? []).join(", ") },
+            { label: "Types", value: (filters.types ?? []).join(", ") },
+            { label: "Villes", value: (filters.villes ?? []).join(", ") },
+            { label: "Produits", value: filters.produits?.length ? `${filters.produits.length} sélectionné(s)` : "" },
+          ],
+        });
       }
       toast.success(`${formatNumber(all.length)} lignes exportées`);
     } catch {

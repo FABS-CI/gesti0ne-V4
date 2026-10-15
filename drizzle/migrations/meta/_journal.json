@@ -442,6 +442,13 @@
       "when": 1791890225303,
       "tag": "0062_facture_exception_ecart",
       "breakpoints": true
+    },
+    {
+      "idx": 63,
+      "version": "7",
+      "when": 1792054002172,
+      "tag": "0063_rapport_produits_prix_achat",
+      "breakpoints": true
     }
   ]
 }

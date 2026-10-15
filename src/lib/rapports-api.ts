@@ -28,6 +28,8 @@ export type ProduitLigneRapport = {
   ca: number;
   remises: number;
   ca_encaisse: number;
+  prix_achat?: number;
+  cout_achat?: number;
   reste_a_encaisser: number;
   qte_retournee: number;
   stock_actuel: number;
