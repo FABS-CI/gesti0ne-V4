@@ -15,14 +15,15 @@ const COLUMNS: Array<{
   width: number;
   align: "left" | "right" | "center";
 }> = [
-  { header: "Code", width: 21, align: "left" },
-  { header: "Désignation", width: 54, align: "left" },
-  { header: "PU", width: 18, align: "right" },
-  { header: "Qté vend.", width: 18, align: "right" },
-  { header: "Clients", width: 14, align: "right" },
-  { header: "CA (net de remises)", width: 28, align: "right" },
-  { header: "Stock act.", width: 17, align: "right" },
-  { header: "Stock init.", width: 17, align: "right" },
+  { header: "Code", width: 20, align: "left" },
+  { header: "Désignation", width: 42, align: "left" },
+  { header: "PU", width: 14, align: "right" },
+  { header: "Qté vend.", width: 14, align: "right" },
+  { header: "Clients", width: 12, align: "right" },
+  { header: "CA (net de remises)", width: 24, align: "right" },
+  { header: "Stock act.", width: 15, align: "right" },
+  { header: "Stock init.", width: 15, align: "right" },
+  { header: "Valeur stock rest.", width: 26, align: "right" },
 ];
 
 const MARGIN_X = 10;
@@ -44,6 +45,11 @@ function money(v: number | null | undefined): string {
   return formatFCFA(v ?? 0, false);
 }
 
+/** Valeur du stock restant = stock actuel × PU catalogue, sans remise. */
+export function valeurStock(r: ProduitLigneRapport): number {
+  return Number(r.valeur_stock_restant ?? Number(r.stock_actuel ?? 0) * Number(r.prix_unitaire ?? 0));
+}
+
 export function rowCells(r: ProduitLigneRapport): string[] {
   return [
     r.code ?? "-",
@@ -54,6 +60,7 @@ export function rowCells(r: ProduitLigneRapport): string[] {
     money(r.ca),
     num(r.stock_actuel),
     num(r.stock_initial),
+    money(valeurStock(r)),
   ];
 }
 
@@ -65,15 +72,16 @@ export function rapportProduitsTotaux(rows: ProduitLigneRapport[]) {
       acc.ca += Number(r.ca ?? 0);
       acc.achat += Number(r.cout_achat ?? Number(r.qte_vendue ?? 0) * Number(r.prix_achat ?? 0));
       acc.stock += Number(r.stock_actuel ?? 0);
+      acc.valeurStock += valeurStock(r);
       return acc;
     },
-    { produits: rows.length, qte: 0, ca: 0, achat: 0, stock: 0 },
+    { produits: rows.length, qte: 0, ca: 0, achat: 0, stock: 0, valeurStock: 0 },
   );
 }
 
 /**
  * Rapport produits — PDF A4 portrait dédié.
- * En-tête compact (date d'édition, période, filtres), 8 colonnes à largeurs
+ * En-tête compact (date d'édition, période, filtres), 9 colonnes à largeurs
  * calibrées, en-têtes répétés à chaque page, pagination « Page X / Y »,
  * récapitulatif final et pied de page simplifié (sans coordonnées bancaires).
  */
@@ -194,6 +202,7 @@ export async function exportRapportProduitsPdf(
     ["Chiffre d'affaires", `${money(totals.ca)} FCFA`],
     ["Prix d'achat", `${money(totals.achat)} FCFA`],
     ["Quantité restante en stock", num(totals.stock)],
+    ["Valeur du stock restant", `${money(totals.valeurStock)} FCFA`],
   ];
   const boxW = 90;
   const boxH = 8 + summary.length * 6;
