@@ -2,7 +2,7 @@
 // Purement visuel : aucun montant n'en dépend.
 import { rgb, type RGB } from "pdf-lib";
 
-export type RecapThemeId = "bleu" | "ardoise" | "vert" | "indigo" | "noir";
+export type RecapThemeId = "bleu" | "ardoise" | "vert" | "indigo" | "noir" | "marine";
 
 export type RecapThemeDocType =
   | "facture"
@@ -88,6 +88,13 @@ export const RECAP_THEMES: Record<RecapThemeId, RecapTheme> = {
     bordure: "#D4D4D4",
     total: "#262626",
     texte: "#0A0A0A",
+  }),
+  marine: make("marine", "Bleu marine", {
+    fond: "#F0F4F8",
+    filet: "#BCCCDC",
+    bordure: "#BCCCDC",
+    total: "#1E3A5F",
+    texte: "#102A43",
   }),
 };
 
