@@ -20,10 +20,7 @@ const rows = [
     ref: null,
   },
 ];
-vi.mock("@/integrations/supabase/client", () => ({
-  supabase: { rpc: vi.fn(async () => ({ data: rows, error: null })) },
-}));
-vi.mock("@/lib/rpc", () => ({ callRpc: vi.fn() }));
+vi.mock("@/lib/rpc", () => ({ callRpc: vi.fn(async () => ({ data: rows, error: null })) }));
 
 import { DocumentTimeline } from "./DocumentTimeline";
 

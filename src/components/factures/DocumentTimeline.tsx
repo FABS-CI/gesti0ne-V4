@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { callRpc } from "@/lib/rpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -78,7 +77,7 @@ export function DocumentTimeline({ factureId }: { factureId: string }) {
   } = useQuery({
     queryKey: ["document-timeline", "facture", factureId],
     queryFn: async (): Promise<TimelineEvent[]> => {
-      const { data, error } = await (supabase.rpc as any)("document_timeline", {
+      const { data, error } = await callRpc("document_timeline", {
         _type: "facture",
         _id: factureId,
       });
