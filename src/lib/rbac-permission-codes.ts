@@ -118,6 +118,7 @@ export const RBAC_PERMISSION_CODES: ReadonlySet<string> = new Set([
   "factures.exporter_pdf",
   "factures.imprimer",
   "factures.modifier",
+  "factures.noter",
   "factures.soumettre_fne",
   "factures.supprimer",
   "factures.voir",

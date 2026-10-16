@@ -2214,6 +2214,36 @@ export type Database = {
         }
         Relationships: []
       }
+      document_notes: {
+        Row: {
+          author_id: string
+          author_name: string | null
+          body: string
+          created_at: string
+          document_id: string
+          document_type: string
+          id: string
+        }
+        Insert: {
+          author_id: string
+          author_name?: string | null
+          body: string
+          created_at?: string
+          document_id: string
+          document_type: string
+          id?: string
+        }
+        Update: {
+          author_id?: string
+          author_name?: string | null
+          body?: string
+          created_at?: string
+          document_id?: string
+          document_type?: string
+          id?: string
+        }
+        Relationships: []
+      }
       document_settings: {
         Row: {
           created_at: string
@@ -7973,6 +8003,24 @@ export type Database = {
       affecter_colis_tournee: {
         Args: { _colis_ids: string[]; _tournee_id: string }
         Returns: Json
+      }
+      ajouter_note_document: {
+        Args: { _body: string; _id: string; _type: string }
+        Returns: {
+          author_id: string
+          author_name: string | null
+          body: string
+          created_at: string
+          document_id: string
+          document_type: string
+          id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "document_notes"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       ajuster_stock_depot: {
         Args: {

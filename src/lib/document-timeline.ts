@@ -18,6 +18,7 @@ const KIND_LABEL: Record<string, string> = {
   retour: "Retour",
   colis: "Colis",
   livraison: "Livraison",
+  note: "Note",
 };
 
 /** Libellé métier d'un type d'événement ; type inconnu affiché « Autre ». */
