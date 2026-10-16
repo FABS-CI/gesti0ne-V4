@@ -62,6 +62,7 @@ import {
 import { formatFCFA as fmt } from "@/lib/format";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 import { CertificationCard } from "@/components/certification/CertificationCard";
+import { DocumentTimeline } from "@/components/factures/DocumentTimeline";
 
 export const Route = createFileRoute("/_authenticated/factures/$factureId")({
   component: FactureDetailPage,
@@ -516,6 +517,8 @@ function FactureDetailPage() {
       })()}
 
       <CertificationCard reference={facture.reference} />
+
+      <DocumentTimeline factureId={factureId} />
     </div>
   );
 }

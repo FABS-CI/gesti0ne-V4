@@ -103,6 +103,7 @@ export function invalidateFacture(
     qc.invalidateQueries({ queryKey: ["facture-paiements", opts.factureId] });
     qc.invalidateQueries({ queryKey: ["fne-facture", opts.factureId] });
     qc.invalidateQueries({ queryKey: ["fne-invoice", opts.factureId] });
+    qc.invalidateQueries({ queryKey: ["document-timeline", "facture", opts.factureId] });
   }
   invalidateClient(qc, opts.clientId);
   invalidateDashboards(qc);
