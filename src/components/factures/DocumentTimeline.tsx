@@ -71,7 +71,11 @@ function NoteForm({ factureId }: { factureId: string }) {
 }
 
 export function DocumentTimeline({ factureId }: { factureId: string }) {
-  const { data = [], isLoading, error } = useQuery({
+  const {
+    data = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["document-timeline", "facture", factureId],
     queryFn: async (): Promise<TimelineEvent[]> => {
       const { data, error } = await (supabase.rpc as any)("document_timeline", {

@@ -1,5 +1,6 @@
 -- Notes internes : contrôles d'accès et inaltérabilité. Exécuter dans une transaction annulée.
 BEGIN;
+SET LOCAL ROLE authenticated;
 DO $$
 DECLARE
   v_noter uuid; v_lecteur uuid; v_facture uuid; v_note public.document_notes; ok boolean;
@@ -23,7 +24,7 @@ BEGIN
 
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_noter, 'role','authenticated')::text, true);
   BEGIN PERFORM ajouter_note_document('facture', gen_random_uuid(), 'x'); ok := false;
-  EXCEPTION WHEN others THEN RAISE NOTICE 'msg=%', SQLERRM; ok := SQLERRM = 'Facture introuvable.'; END;
+  EXCEPTION WHEN others THEN ok := SQLERRM = 'Facture introuvable.'; END;
   ASSERT ok, 'facture inexistante';
   BEGIN PERFORM ajouter_note_document('facture', v_facture, '   '); ok := false;
   EXCEPTION WHEN others THEN ok := SQLERRM = 'La note est vide.'; END;
@@ -45,6 +46,7 @@ BEGIN
 
   ASSERT NOT has_table_privilege('authenticated','public.document_notes','SELECT,INSERT'), 'aucun accès direct authenticated';
   ASSERT NOT has_table_privilege('anon','public.document_notes','SELECT'), 'aucun accès direct anon';
+  ASSERT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname='trg_document_notes_append_only'), 'trigger append-only';
   RAISE NOTICE 'document_notes : tous les contrôles passent';
 END $$;
 ROLLBACK;
