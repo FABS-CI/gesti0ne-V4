@@ -498,6 +498,13 @@
       "when": 1792143637379,
       "tag": "0070_document_timeline_facture",
       "breakpoints": true
+    },
+    {
+      "idx": 71,
+      "version": "7",
+      "when": 1792159244399,
+      "tag": "0071_document_notes",
+      "breakpoints": true
     }
   ]
 }
