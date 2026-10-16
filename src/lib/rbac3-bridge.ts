@@ -108,6 +108,7 @@ export const RBAC3_ACTION_TO_ACTIONS: Record<string, string[]> = {
   annuler: ["annuler"],
   imprimer: ["imprimer", "telecharger"],
   exporter: ["exporter_pdf", "exporter_excel", "telecharger"],
+  noter: ["noter"],
 };
 
 /**

@@ -31,6 +31,7 @@ const CRITICAL_RPCS = [
   "annuler_specimen",
   "annuler_transfert",
   "executer_cloture_exercice",
+  "ajouter_note_document",
 ];
 
 const files = execSync(
