@@ -8681,6 +8681,16 @@ export type Database = {
         Args: { _bl_id: string; _motif: string }
         Returns: undefined
       }
+      document_timeline: {
+        Args: { _id: string; _type: string }
+        Returns: {
+          actor_name: string
+          kind: string
+          label: string
+          occurred_at: string
+          ref: string
+        }[]
+      }
       enregistrer_approvisionnement: {
         Args: { _payload: Json }
         Returns: {
