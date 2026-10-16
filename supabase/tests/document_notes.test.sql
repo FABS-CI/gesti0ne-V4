@@ -23,7 +23,7 @@ BEGIN
 
   PERFORM set_config('request.jwt.claims', json_build_object('sub', v_noter, 'role','authenticated')::text, true);
   BEGIN PERFORM ajouter_note_document('facture', gen_random_uuid(), 'x'); ok := false;
-  EXCEPTION WHEN others THEN ok := SQLERRM = 'Facture introuvable.'; END;
+  EXCEPTION WHEN others THEN RAISE NOTICE 'msg=%', SQLERRM; ok := SQLERRM = 'Facture introuvable.'; END;
   ASSERT ok, 'facture inexistante';
   BEGIN PERFORM ajouter_note_document('facture', v_facture, '   '); ok := false;
   EXCEPTION WHEN others THEN ok := SQLERRM = 'La note est vide.'; END;
