@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Can } from "@/components/rbac/Can";
 import { formatDocumentReference } from "@/lib/document-reference";
-import { timelineKindLabel, type TimelineEvent } from "@/lib/document-timeline";
+import { humanizeTimelineLabel, timelineKindLabel, type TimelineEvent } from "@/lib/document-timeline";
 
 const dtf = new Intl.DateTimeFormat("fr-FR", {
   dateStyle: "short",
