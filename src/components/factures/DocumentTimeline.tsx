@@ -128,7 +128,7 @@ export function DocumentTimeline(
                   </div>
                 ) : (
                   <div className="flex flex-wrap items-baseline gap-x-2 text-sm">
-                    <span className="font-medium">{e.label}</span>
+                    <span className="font-medium">{humanizeTimelineLabel(e.label)}</span>
                     {e.ref && (
                       <span className="font-mono text-xs text-muted-foreground">
                         {formatDocumentReference(e.ref)}
