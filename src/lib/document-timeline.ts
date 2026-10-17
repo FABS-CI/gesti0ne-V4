@@ -19,6 +19,11 @@ const KIND_LABEL: Record<string, string> = {
   colis: "Colis",
   livraison: "Livraison",
   note: "Note",
+  etape: "Étape",
+  lien: "Document lié",
+  repartition: "Répartition",
+  renommage: "Renommage",
+  interaction: "Contact",
 };
 
 /** Libellé métier d'un type d'événement ; type inconnu affiché « Autre ». */
