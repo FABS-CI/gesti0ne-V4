@@ -519,6 +519,13 @@
       "when": 1792234745250,
       "tag": "0073_document_timeline_autres_documents",
       "breakpoints": true
+    },
+    {
+      "idx": 74,
+      "version": "7",
+      "when": 1792234875453,
+      "tag": "0074_statut_libelle_attente_validation",
+      "breakpoints": true
     }
   ]
 }
