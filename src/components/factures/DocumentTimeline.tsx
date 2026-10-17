@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Can } from "@/components/rbac/Can";
 import { formatDocumentReference } from "@/lib/document-reference";
-import { timelineKindLabel, type TimelineEvent } from "@/lib/document-timeline";
+import { humanizeTimelineLabel, timelineKindLabel, type TimelineEvent } from "@/lib/document-timeline";
 
 const dtf = new Intl.DateTimeFormat("fr-FR", {
   dateStyle: "short",
@@ -128,7 +128,7 @@ export function DocumentTimeline(
                   </div>
                 ) : (
                   <div className="flex flex-wrap items-baseline gap-x-2 text-sm">
-                    <span className="font-medium">{e.label}</span>
+                    <span className="font-medium">{humanizeTimelineLabel(e.label)}</span>
                     {e.ref && (
                       <span className="font-mono text-xs text-muted-foreground">
                         {formatDocumentReference(e.ref)}
