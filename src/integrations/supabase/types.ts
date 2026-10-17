@@ -7943,6 +7943,10 @@ export type Database = {
       }
       _current_user_display_name: { Args: never; Returns: string }
       _delete_ecriture_piece: { Args: { _piece: string }; Returns: undefined }
+      _facture_diff_label: {
+        Args: { n: Json; o: Json; prix: boolean }
+        Returns: string
+      }
       _journal_id: { Args: { _code: string }; Returns: string }
       _next_ref: {
         Args: { _col: string; _prefix: string; _table: unknown }
