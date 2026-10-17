@@ -1,3 +1,4 @@
+import { DocumentTimeline } from "@/components/factures/DocumentTimeline";
 import { formatPercent } from "@/lib/format";
 import { PageHeader } from "@/components/common/PageHeader";
 import { formatDocumentReference } from "@/lib/document-reference";
@@ -366,6 +367,7 @@ function ProformaDetailPage() {
           </CardContent>
         </Card>
       )}
+      <DocumentTimeline type="proforma" id={proformaId} />
     </div>
   );
 }

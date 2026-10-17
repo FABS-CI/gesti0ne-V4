@@ -1,3 +1,4 @@
+import { DocumentTimeline } from "@/components/factures/DocumentTimeline";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -357,6 +358,7 @@ function PaiementDetailPage() {
           </CardContent>
         </Card>
       )}
+      <DocumentTimeline type="paiement" id={paiementId} />
     </div>
   );
 }
