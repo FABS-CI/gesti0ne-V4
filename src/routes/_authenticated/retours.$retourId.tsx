@@ -1,3 +1,4 @@
+import { DocumentTimeline } from "@/components/factures/DocumentTimeline";
 import { PageHeader } from "@/components/common/PageHeader";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -417,6 +418,7 @@ function RetourDetailPage() {
           onDone={invalidate}
         />
       )}
+      <DocumentTimeline type="retour" id={retourId} />
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { DocumentTimeline } from "@/components/factures/DocumentTimeline";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
@@ -296,6 +297,7 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
             Avoirs ({counts.avoirs})
           </TabsTrigger>
           <TabsTrigger value="stats">Statistiques</TabsTrigger>
+          <TabsTrigger value="historique">Historique</TabsTrigger>
           <TabsTrigger value="audit">Audit</TabsTrigger>
         </TabsList>
 
@@ -349,6 +351,9 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
           </Section>
         </TabsContent>
 
+        <TabsContent value="historique">
+          <DocumentTimeline type="client" id={clientId} />
+        </TabsContent>
         <TabsContent value="audit" className="space-y-3">
           <ClientAuditTab clientId={clientId} />
         </TabsContent>

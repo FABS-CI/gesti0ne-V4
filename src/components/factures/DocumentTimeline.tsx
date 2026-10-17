@@ -69,16 +69,22 @@ function NoteForm({ factureId }: { factureId: string }) {
   );
 }
 
-export function DocumentTimeline({ factureId }: { factureId: string }) {
+export type TimelineDocType = "facture" | "commande" | "paiement" | "client" | "retour" | "proforma";
+
+export function DocumentTimeline(
+  props: { factureId: string } | { type: TimelineDocType; id: string },
+) {
+  const type: TimelineDocType = "factureId" in props ? "facture" : props.type;
+  const factureId = "factureId" in props ? props.factureId : props.id;
   const {
     data = [],
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["document-timeline", "facture", factureId],
+    queryKey: ["document-timeline", type, factureId],
     queryFn: async (): Promise<TimelineEvent[]> => {
       const { data, error } = await callRpc("document_timeline", {
-        _type: "facture",
+        _type: type,
         _id: factureId,
       });
       if (error) throw error;
@@ -92,9 +98,11 @@ export function DocumentTimeline({ factureId }: { factureId: string }) {
         <CardTitle className="text-base">Historique</CardTitle>
       </CardHeader>
       <CardContent>
-        <Can permission="factures.noter">
-          <NoteForm factureId={factureId} />
-        </Can>
+        {type === "facture" && (
+          <Can permission="factures.noter">
+            <NoteForm factureId={factureId} />
+          </Can>
+        )}
         {isLoading ? (
           <div className="space-y-2">
             <Skeleton className="h-5 w-full" />

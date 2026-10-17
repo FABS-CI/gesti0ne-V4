@@ -1,3 +1,4 @@
+import { DocumentTimeline } from "@/components/factures/DocumentTimeline";
 import { PageHeader } from "@/components/common/PageHeader";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -377,6 +378,7 @@ function CommandeDetailPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <DocumentTimeline type="commande" id={commandeId} />
     </div>
   );
 }
