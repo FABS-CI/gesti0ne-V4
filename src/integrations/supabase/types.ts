@@ -7943,10 +7943,15 @@ export type Database = {
       }
       _current_user_display_name: { Args: never; Returns: string }
       _delete_ecriture_piece: { Args: { _piece: string }; Returns: undefined }
+      _doc_diff_label: {
+        Args: { fields: Json; n: Json; o: Json; prix: boolean }
+        Returns: string
+      }
       _facture_diff_label: {
         Args: { n: Json; o: Json; prix: boolean }
         Returns: string
       }
+      _fmt_fcfa: { Args: { v: string }; Returns: string }
       _journal_id: { Args: { _code: string }; Returns: string }
       _next_ref: {
         Args: { _col: string; _prefix: string; _table: unknown }
@@ -8004,6 +8009,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      _statut_libelle: { Args: { v: string }; Returns: string }
       affecter_colis_tournee: {
         Args: { _colis_ids: string[]; _tournee_id: string }
         Returns: Json
