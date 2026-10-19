@@ -1,3 +1,4 @@
+import { ClientLink } from "@/components/common/ClientLink";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -126,7 +127,7 @@ export function FNEFacturesTab() {
                     }
                   >
                     <TableCell className="font-mono text-xs">{formatDocumentReference(r.reference)}</TableCell>
-                    <TableCell>{r.client_nom ?? "—"}</TableCell>
+                    <TableCell><ClientLink clientId={(r as { client_id?: string | null }).client_id} nom={r.client_nom} /></TableCell>
                     <TableCell className="font-mono text-xs">{r.code_dgi ?? "—"}</TableCell>
                     <TableCell className="text-right">
                       {formatFCFA(Number(r.montant ?? 0))}

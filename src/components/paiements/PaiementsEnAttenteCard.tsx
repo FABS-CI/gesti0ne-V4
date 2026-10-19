@@ -1,3 +1,4 @@
+import { ClientLink } from "@/components/common/ClientLink";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { useState } from "react";
 import { Check, X, Clock } from "lucide-react";
@@ -72,7 +73,7 @@ export function PaiementsEnAttenteCard({
                   <TableRow key={p.paiement_id}>
                     <TableCell className="font-medium">{formatDocumentReference(p.reference)}</TableCell>
                     <TableCell>{formatDate(p.date_paiement)}</TableCell>
-                    <TableCell>{p.client_nom ?? "—"}</TableCell>
+                    <TableCell><ClientLink clientId={(p as { client_id?: string | null }).client_id} nom={p.client_nom} /></TableCell>
                     <TableCell>{MODE_PAIEMENT_LABEL[p.mode_paiement] ?? p.mode_paiement}</TableCell>
                     <TableCell className="text-right font-medium">{formatFCFA(Number(p.montant))}</TableCell>
                     <TableCell className="text-right">

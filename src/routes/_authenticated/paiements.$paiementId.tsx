@@ -1,3 +1,4 @@
+import { ClientLink } from "@/components/common/ClientLink";
 import { DocumentTimeline } from "@/components/factures/DocumentTimeline";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -297,7 +298,7 @@ function PaiementDetailPage() {
               <User className="h-4 w-4" /> Client
             </CardTitle>
           </CardHeader>
-          <CardContent className="font-medium">{paiement.client_nom ?? "—"}</CardContent>
+          <CardContent className="font-medium"><ClientLink clientId={(paiement as { client_id?: string | null }).client_id} nom={paiement.client_nom} /></CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
