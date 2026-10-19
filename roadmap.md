@@ -85,3 +85,8 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [ ] Refonte portrait et export complet, sans changer les autres documents
 - [ ] Tests purs et contrôles visuels avant/après (1, 25, 120 produits)
 - [ ] Rapport de livraison et propositions de corrections non exécutées
+
+## Liens clients et produits (file-80)
+- [x] Liens clients : paiements, DGI, livraisons, rapport transport, fiche facture
+- [x] Liens produits : lignes de la fiche facture
+- [x] Tests attachClientIds (lots de 200, client introuvable)
