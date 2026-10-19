@@ -1,3 +1,4 @@
+import { attachClientIds } from "@/lib/facture-client-ids";
 import { pgSafe } from "@/lib/postgrest-filter";
 import { supabase } from "@/integrations/supabase/client";
 import { callRpc } from "@/lib/rpc";
@@ -29,6 +30,7 @@ export type Paiement = {
   paiement_id: string;
   reference: string;
   facture_id: string | null;
+  client_id?: string | null;
   client_nom: string | null;
   date_paiement: string;
   montant: number;
@@ -63,7 +65,7 @@ export async function listPaiements(
   query = query.order("created_at", { ascending: false });
   const { data, error } = await query;
   if (error) throw error;
-  return (data ?? []) as Paiement[];
+  return attachClientIds((data ?? []) as Paiement[]);
 }
 
 export async function listFacturesOptions() {
@@ -111,7 +113,9 @@ export async function getPaiement(id: string) {
     .eq("paiement_id", id)
     .maybeSingle();
   if (error) throw error;
-  return data as Paiement | null;
+  if (!data) return null;
+  const [row] = await attachClientIds([data as Paiement]);
+  return row ?? null;
 }
 
 // ===== Workflow officiel =====
@@ -279,6 +283,7 @@ export type PaiementAnnulationAudit = {
   created_at: string;
   /** Libellés lisibles résolus côté client (référence paiement, nom utilisateur). */
   paiement_reference?: string | null;
+  client_id?: string | null;
   client_nom?: string | null;
   annule_par_nom?: string | null;
 };
@@ -310,7 +315,7 @@ async function enrichirAnnulations(rows: PaiementAnnulationAudit[]) {
   const paiements = new Map(paiementsData.map((p) => [p.paiement_id, p]));
   const profils = new Map(profilsData.map((p) => [p.id, p]));
 
-  return rows.map((r) => {
+  return attachClientIds(rows.map((r) => {
     const p = paiements.get(r.paiement_id);
     const u = r.annule_par ? profils.get(r.annule_par) : undefined;
     return {
@@ -319,7 +324,7 @@ async function enrichirAnnulations(rows: PaiementAnnulationAudit[]) {
       client_nom: p?.client_nom ?? null,
       annule_par_nom: u?.nom_complet || u?.email || null,
     };
-  });
+  }));
 }
 
 export async function listPaiementAnnulationsAudit(q?: string) {

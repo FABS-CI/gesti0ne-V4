@@ -1,5 +1,10 @@
 # Audit ERP — module par module
 
+## Liens clients et produits (file-80)
+- [ ] Enrichir les lectures avec les identifiants réels, par lots de 200
+- [ ] Liens sur les écrans internes demandés, sans modifier PDF/public/sélecteurs
+- [ ] Tests du repli sans identifiant et clic sans propagation, navigation réelle
+
 Livrable par module : rapport (gravité) + correction des problèmes critiques.
 
 ## Modules

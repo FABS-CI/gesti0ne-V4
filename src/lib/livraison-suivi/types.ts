@@ -72,6 +72,7 @@ export type LivSuiviCommande = {
   nb_cartons?: number | null;
   commande?: {
     reference: string;
+    client_id?: string | null;
     client_nom: string | null;
     ville: string | null;
     telephone: string | null;
