@@ -1,3 +1,4 @@
+import { ClientLink } from "@/components/common/ClientLink";
 import { COMMANDE_REF_SEARCH_DEFAULTS } from "@/lib/route-schemas";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
@@ -125,7 +126,7 @@ export function LivraisonsTable({ rows, isLoading, onAdvance }: Props) {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="text-sm">{r.commande?.client_nom ?? "—"}</div>
+                      <div className="text-sm"><ClientLink clientId={r.commande?.client_id} nom={r.commande?.client_nom} /></div>
                       <div className="text-xs text-muted-foreground">{r.commande?.ville ?? ""}</div>
                     </TableCell>
                     <TableCell>

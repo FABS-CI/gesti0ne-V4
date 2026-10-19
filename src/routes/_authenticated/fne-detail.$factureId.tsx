@@ -1,3 +1,4 @@
+import { ClientLink } from "@/components/common/ClientLink";
 import { askConfirm } from "@/components/common/GlobalConfirm";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -179,7 +180,7 @@ function FNEDetail() {
             </Badge>
             <dl className="grid grid-cols-3 gap-2 text-sm mt-4">
               <dt className="text-muted-foreground">Client</dt>
-              <dd className="col-span-2">{f.client_nom}</dd>
+              <dd className="col-span-2"><ClientLink clientId={(f as { client_id?: string | null }).client_id} nom={f.client_nom} /></dd>
               <dt className="text-muted-foreground">Montant</dt>
               <dd className="col-span-2">{formatFCFA(Number(f.montant ?? 0))}</dd>
               <dt className="text-muted-foreground">Template</dt>

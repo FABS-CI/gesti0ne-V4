@@ -1,3 +1,4 @@
+import { ProduitLink } from "@/components/common/ProduitLink";
 import { PageHeader } from "@/components/common/PageHeader";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -354,7 +355,7 @@ function FactureDetailPage() {
               ) : (
                 lignes.map((l: any) => (
                   <TableRow key={l.ligne_id}>
-                    <TableCell>{l.designation}</TableCell>
+                    <TableCell><ProduitLink produitId={l.produit_id} nom={l.designation} /></TableCell>
                     <TableCell className="text-right text-destructive">
                       {l.remise_pct ? `${l.remise_pct} %` : "—"}
                     </TableCell>
