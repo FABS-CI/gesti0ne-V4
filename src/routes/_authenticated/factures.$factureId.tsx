@@ -1,3 +1,4 @@
+import { ClientLink } from "@/components/common/ClientLink";
 import { ProduitLink } from "@/components/common/ProduitLink";
 import { PageHeader } from "@/components/common/PageHeader";
 import { formatDocumentReference } from "@/lib/document-reference";
@@ -288,7 +289,7 @@ function FactureDetailPage() {
               <User className="h-4 w-4" /> Client
             </CardTitle>
           </CardHeader>
-          <CardContent className="font-medium">{facture.client_nom ?? "—"}</CardContent>
+          <CardContent className="font-medium"><ClientLink clientId={facture.client_id} nom={facture.client_nom} /></CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
