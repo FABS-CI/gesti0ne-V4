@@ -1,3 +1,4 @@
+import { formatNumber } from "@/lib/format";
 import { useEffect, useState, type KeyboardEvent, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Columns3 } from "lucide-react";
@@ -45,8 +46,8 @@ type Props = {
   emptyAction?: ReactNode;
 };
 
-const fmtN = (n: number) => Number(n ?? 0).toLocaleString("fr-FR").replace(/\u202f|\u00a0/g, " ");
-const fmtPct = (n: number) => `${Number(n ?? 0).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} %`;
+const fmtN = (n: number) => formatNumber(Number(n ?? 0));
+const fmtPct = (n: number) => `${formatNumber(Number(n ?? 0), 1).replace(/,0$/, "")} %`;
 
 const LABEL: Record<ColId, string> = {
   produit: "Produit",

@@ -1,8 +1,9 @@
+import { formatNumber } from "@/lib/format";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-const fmt = (n: number) => n.toLocaleString("fr-FR").replace(/\u202f|\u00a0/g, " ");
+const fmt = (n: number) => formatNumber(n);
 
 /**
  * Pagination partagée pour les grosses listes (contrôle serveur page/pageSize).
