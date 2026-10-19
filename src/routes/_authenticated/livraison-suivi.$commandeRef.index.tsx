@@ -1,3 +1,4 @@
+import { ClientLink } from "@/components/common/ClientLink";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -242,7 +243,7 @@ function SuiviDetail() {
         <div>
           <h1 className="ds-page-title">Suivi — {formatDocumentReference(suivi.commande?.reference)}</h1>
           <p className="text-sm text-muted-foreground">
-            {suivi.commande?.client_nom} · {suivi.commande?.ville ?? ""}
+            <ClientLink clientId={suivi.commande?.client_id} nom={suivi.commande?.client_nom} /> · {suivi.commande?.ville ?? ""}
           </p>
         </div>
         <div className="ml-auto">

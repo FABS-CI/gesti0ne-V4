@@ -1,3 +1,4 @@
+import { ClientLink } from "@/components/common/ClientLink";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -285,7 +286,7 @@ function RapportTransportPage() {
                   ) : (
                     d.clients.map((c) => (
                       <TableRow key={`${c.client_id}-${c.client_nom}`}>
-                        <TableCell>{c.client_nom}</TableCell>
+                        <TableCell><ClientLink clientId={c.client_id} nom={c.client_nom} /></TableCell>
                         <TableCell className="text-right">{c.nb}</TableCell>
                         <TableCell className="text-right font-medium">
                           {formatFCFA(c.total)}
@@ -326,7 +327,7 @@ function RapportTransportPage() {
                       <TableRow key={`${l.facture_id ?? i}`}>
                         <TableCell className="font-medium">{l.reference ?? NON_RENSEIGNE}</TableCell>
                         <TableCell>{l.date_facture ? frDate(l.date_facture) : NON_RENSEIGNE}</TableCell>
-                        <TableCell>{l.client_nom ?? NON_RENSEIGNE}</TableCell>
+                        <TableCell><ClientLink clientId={l.client_id} nom={l.client_nom ?? NON_RENSEIGNE} /></TableCell>
                         <TableCell>
                           {TYPE_MAJ[l.type_frais_transport ?? ""] ?? NON_RENSEIGNE}
                         </TableCell>
