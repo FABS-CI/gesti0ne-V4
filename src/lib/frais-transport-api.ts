@@ -1,3 +1,4 @@
+import { attachClientIds } from "@/lib/facture-client-ids";
 import { supabase } from "@/integrations/supabase/client";
 
 export type FraisTransportFilters = {
@@ -22,6 +23,7 @@ export type FraisTransportRapport = {
   periodes: { periode: string; livraison: number; expedition: number; total: number }[];
   clients: { client_id: string | null; client_nom: string; total: number; nb: number }[];
   lignes: {
+    client_id?: string | null;
     facture_id: string | null;
     reference: string | null;
     date_facture: string | null;
@@ -77,7 +79,7 @@ export async function getRapportFraisTransport(
     kpi: { ...EMPTY.kpi, ...(r.kpi ?? {}) },
     periodes: r.periodes ?? [],
     clients,
-    lignes,
+    lignes: await attachClientIds(lignes),
   };
 }
 

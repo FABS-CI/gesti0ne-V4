@@ -1,3 +1,4 @@
+import { attachClientIds } from "@/lib/facture-client-ids";
 import { supabase } from "@/integrations/supabase/client";
 import { loadFNESettings, isProductionReady } from "./settings";
 
@@ -19,7 +20,7 @@ export async function listFNEInvoices(params: { statut?: string; limit?: number 
   if (params.statut) q = q.eq("statut", params.statut);
   const { data, error } = await q;
   if (error) throw error;
-  return data ?? [];
+  return attachClientIds(data ?? []);
 }
 
 export async function getFNEInvoice(fneId: string) {
@@ -29,7 +30,8 @@ export async function getFNEInvoice(fneId: string) {
     .eq("fne_id", fneId)
     .single();
   if (error) throw error;
-  return data;
+  const [row] = await attachClientIds([data]);
+  return row;
 }
 
 export async function listFNELogs(limit = 200) {

@@ -4,6 +4,7 @@ export type VenteLigne = {
   ligne_id: string;
   commande_id: string;
   commande_reference: string | null;
+  client_id?: string | null;
   client_nom: string | null;
   date_commande: string | null;
   statut: string | null;
@@ -16,7 +17,7 @@ export async function getProduitVentes(produitId: string, limit = 50) {
   const { data, error } = await supabase
     .from("commande_lignes")
     .select(
-      "ligne_id, commande_id, quantite, prix_unitaire, total_ligne, commandes!inner(reference, client_nom, date_commande, statut)",
+      "ligne_id, commande_id, quantite, prix_unitaire, total_ligne, commandes!inner(reference, client_id, client_nom, date_commande, statut)",
     )
     .eq("produit_id", produitId)
     .order("created_at", { ascending: false })
@@ -26,6 +27,7 @@ export async function getProduitVentes(produitId: string, limit = 50) {
     ligne_id: row.ligne_id,
     commande_id: row.commande_id,
     commande_reference: row.commandes?.reference ?? null,
+    client_id: row.commandes?.client_id ?? null,
     client_nom: row.commandes?.client_nom ?? null,
     date_commande: row.commandes?.date_commande ?? null,
     statut: row.commandes?.statut ?? null,

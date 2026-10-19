@@ -1,3 +1,4 @@
+import { attachClientIds } from "@/lib/facture-client-ids";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,7 +29,7 @@ export function usePaiementsEnAttente(exerciceId?: string | null) {
       if (exerciceId) q.eq("exercice_id", exerciceId);
       const { data, error } = await q;
       if (error) throw error;
-      return (data ?? []) as Paiement[];
+      return attachClientIds((data ?? []) as Paiement[]);
     },
     staleTime: 30_000,
   });

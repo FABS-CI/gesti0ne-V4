@@ -253,7 +253,7 @@ export async function getFactureLignes(factureId: string) {
 
   const { data, error } = await supabase
     .from("commande_lignes")
-    .select("designation, quantite, prix_unitaire, total_ligne, remise_pct, montant_remise, total_ht_ligne, reference_produit, ligne_id")
+    .select("produit_id, designation, quantite, prix_unitaire, total_ligne, remise_pct, montant_remise, total_ht_ligne, reference_produit, ligne_id")
     .eq("commande_id", facture.commande_id);
 
   if (error) throw error;

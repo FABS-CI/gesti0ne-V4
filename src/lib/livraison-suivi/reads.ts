@@ -57,7 +57,7 @@ export async function listCommandesSuivi(opts?: {
   let q = supabase
     .from("livsuivi_commandes")
     .select(
-      "*, commande:commandes(reference, client_nom, ville, telephone, montant_total), tournee:tournees(tournee_id, reference, statut, date_tournee, chauffeur_nom, vehicule:vehicules(immatriculation))",
+      "*, commande:commandes(reference, client_id, client_nom, ville, telephone, montant_total), tournee:tournees(tournee_id, reference, statut, date_tournee, chauffeur_nom, vehicule:vehicules(immatriculation))",
     )
     .not("tournee_id", "is", null)
     .order("derniere_maj", { ascending: false });
@@ -142,7 +142,7 @@ export async function getSuiviByCommandeRef(ref: string) {
   const suiviRes = await supabase
     .from("livsuivi_commandes")
     .select(
-      "*, commande:commandes!inner(commande_id, reference, client_nom, ville, telephone, adresse, montant_total, depot:depots(nom)), tournee:tournees(tournee_id, reference, statut, date_tournee, chauffeur_nom, vehicule:vehicules(immatriculation))",
+      "*, commande:commandes!inner(commande_id, reference, client_id, client_nom, ville, telephone, adresse, montant_total, depot:depots(nom)), tournee:tournees(tournee_id, reference, statut, date_tournee, chauffeur_nom, vehicule:vehicules(immatriculation))",
     )
     .eq("commande.reference", ref)
     .limit(1)
@@ -153,6 +153,7 @@ export async function getSuiviByCommandeRef(ref: string) {
     commande: {
       commande_id: string;
       reference: string;
+      client_id?: string | null;
       client_nom: string | null;
       ville: string | null;
       telephone: string | null;
