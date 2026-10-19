@@ -1,3 +1,4 @@
+import { ClientLink } from "@/components/common/ClientLink";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
@@ -429,7 +430,7 @@ function PaiementsPage() {
                     <TableRow key={p.paiement_id}>
                       <TableCell className="font-mono text-xs">{formatDocumentReference(p.reference)}</TableCell>
                       <TableCell className="whitespace-nowrap">{formatDate(p.date_paiement)}</TableCell>
-                      <TableCell className="font-medium">{p.client_nom ?? "—"}</TableCell>
+                      <TableCell className="font-medium"><ClientLink clientId={(p as { client_id?: string | null }).client_id} nom={p.client_nom} /></TableCell>
                       <TableCell>
                         {MODE_PAIEMENT_LABEL[p.mode_paiement] ?? p.mode_paiement}
                       </TableCell>
