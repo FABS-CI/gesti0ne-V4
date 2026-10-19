@@ -1,4 +1,5 @@
 import { askConfirm } from "@/components/common/GlobalConfirm";
+import { ClientLink } from "@/components/common/ClientLink";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -319,7 +320,9 @@ function ComptaAuditPage() {
                   soldes.map((s) => (
                     <TableRow key={s.client_id}>
                       <TableCell className="font-medium">{s.reference}</TableCell>
-                      <TableCell>{s.nom}</TableCell>
+                      <TableCell>
+                        <ClientLink clientId={s.client_id} nom={s.nom} />
+                      </TableCell>
                       <TableCell className="text-right">
                         {formatFCFA(s.solde_enregistre)}
                       </TableCell>
