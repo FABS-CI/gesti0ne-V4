@@ -2,6 +2,7 @@ import { formatDocumentReference } from "@/lib/document-reference";
 import { FileDown, FileText, Loader2, Users, Eye, Wallet } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { EmptyState } from "@/components/common/EmptyState";
+import { ClientLink } from "@/components/common/ClientLink";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -64,7 +65,9 @@ export function EtatCompteTable({ clients, isLoading, busy, historiqueBusy, onPd
               return (
                 <TableRow key={c.client_id}>
                   <TableCell className="font-mono text-xs">{formatDocumentReference(c.reference)}</TableCell>
-                  <TableCell className="font-medium">{c.nom}</TableCell>
+                  <TableCell>
+                    <ClientLink clientId={c.client_id} nom={c.nom} />
+                  </TableCell>
                   <TableCell
                     className="text-right font-semibold"
                     style={{ color: solde > 0 ? "#EF4444" : "#10B981" }}
