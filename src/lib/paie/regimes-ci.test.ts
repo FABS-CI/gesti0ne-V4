@@ -29,7 +29,7 @@ describe("REGIME_2022 — août 2022", () => {
   it("ITS 1 702", () => expect(b.its).toBe(1702));
   it("CN 942", () => expect(b.cn).toBe(942));
   it("CR 8 938", () => expect(b.cr).toBe(8938));
-  it("net 158 100 (IGR saisi 1 693)", () => expect(b.netAPayer).toBe(158100));
+  it("net 157 600 (IGR saisi 1 693, CMU 1 000)", () => expect(b.netAPayer).toBe(157600));
   it.todo("IGR 1 693 calculé par formule");
 });
 
