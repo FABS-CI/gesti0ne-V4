@@ -9,6 +9,7 @@ import {
   bulletinFileName,
   ENTREPRISE_FABS,
 } from "@/lib/pdf/bulletinPaieCI";
+import { construireDonneesPdf, type BulletinStocke, type LigneStockee } from "@/lib/paie/bulletin-pdf-data";
 import { usePdfDownload } from "@/hooks/use-pdf-download";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -62,6 +63,33 @@ function BulletinDetailPage() {
     queryFn: () => getBulletin(bulletinId),
   });
 
+  const { data: lignes } = useQuery({
+    queryKey: ["bulletin-lignes", bulletinId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("bulletin_lignes")
+        .select("numero_rubrique,designation,libelle,nombre,base,taux,gain,retenue,bloc,ordre")
+        .eq("bulletin_id", bulletinId)
+        .order("ordre");
+      if (error) throw error;
+      return (data ?? []) as LigneStockee[];
+    },
+  });
+  const employeId = (bulletin as { employe_id?: string | null } | undefined)?.employe_id;
+  const { data: employe } = useQuery({
+    queryKey: ["bulletin-employe", employeId],
+    enabled: !!employeId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("employes")
+        .select("matricule,poste,categorie,numero_cnps,date_embauche,departement")
+        .eq("employe_id", employeId!)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
   if (isLoading) return <Skeleton className="h-64 w-full" />;
   if (!bulletin)
     return (
@@ -86,46 +114,22 @@ function BulletinDetailPage() {
           <>
             {(() => {
               const pst = pdf.getState(bulletin.bulletin_id);
-              const reference = `BP|${bulletin.bulletin_id.slice(0, 8)}`;
-              const brut = Number(bulletin.salaire_brut);
-              const ret = Number(bulletin.retenues);
-              const net = Number(bulletin.salaire_net);
+              const data = construireDonneesPdf(
+                bulletin as unknown as BulletinStocke,
+                lignes ?? [],
+                employe ?? null,
+                ENTREPRISE_FABS,
+              );
               return (
                 <Button
                   size="sm"
                   variant="outline"
-                  disabled={pst.loading}
+                  disabled={pst.loading || !lignes?.length}
                   onClick={() =>
                     pdf.download(
                       bulletin.bulletin_id,
-                      () =>
-                        Promise.resolve(
-                          generateBulletinPaieCIPDF({
-                            reference,
-                            entreprise: ENTREPRISE_FABS,
-                            salarie: {
-                              matricule: "—",
-                              nomComplet: bulletin.employe_nom,
-                            },
-                            periode: {
-                              periode: bulletin.periode,
-                              mois: bulletin.periode,
-                              dateEdition: bulletin.created_at,
-                            },
-                            gains: [{ libelle: "Salaire brut", montant: brut }],
-                            retenues: [
-                              { libelle: "Retenues (cotisations & impôts)", montant: ret },
-                            ],
-                            totaux: {
-                              totalGains: brut,
-                              totalRetenues: ret,
-                              salaireBrut: brut,
-                              salaireImposable: brut,
-                              netAPayer: net,
-                            },
-                          }),
-                        ),
-                      bulletinFileName(reference, bulletin.employe_nom),
+                      () => Promise.resolve(generateBulletinPaieCIPDF(data)),
+                      bulletinFileName(data.reference, bulletin.employe_nom),
                     )
                   }
                 >
@@ -183,6 +187,43 @@ function BulletinDetailPage() {
           </CardContent>
         </Card>
       </div>
+
+      {!!lignes?.length && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Lignes du bulletin</CardTitle>
+          </CardHeader>
+          <CardContent className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="text-muted-foreground">
+                <tr className="border-b text-left">
+                  <th className="py-1 pr-2">N°</th>
+                  <th className="py-1 pr-2">Désignation</th>
+                  <th className="py-1 pr-2 text-right">Base</th>
+                  <th className="py-1 pr-2 text-right">Taux</th>
+                  <th className="py-1 pr-2 text-right">Gains</th>
+                  <th className="py-1 text-right">Retenues</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lignes.map((l) => (
+                  <tr key={l.ordre} className={`border-b ${l.bloc === "patronal" ? "text-muted-foreground" : ""}`}>
+                    <td className="py-1 pr-2">{l.numero_rubrique}</td>
+                    <td className="py-1 pr-2">
+                      {l.designation ?? l.libelle}
+                      {l.bloc === "patronal" ? " (employeur)" : ""}
+                    </td>
+                    <td className="py-1 pr-2 text-right">{l.base != null ? formatFCFA(l.base, false) : ""}</td>
+                    <td className="py-1 pr-2 text-right">{l.taux != null ? `${l.taux} %` : ""}</td>
+                    <td className="py-1 pr-2 text-right">{l.gain ? formatFCFA(l.gain, false) : ""}</td>
+                    <td className="py-1 text-right">{l.retenue ? formatFCFA(l.retenue, false) : ""}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>
