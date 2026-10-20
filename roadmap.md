@@ -94,7 +94,7 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 ## Refonte paie (régime ITS 2024)
 - [x] Moteur de calcul régimes 2024/2022 + tests de référence
 - [x] Migration (régimes, champs employés/bulletins, lignes) — reste: coordonnées entreprise (raison sociale, CNPS 366145, cachet)
-- [ ] Calcul côté serveur à l'enregistrement, validation directe (sans approbation)
+- [x] Calcul côté serveur à l'enregistrement, validation directe (sans approbation)
 - [ ] Saisie « Nouveau bulletin » avec aperçu
 - [ ] PDF modèle FABS depuis les lignes enregistrées
 - [ ] Déclarations CNPS/ITS depuis les lignes

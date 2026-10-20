@@ -31,3 +31,4 @@
 - Internal document notes (`document_notes`) are append-only (trigger blocks UPDATE/DELETE), have no direct table grants, are written only via `ajouter_note_document` (`factures.noter`) and read only via `document_timeline`; never expose them in PDFs, emails, QR pages or client exports.
 - Document history uses only permission-checked `document_timeline(_type, _id)` and DocumentTimeline; no-op updates are hidden to avoid noise.
 - Entity names use ClientLink/ProduitLink with real IDs; attachClientIds batches invoice lookups by 200, keeping missing IDs plain text and stopping row clicks.
+- Payslips are computed only by the `paie_enregistrer_bulletin` RPC (regime chosen by period end date, rates from `paie_regimes`) and stored line by line in `bulletin_lignes`; the client sends inputs only and PDFs read stored lines, so an issued payslip never changes. `src/lib/paie/regimes-ci.ts` mirrors the engine for live preview and tests.
