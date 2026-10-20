@@ -37,3 +37,12 @@ it("régime selon date de fin", () => {
   expect(regimePourDate("2023-12-31")).toBe("REGIME_2022");
   expect(regimePourDate("2024-01-31")).toBe("REGIME_2024");
 });
+
+describe("IGR 2022 = barème ITS 2024 − RICF", () => {
+  it("150 000 avec 1 part donne 12 000", () => {
+    expect(igr2022(150000, 1)).toBe(12000);
+  });
+  it("ne descend jamais sous 0", () => {
+    expect(igr2022(141872, 3)).toBe(0);
+  });
+});
