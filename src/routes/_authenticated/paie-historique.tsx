@@ -11,7 +11,6 @@ const historiqueConfig = {
   subtitle: "Tous les bulletins enregistrés",
   icon: History,
   newHref: undefined,
-  newLabel: undefined,
 };
 
 export const Route = createFileRoute("/_authenticated/paie-historique")({
