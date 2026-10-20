@@ -48,10 +48,12 @@ export function AdvancedSearchBar({
   fields,
   value,
   onChange,
+  labels,
 }: {
   fields: AdvancedFilterField[];
   value: AdvancedFilters;
   onChange: (v: AdvancedFilters) => void;
+  labels?: Partial<Record<keyof AdvancedFilters, string>>;
 }) {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<AdvancedFilters>(value);
