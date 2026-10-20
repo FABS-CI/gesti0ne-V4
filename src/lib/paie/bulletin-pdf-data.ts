@@ -1,6 +1,6 @@
 // Construit les données du PDF bulletin uniquement à partir des lignes enregistrées
 // (bulletin_lignes) : aucun recalcul, pour qu'un bulletin émis ne change jamais.
-import type { BulletinCIData, BulletinLigne, BulletinEntreprise } from "@/lib/pdf/bulletinPaieCI";
+import type { BulletinCIData, BulletinLigne, BulletinEntreprise, BulletinCumulsAnnuels } from "@/lib/pdf/bulletinPaieCI";
 
 export interface LigneStockee {
   numero_rubrique: string | null;
@@ -44,22 +44,55 @@ export interface EmployeInfo {
   numero_cnps?: string | null;
   date_embauche?: string | null;
   departement?: string | null;
+  adresse?: string | null;
+}
+
+/** Bulletin de l'année civile (mois courant inclus) servant aux cumuls. */
+export interface BulletinCumul {
+  brut_imposable: number | null;
+  jours_travailles: number | null;
+  lignes: Array<Pick<LigneStockee, "numero_rubrique" | "retenue">>;
+}
+
+/** Cumuls annuels calculés uniquement depuis les bulletins enregistrés. */
+export function calculerCumuls(bulletins: BulletinCumul[]): BulletinCumulsAnnuels {
+  const sum = (code: string) =>
+    bulletins.reduce(
+      (s, b) => s + b.lignes.filter((l) => l.numero_rubrique === code).reduce((t, l) => t + n(l.retenue), 0),
+      0,
+    );
+  const cr = sum("469");
+  const cn = sum("420");
+  return {
+    cr,
+    cn,
+    crn: cr + cn,
+    its: sum("413"),
+    igr: sum("431"),
+    brutImposable: bulletins.reduce((s, b) => s + n(b.brut_imposable), 0),
+    jrsTravailles: bulletins.reduce((s, b) => s + n(b.jours_travailles), 0),
+  };
 }
 
 const n = (v: number | null | undefined) => Number(v ?? 0) || 0;
 
 export function lignesPourPdf(lignes: LigneStockee[]) {
   const sorted = [...lignes].sort((a, b) => a.ordre - b.ordre);
-  const toLigne = (l: LigneStockee, imposable: boolean): BulletinLigne => ({
-    code: l.numero_rubrique ?? undefined,
-    libelle: l.designation ?? l.libelle ?? "",
-    nbre: l.nombre,
-    base: l.base,
-    taux: l.taux,
-    gain: n(l.gain),
-    retenue: n(l.retenue),
-    imposable,
-  });
+  // Une retenue garde `retenue: 0` (ex. ITS annulé par la RICF) pour rester
+  // dans le bloc des retenues ; un gain n'a pas de champ retenue.
+  const toLigne = (l: LigneStockee, imposable: boolean): BulletinLigne => {
+    const estRetenue = l.bloc === "retenue" || (n(l.retenue) !== 0 && n(l.gain) === 0);
+    return {
+      code: l.numero_rubrique ?? undefined,
+      libelle: l.designation ?? l.libelle ?? "",
+      nbre: l.nombre,
+      base: l.base,
+      taux: l.taux,
+      gain: estRetenue ? null : n(l.gain),
+      retenue: estRetenue ? n(l.retenue) : null,
+      imposable,
+    };
+  };
   return {
     lignes: sorted
       .filter((l) => l.bloc !== "patronal")
@@ -73,6 +106,7 @@ export function construireDonneesPdf(
   lignes: LigneStockee[],
   emp: EmployeInfo | null,
   entreprise: BulletinEntreprise,
+  cumuls?: BulletinCumulsAnnuels,
 ): BulletinCIData {
   const { lignes: ls, patronales } = lignesPourPdf(lignes);
   const totalGains = ls.reduce((s, l) => s + n(l.gain), 0);
@@ -90,6 +124,7 @@ export function construireDonneesPdf(
       departement: emp?.departement ?? undefined,
       numCnps: emp?.numero_cnps ?? undefined,
       dateEmbauche: emp?.date_embauche ?? undefined,
+      adresse: emp?.adresse ?? undefined,
       parts: b.parts ?? undefined,
     },
     periode: {
@@ -111,6 +146,7 @@ export function construireDonneesPdf(
       totalAutresRetenues: n(b.total_autres_retenues),
       coutSalarial: b.cout_salarial ?? undefined,
     },
+    cumuls,
     paiement: { date: b.date_paiement ?? undefined, mode: b.mode_paiement ?? undefined },
   };
 }

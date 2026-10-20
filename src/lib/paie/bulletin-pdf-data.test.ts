@@ -30,3 +30,24 @@ describe("PDF bulletin depuis lignes enregistrées", () => {
     expect(d.lignes!.some((l) => l.libelle.includes("patronale"))).toBe(false);
   });
 });
+
+import { calculerCumuls, lignesPourPdf as lpp } from "./bulletin-pdf-data";
+describe("cumuls annuels et lignes de retenue", () => {
+  it("additionne CR, ITS, brut et jours depuis les bulletins enregistrés", () => {
+    const c = calculerCumuls([
+      { brut_imposable: 141872, jours_travailles: 30, lignes: [{ numero_rubrique: "469", retenue: 8938 }, { numero_rubrique: "413", retenue: 0 }] },
+      { brut_imposable: 141872, jours_travailles: 30, lignes: [{ numero_rubrique: "469", retenue: 8938 }] },
+    ]);
+    expect(c.cr).toBe(17876);
+    expect(c.its).toBe(0);
+    expect(c.brutImposable).toBe(283744);
+    expect(c.jrsTravailles).toBe(60);
+  });
+  it("garde retenue: 0 pour un ITS annulé par la RICF", () => {
+    const { lignes } = lpp([
+      { numero_rubrique: "413", designation: "ITS", libelle: null, nombre: null, base: 141872, taux: null, gain: 0, retenue: 0, bloc: "retenue", ordre: 1 },
+    ]);
+    expect(lignes[0].retenue).toBe(0);
+    expect(lignes[0].imposable).toBe(true);
+  });
+});

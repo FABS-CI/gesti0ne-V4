@@ -9,7 +9,7 @@ import {
   bulletinFileName,
   ENTREPRISE_FABS,
 } from "@/lib/pdf/bulletinPaieCI";
-import { construireDonneesPdf, type BulletinStocke, type LigneStockee } from "@/lib/paie/bulletin-pdf-data";
+import { construireDonneesPdf, calculerCumuls, type BulletinCumul, type BulletinStocke, type LigneStockee } from "@/lib/paie/bulletin-pdf-data";
 import { usePdfDownload } from "@/hooks/use-pdf-download";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -82,11 +82,34 @@ function BulletinDetailPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("employes")
-        .select("matricule,poste,categorie,numero_cnps,date_embauche,departement")
+        .select("matricule,poste,categorie,numero_cnps,date_embauche,departement,adresse")
         .eq("employe_id", employeId!)
         .maybeSingle();
       if (error) throw error;
       return data;
+    },
+  });
+
+  const dateFin = (bulletin as { date_fin?: string | null } | undefined)?.date_fin;
+  const { data: cumuls } = useQuery({
+    queryKey: ["bulletin-cumuls", employeId, dateFin],
+    enabled: !!employeId && !!dateFin,
+    queryFn: async () => {
+      const debutAnnee = `${dateFin!.slice(0, 4)}-01-01`;
+      const { data, error } = await supabase
+        .from("bulletins_paie")
+        .select("brut_imposable,jours_travailles,bulletin_lignes(numero_rubrique,retenue)")
+        .eq("employe_id", employeId!)
+        .gte("date_fin", debutAnnee)
+        .lte("date_fin", dateFin!);
+      if (error) throw error;
+      return calculerCumuls(
+        (data ?? []).map((b) => ({
+          brut_imposable: b.brut_imposable,
+          jours_travailles: b.jours_travailles,
+          lignes: (b.bulletin_lignes ?? []) as BulletinCumul["lignes"],
+        })),
+      );
     },
   });
 
@@ -119,6 +142,7 @@ function BulletinDetailPage() {
                 lignes ?? [],
                 employe ?? null,
                 ENTREPRISE_FABS,
+                cumuls,
               );
               return (
                 <Button
