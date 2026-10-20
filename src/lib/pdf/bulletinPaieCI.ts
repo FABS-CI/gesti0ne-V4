@@ -1,18 +1,15 @@
 // ---------------------------------------------------------------------------
-// Bulletin de paie — conforme Côte d'Ivoire (modèle EDITIONS FABS)
-// A4 portrait, sans en-tête/pied de page ERP. Tableau unifié 7 colonnes
-// (N° · Désignation · Nbre · Base · Taux · Gains · Retenues) avec
-// sous-totaux "SALAIRE BRUT IMPOSABLE" et "TOTAL RETENUES FISCALES &
-// SOCIALES", puis rubriques non-imposables, cumuls annuels et mode de
-// paiement. Les rubriques sont paramétrables : n'importe quel service RH
-// ou comptable peut en ajouter via `lignes` (ou via `gains`/`retenues`
-// pour compat).
+// Bulletin de paie — reproduction fidèle du modèle EDITIONS FABS (août 2022)
+// A4 portrait, UNE seule page. Mise en page identique au modèle :
+//  - cadres employeur / salarié (2 cadres) en haut, titre sous le cadre employeur
+//  - tableau 7 colonnes (N° · DESIGNATION · NBRE. · BASE · TAUX · GAINS · RETENUES)
+//    avec sous-totaux "SALAIRE BRUT IMPOSABLE..." et "TOTAL RETENUES FISCALES
+//    & SOCIALES...", puis rubriques non imposables (indemnités, CMU, arrondi)
+//  - pied à 3 cellules (indemnités non impo. · autres retenues · coût salarial)
+//  - NET A PAYER, CUMULS ANNUELS, signature, date et mode de paiement
+// Interface publique inchangée (types + generateBulletinPaieCIPDF).
 // ---------------------------------------------------------------------------
 import type jsPDFType from "jspdf";
-import { formatFCFA } from "@/lib/format";
-
-import type autoTableType from "jspdf-autotable";
-import logoUrl from "@/assets/fabs-logo.png";
 
 export type BulletinLigne = {
   code?: string;
@@ -118,572 +115,314 @@ export type BulletinPdfOptions = {
   baseFontSize?: number;
 };
 
-// Entreprise par défaut (FABS-CI) — surchargée par l'appelant si besoin.
+// Entreprise par défaut — surchargée par l'appelant. Les valeurs ci-dessous
+// sont celles du bulletin modèle ; à renseigner dans les paramètres entreprise.
 export const ENTREPRISE_FABS: BulletinEntreprise = {
-  raisonSociale: "EDITIONS FABS-CI",
-  adresse: "Bingerville, Qt N'GOTTO — BP 693",
+  raisonSociale: "EDITIONS FABS",
+  adresse: "BP 693 BINGERVILLE",
   telephone: "+225 0759737123",
-  email: "edition693fabs@gmail.com",
-  rccm: "CI-ABJ-2020-B-12345",
-  numContribuable: "2045123 A",
-  cnpsEmployeur: "0123456",
+  cnpsEmployeur: "366145",
 };
 
-// jsPDF/Helvetica ne contient pas U+202F/U+00A0 — on force une espace ASCII.
-const stripNbsp = (s: string): string => s.replace(/[\u202F\u00A0]/g, " ");
-const fmt = (n: number | null | undefined): string => {
-  if (n === null || n === undefined || Number.isNaN(Number(n)) || Number(n) === 0) return "";
-  return formatFCFA(Number(n), false);
-};
-const fmtAlways = (n: number | null | undefined): string => {
-  if (n === null || n === undefined || Number.isNaN(Number(n))) return "0";
-  return formatFCFA(Number(n), false);
-};
+// ---- Formats --------------------------------------------------------------
+// jsPDF/Helvetica ne contient pas U+202F/U+00A0 : espace ASCII uniquement.
+const int = (n: number): string => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+const money = (n?: number | null): string =>
+  n == null || Number.isNaN(Number(n)) || Math.round(Number(n)) === 0 ? "" : int(Number(n));
+const moneyAlways = (n?: number | null): string =>
+  n == null || Number.isNaN(Number(n)) ? "0" : int(Number(n));
+const taux = (t?: number | null): string =>
+  t == null || Number.isNaN(Number(t)) || Number(t) === 0 ? "" : Number(t).toFixed(2).replace(".", ",");
+const nbre = (n?: number | null): string =>
+  n == null || Number.isNaN(Number(n)) || Number(n) === 0 ? "" : String(Math.round(Number(n) * 100) / 100).replace(".", ",");
 
-const fmtTaux = (t: number | null | undefined): string => {
-  if (t === null || t === undefined || Number.isNaN(Number(t)) || Number(t) === 0) return "";
-  return stripNbsp(new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 }).format(Number(t)));
-};
+const MOIS = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
 
-const fmtDate = (d?: string): string => {
-  if (!d) return "";
-  const dt = new Date(d);
-  if (Number.isNaN(dt.getTime())) return d;
-  return dt.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
-};
-
-function lastY(doc: jsPDFType): number {
-  return (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY;
+function parseDate(s?: string): { d: number; m: number; y: number } | null {
+  if (!s) return null;
+  let r = /^(\d{4})-(\d{2})-(\d{2})/.exec(s);
+  if (r) return { y: +r[1], m: +r[2], d: +r[3] };
+  r = /^(\d{2})\/(\d{2})\/(\d{2,4})/.exec(s);
+  if (r) return { d: +r[1], m: +r[2], y: r[3].length === 2 ? 2000 + +r[3] : +r[3] };
+  return null;
 }
+const p2 = (n: number): string => String(n).padStart(2, "0");
+const dateCourte = (s?: string): string => {
+  const d = parseDate(s);
+  return d ? `${p2(d.d)}/${p2(d.m)}/${p2(d.y % 100)}` : (s ?? "");
+};
+const dateComplete = (s?: string): string => {
+  const d = parseDate(s);
+  return d ? `${p2(d.d)}/${p2(d.m)}/${d.y}` : (s ?? "");
+};
+const dateLongue = (s?: string): { jour: string; mois: string; annee: string } => {
+  const d = parseDate(s) ?? (() => {
+    const n = new Date();
+    return { d: n.getDate(), m: n.getMonth() + 1, y: n.getFullYear() };
+  })();
+  return { jour: String(d.d), mois: MOIS[d.m - 1], annee: String(d.y) };
+};
+const partsFmt = (p?: number | string): string => {
+  if (p == null || p === "") return "";
+  const n = Number(p);
+  return Number.isNaN(n) ? String(p) : n.toFixed(1).replace(".", ",");
+};
 
-// Charge le logo et le convertit en niveaux de gris pour un filigrane monochrome.
-let cachedWatermark: string | null = null;
-async function loadWatermarkDataUrl(): Promise<string | null> {
-  if (cachedWatermark) return cachedWatermark;
-  if (typeof window === "undefined" || typeof document === "undefined") return null;
-  try {
-    const res = await fetch(logoUrl);
-    const blob = await res.blob();
-    const bmp = await createImageBitmap(blob);
-    const canvas = document.createElement("canvas");
-    canvas.width = bmp.width;
-    canvas.height = bmp.height;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return null;
-    ctx.drawImage(bmp, 0, 0);
-    const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const d = img.data;
-    for (let i = 0; i < d.length; i += 4) {
-      const g = Math.round(0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]);
-      d[i] = d[i + 1] = d[i + 2] = g;
-    }
-    ctx.putImageData(img, 0, 0);
-    cachedWatermark = canvas.toDataURL("image/png");
-    return cachedWatermark;
-  } catch {
-    return null;
-  }
-}
-
+// ---- Construction des lignes (ordre du modèle) ----------------------------
 function normaliseLignes(data: BulletinCIData): BulletinLigne[] {
   if (data.lignes && data.lignes.length) return data.lignes;
   const g = (data.gains ?? []).map<BulletinLigne>((l) => ({
-    code: l.code,
-    libelle: l.libelle,
-    nbre: l.nbre,
-    base: l.base,
-    taux: l.taux,
-    gain: l.montant,
-    imposable: l.imposable ?? true,
+    code: l.code, libelle: l.libelle, nbre: l.nbre, base: l.base, taux: l.taux,
+    gain: l.montant, imposable: l.imposable ?? true,
   }));
   const r = (data.retenues ?? []).map<BulletinLigne>((l) => ({
-    code: l.code,
-    libelle: l.libelle,
-    nbre: l.nbre,
-    base: l.base,
-    taux: l.taux,
-    retenue: l.montant,
-    imposable: l.imposable ?? true,
+    code: l.code, libelle: l.libelle, nbre: l.nbre, base: l.base, taux: l.taux,
+    retenue: l.montant, imposable: l.imposable ?? true,
   }));
   return [...g, ...r];
 }
 
+type Row =
+  | { kind: "line"; l: BulletinLigne }
+  | { kind: "sub"; label: string; col: "gain" | "retenue"; amount: number }
+  | { kind: "gap" };
+
+function buildRows(data: BulletinCIData): Row[] {
+  const lignes = normaliseLignes(data);
+  const imposables = lignes.filter((l) => l.imposable !== false);
+  // Une ligne est une retenue dès qu'elle porte un champ `retenue` (même à 0,
+  // ex. ITS annulé par la réduction pour charges de famille) et aucun gain.
+  const isRet = (l: BulletinLigne) => l.retenue != null && !(Number(l.gain) > 0);
+  const gainsImp = imposables.filter((l) => !isRet(l));
+  const retImp = imposables.filter(isRet);
+  const nonImpo = lignes.filter((l) => l.imposable === false);
+
+  const brutImposable =
+    data.totaux.salaireImposable ?? gainsImp.reduce((s, l) => s + (Number(l.gain) || 0), 0);
+  const totalRetFisc = retImp.reduce((s, l) => s + (Number(l.retenue) || 0), 0);
+
+  const rows: Row[] = [];
+  gainsImp.forEach((l) => rows.push({ kind: "line", l }));
+  rows.push({ kind: "gap" });
+  rows.push({ kind: "sub", label: "SALAIRE BRUT IMPOSABLE...", col: "gain", amount: brutImposable });
+  rows.push({ kind: "gap" });
+  retImp.forEach((l) => rows.push({ kind: "line", l }));
+  rows.push({ kind: "gap" });
+  rows.push({ kind: "sub", label: "TOTAL  RETENUES FISCALES & SOCIALES...", col: "retenue", amount: totalRetFisc });
+  rows.push({ kind: "gap" });
+  nonImpo.forEach((l) => rows.push({ kind: "line", l }));
+  return rows;
+}
+
+// ---- Génération -----------------------------------------------------------
 export async function generateBulletinPaieCIPDF(
   data: BulletinCIData,
   opts: BulletinPdfOptions = {},
 ): Promise<Blob> {
-  const [{ default: jsPDF }, { default: autoTable }] = (await Promise.all([
-    import("jspdf"),
-    import("jspdf-autotable"),
-  ])) as unknown as [{ default: typeof jsPDFType }, { default: typeof autoTableType }];
+  const { default: jsPDF } = (await import("jspdf")) as unknown as { default: typeof jsPDFType };
   const doc = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
-  const pageW = doc.internal.pageSize.getWidth();
-  const pageH = doc.internal.pageSize.getHeight();
-  const margin = Math.max(4, Math.min(30, opts.margin ?? 12));
-  // Charte lisibilité RH — corps 9.5 pt, tableaux 9 pt (bien plus confortable
-  // que l'ancienne base 8.5/8), en-têtes en gras plus visibles.
-  const bfs = Math.max(7.5, Math.min(12, opts.baseFontSize ?? 9.5));
-  const tfs = Math.max(7, bfs - 0.5);
+  const W = doc.internal.pageSize.getWidth();
+  const m = Math.max(6, Math.min(20, opts.margin ?? 12));
+  const fs = Math.max(7.5, Math.min(11, opts.baseFontSize ?? 9));
+  const X0 = m;
+  const X1 = W - m;
+  const TW = X1 - X0;
+  const GREY = 110;
+
   const ent = data.entreprise;
-  // Charte 100 % noir & blanc (monochrome) — aucun coloris.
-  // Palette 100 % monochrome, aucune zone remplie en noir.
-  const NAVY: [number, number, number] = [0, 0, 0];
-  const BORDER: [number, number, number] = [120, 120, 120];
-  const SOFT: [number, number, number] = [250, 250, 250];
-  const SUBTOTAL_BG: [number, number, number] = [240, 240, 240];
-  const SUBTOTAL_RET_BG: [number, number, number] = [235, 235, 235];
-  const ALT_ROW: [number, number, number] = [252, 252, 252];
-  const SECTION_BG: [number, number, number] = [230, 230, 230];
+  const sal = data.salarie;
+  const per = data.periode;
+  const tot = data.totaux;
 
-  // --- En-tête sobre : fond blanc, texte noir, filet noir ---
-  const bannerH = 24;
-  doc.setTextColor(...NAVY);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(15);
-  doc.text(ent.raisonSociale, margin, 10);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(bfs - 0.5);
-  const infoLine = [ent.adresse, ent.telephone ? `Tél. ${ent.telephone}` : null, ent.email]
-    .filter(Boolean)
-    .join("  ·  ");
-  if (infoLine) doc.text(infoLine, margin, 15);
-  const legalLine = [
-    ent.rccm ? `RCCM ${ent.rccm}` : null,
-    ent.numContribuable ? `NCC ${ent.numContribuable}` : null,
-    ent.cnpsEmployeur ? `CNPS Employeur ${ent.cnpsEmployeur}` : null,
-  ]
-    .filter(Boolean)
-    .join("  ·  ");
-  if (legalLine) doc.text(legalLine, margin, 19.5);
-  doc.setDrawColor(...NAVY);
-  doc.setLineWidth(0.5);
-  doc.line(margin, bannerH, pageW - margin, bannerH);
-
-  // Titre du document
-  doc.setTextColor(...NAVY);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(14);
-  doc.text("BULLETIN DE PAIE", margin, bannerH + 7);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(bfs);
-  const periodeLbl =
-    data.periode.du && data.periode.au
-      ? `Période : ${fmtDate(data.periode.du)} — ${fmtDate(data.periode.au)}`
-      : `Période : ${data.periode.periode}`;
-  doc.text(periodeLbl, pageW - margin, bannerH + 4, { align: "right" });
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(bfs - 1);
-  const meta = [
-    `Réf. : ${data.reference}`,
-    data.periode.dateEdition ? `Édité le ${fmtDate(data.periode.dateEdition)}` : null,
-  ]
-    .filter(Boolean)
-    .join("   ");
-  doc.text(meta, pageW - margin, bannerH + 8.5, { align: "right" });
-  doc.setDrawColor(...BORDER);
-  doc.setLineWidth(0.3);
-  doc.line(margin, bannerH + 11, pageW - margin, bannerH + 11);
-  doc.setTextColor(30);
-
-  // --- Carte "Salarié" ---
-  const s = data.salarie;
-  let y = bannerH + 14;
-  const cardX = margin;
-  const cardW = pageW - margin * 2;
-  const salLines: Array<[string, string | undefined, string, string | undefined]> = [
-    ["Matricule", s.matricule, "Fonction", s.fonction],
-    ["N° CNPS", s.numCnps, "Catégorie", s.categorie],
-    ["Département", s.departement, "Date d'embauche", fmtDate(s.dateEmbauche)],
-    ["Adresse", s.adresse, "Parts", s.parts !== undefined ? String(s.parts) : undefined],
-  ].filter(([, v1, , v2]) => v1 || v2) as typeof salLines;
-  const cardH = 10 + salLines.length * 4.8 + 3;
-  doc.setFillColor(...SOFT);
-  doc.setDrawColor(...BORDER);
-  doc.setLineWidth(0.3);
-  doc.roundedRect(cardX, y, cardW, cardH, 1.5, 1.5, "FD");
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  doc.setTextColor(...NAVY);
-  doc.text(s.nomComplet.toUpperCase(), cardX + 4, y + 6.5);
-  doc.setDrawColor(...BORDER);
-  doc.line(cardX + 4, y + 8.5, cardX + cardW - 4, y + 8.5);
-  doc.setFontSize(bfs);
-  doc.setTextColor(30);
-  const col2X = cardX + cardW / 2 + 2;
-  let ry = y + 13;
-  for (const [k1, v1, k2, v2] of salLines) {
-    if (v1) {
-      doc.setFont("helvetica", "bold");
-      doc.text(`${k1} :`, cardX + 4, ry);
-      doc.setFont("helvetica", "normal");
-      doc.text(String(v1), cardX + 4 + 28, ry);
-    }
-    if (v2) {
-      doc.setFont("helvetica", "bold");
-      doc.text(`${k2} :`, col2X, ry);
-      doc.setFont("helvetica", "normal");
-      doc.text(String(v2), col2X + 30, ry);
-    }
-    ry += 4.8;
-  }
-  y = y + cardH + 3;
-
-  // --- Tableau unifié 7 colonnes avec sous-totaux ---
-  const lignes = normaliseLignes(data);
-  const impoGains = lignes.filter((l) => (l.gain ?? 0) > 0 && l.imposable !== false);
-  const impoRetenues = lignes.filter((l) => (l.retenue ?? 0) > 0 && l.imposable !== false);
-  const nonImpoGains = lignes.filter((l) => (l.gain ?? 0) > 0 && l.imposable === false);
-  const nonImpoRetenues = lignes.filter((l) => (l.retenue ?? 0) > 0 && l.imposable === false);
-
-  const sumGain = (arr: BulletinLigne[]) => arr.reduce((s, l) => s + (l.gain ?? 0), 0);
-  const sumRet = (arr: BulletinLigne[]) => arr.reduce((s, l) => s + (l.retenue ?? 0), 0);
-
-  const brutImposable = data.totaux.salaireImposable || sumGain(impoGains);
-  const totalRetenuesFS = sumRet(impoRetenues);
-  const totalIndNonImpo = data.totaux.totalIndemnitesNonImpo ?? sumGain(nonImpoGains);
-  const totalAutresRet = data.totaux.totalAutresRetenues ?? sumRet(nonImpoRetenues);
-
-  const rowFor = (l: BulletinLigne) => [
-    l.code ?? "",
-    l.libelle,
-    l.nbre != null ? String(l.nbre) : "",
-    fmt(l.base),
-    fmtTaux(l.taux),
-    fmt(l.gain ?? 0),
-    fmt(l.retenue ?? 0),
-  ];
-
-  const body: (
-    string | { content: string; colSpan?: number; styles?: Record<string, unknown> }
-  )[][] = [];
-  const sectionRow = (label: string) => [
-    {
-      content: label,
-      colSpan: 7,
-      styles: {
-        fontStyle: "bold",
-        halign: "left",
-        fillColor: SECTION_BG,
-        textColor: NAVY,
-        cellPadding: 2,
-      },
-    },
-  ];
-  if (impoGains.length) body.push(sectionRow("GAINS IMPOSABLES"));
-  for (const l of impoGains) body.push(rowFor(l));
-  body.push([
-    {
-      content: "SALAIRE BRUT IMPOSABLE",
-      colSpan: 5,
-      styles: { fontStyle: "bold", halign: "right", fillColor: SUBTOTAL_BG },
-    },
-    {
-      content: fmtAlways(brutImposable),
-      styles: { fontStyle: "bold", fillColor: SUBTOTAL_BG },
-    },
-    { content: "", styles: { fillColor: SUBTOTAL_BG } },
-  ]);
-  if (impoRetenues.length)
-    body.push(sectionRow("RETENUES FISCALES & SOCIALES (CNPS, ITS, IGR, CN…)"));
-  for (const l of impoRetenues) body.push(rowFor(l));
-  body.push([
-    {
-      content: "TOTAL RETENUES FISCALES & SOCIALES",
-      colSpan: 6,
-      styles: { fontStyle: "bold", halign: "right", fillColor: SUBTOTAL_RET_BG },
-    },
-    {
-      content: fmtAlways(totalRetenuesFS),
-      styles: { fontStyle: "bold", fillColor: SUBTOTAL_RET_BG },
-    },
-  ]);
-  if (nonImpoGains.length) body.push(sectionRow("INDEMNITÉS NON IMPOSABLES"));
-  for (const l of nonImpoGains) body.push(rowFor(l));
-  if (nonImpoRetenues.length) body.push(sectionRow("AUTRES RETENUES"));
-  for (const l of nonImpoRetenues) body.push(rowFor(l));
-
-  autoTable(doc, {
-    startY: y + 2,
-    margin: { left: margin, right: margin },
-    head: [["N°", "DÉSIGNATION", "NBRE.", "BASE", "TAUX", "GAINS", "RETENUES"]],
-    body,
-    styles: {
-      fontSize: tfs,
-      cellPadding: 2.4,
-      lineColor: BORDER,
-      lineWidth: 0.1,
-      valign: "middle",
-      overflow: "linebreak",
-    },
-    headStyles: {
-      fillColor: SOFT,
-      textColor: NAVY,
-      fontStyle: "bold",
-      fontSize: tfs + 0.5,
-      halign: "center",
-      cellPadding: 2.6,
-      lineColor: NAVY,
-      lineWidth: 0.2,
-    },
-    alternateRowStyles: { fillColor: ALT_ROW },
-    columnStyles: {
-      0: { cellWidth: 9, halign: "center" },
-      1: { cellWidth: "auto", fontStyle: "bold" },
-      2: { cellWidth: 11, halign: "right" },
-      3: { cellWidth: 20, halign: "right" },
-      4: { cellWidth: 13, halign: "right" },
-      5: { cellWidth: 26, halign: "right" },
-      6: { cellWidth: 26, halign: "right" },
-    },
-    theme: "grid",
-  });
-  y = lastY(doc);
-
-  // --- Helper : bascule automatique en page suivante si besoin ---
-  const bottomMargin = 16;
-  const ensureSpace = (needed: number): void => {
-    if (y + needed > pageH - bottomMargin) {
-      doc.addPage();
-      y = margin + 4;
-      doc.setFont("helvetica", "italic");
-      doc.setFontSize(8);
-      doc.setTextColor(120);
-      doc.text(
-        `Bulletin de paie — ${data.salarie.nomComplet} — ${data.periode.periode} (suite)`,
-        pageW / 2,
-        y,
-        { align: "center" },
-      );
-      y += 5;
-      doc.setTextColor(30);
-    }
-  };
-
-  // --- Synthèse 3 blocs : BRUT | RETENUES | NET À PAYER ---
-  ensureSpace(28);
-  const boxY = y + 4;
-  const boxH = 20;
-  const totalW = pageW - margin * 2;
-  const gap = 3;
-  const boxW = (totalW - gap * 2) / 3;
-  const drawBox = (
-    x: number,
-    label: string,
-    value: string,
-    bg: [number, number, number],
-    fg: [number, number, number],
-    big = false,
+  type Style = "normal" | "bold" | "italic" | "bolditalic";
+  const text = (
+    s: string, x: number, y: number,
+    o: { size?: number; style?: Style; font?: "helvetica" | "times"; align?: "left" | "right" | "center" } = {},
   ) => {
-    doc.setFillColor(...bg);
-    doc.setDrawColor(...NAVY);
-    doc.setLineWidth(0.4);
-    doc.roundedRect(x, boxY, boxW, boxH, 2, 2, "FD");
-    doc.setTextColor(...fg);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(9);
-    doc.text(label, x + 4, boxY + 6.5);
-    doc.setFontSize(big ? 16 : 13);
-    doc.text(`${value} FCFA`, x + boxW - 4, boxY + 14.5, { align: "right" });
+    doc.setFont(o.font ?? "helvetica", o.style ?? "normal");
+    doc.setFontSize(o.size ?? fs);
+    doc.setTextColor(0, 0, 0);
+    doc.text(s, x, y, { align: o.align ?? "left" });
   };
-  drawBox(
-    margin,
-    "SALAIRE BRUT",
-    fmtAlways(data.totaux.salaireBrut || brutImposable),
-    SUBTOTAL_BG,
-    NAVY,
-  );
-  drawBox(
-    margin + boxW + gap,
-    "TOTAL RETENUES",
-    fmtAlways(totalRetenuesFS + totalAutresRet),
-    SUBTOTAL_RET_BG,
-    NAVY,
-  );
-  drawBox(
-    margin + (boxW + gap) * 2,
-    "NET À PAYER",
-    fmtAlways(data.totaux.netAPayer),
-    [255, 255, 255],
-    NAVY,
-    true,
-  );
-  doc.setTextColor(30);
-  y = boxY + boxH;
+  const box = (x: number, y: number, w: number, h: number) => {
+    doc.setDrawColor(GREY);
+    doc.setLineWidth(0.25);
+    doc.rect(x, y, w, h);
+  };
+  const hline = (x1: number, x2: number, y: number) => {
+    doc.setDrawColor(GREY);
+    doc.setLineWidth(0.25);
+    doc.line(x1, y, x2, y);
+  };
+  const vline = (x: number, y1: number, y2: number) => {
+    doc.setDrawColor(GREY);
+    doc.setLineWidth(0.25);
+    doc.line(x, y1, x, y2);
+  };
 
-  // Ligne d'infos secondaires (indemnités non impo, coût employeur)
-  if (totalIndNonImpo || totalAutresRet || data.totaux.coutSalarial || data.totaux.coutEmployeur) {
-    y += 3;
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(bfs - 0.5);
-    doc.setTextColor(80);
-    const parts: string[] = [];
-    if (totalIndNonImpo) parts.push(`Indemnités non imposables : ${fmtAlways(totalIndNonImpo)}`);
-    if (data.totaux.coutSalarial ?? data.totaux.coutEmployeur)
-      parts.push(
-        `Coût employeur : ${fmtAlways(data.totaux.coutSalarial ?? data.totaux.coutEmployeur)}`,
-      );
-    if (parts.length) doc.text(parts.join("     ·     "), margin, y + 3);
-    y += 5;
-    doc.setTextColor(30);
-  }
+  // ===== En-tête : cadre employeur (gauche) + 2 cadres salarié (droite) =====
+  const gap = 4;
+  const leftW = TW / 2 - gap / 2;
+  const rightX = X0 + leftW + gap;
+  const rightW = X1 - rightX;
+  const y0 = m;
+  const h1 = 25;
+  const h2 = 17;
 
-  // --- Cumuls annuels (optionnel) ---
-  if (data.cumuls) {
-    ensureSpace(24);
-    const c = data.cumuls;
-    autoTable(doc, {
-      startY: y + 3,
-      margin: { left: margin, right: margin },
-      head: [
-        [
-          {
-            content: "CUMULS ANNUELS",
-            colSpan: 7,
-            styles: { halign: "center", fillColor: SECTION_BG, textColor: NAVY, fontStyle: "bold" },
-          },
-        ],
-        ["C.R", "C.N", "C.R.N", "I.T.S", "I.G.R", "BRUT IMPOSABLE", "JRS. TRAV."],
-      ],
-      body: [
-        [
-          fmtAlways(c.cr),
-          fmtAlways(c.cn),
-          fmtAlways(c.crn),
-          fmtAlways(c.its),
-          fmtAlways(c.igr),
-          fmtAlways(c.brutImposable),
-          fmtAlways(c.jrsTravailles),
-        ],
-      ],
-      styles: { fontSize: tfs, halign: "right", cellPadding: 2.2, lineColor: BORDER },
-      headStyles: {
-        fillColor: SUBTOTAL_BG,
-        textColor: NAVY,
-        halign: "center",
-        fontStyle: "bold",
-      },
-      theme: "grid",
-      pageBreak: "auto",
-      didDrawPage: () => {
-        // autotable a lui-même géré le saut, on synchronise `y`
-      },
-    });
-    y = lastY(doc);
-  }
+  box(X0, y0, leftW, h1);
+  text(ent.raisonSociale, X0 + 4, y0 + 8.5, { size: 13, style: "bold" });
+  text(ent.adresse ?? "", X0 + 4, y0 + 15, { size: fs - 0.5 });
+  if (ent.telephone) text(`Tél. ${ent.telephone}`, X0 + leftW - 4, y0 + 15, { size: fs - 0.5, align: "right" });
+  if (ent.cnpsEmployeur) text(`CNPS Employeur: ${ent.cnpsEmployeur}`, X0 + 4, y0 + 20.5, { size: fs - 0.5 });
 
-  // --- Champs personnalisés (RH / Compta) ---
-  if (data.champsPersonnalises && data.champsPersonnalises.length > 0) {
-    ensureSpace(8 + data.champsPersonnalises.length * 4);
-    y += 4;
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(bfs);
-    doc.setTextColor(...NAVY);
-    doc.text("INFORMATIONS COMPLÉMENTAIRES", margin, y);
-    y += 3;
-    doc.setDrawColor(...BORDER);
-    doc.line(margin, y, pageW - margin, y);
-    y += 3;
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(tfs);
-    doc.setTextColor(30);
-    const colW = (pageW - margin * 2) / 2;
-    let col = 0;
-    let rowY = y;
-    for (const c of data.champsPersonnalises) {
-      ensureSpace(5);
-      const x = margin + col * colW;
-      doc.setFont("helvetica", "bold");
-      doc.text(`${c.label} :`, x, rowY);
-      doc.setFont("helvetica", "normal");
-      const kw = doc.getTextWidth(`${c.label} : `);
-      const lines = doc.splitTextToSize(c.valeur, colW - kw - 2);
-      doc.text(lines, x + kw, rowY);
-      col = col === 0 ? 1 : 0;
-      if (col === 0) rowY += 4.4;
-    }
-    y = col === 0 ? rowY : rowY + 4.4;
-  }
-
-  // --- Paiement + observations ---
-  ensureSpace(12);
-  y += 6;
-  doc.setTextColor(30);
+  box(rightX, y0, rightW, h1);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(bfs);
-  if (data.paiement?.date) {
-    doc.text("Salaire payé le :", margin, y);
-    doc.setFont("helvetica", "normal");
-    doc.text(fmtDate(data.paiement.date), margin + 30, y);
-  }
-  if (data.paiement?.mode) {
-    doc.setFont("helvetica", "bold");
-    doc.text("Mode de paiement :", margin + 80, y);
-    doc.setFont("helvetica", "normal");
-    doc.text(data.paiement.mode, margin + 115, y);
-  }
+  doc.setFontSize(11.5);
+  const nameLines = (doc.splitTextToSize(sal.nomComplet, rightW - 8) as string[]).slice(0, 2);
+  nameLines.forEach((ln, i) => text(ln, rightX + 4, y0 + 7 + i * 5, { size: 11.5, style: "bold" }));
+  text(`Fonction : ${sal.fonction ?? ""}`, rightX + 4, y0 + 17.5, { size: fs - 0.5 });
+  text(`Catég. : ${sal.categorie ?? ""}`, rightX + rightW - 4, y0 + 17.5, { size: fs - 0.5, align: "right" });
+  text(`Adresse : ${sal.adresse ?? ""}`, rightX + 4, y0 + 22.5, { size: fs - 0.5 });
 
-  if (data.observations) {
-    const lines = doc.splitTextToSize(data.observations, pageW - margin * 2);
-    ensureSpace(6 + lines.length * 4);
-    y += 5;
-    doc.setFont("helvetica", "bold");
-    doc.text("Observations :", margin, y);
-    doc.setFont("helvetica", "normal");
-    doc.text(lines, margin, y + 4);
-    y += 4 + lines.length * 4;
-  }
+  box(rightX, y0 + h1, rightW, h2);
+  text(`Matricule : ${sal.matricule ?? ""}`, rightX + 4, y0 + h1 + 6.5, { size: fs - 0.5 });
+  text(`Date d'embauche : ${dateCourte(sal.dateEmbauche)}`, rightX + rightW - 4, y0 + h1 + 6.5, { size: fs - 0.5, align: "right" });
+  text(`N° CNPS : ${sal.numCnps ?? ""}`, rightX + 4, y0 + h1 + 13, { size: fs - 0.5 });
+  text(`Parts : ${partsFmt(sal.parts)}`, rightX + rightW - 4, y0 + h1 + 13, { size: fs - 0.5, align: "right" });
 
-  // --- Pagination + mention légale (sur chaque page) ---
-  const pageCount = doc.getNumberOfPages();
-  for (let i = 1; i <= pageCount; i++) {
-    doc.setPage(i);
-    doc.setDrawColor(...BORDER);
-    doc.setLineWidth(0.3);
-    doc.line(margin, pageH - 10, pageW - margin, pageH - 10);
-    doc.setFont("helvetica", "italic");
-    doc.setFontSize(7.5);
-    doc.setTextColor(90);
-    doc.text(
-      "Pour vous aider à faire valoir vos droits, conservez ce bulletin de paie sans limitation de durée. — Bulletin établi conformément au Code du travail de Côte d'Ivoire.",
-      pageW / 2,
-      pageH - 6,
-      { align: "center", maxWidth: pageW - margin * 2 - 30 },
-    );
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(7.5);
-    doc.setTextColor(...NAVY);
-    doc.text(`Page ${i} / ${pageCount}`, pageW - margin, pageH - 6, { align: "right" });
+  // Titre sous le cadre employeur
+  text("*".repeat(25), X0 + 1, y0 + h1 + 9, { size: 12, style: "bold" });
+  let titleSize = 23;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(titleSize);
+  while (doc.getTextWidth("BULLETIN DE PAIE") > leftW && titleSize > 14) {
+    titleSize -= 1;
+    doc.setFontSize(titleSize);
   }
+  text("BULLETIN DE PAIE", X0, y0 + h1 + 19, { size: titleSize, style: "bold" });
+  const dl = dateLongue(per.dateEdition);
+  text("Établi le :", X0, y0 + h1 + 25.5, { size: fs - 1 });
+  text(`${dl.jour}   ${dl.mois}   ${dl.annee}`, X0 + 17, y0 + h1 + 25.5, { size: fs - 1, style: "bold" });
+  text("Période du :", X0, y0 + h1 + 30.5, { size: fs - 1 });
+  text(`${dateCourte(per.du)}   au   ${dateCourte(per.au)}`, X0 + 19, y0 + h1 + 30.5, { size: fs - 1, style: "bold" });
 
-  // --- Filigrane logo (monochrome, discret) sur chaque page ---
-  const watermark = await loadWatermarkDataUrl();
-  if (watermark) {
-    const pageCountWm = doc.getNumberOfPages();
-    const wmW = Math.min(pageW, pageH) * 0.55;
-    const wmH = wmW; // ratio préservé côté canvas source
-    const wmX = (pageW - wmW) / 2;
-    const wmY = (pageH - wmH) / 2;
-    type GStateCtor = new (opts: { opacity: number }) => unknown;
-    const jsp = doc as unknown as {
-      GState?: GStateCtor;
-      setGState?: (s: unknown) => void;
-      addImage: (data: string, fmt: string, x: number, y: number, w: number, h: number) => void;
-    };
-    for (let i = 1; i <= pageCountWm; i++) {
-      doc.setPage(i);
-      if (jsp.GState && jsp.setGState) {
-        jsp.setGState(new jsp.GState({ opacity: 0.08 }));
-      }
-      try {
-        jsp.addImage(watermark, "PNG", wmX, wmY, wmW, wmH);
-      } catch {
-        /* ignore */
-      }
-      if (jsp.GState && jsp.setGState) {
-        jsp.setGState(new jsp.GState({ opacity: 1 }));
-      }
+  // ===== Tableau principal ================================================
+  const tTop = y0 + h1 + h2 + 20;
+  const headH = 9;
+  const bodyH = 128;
+  const footH = 8;
+  const bodyTop = tTop + headH;
+  const bodyBottom = bodyTop + bodyH;
+  const footBottom = bodyBottom + footH;
+
+  const rel = [12.8, 79.1, 14.0, 20.3, 14.3, 21.2, 24.2];
+  const k = TW / rel.reduce((a, b) => a + b, 0);
+  const cw = rel.map((r) => r * k);
+  const cx: number[] = [X0];
+  cw.forEach((w, i) => cx.push(cx[i] + w));
+
+  box(X0, tTop, TW, headH + bodyH);
+  hline(X0, X1, bodyTop);
+  for (let i = 1; i < cx.length - 1; i++) vline(cx[i], tTop, bodyBottom);
+  const heads = ["N°", "DESIGNATION", "NBRE.", "BASE", "TAUX", "GAINS", "RETENUES"];
+  heads.forEach((h, i) => text(h, cx[i] + cw[i] / 2, tTop + headH / 2 + 1.4, { size: fs, style: "bold", align: "center" }));
+
+  const rows = buildRows(data);
+  const weights = rows.map((r) => (r.kind === "gap" ? 0.6 : 1));
+  const totalW = weights.reduce((a, b) => a + b, 0);
+  const rowH = Math.max(2.8, Math.min(4.9, (bodyH - 2) / totalW));
+  const fsRow = rowH < 3.6 ? fs - 1.5 : fs;
+
+  let y = bodyTop + 1.5;
+  rows.forEach((r, idx) => {
+    const h = rowH * weights[idx];
+    if (r.kind === "line") {
+      const l = r.l;
+      const ty = y + rowH * 0.72;
+      text(l.code ?? "", cx[0] + 1.5, ty, { size: fsRow });
+      text(l.libelle, cx[1] + 1.5, ty, { size: fsRow });
+      text(nbre(l.nbre), cx[3] - 1.5, ty, { size: fsRow, align: "right" });
+      text(money(l.base), cx[4] - 1.5, ty, { size: fsRow, align: "right" });
+      text(taux(l.taux), cx[5] - 1.5, ty, { size: fsRow, align: "right" });
+      text(money(l.gain), cx[6] - 1.5, ty, { size: fsRow, align: "right" });
+      const ret = l.retenue != null && Number(l.retenue) === 0 && !(Number(l.gain) > 0) ? "0" : money(l.retenue);
+      text(ret, cx[7] - 1.5, ty, { size: fsRow, align: "right" });
+    } else if (r.kind === "sub") {
+      const ty = y + rowH * 0.72;
+      text(r.label, cx[1] + cw[1] / 2, ty, { size: fsRow, align: "center" });
+      const ci = r.col === "gain" ? 5 : 6;
+      hline(cx[ci], cx[ci + 1], y - 0.3);
+      hline(cx[ci], cx[ci + 1], y + rowH + 0.3);
+      text(moneyAlways(r.amount), cx[ci + 1] - 1.5, ty, { size: fsRow, style: "bolditalic", align: "right" });
     }
+    y += h;
+  });
+
+  // ===== Pied du tableau : 3 cellules =====================================
+  const fr = [38.2, 33.7, 28.1];
+  const fx = [X0, X0 + (TW * fr[0]) / 100, X0 + (TW * (fr[0] + fr[1])) / 100, X1];
+  box(X0, bodyBottom, TW, footH);
+  vline(fx[1], bodyBottom, footBottom);
+  vline(fx[2], bodyBottom, footBottom);
+  const fy = bodyBottom + footH / 2 + 1.3;
+  const cout = tot.coutSalarial ?? tot.coutEmployeur ?? 0;
+  text("TOTAL INDEMNITES NON IMPO. :", fx[0] + 1.5, fy, { size: fs - 1.5, style: "italic" });
+  text(moneyAlways(tot.totalIndemnitesNonImpo), fx[1] - 2, fy, { size: fs - 1.5, style: "bolditalic", align: "right" });
+  text("TOTAL AUTRES RETENUES :", fx[1] + 1.5, fy, { size: fs - 1.5, style: "italic" });
+  text(moneyAlways(tot.totalAutresRetenues), fx[2] - 2, fy, { size: fs - 1.5, style: "bolditalic", align: "right" });
+  text("COÛT SALARIAL :", fx[2] + 1.5, fy, { size: fs - 1.5, style: "italic" });
+  text(moneyAlways(cout), X1 - 2, fy, { size: fs - 1.5, style: "bolditalic", align: "right" });
+
+  // ===== NET A PAYER =======================================================
+  const ny = footBottom + 12;
+  text("NET A PAYER :", X0 + TW * 0.217, ny, { size: 15, style: "bold", font: "times" });
+  text(moneyAlways(tot.netAPayer), X0 + TW * 0.52, ny, { size: 15, style: "bold", font: "times" });
+
+  // ===== CUMULS ANNUELS =====================================================
+  const cTop = ny + 8;
+  const rT = 7, rL = 7, rV = 8;
+  box(X0, cTop, TW, rT + rL + rV);
+  text("CUMULS ANNUELS", X0 + TW / 2, cTop + rT / 2 + 1.3, { size: fs, style: "bold", align: "center" });
+  hline(X0, X1, cTop + rT);
+  hline(X0, X1, cTop + rT + rL);
+  const crel = [24, 23.4, 24, 24, 24, 39, 27.6];
+  const ck = TW / crel.reduce((a, b) => a + b, 0);
+  const ccx: number[] = [X0];
+  crel.forEach((w, i) => ccx.push(ccx[i] + w * ck));
+  for (let i = 1; i < ccx.length - 1; i++) vline(ccx[i], cTop + rT, cTop + rT + rL + rV);
+  const cl = ["C.R", "C.N", "C.R.N", "I.T.S", "I.G.R", "BRUT IMPOSABLE", "JRS. TRAVAILLES"];
+  const cu = data.cumuls ?? {};
+  const cv = [cu.cr, cu.cn, cu.crn, cu.its, cu.igr, cu.brutImposable, cu.jrsTravailles];
+  cl.forEach((lab, i) => {
+    const cxm = (ccx[i] + ccx[i + 1]) / 2;
+    text(lab, cxm, cTop + rT + rL / 2 + 1.2, { size: fs - 1.5, align: "center" });
+    text(moneyAlways(cv[i]), cxm, cTop + rT + rL + rV / 2 + 1.3, { size: fs - 0.5, align: "center" });
+  });
+
+  // ===== Signature / paiement ==============================================
+  const sy = cTop + rT + rL + rV + 7;
+  text("Signature de l'employé(e)", X0, sy, { size: fs - 0.5 });
+  const px = X0 + TW * 0.6;
+  text("Salaire payé le :", px, sy, { size: fs - 0.5 });
+  text(dateComplete(data.paiement?.date), px + 28, sy, { size: fs - 0.5, style: "bold" });
+  text("Mode de paiement :", px - 2, sy + 6, { size: fs - 0.5 });
+  text(data.paiement?.mode ?? "", px + 30, sy + 6, { size: fs - 0.5, style: "bold" });
+
+  // ===== Notes facultatives + mention légale ===============================
+  const extras: string[] = [];
+  if (data.observations) extras.push(data.observations);
+  if (data.champsPersonnalises?.length)
+    extras.push(data.champsPersonnalises.map((c) => `${c.label} : ${c.valeur}`).join("  ·  "));
+  if (extras.length) {
+    const lines = doc.splitTextToSize(extras.join("  —  "), TW) as string[];
+    doc.setFontSize(7);
+    lines.slice(0, 2).forEach((ln, i) => text(ln, X0, sy + 15 + i * 3.2, { size: 7, style: "italic" }));
   }
+  const legalY = doc.internal.pageSize.getHeight() - m + 4;
+  text(
+    "Pour vous aider à faire valoir vos droits, conservez ce bulletin de paie sans limitation de durée.",
+    X0, Math.min(legalY, 292), { size: 7.5 },
+  );
 
   return doc.output("blob");
 }
