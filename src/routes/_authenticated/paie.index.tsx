@@ -36,6 +36,7 @@ const config: ResourceConfig = {
   summary: { label: "bulletins", sumField: "salaire_net", sumLabel: "Total des nets" },
   advancedFilters: {
     fields: ["client", "dates", "montants"],
+    labels: { client: "Employé" },
     columns: { client: "employe_nom", date: "created_at", montant: "salaire_net" },
   },
   rowActions: [

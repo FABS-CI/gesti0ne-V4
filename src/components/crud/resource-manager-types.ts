@@ -65,6 +65,8 @@ export type RowAction = {
 
 export type AdvancedFiltersConfig = {
   fields: AdvancedFilterField[];
+  /** Libellés remplaçant ceux par défaut (ex. client → « Employé »). */
+  labels?: { client?: string };
   columns?: Partial<{
     reference: string;
     client: string;

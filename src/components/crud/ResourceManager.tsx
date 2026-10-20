@@ -342,7 +342,7 @@ export function ResourceManager({ config }: { config: ResourceConfig }) {
       filtres.push(`Statut : ${m?.label ?? statutFilter}`);
     }
     if (periodeActive) filtres.push(`Période : ${mois} ${annee}`);
-    filtres.push(...describeFilters(advanced));
+    filtres.push(...describeFilters(advanced, config.advancedFilters?.labels));
     const isDateCol = (c: (typeof config.columns)[number]) =>
       c.type === "date" || /date|validite|échéance|echeance/i.test(c.name);
     const moneyCols = config.columns.filter((c) => c.type === "money");
@@ -456,6 +456,7 @@ export function ResourceManager({ config }: { config: ResourceConfig }) {
         <div className="rounded-lg border bg-card p-3">
           <AdvancedSearchBar
             fields={config.advancedFilters.fields}
+            labels={config.advancedFilters.labels}
             value={advanced}
             onChange={setAdvanced}
           />
@@ -471,7 +472,7 @@ export function ResourceManager({ config }: { config: ResourceConfig }) {
             clear: () => setStatutFilter("all"),
           });
         if (periodeActive) puces.push({ label: `Période : ${mois} ${annee}`, clear: () => setMois("all") });
-        describeFilters(advanced).forEach((label, i) => {
+        describeFilters(advanced, config.advancedFilters?.labels).forEach((label, i) => {
           const key = Object.keys(advanced)[i] as keyof AdvancedFilters | undefined;
           puces.push({
             label,

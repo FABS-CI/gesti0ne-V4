@@ -129,7 +129,7 @@ export function AdvancedSearchBar({
               </Field>
             )}
             {has("client") && (
-              <Field label={FIELD_LABELS.client}>
+              <Field label={labels?.client ?? FIELD_LABELS.client}>
                 <Input
                   value={draft.client ?? ""}
                   onChange={(e) => patch({ client: e.target.value })}
@@ -262,12 +262,12 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
  * Construit un fragment lisible décrivant les filtres actifs — utilisé dans
  * l'en-tête des exports PDF pour rappeler les critères appliqués.
  */
-export function describeFilters(f: AdvancedFilters): string[] {
+export function describeFilters(f: AdvancedFilters, labels?: Partial<Record<keyof AdvancedFilters, string>>): string[] {
   const out: string[] = [];
   for (const k of Object.keys(f) as (keyof AdvancedFilters)[]) {
     const v = f[k];
     if (v === undefined || v === null || String(v).trim() === "") continue;
-    out.push(`${FIELD_LABELS[k]}: ${v}`);
+    out.push(`${labels?.[k] ?? FIELD_LABELS[k]}: ${v}`);
   }
   return out;
 }
