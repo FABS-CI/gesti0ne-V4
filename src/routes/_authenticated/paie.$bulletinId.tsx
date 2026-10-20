@@ -71,21 +71,6 @@ function BulletinDetailPage() {
       return (data ?? []) as LigneStockee[];
     },
   });
-  const employeId = (bulletin as { employe_id?: string | null } | undefined)?.employe_id;
-  const { data: employe } = useQuery({
-    queryKey: ["bulletin-employe", employeId],
-    enabled: !!employeId,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("employes")
-        .select("matricule,poste,categorie,numero_cnps,date_embauche,departement,adresse")
-        .eq("employe_id", employeId!)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
-    },
-  });
-
   if (isLoading) return <Skeleton className="h-64 w-full" />;
   if (!bulletin)
     return (

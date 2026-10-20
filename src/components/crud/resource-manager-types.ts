@@ -104,6 +104,12 @@ export type ResourceConfig = {
   editHref?: (row: Row) => string;
   validate?: (row: Row, ctx: { isEdit: boolean }) => string[] | null | undefined;
   computeNewDefaults?: () => Promise<Record<string, unknown>> | Record<string, unknown>;
+  /** Filtre Mois + Année sur une colonne texte du type « Juin 2026 ». */
+  periodFilter?: { field: string };
+  /** Conserve recherche et filtres dans l'adresse de la page. */
+  syncFiltersToUrl?: boolean;
+  /** Compteur sous les filtres : « X <label> » et total d'une colonne. */
+  summary?: { label: string; sumField: string; sumLabel: string };
 };
 
 export type ComputeDefaultsFn = () => Promise<Record<string, unknown>> | Record<string, unknown>;

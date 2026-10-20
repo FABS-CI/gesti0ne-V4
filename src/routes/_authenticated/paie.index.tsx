@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Wallet } from "lucide-react";
+import { FileDown, Wallet } from "lucide-react";
+import { BulletinActionButtons } from "@/components/paie/BulletinActionButtons";
 import { ResourceManager, type ResourceConfig } from "@/components/crud/ResourceManager";
 
 import { authRouteHead } from "@/lib/route-head";
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/_authenticated/paie/")({
 });
 
 const statuts = [
+  { value: "brouillon", label: "Brouillon", color: "#64748B" },
   { value: "genere", label: "Généré", color: "#3B82F6" },
   { value: "valide", label: "Validé", color: "#10B981" },
   { value: "paye", label: "Payé", color: "#14B8A6" },
@@ -29,6 +31,20 @@ const config: ResourceConfig = {
   searchFields: ["employe_nom", "periode"],
   newHref: "/paie/nouveau",
   statusFilter: { field: "statut", options: statuts },
+  periodFilter: { field: "periode" },
+  syncFiltersToUrl: true,
+  summary: { label: "bulletins", sumField: "salaire_net", sumLabel: "Total des nets" },
+  advancedFilters: {
+    fields: ["client", "dates", "montants"],
+    columns: { client: "employe_nom", date: "created_at", montant: "salaire_net" },
+  },
+  rowActions: [
+    {
+      label: "Valider / Télécharger",
+      icon: FileDown,
+      render: (row) => <BulletinActionButtons bulletinId={String(row.bulletin_id)} statut={row.statut} size="icon" />,
+    },
+  ],
   columns: [
     { name: "employe_nom", label: "Employé" },
     { name: "periode", label: "Période" },
