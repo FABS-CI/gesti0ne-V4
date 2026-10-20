@@ -30,7 +30,7 @@ export const REGIME_2024: RegimeParams = {
   itsTauxForfait: 0,
   ricfParDemiPart: 5500,
   crTaux: 6.3, crPlafond: 3375000,
-  cmuSalarie: 500, cmuPatronal: 500,
+  cmuSalarie: 1000, cmuPatronal: 1000,
   transportPlafond: 30000,
   arrondiUnite: 100,
   retraitePatTaux: 7.7, retraitePatPlafond: 3375000,

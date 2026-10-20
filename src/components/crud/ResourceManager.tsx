@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { Search, Plus, Download, FileDown } from "lucide-react";
+import { Search, Plus, Download, FileDown, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -13,7 +14,7 @@ import {
   type AdvancedFilters,
 } from "@/components/search/AdvancedSearchBar";
 import { exportListePDF } from "@/lib/pdf/exportListe";
-import { formatFCFA, formatDate } from "@/lib/format";
+import { formatFCFA, formatDate, formatNumber } from "@/lib/format";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,6 +48,8 @@ export type {
   ComputeDefaultsFn,
 } from "./resource-manager-types";
 
+const MOIS_FR = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+
 export function ResourceManager({ config }: { config: ResourceConfig }) {
   const Icon = config.icon;
   const queryClient = useQueryClient();
@@ -55,6 +58,48 @@ export function ResourceManager({ config }: { config: ResourceConfig }) {
   const [statutFilter, setStatutFilter] = useState("all");
   const q = useDebouncedValue(search, 300);
   const [advanced, setAdvanced] = useState<AdvancedFilters>({});
+  const [mois, setMois] = useState("all");
+  const [annee, setAnnee] = useState(String(new Date().getFullYear()));
+
+  // Lecture initiale des filtres depuis l'adresse (option syncFiltersToUrl).
+  useEffect(() => {
+    if (!config.syncFiltersToUrl) return;
+    const sp = new URLSearchParams(window.location.search);
+    if (sp.get("q")) setSearch(sp.get("q")!);
+    if (sp.get("statut")) setStatutFilter(sp.get("statut")!);
+    if (sp.get("mois")) setMois(sp.get("mois")!);
+    if (sp.get("annee")) setAnnee(sp.get("annee")!);
+    const adv = sp.get("f");
+    if (adv) {
+      try {
+        setAdvanced(JSON.parse(adv) as AdvancedFilters);
+      } catch {
+        /* filtre illisible ignoré */
+      }
+    }
+  }, [config.syncFiltersToUrl]);
+
+  useEffect(() => {
+    if (!config.syncFiltersToUrl) return;
+    const url = new URL(window.location.href);
+    const setOrDel = (k: string, v: string | null) =>
+      v ? url.searchParams.set(k, v) : url.searchParams.delete(k);
+    setOrDel("q", q || null);
+    setOrDel("statut", statutFilter !== "all" ? statutFilter : null);
+    setOrDel("mois", mois !== "all" ? mois : null);
+    setOrDel("annee", mois !== "all" ? annee : null);
+    setOrDel("f", Object.keys(advanced).length ? JSON.stringify(advanced) : null);
+    window.history.replaceState(window.history.state, "", url.toString());
+  }, [config.syncFiltersToUrl, q, statutFilter, mois, annee, advanced]);
+
+  const periodeActive = !!config.periodFilter && mois !== "all" && /^\d{4}$/.test(annee);
+  function resetFiltres() {
+    setSearch("");
+    setStatutFilter("all");
+    setMois("all");
+    setAnnee(String(new Date().getFullYear()));
+    setAdvanced({});
+  }
 
   // Auto-open new dialog if ?new=true
   useEffect(() => {
@@ -86,7 +131,7 @@ export function ResourceManager({ config }: { config: ResourceConfig }) {
   const [defaultSources, setDefaultSources] = useState<Record<string, string>>({});
 
   const { data: rows = [], isLoading } = useQuery({
-    queryKey: [config.table, q, statutFilter, advanced],
+    queryKey: [config.table, q, statutFilter, advanced, periodeActive ? `${mois} ${annee}` : ""],
     queryFn: async () => {
       const joinCfg = config.advancedFilters?.joins;
       if (joinCfg?.client && (advanced.telephone || advanced.commercial || advanced.ville)) {
@@ -123,6 +168,7 @@ export function ResourceManager({ config }: { config: ResourceConfig }) {
       if (config.statusFilter && statutFilter !== "all") {
         query = query.eq(config.statusFilter.field, statutFilter);
       }
+      if (periodeActive) query = query.ilike(config.periodFilter!.field, `${mois} ${annee}%`);
       if (advanced.reference) query = query.ilike(advCols.reference, `%${advanced.reference}%`);
       if (advanced.client) query = query.ilike(advCols.client, `%${advanced.client}%`);
       if (advanced.telephone && !joinCfg?.client)
@@ -295,7 +341,8 @@ export function ResourceManager({ config }: { config: ResourceConfig }) {
       const m = optionMeta(config.statusFilter.options, statutFilter);
       filtres.push(`Statut : ${m?.label ?? statutFilter}`);
     }
-    filtres.push(...describeFilters(advanced));
+    if (periodeActive) filtres.push(`Période : ${mois} ${annee}`);
+    filtres.push(...describeFilters(advanced, config.advancedFilters?.labels));
     const isDateCol = (c: (typeof config.columns)[number]) =>
       c.type === "date" || /date|validite|échéance|echeance/i.test(c.name);
     const moneyCols = config.columns.filter((c) => c.type === "money");
@@ -379,17 +426,92 @@ export function ResourceManager({ config }: { config: ResourceConfig }) {
             </SelectContent>
           </Select>
         )}
+        {config.periodFilter && (
+          <>
+            <Select value={mois} onValueChange={setMois}>
+              <SelectTrigger className="w-44" aria-label="Mois">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toutes les périodes</SelectItem>
+                {MOIS_FR.map((m) => (
+                  <SelectItem key={m} value={m}>
+                    {m}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Input
+              aria-label="Année"
+              className="w-24"
+              inputMode="numeric"
+              value={annee}
+              onChange={(e) => setAnnee(e.target.value.replace(/\D/g, "").slice(0, 4))}
+            />
+          </>
+        )}
       </div>
 
       {config.advancedFilters && (
         <div className="rounded-lg border bg-card p-3">
           <AdvancedSearchBar
             fields={config.advancedFilters.fields}
+            labels={config.advancedFilters.labels}
             value={advanced}
             onChange={setAdvanced}
           />
         </div>
       )}
+
+      {(() => {
+        const puces: { label: string; clear: () => void }[] = [];
+        if (q) puces.push({ label: `Recherche : ${q}`, clear: () => setSearch("") });
+        if (config.statusFilter && statutFilter !== "all")
+          puces.push({
+            label: `Statut : ${optionMeta(config.statusFilter.options, statutFilter)?.label ?? statutFilter}`,
+            clear: () => setStatutFilter("all"),
+          });
+        if (periodeActive) puces.push({ label: `Période : ${mois} ${annee}`, clear: () => setMois("all") });
+        describeFilters(advanced, config.advancedFilters?.labels).forEach((label, i) => {
+          const key = Object.keys(advanced)[i] as keyof AdvancedFilters | undefined;
+          puces.push({
+            label,
+            clear: () =>
+              setAdvanced((a) => {
+                const n = { ...a };
+                if (key) delete n[key];
+                return n;
+              }),
+          });
+        });
+        const total = config.summary
+          ? rows.reduce((t, r) => t + (Number(r[config.summary!.sumField]) || 0), 0)
+          : 0;
+        if (!puces.length && !config.summary) return null;
+        return (
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            {puces.map((p) => (
+              <Badge key={p.label} variant="secondary" className="gap-1">
+                {p.label}
+                <button type="button" aria-label={`Retirer ${p.label}`} onClick={p.clear}>
+                  <X className="h-3 w-3" />
+                </button>
+              </Badge>
+            ))}
+            {puces.length > 0 && (
+              <Button variant="ghost" size="sm" onClick={resetFiltres}>
+                Réinitialiser
+              </Button>
+            )}
+            {config.summary && (
+              <span className="ml-auto text-muted-foreground">
+                {formatNumber(rows.length)} {config.summary.label} · {config.summary.sumLabel} :{" "}
+                <span className="font-medium text-foreground">{formatFCFA(total)}</span>
+              </span>
+            )}
+          </div>
+        );
+      })()}
 
       <ResourceTable
         config={config}
