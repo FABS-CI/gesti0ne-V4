@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculerBulletin, its2024, REGIME_2022, REGIME_2024, regimePourDate } from "./regimes-ci";
+import { calculerBulletin, its2024, igr2022, REGIME_2022, REGIME_2024, regimePourDate } from "./regimes-ci";
 
 const modele = { salaireBase: 60000, sursalaire: 77672, tauxAnciennete: 7, transport: 30000, parts: 3 };
 
