@@ -1,0 +1,38 @@
+import { describe, expect, it } from "vitest";
+import { calculerBulletin, its2024, REGIME_2022, REGIME_2024, regimePourDate } from "./regimes-ci";
+
+const modele = { salaireBase: 60000, sursalaire: 77672, tauxAnciennete: 7, transport: 30000, parts: 3 };
+
+describe("REGIME_2024 — bulletin modèle", () => {
+  const b = calculerBulletin(modele, REGIME_2024);
+  it("brut imposable 141 872", () => expect(b.brutImposable).toBe(141872));
+  it("ITS brut 10 700, RICF 22 000, ITS 0", () => {
+    expect(b.itsBrut).toBe(10700); expect(b.ricf).toBe(22000); expect(b.its).toBe(0);
+  });
+  it("CR 8 938", () => expect(b.cr).toBe(8938));
+  it("net avant arrondi 162 434, arrondi −34, net 162 400", () => {
+    expect(b.netAvantArrondi).toBe(162434); expect(b.arrondi).toBe(-34); expect(b.netAPayer).toBe(162400);
+  });
+  it("charges patronales indicatives", () => {
+    expect(b.patronal).toMatchObject({ retraite: 10924, pf: 3500, maternite: 525, at: 1400, cmu: 500 });
+  });
+});
+
+describe("REGIME_2024 — ITS seul", () => {
+  it.each([[150000, 1, 12000], [300000, 2, 28000], [500000, 3, 59000], [1000000, 5, 148000]])(
+    "%i / %i parts → %i", (brut, parts, its) => expect(its2024(brut, parts).its).toBe(its));
+});
+
+describe("REGIME_2022 — août 2022", () => {
+  const b = calculerBulletin({ ...modele, igrManuel: 1693 }, REGIME_2022);
+  it("ITS 1 702", () => expect(b.its).toBe(1702));
+  it("CN 942", () => expect(b.cn).toBe(942));
+  it("CR 8 938", () => expect(b.cr).toBe(8938));
+  it("net 158 100 (IGR saisi 1 693)", () => expect(b.netAPayer).toBe(158100));
+  it.todo("IGR 1 693 calculé par formule");
+});
+
+it("régime selon date de fin", () => {
+  expect(regimePourDate("2023-12-31")).toBe("REGIME_2022");
+  expect(regimePourDate("2024-01-31")).toBe("REGIME_2024");
+});
