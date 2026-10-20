@@ -878,12 +878,19 @@ export type Database = {
       bulletin_lignes: {
         Row: {
           base: number | null
+          bloc: string | null
           bulletin_id: string
           code: string | null
           created_at: string
+          designation: string | null
+          gain: number
           libelle: string | null
           ligne_id: string
           montant: number | null
+          nombre: number | null
+          numero_rubrique: string | null
+          ordre: number
+          retenue: number
           rubrique_id: string | null
           taux: number | null
           type: string | null
@@ -891,12 +898,19 @@ export type Database = {
         }
         Insert: {
           base?: number | null
+          bloc?: string | null
           bulletin_id: string
           code?: string | null
           created_at?: string
+          designation?: string | null
+          gain?: number
           libelle?: string | null
           ligne_id?: string
           montant?: number | null
+          nombre?: number | null
+          numero_rubrique?: string | null
+          ordre?: number
+          retenue?: number
           rubrique_id?: string | null
           taux?: number | null
           type?: string | null
@@ -904,12 +918,19 @@ export type Database = {
         }
         Update: {
           base?: number | null
+          bloc?: string | null
           bulletin_id?: string
           code?: string | null
           created_at?: string
+          designation?: string | null
+          gain?: number
           libelle?: string | null
           ligne_id?: string
           montant?: number | null
+          nombre?: number | null
+          numero_rubrique?: string | null
+          ordre?: number
+          retenue?: number
           rubrique_id?: string | null
           taux?: number | null
           type?: string | null
@@ -927,57 +948,110 @@ export type Database = {
       }
       bulletins_paie: {
         Row: {
+          arrondi: number | null
+          brut_imposable: number | null
           bulletin_id: string
           cotisations: number | null
+          cout_salarial: number | null
           created_at: string
           date_bulletin: string | null
+          date_debut: string | null
+          date_etablissement: string | null
+          date_fin: string | null
+          date_paiement: string | null
           employe_id: string | null
           employe_nom: string | null
           exercice_id: string | null
+          jours_travailles: number
+          mode_paiement: string | null
+          net_a_payer: number | null
+          parts: number | null
           pdf_url: string | null
           periode: string | null
           reference: string | null
+          regime_code: string | null
           retenues: number | null
+          saisie: Json | null
           salaire_brut: number | null
           salaire_net: number | null
           statut: string | null
+          total_autres_retenues: number | null
+          total_indemnites_non_imposables: number | null
           updated_at: string
         }
         Insert: {
+          arrondi?: number | null
+          brut_imposable?: number | null
           bulletin_id?: string
           cotisations?: number | null
+          cout_salarial?: number | null
           created_at?: string
           date_bulletin?: string | null
+          date_debut?: string | null
+          date_etablissement?: string | null
+          date_fin?: string | null
+          date_paiement?: string | null
           employe_id?: string | null
           employe_nom?: string | null
           exercice_id?: string | null
+          jours_travailles?: number
+          mode_paiement?: string | null
+          net_a_payer?: number | null
+          parts?: number | null
           pdf_url?: string | null
           periode?: string | null
           reference?: string | null
+          regime_code?: string | null
           retenues?: number | null
+          saisie?: Json | null
           salaire_brut?: number | null
           salaire_net?: number | null
           statut?: string | null
+          total_autres_retenues?: number | null
+          total_indemnites_non_imposables?: number | null
           updated_at?: string
         }
         Update: {
+          arrondi?: number | null
+          brut_imposable?: number | null
           bulletin_id?: string
           cotisations?: number | null
+          cout_salarial?: number | null
           created_at?: string
           date_bulletin?: string | null
+          date_debut?: string | null
+          date_etablissement?: string | null
+          date_fin?: string | null
+          date_paiement?: string | null
           employe_id?: string | null
           employe_nom?: string | null
           exercice_id?: string | null
+          jours_travailles?: number
+          mode_paiement?: string | null
+          net_a_payer?: number | null
+          parts?: number | null
           pdf_url?: string | null
           periode?: string | null
           reference?: string | null
+          regime_code?: string | null
           retenues?: number | null
+          saisie?: Json | null
           salaire_brut?: number | null
           salaire_net?: number | null
           statut?: string | null
+          total_autres_retenues?: number | null
+          total_indemnites_non_imposables?: number | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "bulletins_paie_regime_code_fkey"
+            columns: ["regime_code"]
+            isOneToOne: false
+            referencedRelation: "paie_regimes"
+            referencedColumns: ["code"]
+          },
+        ]
       }
       categories_produits: {
         Row: {
@@ -2631,6 +2705,7 @@ export type Database = {
           lieu_naissance: string | null
           matricule: string
           mode_paiement: string | null
+          mode_paiement_defaut: string | null
           nationalite: string | null
           niveau_etudes: string | null
           nom_complet: string
@@ -2639,6 +2714,7 @@ export type Database = {
           numero_compte: string | null
           numero_securite_sociale: string | null
           observations: string | null
+          parts: number
           pays: string | null
           phone_normalized: string | null
           photo_url: string | null
@@ -2689,6 +2765,7 @@ export type Database = {
           lieu_naissance?: string | null
           matricule?: string
           mode_paiement?: string | null
+          mode_paiement_defaut?: string | null
           nationalite?: string | null
           niveau_etudes?: string | null
           nom_complet: string
@@ -2697,6 +2774,7 @@ export type Database = {
           numero_compte?: string | null
           numero_securite_sociale?: string | null
           observations?: string | null
+          parts?: number
           pays?: string | null
           phone_normalized?: string | null
           photo_url?: string | null
@@ -2747,6 +2825,7 @@ export type Database = {
           lieu_naissance?: string | null
           matricule?: string
           mode_paiement?: string | null
+          mode_paiement_defaut?: string | null
           nationalite?: string | null
           niveau_etudes?: string | null
           nom_complet?: string
@@ -2755,6 +2834,7 @@ export type Database = {
           numero_compte?: string | null
           numero_securite_sociale?: string | null
           observations?: string | null
+          parts?: number
           pays?: string | null
           phone_normalized?: string | null
           photo_url?: string | null
@@ -4439,6 +4519,33 @@ export type Database = {
           annee?: number
           dernier_numero?: number
           type_doc?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      paie_regimes: {
+        Row: {
+          actif: boolean
+          code: string
+          date_effet: string
+          libelle: string
+          parametres: Json
+          updated_at: string
+        }
+        Insert: {
+          actif?: boolean
+          code: string
+          date_effet: string
+          libelle: string
+          parametres?: Json
+          updated_at?: string
+        }
+        Update: {
+          actif?: boolean
+          code?: string
+          date_effet?: string
+          libelle?: string
+          parametres?: Json
           updated_at?: string
         }
         Relationships: []

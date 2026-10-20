@@ -526,6 +526,13 @@
       "when": 1792234875453,
       "tag": "0074_statut_libelle_attente_validation",
       "breakpoints": true
+    },
+    {
+      "idx": 75,
+      "version": "7",
+      "when": 1792485514156,
+      "tag": "0075_paie_regimes_ci_2024",
+      "breakpoints": true
     }
   ]
 }
