@@ -1,24 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import type { Group, Item } from "./nav-data";
-import { useApprobationsCount } from "@/hooks/use-approbations-count";
-
-function BadgeApprobations() {
-  const { total, critiques } = useApprobationsCount();
-  if (!total) return null;
-  const isCritical = critiques > 0;
-  return (
-    <span
-      aria-label={`${total} approbation${total > 1 ? "s" : ""} en attente`}
-      className={cn(
-        "ml-auto min-w-5 shrink-0 rounded-md px-1.5 py-0.5 text-center text-xs font-medium tabular-nums",
-        isCritical ? "bg-destructive text-destructive-foreground" : "bg-warning text-sidebar-primary-foreground",
-      )}
-    >
-      {total > 99 ? "99+" : total}
-    </span>
-  );
-}
 
 export function SidebarNavItem({
   item,
@@ -55,7 +37,6 @@ export function SidebarNavItem({
           className={cn("h-4 w-4 shrink-0", active ? "text-sidebar-primary" : "text-sidebar-foreground/50")}
         />
         <span className="truncate">{item.title}</span>
-        {item.badge === "approbations" ? <BadgeApprobations /> : null}
       </Link>
     </li>
   );

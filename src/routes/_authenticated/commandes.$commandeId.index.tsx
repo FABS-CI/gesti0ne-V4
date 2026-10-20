@@ -17,7 +17,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import {
-  demanderAnnulationCommande,
+  annulerCommandeDirecte,
   getCommande,
   getCommandeLignes,
   STATUT_LABEL,
@@ -80,16 +80,15 @@ function CommandeDetailPage() {
     queryFn: () => getCommandeLignes(commandeId),
   });
   const annulMut = useMutation({
-    mutationFn: () => demanderAnnulationCommande(commandeId, annulMotif.trim()),
+    mutationFn: () => annulerCommandeDirecte(commandeId, annulMotif.trim()),
     onSuccess: () => {
-      toast.success("Demande d'annulation envoyée pour approbation");
+      toast.success("Commande annulée");
       queryClient.invalidateQueries({ queryKey: ["commande", commandeId] });
       queryClient.invalidateQueries({ queryKey: ["commandes"] });
-      queryClient.invalidateQueries({ queryKey: ["approbations"] });
       setAnnulOpen(false);
       setAnnulMotif("");
     },
-    onError: (e) => toast.error(friendlyError(e, "Impossible de demander l'annulation")),
+    onError: (e) => toast.error(friendlyError(e, "Impossible d'annuler la commande")),
   });
 
 
@@ -194,12 +193,12 @@ function CommandeDetailPage() {
           commande.statut !== "annulation_en_attente" && (
             <Button variant="outline" size="sm" onClick={() => setAnnulOpen(true)}>
               <Ban className="mr-2 h-4 w-4 text-destructive" />
-              Demander l'annulation
+              Annuler la commande
             </Button>
           )}
         {commande.statut === "annulation_en_attente" && (
           <Badge variant="outline" className="border-warning text-warning">
-            En attente d'approbation
+            Annulation en attente
           </Badge>
         )}
       </div>
@@ -342,10 +341,10 @@ function CommandeDetailPage() {
       <AlertDialog open={annulOpen} onOpenChange={setAnnulOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Demander l'annulation de la commande ?</AlertDialogTitle>
+            <AlertDialogTitle>Annuler la commande ?</AlertDialogTitle>
             <AlertDialogDescription>
-              La commande passera en statut « Annulation en attente ». Un comptable devra approuver
-              ou rejeter la demande depuis le centre d'approbations.
+              La commande est annulée tout de suite : le stock est remis, les factures, bons de
+              livraison et proformas liés sont annulés et le solde du client est recalculé.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="space-y-1 py-2">
@@ -373,7 +372,7 @@ function CommandeDetailPage() {
               }}
               disabled={annulMut.isPending || !annulMotif.trim()}
             >
-              Envoyer la demande
+              Annuler la commande
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
