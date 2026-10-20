@@ -90,3 +90,13 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Liens clients : paiements, DGI, livraisons, rapport transport, fiche facture
 - [x] Liens produits : lignes de la fiche facture
 - [x] Tests attachClientIds (lots de 200, client introuvable)
+
+## Refonte paie (régime ITS 2024)
+- [x] Moteur de calcul régimes 2024/2022 + tests de référence
+- [ ] Migration (régimes, champs employés/bulletins, lignes enregistrées, paramètres entreprise)
+- [ ] Calcul côté serveur à l'enregistrement, validation directe (sans approbation)
+- [ ] Saisie « Nouveau bulletin » avec aperçu
+- [ ] PDF modèle FABS depuis les lignes enregistrées
+- [ ] Déclarations CNPS/ITS depuis les lignes
+- [ ] Formule IGR 2022 (à fournir) ; cachet entreprise (image à fournir)
+## Retrait Centre d'approbations — en attente des 2 décisions utilisateur
