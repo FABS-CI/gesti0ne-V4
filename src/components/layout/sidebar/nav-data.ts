@@ -107,7 +107,6 @@ export const groups: Group[] = [
       { title: "Paiements", url: "/paiements", icon: CreditCard, ready: true },
       { title: "Retours", url: "/retours", icon: RotateCcw, ready: true },
       { title: "Spécimens", url: "/specimens", icon: Gift, ready: true },
-      { title: "Approbations", url: "/approbations", icon: ShieldCheck, ready: true, badge: "approbations" },
     ],
   },
   {
@@ -272,7 +271,6 @@ export const groups: Group[] = [
       { title: "Journal d'audit", url: "/audit", icon: History, ready: true },
       { title: "Backup", url: "/backup", icon: Database, ready: true },
       { title: "Santé du système", url: "/admin/sante-systeme", icon: Shield, ready: true },
-      { title: "Seuils d'approbation", url: "/admin/approbation-seuils", icon: Shield, ready: true },
       { title: "Renommage des clients", url: "/admin/renommage-clients", icon: UserCog, ready: true },
       { title: "Apparence des documents", url: "/admin/apparence-documents", icon: FileText, ready: true },
 

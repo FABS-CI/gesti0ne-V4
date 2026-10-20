@@ -172,8 +172,6 @@ export const ROUTE_TO_PERMISSION: Record<string, RoutePermissionRequirement> = {
   "/centre-documents": ["centre_documents.voir", "documents.voir"],
   "/modeles-documents": "modeles_documents.voir",
   "/documents-impression": "documents.voir",
-  "/approbations": "workflows.voir",
-  "/workflow-approvals": "workflows.voir",
   "/workflows-definitions": "workflows.acceder_parametres",
 
   // Admin & exercices (P2)
@@ -185,7 +183,6 @@ export const ROUTE_TO_PERMISSION: Record<string, RoutePermissionRequirement> = {
   "/admin/google-drive": "integrations.acceder_parametres",
   "/admin/securite": "audit.voir",
   "/admin/rpc-errors": "audit.voir",
-  "/admin/approbation-seuils": "workflows.acceder_parametres",
   "/admin/apparence-documents": "modeles_documents.voir",
   "/admin/roles-v3": "roles_permissions.voir",
   "/admin/sante-systeme": "audit.voir",
