@@ -1,27 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { History } from "lucide-react";
-import { ModulePlaceholder } from "@/components/common/ModulePlaceholder";
+import { ResourceManager } from "@/components/crud/ResourceManager";
+import { bulletinsConfig } from "@/components/paie/bulletins-config";
+import { authRouteHead } from "@/lib/route-head";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
+const historiqueConfig = {
+  ...bulletinsConfig,
+  title: "Historique des paies",
+  subtitle: "Tous les bulletins enregistrés",
+  icon: History,
+  newHref: undefined,
+};
+
 export const Route = createFileRoute("/_authenticated/paie-historique")({
-  component: () => (
-    <ModulePlaceholder
-      title="Historique des paies"
-      subtitle="Consultation de tous les bulletins archivés"
-      icon={History}
-      color="#8B5CF6"
-      description="Retrouvez l'ensemble des bulletins de paie générés, avec périodes, salariés, montants, statuts de validation et actions d'impression / téléchargement."
-      shortcuts={[
-        { label: "Bulletins", to: "/paie" },
-        { label: "Tableau de bord Paie", to: "/paie-dashboard" },
-      ]}
-      bullets={[
-        "Filtrage par période, salarié, statut",
-        "Téléchargement PDF individuel",
-        "Traçabilité des validations et paiements",
-      ]}
-    />
-  ),
+  head: () => authRouteHead("Historique des paies"),
+  component: () => <ResourceManager config={historiqueConfig} />,
   errorComponent: RouteError,
   notFoundComponent: RouteNotFound,
 });
