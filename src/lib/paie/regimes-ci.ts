@@ -88,9 +88,9 @@ export function cn2022(brutImposable: number, p: RegimeParams = REGIME_2022): nu
   return Math.round(bareme(base, p.cnBareme));
 }
 
-/** IGR 2022 : formule à compléter (renvoie 0 tant qu'elle n'est pas fournie). */
-export function igr2022(_brutImposable: number, _parts: number): number {
-  return 0;
+/** IGR 2022 : on applique le barème ITS 2024 moins la RICF (décision utilisateur). */
+export function igr2022(brutImposable: number, parts: number, p24: RegimeParams = REGIME_2024): number {
+  return its2024(brutImposable, parts, p24).its;
 }
 
 export interface SaisieBulletin {
