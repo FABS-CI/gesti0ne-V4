@@ -71,5 +71,5 @@ export async function buildBulletinRowPdf(bulletinId: string) {
 export async function telechargerBulletin(bulletinId: string) {
   const { data, employeNom } = await buildBulletinRowPdf(bulletinId);
   const blob = await generateBulletinPaieCIPDF(data);
-  downloadBlob(blob, bulletinFileName(data.reference, employeNom));
+  downloadBlob(blob, bulletinFileName(data.reference ?? bulletinId, employeNom));
 }
