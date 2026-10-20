@@ -232,7 +232,7 @@ function NouveauBulletinPage() {
                 <Select value={modePaiement} onValueChange={setModePaiement}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    {MODES.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+                    {Array.from(new Set([...MODES, modePaiement].filter(Boolean))).map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
