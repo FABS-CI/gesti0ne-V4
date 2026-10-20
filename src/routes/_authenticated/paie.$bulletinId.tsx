@@ -1,16 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Calendar, FileDown, Loader2, Minus, User, Wallet } from "lucide-react";
+import { Calendar, Minus, User, Wallet } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { formatDate, formatFCFA } from "@/lib/format";
-import {
-  generateBulletinPaieCIPDF,
-  bulletinFileName,
-  ENTREPRISE_FABS,
-} from "@/lib/pdf/bulletinPaieCI";
-import { construireDonneesPdf, calculerCumuls, type BulletinCumul, type BulletinStocke, type LigneStockee } from "@/lib/paie/bulletin-pdf-data";
-import { usePdfDownload } from "@/hooks/use-pdf-download";
+import type { LigneStockee } from "@/lib/paie/bulletin-pdf-data";
+import { BulletinActionButtons } from "@/components/paie/BulletinActionButtons";
+import { CMU_FORFAIT_FCFA } from "@/lib/paie-bulletin-actions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,6 +32,7 @@ type Bulletin = {
 };
 
 const STATUTS: Record<string, { label: string; color: string }> = {
+  brouillon: { label: "Brouillon", color: "#64748B" },
   genere: { label: "Généré", color: "#3B82F6" },
   valide: { label: "Validé", color: "#10B981" },
   paye: { label: "Payé", color: "#14B8A6" },
@@ -57,7 +54,6 @@ function frDate(d: string | null | undefined) {
 
 function BulletinDetailPage() {
   const { bulletinId } = Route.useParams();
-  const pdf = usePdfDownload();
   const { data: bulletin, isLoading } = useQuery({
     queryKey: ["bulletin", bulletinId],
     queryFn: () => getBulletin(bulletinId),
@@ -90,29 +86,6 @@ function BulletinDetailPage() {
     },
   });
 
-  const dateFin = (bulletin as { date_fin?: string | null } | undefined)?.date_fin;
-  const { data: cumuls } = useQuery({
-    queryKey: ["bulletin-cumuls", employeId, dateFin],
-    enabled: !!employeId && !!dateFin,
-    queryFn: async () => {
-      const debutAnnee = `${dateFin!.slice(0, 4)}-01-01`;
-      const { data, error } = await supabase
-        .from("bulletins_paie")
-        .select("brut_imposable,jours_travailles,bulletin_lignes(numero_rubrique,retenue)")
-        .eq("employe_id", employeId!)
-        .gte("date_fin", debutAnnee)
-        .lte("date_fin", dateFin!);
-      if (error) throw error;
-      return calculerCumuls(
-        (data ?? []).map((b) => ({
-          brut_imposable: b.brut_imposable,
-          jours_travailles: b.jours_travailles,
-          lignes: (b.bulletin_lignes ?? []) as BulletinCumul["lignes"],
-        })),
-      );
-    },
-  });
-
   if (isLoading) return <Skeleton className="h-64 w-full" />;
   if (!bulletin)
     return (
@@ -135,37 +108,7 @@ function BulletinDetailPage() {
         crumbs={[{ label: "Paie", to: "/paie" }, { label: bulletin.periode }]}
         actions={
           <>
-            {(() => {
-              const pst = pdf.getState(bulletin.bulletin_id);
-              const data = construireDonneesPdf(
-                bulletin as unknown as BulletinStocke,
-                lignes ?? [],
-                employe ?? null,
-                ENTREPRISE_FABS,
-                cumuls,
-              );
-              return (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={pst.loading || !lignes?.length}
-                  onClick={() =>
-                    pdf.download(
-                      bulletin.bulletin_id,
-                      () => Promise.resolve(generateBulletinPaieCIPDF(data)),
-                      bulletinFileName(data.reference, bulletin.employe_nom),
-                    )
-                  }
-                >
-                  {pst.loading ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <FileDown className="mr-2 h-4 w-4" />
-                  )}
-                  {pst.loading ? "Génération…" : "Télécharger PDF"}
-                </Button>
-              );
-            })()}
+            <BulletinActionButtons bulletinId={bulletin.bulletin_id} statut={bulletin.statut} showLabels />
             {st && (
               <Badge style={{ backgroundColor: st.color }} className="text-white">
                 {st.label}
@@ -261,6 +204,10 @@ function BulletinDetailPage() {
           <div className="flex justify-between">
             <span className="text-muted-foreground">Retenues</span>
             <span className="font-medium text-destructive">- {formatFCFA(bulletin.retenues)}</span>
+          </div>
+          <div className="flex justify-between pl-4 text-xs">
+            <span className="text-muted-foreground">dont CMU salarié</span>
+            <span>{formatFCFA(lignes?.find((l) => l.numero_rubrique === "776")?.retenue ?? CMU_FORFAIT_FCFA)}</span>
           </div>
           <div className="flex justify-between border-t pt-2 text-base">
             <span className="font-semibold">Salaire net</span>
