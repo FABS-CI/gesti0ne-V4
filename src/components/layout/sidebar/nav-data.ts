@@ -56,7 +56,7 @@ export type Item = {
    */
   section?: string;
   /** Si défini, affiche un badge dynamique piloté par ce hook. */
-  badge?: "approbations";
+  badge?: never;
 };
 export type Group = {
   label: string;
