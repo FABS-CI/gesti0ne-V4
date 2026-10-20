@@ -197,3 +197,31 @@ export function calculerBulletin(s: SaisieBulletin, p: RegimeParams): ResultatBu
     patronal: pat, coutSalarial: brutImposable + nonImpo + pat.total,
   };
 }
+
+type Bar = Array<[number | null, number]>;
+const toTranches = (b: unknown): Tranche[] =>
+  Array.isArray(b) ? (b as Bar).map(([max, taux]) => ({ max: max ?? Infinity, taux })) : [];
+
+/** Convertit les paramètres enregistrés (paie_regimes.parametres) en RegimeParams. */
+export function regimeDepuisParametres(code: RegimeCode, j: Record<string, unknown> | null | undefined): RegimeParams {
+  const base = code === "REGIME_2022" ? REGIME_2022 : REGIME_2024;
+  if (!j) return base;
+  const n = (k: string, d: number) => (typeof j[k] === "number" ? (j[k] as number) : d);
+  return {
+    ...base,
+    itsBareme: j["its_bareme"] ? toTranches(j["its_bareme"]) : base.itsBareme,
+    itsTauxForfait: n("its_taux_forfait", base.itsTauxForfait),
+    ricfParDemiPart: n("ricf_par_demi_part", base.ricfParDemiPart),
+    crTaux: n("cr_taux", base.crTaux), crPlafond: n("cr_plafond", base.crPlafond),
+    cmuSalarie: n("cmu_salarie", base.cmuSalarie), cmuPatronal: n("cmu_patronal", base.cmuPatronal),
+    transportPlafond: n("transport_plafond", base.transportPlafond),
+    arrondiUnite: n("arrondi_unite", base.arrondiUnite),
+    retraitePatTaux: n("retraite_pat_taux", base.retraitePatTaux), retraitePatPlafond: n("retraite_pat_plafond", base.retraitePatPlafond),
+    pfTaux: n("pf_taux", base.pfTaux), maternTaux: n("maternite_taux", base.maternTaux), atTaux: n("at_taux", base.atTaux),
+    plafondPrestations: n("plafond_prestations", base.plafondPrestations),
+    fdfpActif: typeof j["fdfp_actif"] === "boolean" ? (j["fdfp_actif"] as boolean) : base.fdfpActif,
+    fdfpTaux: n("fdfp_taux", base.fdfpTaux),
+    cnAbattement: n("cn_abattement", base.cnAbattement),
+    cnBareme: j["cn_bareme"] ? toTranches(j["cn_bareme"]) : base.cnBareme,
+  };
+}

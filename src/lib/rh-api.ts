@@ -76,6 +76,7 @@ export type Employe = {
   statut_employe?: string | null;
   temps_travail?: string | null;
   categorie?: string | null;
+  parts?: number | null;
   echelon?: string | null;
   site_affectation?: string | null;
   // Financier
