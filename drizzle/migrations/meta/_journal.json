@@ -547,6 +547,13 @@
       "when": 1792486154813,
       "tag": "0077_paie_calcul_serveur_nom",
       "breakpoints": true
+    },
+    {
+      "idx": 78,
+      "version": "7",
+      "when": 1792493079430,
+      "tag": "0078_paie_valider_genere_et_brouillon",
+      "breakpoints": true
     }
   ]
 }
