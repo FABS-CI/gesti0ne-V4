@@ -8077,6 +8077,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      _paie_bareme: { Args: { _bareme: Json; _base: number }; Returns: number }
       _recalc_factures_du_paiement: {
         Args: { _paiement_id: string }
         Returns: undefined
@@ -9364,6 +9365,19 @@ export type Database = {
       override_payment_product_allocation: {
         Args: { _allocation_id: string; _lignes: Json; _raison: string }
         Returns: Json
+      }
+      paie_enregistrer_bulletin: {
+        Args: {
+          p_date_debut: string
+          p_date_fin: string
+          p_employe_id: string
+          p_saisie: Json
+        }
+        Returns: string
+      }
+      paie_valider_bulletin: {
+        Args: { p_bulletin_id: string }
+        Returns: undefined
       }
       payer_achat: { Args: { _achat_id: string }; Returns: undefined }
       preview_cloture_exercice: {
