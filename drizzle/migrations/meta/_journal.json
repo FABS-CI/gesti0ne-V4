@@ -554,6 +554,13 @@
       "when": 1792493079430,
       "tag": "0078_paie_valider_genere_et_brouillon",
       "breakpoints": true
+    },
+    {
+      "idx": 79,
+      "version": "7",
+      "when": 1792499792206,
+      "tag": "0079_paie_igr_2022_bareme_2024",
+      "breakpoints": true
     }
   ]
 }

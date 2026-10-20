@@ -20,7 +20,6 @@ import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } fr
 import { Route as AuthenticatedAbsencesRouteImport } from './routes/_authenticated/absences'
 import { Route as AuthenticatedAccesRefuseRouteImport } from './routes/_authenticated/acces-refuse'
 import { Route as AuthenticatedAlertesStockRouteImport } from './routes/_authenticated/alertes-stock'
-import { Route as AuthenticatedApprobationsRouteImport } from './routes/_authenticated/approbations'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
 import { Route as AuthenticatedBackupRouteImport } from './routes/_authenticated/backup'
 import { Route as AuthenticatedBalanceRouteImport } from './routes/_authenticated/balance'
@@ -89,7 +88,6 @@ import { Route as AuthenticatedRapportsLogistiqueRouteImport } from './routes/_a
 import { Route as AuthenticatedRetoursRouteImport } from './routes/_authenticated/retours'
 import { Route as AuthenticatedRhDashboardRouteImport } from './routes/_authenticated/rh-dashboard'
 import { Route as AuthenticatedTransfertsRouteImport } from './routes/_authenticated/transferts'
-import { Route as AuthenticatedWorkflowApprovalsRouteImport } from './routes/_authenticated/workflow-approvals'
 import { Route as AuthenticatedWorkflowsDefinitionsRouteImport } from './routes/_authenticated/workflows-definitions'
 import { Route as CartonColisIdRouteImport } from './routes/carton.$colisId'
 import { Route as VerifyUuidRouteImport } from './routes/verify.$uuid'
@@ -100,7 +98,6 @@ import { Route as AuthenticatedAchatsIndexRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAchatsAchatIdRouteImport } from './routes/_authenticated/achats.$achatId'
 import { Route as AuthenticatedAchatsNouveauRouteImport } from './routes/_authenticated/achats.nouveau'
 import { Route as AuthenticatedAdminApparenceDocumentsRouteImport } from './routes/_authenticated/admin.apparence-documents'
-import { Route as AuthenticatedAdminApprobationSeuilsRouteImport } from './routes/_authenticated/admin.approbation-seuils'
 import { Route as AuthenticatedAdminDataQualityRouteImport } from './routes/_authenticated/admin.data-quality'
 import { Route as AuthenticatedAdminGoogleDriveRouteImport } from './routes/_authenticated/admin.google-drive'
 import { Route as AuthenticatedAdminPerfRouteImport } from './routes/_authenticated/admin.perf'
@@ -272,12 +269,6 @@ const AuthenticatedAlertesStockRoute =
   AuthenticatedAlertesStockRouteImport.update({
     id: '/alertes-stock',
     path: '/alertes-stock',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedApprobationsRoute =
-  AuthenticatedApprobationsRouteImport.update({
-    id: '/approbations',
-    path: '/approbations',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAuditRoute = AuthenticatedAuditRouteImport.update({
@@ -658,12 +649,6 @@ const AuthenticatedTransfertsRoute = AuthenticatedTransfertsRouteImport.update({
   path: '/transferts',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedWorkflowApprovalsRoute =
-  AuthenticatedWorkflowApprovalsRouteImport.update({
-    id: '/workflow-approvals',
-    path: '/workflow-approvals',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedWorkflowsDefinitionsRoute =
   AuthenticatedWorkflowsDefinitionsRouteImport.update({
     id: '/workflows-definitions',
@@ -720,12 +705,6 @@ const AuthenticatedAdminApparenceDocumentsRoute =
   AuthenticatedAdminApparenceDocumentsRouteImport.update({
     id: '/admin/apparence-documents',
     path: '/admin/apparence-documents',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAdminApprobationSeuilsRoute =
-  AuthenticatedAdminApprobationSeuilsRouteImport.update({
-    id: '/admin/approbation-seuils',
-    path: '/admin/approbation-seuils',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAdminDataQualityRoute =
@@ -1416,7 +1395,6 @@ export interface FileRoutesByFullPath {
   '/absences': typeof AuthenticatedAbsencesRouteWithChildren
   '/acces-refuse': typeof AuthenticatedAccesRefuseRoute
   '/alertes-stock': typeof AuthenticatedAlertesStockRoute
-  '/approbations': typeof AuthenticatedApprobationsRoute
   '/audit': typeof AuthenticatedAuditRoute
   '/backup': typeof AuthenticatedBackupRoute
   '/balance': typeof AuthenticatedBalanceRoute
@@ -1485,7 +1463,6 @@ export interface FileRoutesByFullPath {
   '/retours': typeof AuthenticatedRetoursRouteWithChildren
   '/rh-dashboard': typeof AuthenticatedRhDashboardRoute
   '/transferts': typeof AuthenticatedTransfertsRouteWithChildren
-  '/workflow-approvals': typeof AuthenticatedWorkflowApprovalsRoute
   '/workflows-definitions': typeof AuthenticatedWorkflowsDefinitionsRoute
   '/carton/$colisId': typeof CartonColisIdRoute
   '/verify/$uuid': typeof VerifyUuidRoute
@@ -1494,7 +1471,6 @@ export interface FileRoutesByFullPath {
   '/achats/$achatId': typeof AuthenticatedAchatsAchatIdRoute
   '/achats/nouveau': typeof AuthenticatedAchatsNouveauRoute
   '/admin/apparence-documents': typeof AuthenticatedAdminApparenceDocumentsRoute
-  '/admin/approbation-seuils': typeof AuthenticatedAdminApprobationSeuilsRoute
   '/admin/data-quality': typeof AuthenticatedAdminDataQualityRoute
   '/admin/google-drive': typeof AuthenticatedAdminGoogleDriveRoute
   '/admin/perf': typeof AuthenticatedAdminPerfRoute
@@ -1622,7 +1598,6 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/acces-refuse': typeof AuthenticatedAccesRefuseRoute
   '/alertes-stock': typeof AuthenticatedAlertesStockRoute
-  '/approbations': typeof AuthenticatedApprobationsRoute
   '/audit': typeof AuthenticatedAuditRoute
   '/backup': typeof AuthenticatedBackupRoute
   '/balance': typeof AuthenticatedBalanceRoute
@@ -1671,7 +1646,6 @@ export interface FileRoutesByTo {
   '/rapports-comptables': typeof AuthenticatedRapportsComptablesRoute
   '/rapports-logistique': typeof AuthenticatedRapportsLogistiqueRoute
   '/rh-dashboard': typeof AuthenticatedRhDashboardRoute
-  '/workflow-approvals': typeof AuthenticatedWorkflowApprovalsRoute
   '/workflows-definitions': typeof AuthenticatedWorkflowsDefinitionsRoute
   '/carton/$colisId': typeof CartonColisIdRoute
   '/verify/$uuid': typeof VerifyUuidRoute
@@ -1680,7 +1654,6 @@ export interface FileRoutesByTo {
   '/achats/$achatId': typeof AuthenticatedAchatsAchatIdRoute
   '/achats/nouveau': typeof AuthenticatedAchatsNouveauRoute
   '/admin/apparence-documents': typeof AuthenticatedAdminApparenceDocumentsRoute
-  '/admin/approbation-seuils': typeof AuthenticatedAdminApprobationSeuilsRoute
   '/admin/data-quality': typeof AuthenticatedAdminDataQualityRoute
   '/admin/google-drive': typeof AuthenticatedAdminGoogleDriveRoute
   '/admin/perf': typeof AuthenticatedAdminPerfRoute
@@ -1810,7 +1783,6 @@ export interface FileRoutesById {
   '/_authenticated/absences': typeof AuthenticatedAbsencesRouteWithChildren
   '/_authenticated/acces-refuse': typeof AuthenticatedAccesRefuseRoute
   '/_authenticated/alertes-stock': typeof AuthenticatedAlertesStockRoute
-  '/_authenticated/approbations': typeof AuthenticatedApprobationsRoute
   '/_authenticated/audit': typeof AuthenticatedAuditRoute
   '/_authenticated/backup': typeof AuthenticatedBackupRoute
   '/_authenticated/balance': typeof AuthenticatedBalanceRoute
@@ -1879,7 +1851,6 @@ export interface FileRoutesById {
   '/_authenticated/retours': typeof AuthenticatedRetoursRouteWithChildren
   '/_authenticated/rh-dashboard': typeof AuthenticatedRhDashboardRoute
   '/_authenticated/transferts': typeof AuthenticatedTransfertsRouteWithChildren
-  '/_authenticated/workflow-approvals': typeof AuthenticatedWorkflowApprovalsRoute
   '/_authenticated/workflows-definitions': typeof AuthenticatedWorkflowsDefinitionsRoute
   '/carton/$colisId': typeof CartonColisIdRoute
   '/verify/$uuid': typeof VerifyUuidRoute
@@ -1888,7 +1859,6 @@ export interface FileRoutesById {
   '/_authenticated/achats/$achatId': typeof AuthenticatedAchatsAchatIdRoute
   '/_authenticated/achats/nouveau': typeof AuthenticatedAchatsNouveauRoute
   '/_authenticated/admin/apparence-documents': typeof AuthenticatedAdminApparenceDocumentsRoute
-  '/_authenticated/admin/approbation-seuils': typeof AuthenticatedAdminApprobationSeuilsRoute
   '/_authenticated/admin/data-quality': typeof AuthenticatedAdminDataQualityRoute
   '/_authenticated/admin/google-drive': typeof AuthenticatedAdminGoogleDriveRoute
   '/_authenticated/admin/perf': typeof AuthenticatedAdminPerfRoute
@@ -2019,7 +1989,6 @@ export interface FileRouteTypes {
     | '/absences'
     | '/acces-refuse'
     | '/alertes-stock'
-    | '/approbations'
     | '/audit'
     | '/backup'
     | '/balance'
@@ -2088,7 +2057,6 @@ export interface FileRouteTypes {
     | '/retours'
     | '/rh-dashboard'
     | '/transferts'
-    | '/workflow-approvals'
     | '/workflows-definitions'
     | '/carton/$colisId'
     | '/verify/$uuid'
@@ -2097,7 +2065,6 @@ export interface FileRouteTypes {
     | '/achats/$achatId'
     | '/achats/nouveau'
     | '/admin/apparence-documents'
-    | '/admin/approbation-seuils'
     | '/admin/data-quality'
     | '/admin/google-drive'
     | '/admin/perf'
@@ -2225,7 +2192,6 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/acces-refuse'
     | '/alertes-stock'
-    | '/approbations'
     | '/audit'
     | '/backup'
     | '/balance'
@@ -2274,7 +2240,6 @@ export interface FileRouteTypes {
     | '/rapports-comptables'
     | '/rapports-logistique'
     | '/rh-dashboard'
-    | '/workflow-approvals'
     | '/workflows-definitions'
     | '/carton/$colisId'
     | '/verify/$uuid'
@@ -2283,7 +2248,6 @@ export interface FileRouteTypes {
     | '/achats/$achatId'
     | '/achats/nouveau'
     | '/admin/apparence-documents'
-    | '/admin/approbation-seuils'
     | '/admin/data-quality'
     | '/admin/google-drive'
     | '/admin/perf'
@@ -2412,7 +2376,6 @@ export interface FileRouteTypes {
     | '/_authenticated/absences'
     | '/_authenticated/acces-refuse'
     | '/_authenticated/alertes-stock'
-    | '/_authenticated/approbations'
     | '/_authenticated/audit'
     | '/_authenticated/backup'
     | '/_authenticated/balance'
@@ -2481,7 +2444,6 @@ export interface FileRouteTypes {
     | '/_authenticated/retours'
     | '/_authenticated/rh-dashboard'
     | '/_authenticated/transferts'
-    | '/_authenticated/workflow-approvals'
     | '/_authenticated/workflows-definitions'
     | '/carton/$colisId'
     | '/verify/$uuid'
@@ -2490,7 +2452,6 @@ export interface FileRouteTypes {
     | '/_authenticated/achats/$achatId'
     | '/_authenticated/achats/nouveau'
     | '/_authenticated/admin/apparence-documents'
-    | '/_authenticated/admin/approbation-seuils'
     | '/_authenticated/admin/data-quality'
     | '/_authenticated/admin/google-drive'
     | '/_authenticated/admin/perf'
@@ -2707,13 +2668,6 @@ declare module '@tanstack/react-router' {
       path: '/alertes-stock'
       fullPath: '/alertes-stock'
       preLoaderRoute: typeof AuthenticatedAlertesStockRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/approbations': {
-      id: '/_authenticated/approbations'
-      path: '/approbations'
-      fullPath: '/approbations'
-      preLoaderRoute: typeof AuthenticatedApprobationsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/audit': {
@@ -3192,13 +3146,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTransfertsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/workflow-approvals': {
-      id: '/_authenticated/workflow-approvals'
-      path: '/workflow-approvals'
-      fullPath: '/workflow-approvals'
-      preLoaderRoute: typeof AuthenticatedWorkflowApprovalsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/workflows-definitions': {
       id: '/_authenticated/workflows-definitions'
       path: '/workflows-definitions'
@@ -3267,13 +3214,6 @@ declare module '@tanstack/react-router' {
       path: '/admin/apparence-documents'
       fullPath: '/admin/apparence-documents'
       preLoaderRoute: typeof AuthenticatedAdminApparenceDocumentsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/approbation-seuils': {
-      id: '/_authenticated/admin/approbation-seuils'
-      path: '/admin/approbation-seuils'
-      fullPath: '/admin/approbation-seuils'
-      preLoaderRoute: typeof AuthenticatedAdminApprobationSeuilsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/data-quality': {
@@ -4498,7 +4438,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAbsencesRoute: typeof AuthenticatedAbsencesRouteWithChildren
   AuthenticatedAccesRefuseRoute: typeof AuthenticatedAccesRefuseRoute
   AuthenticatedAlertesStockRoute: typeof AuthenticatedAlertesStockRoute
-  AuthenticatedApprobationsRoute: typeof AuthenticatedApprobationsRoute
   AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
   AuthenticatedBackupRoute: typeof AuthenticatedBackupRoute
   AuthenticatedBalanceRoute: typeof AuthenticatedBalanceRoute
@@ -4567,12 +4506,10 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedRetoursRoute: typeof AuthenticatedRetoursRouteWithChildren
   AuthenticatedRhDashboardRoute: typeof AuthenticatedRhDashboardRoute
   AuthenticatedTransfertsRoute: typeof AuthenticatedTransfertsRouteWithChildren
-  AuthenticatedWorkflowApprovalsRoute: typeof AuthenticatedWorkflowApprovalsRoute
   AuthenticatedWorkflowsDefinitionsRoute: typeof AuthenticatedWorkflowsDefinitionsRoute
   AuthenticatedAchatsAchatIdRoute: typeof AuthenticatedAchatsAchatIdRoute
   AuthenticatedAchatsNouveauRoute: typeof AuthenticatedAchatsNouveauRoute
   AuthenticatedAdminApparenceDocumentsRoute: typeof AuthenticatedAdminApparenceDocumentsRoute
-  AuthenticatedAdminApprobationSeuilsRoute: typeof AuthenticatedAdminApprobationSeuilsRoute
   AuthenticatedAdminDataQualityRoute: typeof AuthenticatedAdminDataQualityRoute
   AuthenticatedAdminGoogleDriveRoute: typeof AuthenticatedAdminGoogleDriveRoute
   AuthenticatedAdminPerfRoute: typeof AuthenticatedAdminPerfRoute
@@ -4616,7 +4553,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAbsencesRoute: AuthenticatedAbsencesRouteWithChildren,
   AuthenticatedAccesRefuseRoute: AuthenticatedAccesRefuseRoute,
   AuthenticatedAlertesStockRoute: AuthenticatedAlertesStockRoute,
-  AuthenticatedApprobationsRoute: AuthenticatedApprobationsRoute,
   AuthenticatedAuditRoute: AuthenticatedAuditRoute,
   AuthenticatedBackupRoute: AuthenticatedBackupRoute,
   AuthenticatedBalanceRoute: AuthenticatedBalanceRoute,
@@ -4686,15 +4622,12 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedRetoursRoute: AuthenticatedRetoursRouteWithChildren,
   AuthenticatedRhDashboardRoute: AuthenticatedRhDashboardRoute,
   AuthenticatedTransfertsRoute: AuthenticatedTransfertsRouteWithChildren,
-  AuthenticatedWorkflowApprovalsRoute: AuthenticatedWorkflowApprovalsRoute,
   AuthenticatedWorkflowsDefinitionsRoute:
     AuthenticatedWorkflowsDefinitionsRoute,
   AuthenticatedAchatsAchatIdRoute: AuthenticatedAchatsAchatIdRoute,
   AuthenticatedAchatsNouveauRoute: AuthenticatedAchatsNouveauRoute,
   AuthenticatedAdminApparenceDocumentsRoute:
     AuthenticatedAdminApparenceDocumentsRoute,
-  AuthenticatedAdminApprobationSeuilsRoute:
-    AuthenticatedAdminApprobationSeuilsRoute,
   AuthenticatedAdminDataQualityRoute: AuthenticatedAdminDataQualityRoute,
   AuthenticatedAdminGoogleDriveRoute: AuthenticatedAdminGoogleDriveRoute,
   AuthenticatedAdminPerfRoute: AuthenticatedAdminPerfRoute,

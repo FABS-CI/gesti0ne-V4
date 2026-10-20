@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculerBulletin, its2024, REGIME_2022, REGIME_2024, regimePourDate } from "./regimes-ci";
+import { calculerBulletin, its2024, igr2022, REGIME_2022, REGIME_2024, regimePourDate } from "./regimes-ci";
 
 const modele = { salaireBase: 60000, sursalaire: 77672, tauxAnciennete: 7, transport: 30000, parts: 3 };
 
@@ -36,4 +36,13 @@ describe("REGIME_2022 — août 2022", () => {
 it("régime selon date de fin", () => {
   expect(regimePourDate("2023-12-31")).toBe("REGIME_2022");
   expect(regimePourDate("2024-01-31")).toBe("REGIME_2024");
+});
+
+describe("IGR 2022 = barème ITS 2024 − RICF", () => {
+  it("150 000 avec 1 part donne 12 000", () => {
+    expect(igr2022(150000, 1)).toBe(12000);
+  });
+  it("ne descend jamais sous 0", () => {
+    expect(igr2022(141872, 3)).toBe(0);
+  });
 });

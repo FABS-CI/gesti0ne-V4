@@ -447,13 +447,9 @@ function PaiementsPage() {
                           </Badge>
                           {(p.statut === "en_attente" ||
                             p.statut === "en_attente_validation") && (
-                            <Link
-                              to="/approbations"
-                              className="inline-flex items-center rounded-full border border-warning px-2 py-0.5 text-xs font-medium text-warning hover:bg-warning/10"
-                              title="En attente d'approbation — voir le centre"
-                            >
-                              ⏳ Approbation
-                            </Link>
+                            <span className="inline-flex items-center rounded-full border border-warning px-2 py-0.5 text-xs font-medium text-warning">
+                              À valider
+                            </span>
                           )}
                         </div>
                       </TableCell>

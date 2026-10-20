@@ -259,13 +259,13 @@ export async function deleteCommande(id: string, motif?: string | null, force?: 
   return (data ?? {}) as Record<string, number>;
 }
 
-export async function demanderAnnulationCommande(commandeId: string, motif: string) {
-  const { data, error } = await supabase.rpc("commande_demander_annulation", {
-    p_commande_id: commandeId,
-    p_motif: motif,
+/** Annulation directe (remet le stock, annule documents liés, recalcule le solde). */
+export async function annulerCommandeDirecte(commandeId: string, motif: string) {
+  const { error } = await supabase.rpc("annuler_commande", {
+    _commande_id: commandeId,
+    _motif: motif,
   } as never);
   if (error) throw new Error(error.message);
-  return data as string;
 }
 
 export async function getCommande(id: string) {
