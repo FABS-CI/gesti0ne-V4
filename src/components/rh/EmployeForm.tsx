@@ -20,7 +20,6 @@ import {
   listDepartementsBase,
   listFonctions,
   createFonction,
-  DEPARTEMENTS,
   SEXES,
   SITUATIONS_MATRIMONIALES,
   TYPES_CONTRAT,
@@ -33,14 +32,12 @@ import {
   type EmployeDocument,
 } from "@/lib/rh-api";
 import { employeSchema, type EmployeFormValues } from "@/lib/employe-form";
-import { EmployeeSearchSelect } from "@/components/search/EmployeeSearchSelect";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -137,10 +134,6 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
   const set = <K extends keyof EmployeFormValues>(k: K, v: EmployeFormValues[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
-  const departementsQ = useQuery({
-    queryKey: ["departements-base"],
-    queryFn: listDepartementsBase,
-  });
   const fonctionsQ = useQuery({ queryKey: ["fonctions-actives"], queryFn: listFonctions });
 
   const photoUrlQ = useQuery({
