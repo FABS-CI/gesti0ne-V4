@@ -127,6 +127,10 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
   const [initialSnapshot, setInitialSnapshot] = useState(() => JSON.stringify(buildInitial(employe)));
   const isDirty = JSON.stringify(form) !== initialSnapshot;
   const [tab, setTab] = useState("identite");
+  const [errorTab, setErrorTab] = useState<string | null>(null);
+  const [pendingDocs, setPendingDocs] = useState<PendingDoc[]>([]);
+  const [pendingAccount, setPendingAccount] = useState({ enabled: false, email: "" });
+  const createAccountFn = useServerFn(createEmployeAccount);
 
   const set = <K extends keyof EmployeFormValues>(k: K, v: EmployeFormValues[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
@@ -143,12 +147,46 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
       const parsed = employeSchema.safeParse(form);
       if (!parsed.success) {
         const firstIssue = parsed.error.issues[0];
-        throw new Error(firstIssue?.message ?? "Formulaire invalide");
+        const t = tabForField(String(firstIssue?.path?.[0] ?? ""));
+        setErrorTab(t);
+        setTab(t);
+        throw new Error(
+          `${firstIssue?.message ?? "Formulaire invalide"} (onglet ${TAB_LABELS[t]})`,
+        );
+      }
+      setErrorTab(null);
+      if (!editing && pendingAccount.enabled && !pendingAccount.email.trim()) {
+        setTab("compte");
+        throw new Error("Indiquez l'e-mail de connexion du compte, ou décochez la création d'accès.");
       }
       const input = parsed.data as EmployeInput;
       return editing ? updateEmploye(employe!.employe_id, input) : createEmploye(input);
     },
-    onSuccess: (emp) => {
+    onSuccess: async (emp) => {
+      if (!editing) {
+        for (const d of pendingDocs) {
+          try {
+            await uploadEmployeDocument(emp.employe_id, d.file, d.type);
+          } catch (e) {
+            toast.error(`Document « ${d.file.name} » non envoyé`, {
+              description: friendlyError(e, "Échec de l'envoi") + " — l'employé est bien créé, ajoutez-le depuis sa fiche.",
+            });
+          }
+        }
+        if (pendingAccount.enabled && pendingAccount.email.trim()) {
+          try {
+            await createAccountFn({
+              data: { employeId: emp.employe_id, email: pendingAccount.email.trim() },
+            });
+            toast.success("Accès créé, invitation envoyée");
+          } catch (e) {
+            toast.error("Compte d'accès non créé", {
+              description:
+                friendlyError(e, "Erreur") + " — l'employé est bien créé, réessayez depuis sa fiche.",
+            });
+          }
+        }
+      }
       setInitialSnapshot(JSON.stringify(form));
       toast.success(editing ? "Employé modifié" : "Employé créé");
       qc.invalidateQueries({ queryKey: ["employes"] });
@@ -183,20 +221,21 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
 
       <Tabs value={tab} onValueChange={setTab} className="space-y-4">
         <TabsList className="flex flex-wrap h-auto">
-          <TabsTrigger value="identite">Identité</TabsTrigger>
-          <TabsTrigger value="contact">Contact</TabsTrigger>
-          <TabsTrigger value="professionnel">Professionnel</TabsTrigger>
-          <TabsTrigger value="financier">Financier</TabsTrigger>
-          <TabsTrigger value="administratif">Administratif</TabsTrigger>
-          <TabsTrigger value="documents" disabled={!editing}>
-            Documents
-          </TabsTrigger>
-          <TabsTrigger value="compte" disabled={!editing}>
-            Compte
-          </TabsTrigger>
-          <TabsTrigger value="historique" disabled={!editing}>
-            Historique
-          </TabsTrigger>
+          <TabsTrigger value="identite" className={errorTab === "identite" ? "text-destructive" : undefined}>Identité</TabsTrigger>
+          <TabsTrigger value="contact" className={errorTab === "contact" ? "text-destructive" : undefined}>Contact</TabsTrigger>
+          <TabsTrigger value="professionnel" className={errorTab === "professionnel" ? "text-destructive" : undefined}>Professionnel</TabsTrigger>
+          <TabsTrigger value="financier" className={errorTab === "financier" ? "text-destructive" : undefined}>Financier</TabsTrigger>
+          <TabsTrigger value="administratif" className={errorTab === "administratif" ? "text-destructive" : undefined}>Administratif</TabsTrigger>
+          <TabsTrigger value="documents">Documents</TabsTrigger>
+          <TabsTrigger value="compte">Compte</TabsTrigger>
+          <span
+            title={editing ? undefined : "Disponible après l'enregistrement de l'employé"}
+            className="inline-flex"
+          >
+            <TabsTrigger value="historique" disabled={!editing}>
+              Historique
+            </TabsTrigger>
+          </span>
         </TabsList>
 
         {/* IDENTITÉ */}
@@ -485,13 +524,23 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
 
         {/* DOCUMENTS */}
         <TabsContent value="documents">
-          {editing ? <DocumentsTab employeId={employe!.employe_id} /> : null}
+          {editing ? (
+            <DocumentsTab employeId={employe!.employe_id} />
+          ) : (
+            <PendingDocumentsTab docs={pendingDocs} onChange={setPendingDocs} />
+          )}
         </TabsContent>
 
         <TabsContent value="compte">
           {editing ? (
             <AccountTab employeId={employe!.employe_id} defaultEmail={employe!.email ?? ""} />
-          ) : null}
+          ) : (
+            <PendingAccountTab
+              value={pendingAccount}
+              onChange={setPendingAccount}
+              employeEmail={(form.email as string | null | undefined) ?? ""}
+            />
+          )}
         </TabsContent>
         <TabsContent value="historique">
           {editing ? <HistoriqueTab employeId={employe!.employe_id} /> : null}
@@ -1177,6 +1226,160 @@ function HistoriqueTab({ employeId }: { employeId: string }) {
             )}
           </div>
         ))}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ============================================================
+// Création : documents et compte en attente d'enregistrement
+// ============================================================
+
+type PendingDoc = { key: string; file: File; type: string };
+
+const TAB_LABELS: Record<string, string> = {
+  identite: "Identité",
+  contact: "Contact",
+  professionnel: "Professionnel",
+  financier: "Financier",
+  administratif: "Administratif",
+};
+
+const FIELD_TABS: Record<string, string[]> = {
+  contact: ["adresse", "commune", "ville", "pays", "email", "telephone", "telephone_secondaire"],
+  professionnel: [
+    "departement", "fonction_id", "poste", "service", "responsable_hierarchique_id",
+    "type_contrat", "date_embauche", "date_fin_contrat", "statut_employe", "temps_travail",
+    "categorie", "echelon", "site_affectation", "actif",
+  ],
+  financier: [
+    "salaire", "primes", "indemnites", "avantages", "mode_paiement", "banque",
+    "numero_compte", "devise", "centre_cout",
+  ],
+  administratif: [
+    "niveau_etudes", "diplomes", "competences", "certifications", "contact_urgence_nom",
+    "contact_urgence_telephone", "contact_urgence_lien", "observations",
+  ],
+};
+
+function tabForField(field: string): string {
+  for (const [t, fields] of Object.entries(FIELD_TABS)) if (fields.includes(field)) return t;
+  return "identite";
+}
+
+function PendingDocumentsTab({
+  docs,
+  onChange,
+}: {
+  docs: PendingDoc[];
+  onChange: (d: PendingDoc[]) => void;
+}) {
+  const [type, setType] = useState<string>("autre");
+  const ref = useRef<HTMLInputElement>(null);
+  const labelOf = (v: string) => TYPES_DOCUMENT_EMPLOYE.find((t) => t.value === v)?.label ?? v;
+  return (
+    <Card>
+      <CardContent className="space-y-4 pt-6">
+        <p className="text-sm text-muted-foreground">
+          Les documents choisis seront envoyés juste après l'enregistrement de l'employé.
+        </p>
+        <div className="flex flex-wrap items-end gap-2">
+          <Field label="Type de document">
+            <Select value={type} onValueChange={setType}>
+              <SelectTrigger className="w-[220px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {TYPES_DOCUMENT_EMPLOYE.map((t) => (
+                  <SelectItem key={t.value} value={t.value}>
+                    {t.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
+          <input
+            ref={ref}
+            type="file"
+            multiple
+            className="hidden"
+            onChange={(e) => {
+              const files = Array.from(e.target.files ?? []);
+              onChange([
+                ...docs,
+                ...files.map((file) => ({ key: `${Date.now()}-${file.name}-${Math.random()}`, file, type })),
+              ]);
+              if (ref.current) ref.current.value = "";
+            }}
+          />
+          <Button type="button" onClick={() => ref.current?.click()}>
+            <Upload className="mr-2 h-4 w-4" /> Ajouter un document
+          </Button>
+        </div>
+        {docs.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Aucun document.</p>
+        ) : (
+          <div className="space-y-1">
+            {docs.map((d) => (
+              <div key={d.key} className="flex items-center gap-2 rounded border p-2">
+                <Badge variant="outline">{labelOf(d.type)}</Badge>
+                <span className="flex-1 truncate text-sm">{d.file.name}</span>
+                <span className="text-xs text-muted-foreground">
+                  {Math.round(d.file.size / 1024)} Ko
+                </span>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => onChange(docs.filter((x) => x.key !== d.key))}
+                >
+                  <Trash2 className="mr-1 h-4 w-4" /> Retirer
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function PendingAccountTab({
+  value,
+  onChange,
+  employeEmail,
+}: {
+  value: { enabled: boolean; email: string };
+  onChange: (v: { enabled: boolean; email: string }) => void;
+  employeEmail: string;
+}) {
+  return (
+    <Card>
+      <CardContent className="space-y-4 pt-6">
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={value.enabled}
+            onChange={(e) =>
+              onChange({ enabled: e.target.checked, email: value.email || employeEmail })
+            }
+          />
+          Créer un accès à l'application pour cet employé (facultatif)
+        </label>
+        {value.enabled ? (
+          <Field label="E-mail de connexion">
+            <Input
+              type="email"
+              value={value.email}
+              placeholder="prenom.nom@exemple.com"
+              onChange={(e) => onChange({ ...value, email: e.target.value })}
+            />
+          </Field>
+        ) : null}
+        <p className="text-xs text-muted-foreground">
+          Le compte est créé et l'invitation envoyée après l'enregistrement de la fiche. Les
+          droits se règlent ensuite dans la gestion des utilisateurs.
+        </p>
       </CardContent>
     </Card>
   );
