@@ -39,6 +39,7 @@ export interface BulletinStocke {
 
 export interface EmployeInfo {
   matricule?: string | null;
+  prenoms?: string | null;
   poste?: string | null;
   categorie?: string | null;
   numero_cnps?: string | null;
@@ -72,6 +73,14 @@ export function calculerCumuls(bulletins: BulletinCumul[]): BulletinCumulsAnnuel
     brutImposable: bulletins.reduce((s, b) => s + n(b.brut_imposable), 0),
     jrsTravailles: bulletins.reduce((s, b) => s + n(b.jours_travailles), 0),
   };
+}
+
+/** Nom + prénoms, sans doubler les prénoms déjà présents dans le nom. */
+export function nomEtPrenoms(nom: string | null | undefined, prenoms: string | null | undefined): string {
+  const a = (nom ?? "").trim();
+  const p = (prenoms ?? "").trim();
+  if (!p || a.toLowerCase().includes(p.toLowerCase())) return a;
+  return a ? `${a} ${p}` : p;
 }
 
 const n = (v: number | null | undefined) => Number(v ?? 0) || 0;
@@ -118,7 +127,7 @@ export function construireDonneesPdf(
     entreprise,
     salarie: {
       matricule: emp?.matricule ?? "—",
-      nomComplet: b.employe_nom ?? "",
+      nomComplet: nomEtPrenoms(b.employe_nom, emp?.prenoms),
       fonction: emp?.poste ?? undefined,
       categorie: emp?.categorie ?? undefined,
       departement: emp?.departement ?? undefined,
