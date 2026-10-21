@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { avertissementPeriode } from "@/lib/paie/periode-avertissement";
 import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -102,6 +103,7 @@ function NouveauBulletinPage() {
     if (emp.mode_paiement) setModePaiement(emp.mode_paiement);
   };
 
+  const avertissement = avertissementPeriode(dateDebut, datePaiement, new Date().toISOString().slice(0, 10));
   const regimeCode: RegimeCode = regimePourDate(dateFin || init.fin);
   const params = useMemo(() => {
     const row = regimes?.find((r) => r.code === regimeCode);
@@ -237,6 +239,11 @@ function NouveauBulletinPage() {
                 </Select>
               </div>
             </div>
+            {avertissement && (
+              <p role="alert" className="rounded-md border border-warning/40 bg-warning/10 px-3 py-2 text-xs text-foreground">
+                {avertissement}
+              </p>
+            )}
             <Button className="w-full" disabled={!employe || save.isPending} onClick={() => save.mutate()}>
               {save.isPending ? "Enregistrement…" : "Enregistrer le bulletin"}
             </Button>
