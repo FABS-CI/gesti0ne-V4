@@ -17,7 +17,6 @@ import {
   uploadEmployeDocument,
   deleteEmployeDocument,
   getEmployeDocumentSignedUrl,
-  listDepartementsBase,
   listFonctions,
   createFonction,
   SEXES,
