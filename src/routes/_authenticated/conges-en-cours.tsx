@@ -118,7 +118,7 @@ function CongesEnCoursPage() {
     "Nom",
     "Matricule",
     "Service",
-    "Fonction",
+    "Poste",
     "Type",
     "Début",
     "Fin",
@@ -183,7 +183,7 @@ function CongesEnCoursPage() {
         <div className="relative min-w-[240px] flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Rechercher (nom, matricule, fonction)…"
+            placeholder="Rechercher (nom, matricule, poste)…"
             className="pl-9"
             value={search}
             onChange={(e) => {
@@ -257,7 +257,7 @@ function CongesEnCoursPage() {
                 sortDir={sortDir}
                 onToggle={toggleSort}
               />
-              <TableHead>Fonction</TableHead>
+              <TableHead>Poste</TableHead>
               <TableHead>Type</TableHead>
               <SortableHead
                 k="date_debut"

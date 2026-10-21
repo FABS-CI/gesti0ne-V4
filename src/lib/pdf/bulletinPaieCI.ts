@@ -302,7 +302,7 @@ export async function generateBulletinPaieCIPDF(
   doc.setFontSize(11.5);
   const nameLines = (doc.splitTextToSize(sal.nomComplet, rightW - 8) as string[]).slice(0, 2);
   nameLines.forEach((ln, i) => text(ln, rightX + 4, y0 + 7 + i * 5, { size: 11.5, style: "bold" }));
-  text(`Fonction : ${sal.fonction ?? ""}`, rightX + 4, y0 + 17.5, { size: fs - 0.5 });
+  text(`Poste : ${sal.fonction ?? ""}`, rightX + 4, y0 + 17.5, { size: fs - 0.5 });
   text(`Catég. : ${sal.categorie ?? ""}`, rightX + rightW - 4, y0 + 17.5, { size: fs - 0.5, align: "right" });
   text(`Lieu de résidence : ${capitaliser(sal.adresse)}`, rightX + 4, y0 + 22.5, { size: fs - 0.5 });
 
