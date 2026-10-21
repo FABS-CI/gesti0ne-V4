@@ -1,10 +1,11 @@
+import { COMPANY } from "@/lib/company";
 // ---------------------------------------------------------------------------
 // Bulletin de paie — reproduction fidèle du modèle EDITIONS FABS (août 2022)
 // A4 portrait, UNE seule page. Mise en page identique au modèle :
 //  - cadres employeur / salarié (2 cadres) en haut, titre sous le cadre employeur
 //  - tableau 7 colonnes (N° · DESIGNATION · NBRE. · BASE · TAUX · GAINS · RETENUES)
-//    avec sous-totaux "SALAIRE BRUT IMPOSABLE..." et "TOTAL RETENUES FISCALES
-//    & SOCIALES...", puis rubriques non imposables (indemnités, CMU, arrondi)
+//    avec sous-totaux "SALAIRE BRUT IMPOSABLE DU MOIS DE …" et "TOTAL RETENUES FISCALES
+//    & SOCIALES DU MOIS DE …", puis rubriques non imposables (indemnités, CMU, arrondi)
 //  - pied à 3 cellules (indemnités non impo. · autres retenues · coût salarial)
 //  - NET A PAYER, CUMULS ANNUELS, signature, date et mode de paiement
 // Interface publique inchangée (types + generateBulletinPaieCIPDF).
@@ -118,7 +119,7 @@ export type BulletinPdfOptions = {
 // Entreprise par défaut — surchargée par l'appelant. Les valeurs ci-dessous
 // sont celles du bulletin modèle ; à renseigner dans les paramètres entreprise.
 export const ENTREPRISE_FABS: BulletinEntreprise = {
-  raisonSociale: "EDITIONS FABS",
+  raisonSociale: COMPANY.nom,
   adresse: "BP 693 BINGERVILLE",
   telephone: "+225 0759737123",
   cnpsEmployeur: "366145",
@@ -147,13 +148,10 @@ function parseDate(s?: string): { d: number; m: number; y: number } | null {
   return null;
 }
 const p2 = (n: number): string => String(n).padStart(2, "0");
-const dateCourte = (s?: string): string => {
-  const d = parseDate(s);
-  return d ? `${p2(d.d)}/${p2(d.m)}/${p2(d.y % 100)}` : (s ?? "");
-};
-const dateComplete = (s?: string): string => {
-  const d = parseDate(s);
-  return d ? `${p2(d.d)}/${p2(d.m)}/${d.y}` : (s ?? "");
+
+const capitaliser = (s?: string | null): string => {
+  const t = (s ?? "").trim();
+  return t ? t.charAt(0).toUpperCase() + t.slice(1) : "";
 };
 const dateLongue = (s?: string): { jour: string; mois: string; annee: string } => {
   const d = parseDate(s) ?? (() => {
@@ -161,6 +159,19 @@ const dateLongue = (s?: string): { jour: string; mois: string; annee: string } =
     return { d: n.getDate(), m: n.getMonth() + 1, y: n.getFullYear() };
   })();
   return { jour: String(d.d), mois: MOIS[d.m - 1], annee: String(d.y) };
+};
+/** « 1er octobre 2026 », « 20 octobre 2026 » : mois en lettres minuscules. */
+export const dateEnLettres = (s?: string): string => {
+  const d = parseDate(s);
+  if (!d) return s ?? "";
+  return `${d.d === 1 ? "1er" : d.d} ${MOIS[d.m - 1].toLowerCase()} ${d.y}`;
+};
+/** « DU MOIS D'OCTOBRE », « DU MOIS DE MARS » (mois de la date de fin). */
+export const libelleMois = (s?: string): string => {
+  const d = parseDate(s);
+  if (!d) return "";
+  const m = MOIS[d.m - 1].toUpperCase();
+  return ` DU MOIS ${/^[AEIOUÂÉ]/.test(m) ? "D'" : "DE "}${m}`;
 };
 const partsFmt = (p?: number | string): string => {
   if (p == null || p === "") return "";
@@ -204,11 +215,11 @@ function buildRows(data: BulletinCIData): Row[] {
   const rows: Row[] = [];
   gainsImp.forEach((l) => rows.push({ kind: "line", l }));
   rows.push({ kind: "gap" });
-  rows.push({ kind: "sub", label: "SALAIRE BRUT IMPOSABLE...", col: "gain", amount: brutImposable });
+  rows.push({ kind: "sub", label: `SALAIRE BRUT IMPOSABLE${libelleMois(data.periode.au ?? data.periode.du)}`, col: "gain", amount: brutImposable });
   rows.push({ kind: "gap" });
   retImp.forEach((l) => rows.push({ kind: "line", l }));
   rows.push({ kind: "gap" });
-  rows.push({ kind: "sub", label: "TOTAL  RETENUES FISCALES & SOCIALES...", col: "retenue", amount: totalRetFisc });
+  rows.push({ kind: "sub", label: `TOTAL RETENUES FISCALES & SOCIALES${libelleMois(data.periode.au ?? data.periode.du)}`, col: "retenue", amount: totalRetFisc });
   rows.push({ kind: "gap" });
   nonImpo.forEach((l) => rows.push({ kind: "line", l }));
   return rows;
@@ -282,11 +293,11 @@ export async function generateBulletinPaieCIPDF(
   nameLines.forEach((ln, i) => text(ln, rightX + 4, y0 + 7 + i * 5, { size: 11.5, style: "bold" }));
   text(`Fonction : ${sal.fonction ?? ""}`, rightX + 4, y0 + 17.5, { size: fs - 0.5 });
   text(`Catég. : ${sal.categorie ?? ""}`, rightX + rightW - 4, y0 + 17.5, { size: fs - 0.5, align: "right" });
-  text(`Adresse : ${sal.adresse ?? ""}`, rightX + 4, y0 + 22.5, { size: fs - 0.5 });
+  text(`Lieu de résidence : ${capitaliser(sal.adresse)}`, rightX + 4, y0 + 22.5, { size: fs - 0.5 });
 
   box(rightX, y0 + h1, rightW, h2);
   text(`Matricule : ${sal.matricule ?? ""}`, rightX + 4, y0 + h1 + 6.5, { size: fs - 0.5 });
-  text(`Date d'embauche : ${dateCourte(sal.dateEmbauche)}`, rightX + rightW - 4, y0 + h1 + 6.5, { size: fs - 0.5, align: "right" });
+  text(`Date d'embauche : ${dateEnLettres(sal.dateEmbauche)}`, rightX + rightW - 4, y0 + h1 + 6.5, { size: fs - 0.5, align: "right" });
   text(`N° CNPS : ${sal.numCnps ?? ""}`, rightX + 4, y0 + h1 + 13, { size: fs - 0.5 });
   text(`Parts : ${partsFmt(sal.parts)}`, rightX + rightW - 4, y0 + h1 + 13, { size: fs - 0.5, align: "right" });
 
@@ -303,8 +314,7 @@ export async function generateBulletinPaieCIPDF(
   const dl = dateLongue(per.dateEdition);
   text("Établi le :", X0, y0 + h1 + 25.5, { size: fs - 1 });
   text(`${dl.jour}   ${dl.mois}   ${dl.annee}`, X0 + 17, y0 + h1 + 25.5, { size: fs - 1, style: "bold" });
-  text("Période du :", X0, y0 + h1 + 30.5, { size: fs - 1 });
-  text(`${dateCourte(per.du)}   au   ${dateCourte(per.au)}`, X0 + 19, y0 + h1 + 30.5, { size: fs - 1, style: "bold" });
+  text(`Période du ${dateEnLettres(per.du)} au ${dateEnLettres(per.au)}`, X0, y0 + h1 + 30.5, { size: fs - 1, style: "bold" });
 
   // ===== Tableau principal ================================================
   const tTop = y0 + h1 + h2 + 20;
@@ -366,7 +376,7 @@ export async function generateBulletinPaieCIPDF(
   vline(fx[2], bodyBottom, footBottom);
   const fy = bodyBottom + footH / 2 + 1.3;
   const cout = tot.coutSalarial ?? tot.coutEmployeur ?? 0;
-  text("TOTAL INDEMNITES NON IMPO. :", fx[0] + 1.5, fy, { size: fs - 1.5, style: "italic" });
+  text("TOTAL INDEMNITES NON IMPOSABLES :", fx[0] + 1.5, fy, { size: fs - 1.5, style: "italic" });
   text(moneyAlways(tot.totalIndemnitesNonImpo), fx[1] - 2, fy, { size: fs - 1.5, style: "bolditalic", align: "right" });
   text("TOTAL AUTRES RETENUES :", fx[1] + 1.5, fy, { size: fs - 1.5, style: "italic" });
   text(moneyAlways(tot.totalAutresRetenues), fx[2] - 2, fy, { size: fs - 1.5, style: "bolditalic", align: "right" });
@@ -404,7 +414,7 @@ export async function generateBulletinPaieCIPDF(
   text("Signature de l'employé(e)", X0, sy, { size: fs - 0.5 });
   const px = X0 + TW * 0.6;
   text("Salaire payé le :", px, sy, { size: fs - 0.5 });
-  text(dateComplete(data.paiement?.date), px + 28, sy, { size: fs - 0.5, style: "bold" });
+  text(dateEnLettres(data.paiement?.date), px + 28, sy, { size: fs - 0.5, style: "bold" });
   text("Mode de paiement :", px - 2, sy + 6, { size: fs - 0.5 });
   text(data.paiement?.mode ?? "", px + 30, sy + 6, { size: fs - 0.5, style: "bold" });
 
