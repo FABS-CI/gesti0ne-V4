@@ -53,7 +53,7 @@ describe("cumuls annuels et lignes de retenue", () => {
 });
 
 import { nomEtPrenoms } from "./bulletin-pdf-data";
-import { dateEnLettres, libelleMois } from "@/lib/pdf/bulletinPaieCI";
+import { dateEnLettres } from "@/lib/pdf/bulletinPaieCI";
 describe("bulletin : textes en lettres", () => {
   it("ajoute les prénoms au nom sans les doubler", () => {
     expect(nomEtPrenoms("NIANGORAN", "Konan Paul")).toBe("NIANGORAN Konan Paul");
@@ -62,10 +62,5 @@ describe("bulletin : textes en lettres", () => {
   it("écrit les dates sans numéro de mois, 1er pour le premier jour", () => {
     expect(dateEnLettres("2026-10-20")).toBe("20 octobre 2026");
     expect(dateEnLettres("2026-11-01")).toBe("1er novembre 2026");
-  });
-  it("élide devant une voyelle et prend le mois de fin", () => {
-    expect(libelleMois("2026-10-31")).toBe(" DU MOIS D'OCTOBRE");
-    expect(libelleMois("2026-03-31")).toBe(" DU MOIS DE MARS");
-    expect(libelleMois("2026-08-31")).toBe(" DU MOIS D'AOÛT");
   });
 });

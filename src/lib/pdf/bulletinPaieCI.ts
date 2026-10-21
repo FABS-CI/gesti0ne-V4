@@ -4,8 +4,8 @@ import { COMPANY } from "@/lib/company";
 // A4 portrait, UNE seule page. Mise en page identique au modèle :
 //  - cadres employeur / salarié (2 cadres) en haut, titre sous le cadre employeur
 //  - tableau 7 colonnes (N° · DESIGNATION · NBRE. · BASE · TAUX · GAINS · RETENUES)
-//    avec sous-totaux "SALAIRE BRUT IMPOSABLE DU MOIS DE …" et "TOTAL RETENUES FISCALES
-//    & SOCIALES DU MOIS DE …", puis rubriques non imposables (indemnités, CMU, arrondi)
+//    avec sous-totaux "SALAIRE BRUT IMPOSABLE" et "TOTAL RETENUES FISCALES
+//    & SOCIALES", puis rubriques non imposables (indemnités, CMU, arrondi)
 //  - pied à 3 cellules (indemnités non impo. · autres retenues · coût salarial)
 //  - NET A PAYER, CUMULS ANNUELS, signature, date et mode de paiement
 // Interface publique inchangée (types + generateBulletinPaieCIPDF).
@@ -165,13 +165,6 @@ export const dateEnLettres = (s?: string): string => {
   if (!d) return s ?? "";
   return `${d.d === 1 ? "1er" : d.d} ${MOIS[d.m - 1].toLowerCase()} ${d.y}`;
 };
-/** « DU MOIS D'OCTOBRE », « DU MOIS DE MARS » (mois de la date de fin). */
-export const libelleMois = (s?: string): string => {
-  const d = parseDate(s);
-  if (!d) return "";
-  const m = MOIS[d.m - 1].toUpperCase();
-  return ` DU MOIS ${/^[AEIOUÂÉ]/.test(m) ? "D'" : "DE "}${m}`;
-};
 const partsFmt = (p?: number | string): string => {
   if (p == null || p === "") return "";
   const n = Number(p);
@@ -214,11 +207,11 @@ function buildRows(data: BulletinCIData): Row[] {
   const rows: Row[] = [];
   gainsImp.forEach((l) => rows.push({ kind: "line", l }));
   rows.push({ kind: "gap" });
-  rows.push({ kind: "sub", label: `SALAIRE BRUT IMPOSABLE${libelleMois(data.periode.au ?? data.periode.du)}`, col: "gain", amount: brutImposable });
+  rows.push({ kind: "sub", label: "SALAIRE BRUT IMPOSABLE", col: "gain", amount: brutImposable });
   rows.push({ kind: "gap" });
   retImp.forEach((l) => rows.push({ kind: "line", l }));
   rows.push({ kind: "gap" });
-  rows.push({ kind: "sub", label: `TOTAL RETENUES FISCALES & SOCIALES${libelleMois(data.periode.au ?? data.periode.du)}`, col: "retenue", amount: totalRetFisc });
+  rows.push({ kind: "sub", label: "TOTAL RETENUES FISCALES & SOCIALES", col: "retenue", amount: totalRetFisc });
   rows.push({ kind: "gap" });
   nonImpo.forEach((l) => rows.push({ kind: "line", l }));
   return rows;
@@ -253,6 +246,25 @@ export async function generateBulletinPaieCIPDF(
     doc.setFontSize(o.size ?? fs);
     doc.setTextColor(0, 0, 0);
     doc.text(s, x, y, { align: o.align ?? "left" });
+  };
+  /** Écrit un libellé sans jamais dépasser maxW : réduit la police (jusqu'à −2 pt),
+   *  puis passe à la ligne si besoin. */
+  const fitText = (
+    s: string, x: number, y: number, maxW: number,
+    o: { size?: number; style?: Style; align?: "left" | "center" } = {},
+  ) => {
+    const base = o.size ?? fs;
+    let size = base;
+    doc.setFont("helvetica", o.style ?? "normal");
+    doc.setFontSize(size);
+    while (doc.getTextWidth(s) > maxW && size > base - 2) {
+      size -= 0.25;
+      doc.setFontSize(size);
+    }
+    if (doc.getTextWidth(s) <= maxW) return text(s, x, y, { ...o, size });
+    const lines = (doc.splitTextToSize(s, maxW) as string[]).slice(0, 2);
+    const lh = size * 0.3528 * 1.05;
+    lines.forEach((ln, i) => text(ln, x, y - lh / 2 + i * lh, { ...o, size }));
   };
   const box = (x: number, y: number, w: number, h: number) => {
     doc.setDrawColor(GREY);
@@ -349,7 +361,7 @@ export async function generateBulletinPaieCIPDF(
       const l = r.l;
       const ty = y + rowH * 0.72;
       text(l.code ?? "", cx[0] + 1.5, ty, { size: fsRow });
-      text(l.libelle, cx[1] + 1.5, ty, { size: fsRow });
+      fitText(l.libelle, cx[1] + 1.5, ty, cw[1] - 3, { size: fsRow });
       text(nbre(l.nbre), cx[3] - 1.5, ty, { size: fsRow, align: "right" });
       text(money(l.base), cx[4] - 1.5, ty, { size: fsRow, align: "right" });
       text(taux(l.taux), cx[5] - 1.5, ty, { size: fsRow, align: "right" });
@@ -358,7 +370,7 @@ export async function generateBulletinPaieCIPDF(
       text(ret, cx[7] - 1.5, ty, { size: fsRow, align: "right" });
     } else if (r.kind === "sub") {
       const ty = y + rowH * 0.72;
-      text(r.label, cx[1] + cw[1] / 2, ty, { size: fsRow, align: "center" });
+      fitText(r.label, cx[1] + cw[1] / 2, ty, cw[1] - 3, { size: fsRow, align: "center" });
       const ci = r.col === "gain" ? 5 : 6;
       hline(cx[ci], cx[ci + 1], y - 0.3);
       hline(cx[ci], cx[ci + 1], y + rowH + 0.3);
@@ -375,11 +387,17 @@ export async function generateBulletinPaieCIPDF(
   vline(fx[2], bodyBottom, footBottom);
   const fy = bodyBottom + footH / 2 + 1.3;
   const cout = tot.coutSalarial ?? tot.coutEmployeur ?? 0;
-  text("TOTAL INDEMNITES NON IMPOSABLES :", fx[0] + 1.5, fy, { size: fs - 1.5, style: "italic" });
+  const footLabel = (label: string, amount: string, x0: number, x1: number) => {
+    doc.setFont("helvetica", "bolditalic");
+    doc.setFontSize(fs - 1.5);
+    const aw = doc.getTextWidth(amount);
+    fitText(label, x0 + 1.5, fy, Math.max(5, x1 - x0 - 3.5 - aw - 3), { size: fs - 1.5, style: "italic" });
+  };
+  footLabel("TOTAL INDEMNITES NON IMPOSABLES :", moneyAlways(tot.totalIndemnitesNonImpo), fx[0], fx[1]);
   text(moneyAlways(tot.totalIndemnitesNonImpo), fx[1] - 2, fy, { size: fs - 1.5, style: "bolditalic", align: "right" });
-  text("TOTAL AUTRES RETENUES :", fx[1] + 1.5, fy, { size: fs - 1.5, style: "italic" });
+  footLabel("TOTAL AUTRES RETENUES :", moneyAlways(tot.totalAutresRetenues), fx[1], fx[2]);
   text(moneyAlways(tot.totalAutresRetenues), fx[2] - 2, fy, { size: fs - 1.5, style: "bolditalic", align: "right" });
-  text("COÛT SALARIAL :", fx[2] + 1.5, fy, { size: fs - 1.5, style: "italic" });
+  footLabel("COÛT SALARIAL :", moneyAlways(cout), fx[2], X1);
   text(moneyAlways(cout), X1 - 2, fy, { size: fs - 1.5, style: "bolditalic", align: "right" });
 
   // ===== NET A PAYER =======================================================
