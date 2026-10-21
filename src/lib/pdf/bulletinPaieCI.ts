@@ -147,7 +147,6 @@ function parseDate(s?: string): { d: number; m: number; y: number } | null {
   if (r) return { d: +r[1], m: +r[2], y: r[3].length === 2 ? 2000 + +r[3] : +r[3] };
   return null;
 }
-const p2 = (n: number): string => String(n).padStart(2, "0");
 
 const capitaliser = (s?: string | null): string => {
   const t = (s ?? "").trim();
