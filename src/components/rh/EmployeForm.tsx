@@ -17,10 +17,8 @@ import {
   uploadEmployeDocument,
   deleteEmployeDocument,
   getEmployeDocumentSignedUrl,
-  listDepartementsBase,
   listFonctions,
   createFonction,
-  DEPARTEMENTS,
   SEXES,
   SITUATIONS_MATRIMONIALES,
   TYPES_CONTRAT,
@@ -33,14 +31,12 @@ import {
   type EmployeDocument,
 } from "@/lib/rh-api";
 import { employeSchema, type EmployeFormValues } from "@/lib/employe-form";
-import { EmployeeSearchSelect } from "@/components/search/EmployeeSearchSelect";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -137,10 +133,6 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
   const set = <K extends keyof EmployeFormValues>(k: K, v: EmployeFormValues[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
-  const departementsQ = useQuery({
-    queryKey: ["departements-base"],
-    queryFn: listDepartementsBase,
-  });
   const fonctionsQ = useQuery({ queryKey: ["fonctions-actives"], queryFn: listFonctions });
 
   const photoUrlQ = useQuery({
@@ -282,7 +274,7 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
                   options={SITUATIONS_MATRIMONIALES}
                 />
               </Field>
-              <Field label="N° CNI / Passeport">
+              <Field label="N° CNI">
                 <Input
                   value={form.numero_cni ?? ""}
                   onChange={(e) => set("numero_cni", e.target.value)}
@@ -294,12 +286,6 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
                   onChange={(e) => set("numero_cnps", e.target.value)}
                 />
               </Field>
-              <Field label="N° Sécurité sociale">
-                <Input
-                  value={form.numero_securite_sociale ?? ""}
-                  onChange={(e) => set("numero_securite_sociale", e.target.value)}
-                />
-              </Field>
             </CardContent>
           </Card>
         </TabsContent>
@@ -309,8 +295,9 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
           <Card>
             <SectionHeader icon={Phone} title="Contact" color="#0EA5E9" />
             <CardContent className="grid gap-4 sm:grid-cols-2 pl-5 sm:pl-6">
-              <Field label="Adresse" full>
+              <Field label="Lieu de résidence" full>
                 <Input
+                  placeholder="Ex. : Bingerville"
                   value={form.adresse ?? ""}
                   onChange={(e) => set("adresse", e.target.value)}
                 />
@@ -340,12 +327,6 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
                   onChange={(e) => set("telephone", e.target.value)}
                 />
               </Field>
-              <Field label="Téléphone secondaire">
-                <Input
-                  value={form.telephone_secondaire ?? ""}
-                  onChange={(e) => set("telephone_secondaire", e.target.value)}
-                />
-              </Field>
             </CardContent>
           </Card>
         </TabsContent>
@@ -355,20 +336,6 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
           <Card>
             <SectionHeader icon={Briefcase} title="Informations professionnelles" color="#8B5CF6" />
             <CardContent className="grid gap-4 sm:grid-cols-2 pl-5 sm:pl-6">
-              <Field label="Département *">
-                <Select value={form.departement} onValueChange={(v) => set("departement", v)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {DEPARTEMENTS.map((d) => (
-                      <SelectItem key={d.value} value={d.value}>
-                        {d.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Field>
               <Field label="Service">
                 <Input
                   value={form.service ?? ""}
@@ -385,12 +352,6 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
               </Field>
               <Field label="Poste">
                 <Input value={form.poste ?? ""} onChange={(e) => set("poste", e.target.value)} />
-              </Field>
-              <Field label="Responsable hiérarchique" full>
-                <EmployeeSearchSelect
-                  value={form.responsable_hierarchique_id ?? null}
-                  onChange={(id) => set("responsable_hierarchique_id", id)}
-                />
               </Field>
               <Field label="Type de contrat">
                 <SelectEnum
@@ -433,27 +394,10 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
                   onChange={(e) => set("categorie", e.target.value)}
                 />
               </Field>
-              <Field label="Échelon">
-                <Input
-                  value={form.echelon ?? ""}
-                  onChange={(e) => set("echelon", e.target.value)}
-                />
-              </Field>
-              <Field label="Site d'affectation">
-                <Input
-                  value={form.site_affectation ?? ""}
-                  onChange={(e) => set("site_affectation", e.target.value)}
-                />
-              </Field>
               <div className="flex items-center gap-2 sm:col-span-2">
                 <Switch checked={form.actif} onCheckedChange={(v) => set("actif", v)} />
                 <Label>Employé actif</Label>
               </div>
-              {departementsQ.data?.length ? (
-                <p className="text-xs text-muted-foreground sm:col-span-2">
-                  {departementsQ.data.length} département(s) référencés.
-                </p>
-              ) : null}
             </CardContent>
           </Card>
         </TabsContent>
@@ -490,12 +434,6 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
               <Field label="Devise">
                 <Input value={form.devise ?? ""} onChange={(e) => set("devise", e.target.value)} />
               </Field>
-              <Field label="Centre de coût">
-                <Input
-                  value={form.centre_cout ?? ""}
-                  onChange={(e) => set("centre_cout", e.target.value)}
-                />
-              </Field>
               <div className="sm:col-span-2 space-y-3">
                 <MoneyList
                   label="Primes"
@@ -506,11 +444,6 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
                   label="Indemnités"
                   items={form.indemnites ?? []}
                   onChange={(v) => set("indemnites", v)}
-                />
-                <TextValueList
-                  label="Avantages en nature"
-                  items={form.avantages ?? []}
-                  onChange={(v) => set("avantages", v)}
                 />
               </div>
             </CardContent>
@@ -556,19 +489,6 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
                 <Input
                   value={form.contact_urgence_telephone ?? ""}
                   onChange={(e) => set("contact_urgence_telephone", e.target.value)}
-                />
-              </Field>
-              <Field label="Lien de parenté">
-                <Input
-                  value={form.contact_urgence_lien ?? ""}
-                  onChange={(e) => set("contact_urgence_lien", e.target.value)}
-                />
-              </Field>
-              <Field label="Observations" full>
-                <Textarea
-                  rows={4}
-                  value={form.observations ?? ""}
-                  onChange={(e) => set("observations", e.target.value)}
                 />
               </Field>
             </CardContent>

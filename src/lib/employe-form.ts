@@ -44,7 +44,7 @@ export const employeSchema = z
     telephone: optStr,
     telephone_secondaire: optStr,
     // Professionnel
-    departement: z.string().min(1),
+    departement: z.string().nullable().optional().transform((v) => (v && v.trim() ? v : "autre")),
     fonction_id: optStr,
     poste: optStr,
     service: optStr,
