@@ -17,8 +17,6 @@ import {
   uploadEmployeDocument,
   deleteEmployeDocument,
   getEmployeDocumentSignedUrl,
-  listFonctions,
-  createFonction,
   SEXES,
   SITUATIONS_MATRIMONIALES,
   TYPES_CONTRAT,
@@ -132,8 +130,6 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
 
   const set = <K extends keyof EmployeFormValues>(k: K, v: EmployeFormValues[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
-
-  const fonctionsQ = useQuery({ queryKey: ["fonctions-actives"], queryFn: listFonctions });
 
   const photoUrlQ = useQuery({
     queryKey: ["employe-photo", form.photo_url],
@@ -340,14 +336,6 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
                 <Input
                   value={form.service ?? ""}
                   onChange={(e) => set("service", e.target.value)}
-                />
-              </Field>
-              <Field label="Fonction">
-                <FonctionPicker
-                  value={form.fonction_id ?? null}
-                  onChange={(id) => set("fonction_id", id)}
-                  fonctions={fonctionsQ.data ?? []}
-                  onCreated={() => qc.invalidateQueries({ queryKey: ["fonctions-actives"] })}
                 />
               </Field>
               <Field label="Poste">
@@ -1191,106 +1179,5 @@ function HistoriqueTab({ employeId }: { employeId: string }) {
         ))}
       </CardContent>
     </Card>
-  );
-}
-
-
-type FonctionOption = { fonction_id: string; libelle: string; departement_id: string | null };
-
-function FonctionPicker({
-  value,
-  onChange,
-  fonctions,
-  onCreated,
-}: {
-  value: string | null;
-  onChange: (id: string | null) => void;
-  fonctions: FonctionOption[];
-  onCreated: () => void;
-}) {
-  const [creating, setCreating] = useState(false);
-  const [label, setLabel] = useState("");
-  const [busy, setBusy] = useState(false);
-
-  const submit = async () => {
-    const clean = label.trim();
-    if (!clean) return;
-    setBusy(true);
-    try {
-      const f = await createFonction(clean);
-      toast.success("Fonction créée");
-      onCreated();
-      onChange(f.fonction_id);
-      setLabel("");
-      setCreating(false);
-    } catch (e) {
-      toast.error(friendlyError(e, "Erreur"));
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  if (creating) {
-    return (
-      <div className="flex gap-2">
-        <Input
-          autoFocus
-          value={label}
-          placeholder="Nouvelle fonction…"
-          onChange={(e) => setLabel(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              void submit();
-            }
-            if (e.key === "Escape") {
-              setCreating(false);
-              setLabel("");
-            }
-          }}
-        />
-        <Button type="button" size="sm" onClick={submit} disabled={busy || !label.trim()}>
-          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Créer"}
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          variant="ghost"
-          onClick={() => {
-            setCreating(false);
-            setLabel("");
-          }}
-        >
-          Annuler
-        </Button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex gap-2">
-      <Select value={value ?? "none"} onValueChange={(v) => onChange(v === "none" ? null : v)}>
-        <SelectTrigger className="flex-1">
-          <SelectValue placeholder="—" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="none">— Aucune —</SelectItem>
-          {fonctions.map((f) => (
-            <SelectItem key={f.fonction_id} value={f.fonction_id}>
-              {f.libelle}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Button aria-label="Créer une fonction"
-        type="button"
-        size="icon"
-        variant="outline"
-        title="Créer une fonction"
-        onClick={() => setCreating(true)}
-      >
-        <Plus className="h-4 w-4" />
-      </Button>
-    </div>
   );
 }
