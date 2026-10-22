@@ -68,7 +68,7 @@ export function calculerCumuls(bulletins: BulletinCumul[]): BulletinCumulsAnnuel
     cr,
     cn,
     crn: cr + cn,
-    its: sum("413"),
+    its: sum("401") + sum("413"),
     igr: sum("431"),
     brutImposable: bulletins.reduce((s, b) => s + n(b.brut_imposable), 0),
     jrsTravailles: bulletins.reduce((s, b) => s + n(b.jours_travailles), 0),
@@ -89,7 +89,14 @@ export function lignesPourPdf(lignes: LigneStockee[]) {
   const sorted = [...lignes].sort((a, b) => a.ordre - b.ordre);
   // Une retenue garde `retenue: 0` (ex. ITS annulé par la RICF) pour rester
   // dans le bloc des retenues ; un gain n'a pas de champ retenue.
-  const toLigne = (l: LigneStockee, imposable: boolean): BulletinLigne => {
+  const toLigne = (l0: LigneStockee, imposable: boolean): BulletinLigne => {
+    // Anciens bulletins : affichage seul, montants stockés inchangés.
+    const l: LigneStockee =
+      l0.numero_rubrique === "776"
+        ? { ...l0, numero_rubrique: "470", designation: "CMU (Couverture Maladie Univ.)", bloc: "retenue" }
+        : l0.numero_rubrique === "413"
+          ? { ...l0, numero_rubrique: "401" }
+          : l0;
     const estRetenue = l.bloc === "retenue" || (n(l.retenue) !== 0 && n(l.gain) === 0);
     return {
       code: l.numero_rubrique ?? undefined,
@@ -105,7 +112,7 @@ export function lignesPourPdf(lignes: LigneStockee[]) {
   return {
     lignes: sorted
       .filter((l) => l.bloc !== "patronal")
-      .map((l) => toLigne(l, l.bloc === "imposable" || l.bloc === "retenue")),
+      .map((l) => toLigne(l, l.bloc === "imposable" || l.bloc === "retenue" || l.numero_rubrique === "776")),
     patronales: sorted.filter((l) => l.bloc === "patronal").map((l) => toLigne(l, true)),
   };
 }
