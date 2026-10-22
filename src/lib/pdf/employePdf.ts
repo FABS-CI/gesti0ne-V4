@@ -7,10 +7,8 @@ import {
   addPageNumbers,
   getPdfChromeBodyTop,
   ensurePdfLogo,
-  ensurePdfQr,
-  clearPdfQr,
 } from "@/lib/pdf/pdfChrome";
-import { DEPARTEMENT_LABEL, type Employe } from "@/lib/rh-api";
+import { DEPARTEMENT_LABEL, SEXES, situationsAccordees, type Employe } from "@/lib/rh-api";
 
 async function loadPdfLibs() {
   const [{ default: JsPDF }, { default: autoTable }] = await Promise.all([
@@ -21,14 +19,22 @@ async function loadPdfLibs() {
 }
 
 function fmt(v: unknown): string {
-  if (v === null || v === undefined || v === "") return "—";
-  return String(v);
+  if (v === null || v === undefined) return "";
+  return String(v).trim();
+}
+function dateFr(v: unknown): string {
+  const s = fmt(v);
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s);
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : s;
+}
+function tel(v: unknown): string {
+  const d = fmt(v).replace(/\s+/g, "");
+  return /^\+?\d{8,}$/.test(d) ? d.replace(/(\d{2})(?=\d)/g, "$1 ").trim() : fmt(v);
 }
 
 export async function generateEmployeFichePDF(emp: Employe): Promise<void> {
   await ensurePdfLogo();
   const fileBase = `Fiche_${emp.matricule}_${emp.nom_complet.replace(/\s+/g, "_")}`;
-  await ensurePdfQr(fileBase);
   const { JsPDF, autoTable } = await loadPdfLibs();
   const doc = new JsPDF();
   const t = getActiveTemplate();
@@ -37,14 +43,15 @@ export async function generateEmployeFichePDF(emp: Employe): Promise<void> {
     [
       "Identité",
       [
+        ["Civilité", fmt(emp.civilite)],
         ["Matricule", fmt(emp.matricule)],
         ["Nom", fmt(emp.nom_complet)],
-        ["Prénom", fmt(emp.prenoms)],
-        ["Sexe", fmt(emp.sexe)],
-        ["Date de naissance", fmt(emp.date_naissance)],
+        ["Prénoms", fmt(emp.prenoms)],
+        ["Sexe", SEXES.find((x) => x.value === emp.sexe)?.label ?? fmt(emp.sexe)],
+        ["Date de naissance", dateFr(emp.date_naissance)],
         ["Lieu de naissance", fmt(emp.lieu_naissance)],
         ["Nationalité", fmt(emp.nationalite)],
-        ["Situation matrimoniale", fmt(emp.situation_matrimoniale)],
+        ["Situation matrimoniale", situationsAccordees(emp.sexe).find((x) => x.value === emp.situation_matrimoniale)?.label ?? fmt(emp.situation_matrimoniale)],
         ["N° CNI", fmt(emp.numero_cni)],
         ["N° CNPS", fmt(emp.numero_cnps)],
       ],
@@ -53,9 +60,9 @@ export async function generateEmployeFichePDF(emp: Employe): Promise<void> {
       "Contact",
       [
         ["Email", fmt(emp.email)],
-        ["Téléphone", fmt(emp.telephone)],
+        ["Téléphone", tel(emp.telephone)],
         ["Téléphone secondaire", fmt(emp.telephone_secondaire)],
-        ["Adresse", fmt(emp.adresse)],
+        ["Lieu de résidence", fmt(emp.adresse)],
         ["Commune", fmt(emp.commune)],
         ["Ville", fmt(emp.ville)],
         ["Pays", fmt(emp.pays)],
@@ -65,11 +72,11 @@ export async function generateEmployeFichePDF(emp: Employe): Promise<void> {
       "Professionnel",
       [
         ["Poste", fmt(emp.poste)],
-        ["Département", DEPARTEMENT_LABEL[emp.departement] ?? fmt(emp.departement)],
+        ["Département", (emp.departement && DEPARTEMENT_LABEL[emp.departement]) || fmt(emp.departement)],
         ["Service", fmt(emp.service)],
         ["Type de contrat", fmt(emp.type_contrat)],
-        ["Date d'embauche", fmt(emp.date_embauche)],
-        ["Date fin de contrat", fmt(emp.date_fin_contrat)],
+        ["Date d'embauche", dateFr(emp.date_embauche)],
+        ["Date fin de contrat", dateFr(emp.date_fin_contrat)],
         ["Statut", emp.actif ? "Actif" : "Inactif"],
         ["Catégorie", fmt(emp.categorie)],
         ["Échelon", fmt(emp.echelon)],
@@ -79,7 +86,7 @@ export async function generateEmployeFichePDF(emp: Employe): Promise<void> {
     [
       "Rémunération",
       [
-        ["Salaire de base", formatFCFA(Number(emp.salaire) || 0)],
+        ["Salaire de base", emp.salaire ? formatFCFA(Number(emp.salaire)) : ""],
         ["Mode de paiement", fmt(emp.mode_paiement)],
         ["Banque", fmt(emp.banque)],
         ["N° de compte", fmt(emp.numero_compte)],
@@ -90,25 +97,35 @@ export async function generateEmployeFichePDF(emp: Employe): Promise<void> {
       "Contact d'urgence",
       [
         ["Nom", fmt(emp.contact_urgence_nom)],
-        ["Téléphone", fmt(emp.contact_urgence_telephone)],
+        ["Téléphone", tel(emp.contact_urgence_telephone)],
         ["Lien", fmt(emp.contact_urgence_lien)],
       ],
     ],
   ];
 
-  let startY = getPdfChromeBodyTop();
+  let startY = getPdfChromeBodyTop() + 2;
+  const pageH = doc.internal.pageSize.getHeight();
   const drawChrome = (d: jsPDF) => {
     drawHeader(d, "FICHE EMPLOYÉ", t);
     d.setFontSize(9);
     d.setFont("helvetica", "normal");
     d.setTextColor(...PDF_COLORS.black);
-    d.text(`${emp.matricule} — ${emp.nom_complet}`, 14, 36);
+    const top = getPdfChromeBodyTop() - 4;
+    d.setFont("helvetica", "bold");
+    d.text(
+      [`${emp.civilite ? emp.civilite + " " : ""}${emp.nom_complet}`, emp.matricule, emp.poste, emp.actif ? "Actif" : "Inactif"]
+        .filter(Boolean)
+        .join("  ·  "),
+      14,
+      top,
+    );
+    d.setFont("helvetica", "normal");
     d.setFontSize(8);
     d.setTextColor(...PDF_COLORS.muted);
     d.text(
       `Généré le ${formatDateTime(new Date())}`,
       d.internal.pageSize.getWidth() - 14,
-      36,
+      top,
       {
         align: "right",
       },
@@ -116,15 +133,24 @@ export async function generateEmployeFichePDF(emp: Employe): Promise<void> {
     drawFooter(d, "Fiche employé — Document interne confidentiel.", t);
   };
 
-  for (const [titre, rows] of sections) {
+  for (const [titre, all] of sections) {
+    const rows = all.filter(([, v]) => v !== "");
+    if (!rows.length) continue;
+    // Pas de titre orphelin : la section passe entière à la page suivante si besoin.
+    if (startY + 9 + rows.length * 7 > pageH - 52 && startY > getPdfChromeBodyTop() + 10) {
+      doc.addPage();
+      startY = getPdfChromeBodyTop() + 2;
+    }
     autoTable(doc, {
+      rowPageBreak: "avoid",
       startY,
       head: [[titre, ""]],
       body: rows,
       headStyles: PDF_TABLE.headStyles,
       styles: { fontSize: 9, cellPadding: 2.6 },
       bodyStyles: PDF_TABLE.bodyStyles,
-      columnStyles: { 0: { cellWidth: 60, fontStyle: "bold" } },
+      columnStyles: { 0: { cellWidth: 60, textColor: PDF_COLORS.muted }, 1: { fontStyle: "bold" } },
+      alternateRowStyles: { fillColor: [247, 248, 250] },
       margin: { left: 14, right: 14, top: getPdfChromeBodyTop(), bottom: 52 },
       didDrawPage: () => drawChrome(doc),
     });
@@ -134,5 +160,4 @@ export async function generateEmployeFichePDF(emp: Employe): Promise<void> {
 
   addPageNumbers(doc);
   doc.save(`${fileBase}.pdf`);
-  clearPdfQr();
 }
