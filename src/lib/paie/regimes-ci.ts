@@ -15,6 +15,8 @@ export interface RegimeParams {
   cmuSalarie: number; cmuPatronal: number;
   transportPlafond: number;
   arrondiUnite: number;
+  arrondiMode?: "superieur" | "proche";
+  ancienneteTauxParAn?: number; anciennetePlafond?: number; joursMois?: number;
   retraitePatTaux: number; retraitePatPlafond: number;
   pfTaux: number; maternTaux: number; atTaux: number; plafondPrestations: number;
   fdfpActif: boolean; fdfpTaux: number;
@@ -30,9 +32,10 @@ export const REGIME_2024: RegimeParams = {
   itsTauxForfait: 0,
   ricfParDemiPart: 5500,
   crTaux: 6.3, crPlafond: 3375000,
-  cmuSalarie: 1000, cmuPatronal: 1000,
+  cmuSalarie: 500, cmuPatronal: 500,
   transportPlafond: 30000,
-  arrondiUnite: 100,
+  arrondiUnite: 5, arrondiMode: "superieur",
+  ancienneteTauxParAn: 1, anciennetePlafond: 25, joursMois: 30,
   retraitePatTaux: 7.7, retraitePatPlafond: 3375000,
   pfTaux: 5, maternTaux: 0.75, atTaux: 2, plafondPrestations: 70000,
   fdfpActif: false, fdfpTaux: 0,
@@ -94,6 +97,7 @@ export function igr2022(brutImposable: number, parts: number, p24: RegimeParams 
 }
 
 export interface SaisieBulletin {
+  dateEmbauche?: string; dateFin?: string;
   salaireBase: number;
   sursalaire?: number;
   tauxAnciennete?: number; // % du salaire de base
@@ -127,10 +131,18 @@ export interface ResultatBulletin {
 
 const r = Math.round;
 
+export function tauxAnciennete(dateEmbauche: string, dateFin: string, p: RegimeParams): number {
+  const debut = dateEmbauche.split("-").map(Number), fin = dateFin.split("-").map(Number);
+  if (debut.length !== 3 || fin.length !== 3 || [...debut, ...fin].some(n => !Number.isFinite(n))) return 0;
+  const annees = Math.max(0, fin[0] - debut[0] - (fin[1] < debut[1] || (fin[1] === debut[1] && fin[2] < debut[2]) ? 1 : 0));
+  return Math.min(p.anciennetePlafond ?? 25, annees * (p.ancienneteTauxParAn ?? 1));
+}
+
 export function calculerBulletin(s: SaisieBulletin, p: RegimeParams): ResultatBulletin {
   const sb = Math.max(0, s.salaireBase || 0);
   const sur = Math.max(0, s.sursalaire || 0);
-  const anc = r(sb * (s.tauxAnciennete || 0) / 100);
+  const tauxAnc = s.tauxAnciennete ?? (s.dateEmbauche && s.dateFin ? tauxAnciennete(s.dateEmbauche, s.dateFin, p) : 0);
+  const anc = r(sb * tauxAnc / 100);
   const autres = Math.max(0, s.autresGainsImposables || 0);
   const transport = Math.max(0, s.transport || 0);
   const transportExo = Math.min(transport, p.transportPlafond);
@@ -142,6 +154,7 @@ export function calculerBulletin(s: SaisieBulletin, p: RegimeParams): ResultatBu
   let itsBrut = 0, ricfV = 0, its = 0, cn = 0, igr = 0;
   if (p.code === "REGIME_2024") {
     ({ itsBrut, ricf: ricfV, its } = its2024(brutImposable, s.parts, p));
+    its = 0; // Choix utilisateur : ITS salarié 2024 toujours nul ; barème conservé pour IGR historique.
   } else {
     its = r(brutImposable * p.itsTauxForfait / 100);
     itsBrut = its;
@@ -150,10 +163,10 @@ export function calculerBulletin(s: SaisieBulletin, p: RegimeParams): ResultatBu
   }
   const cr = r(Math.min(brutImposable, p.crPlafond) * p.crTaux / 100);
   const cmu = p.cmuSalarie;
-  const totalFS = its + cn + igr + cr;
-  const netAvant = brutImposable - totalFS - cmu - autresRet + nonImpo;
+  const totalFS = its + cn + igr + cr + cmu;
+  const netAvant = brutImposable - totalFS - autresRet + nonImpo;
   const unite = p.arrondiUnite > 0 ? p.arrondiUnite : 1;
-  const netAPayer = Math.round(netAvant / unite) * unite;
+  const netAPayer = (p.arrondiMode === "proche" ? Math.round(netAvant / unite) : Math.ceil(netAvant / unite)) * unite;
   const arrondi = netAPayer - netAvant;
 
   const plafP = Math.min(brutImposable, p.plafondPrestations);
@@ -171,9 +184,9 @@ export function calculerBulletin(s: SaisieBulletin, p: RegimeParams): ResultatBu
   const L: LigneCalc[] = [];
   let o = 0;
   const add = (l: Omit<LigneCalc, "ordre">) => L.push({ ...l, ordre: ++o });
-  add({ numero: "150", designation: "Salaire de base", nombre: s.joursTravailles ?? 30, base: sb, taux: null, gain: sb, retenue: 0, bloc: "imposable" });
+  add({ numero: "150", designation: "Salaire de base", nombre: s.joursTravailles ?? p.joursMois ?? 30, base: sb, taux: null, gain: sb, retenue: 0, bloc: "imposable" });
   if (sur) add({ numero: "153", designation: "Sursalaire", nombre: null, base: null, taux: null, gain: sur, retenue: 0, bloc: "imposable" });
-  if (anc) add({ numero: "154", designation: "Prime d'ancienneté", nombre: null, base: sb, taux: s.tauxAnciennete ?? 0, gain: anc, retenue: 0, bloc: "imposable" });
+  if (anc) add({ numero: "154", designation: "Prime d'ancienneté", nombre: null, base: sb, taux: tauxAnc, gain: anc, retenue: 0, bloc: "imposable" });
   if (autres) add({ numero: "160", designation: "Autres gains imposables", nombre: null, base: null, taux: null, gain: autres, retenue: 0, bloc: "imposable" });
   if (transportExces) add({ numero: "503", designation: "Excédent indemnité de transport", nombre: null, base: null, taux: null, gain: transportExces, retenue: 0, bloc: "imposable" });
   add({ numero: "401", designation: "ITS (Part salariale)", nombre: null, base: brutImposable, taux: p.code === "REGIME_2022" ? p.itsTauxForfait : null, gain: 0, retenue: its, bloc: "retenue" });
@@ -182,7 +195,7 @@ export function calculerBulletin(s: SaisieBulletin, p: RegimeParams): ResultatBu
     add({ numero: "431", designation: "I.G.R", nombre: null, base: brutImposable, taux: null, gain: 0, retenue: igr, bloc: "retenue" });
   }
   add({ numero: "469", designation: "C.R", nombre: null, base: Math.min(brutImposable, p.crPlafond), taux: p.crTaux, gain: 0, retenue: cr, bloc: "retenue" });
-  if (transportExo) add({ numero: "503", designation: "Indemnité de transport", nombre: null, base: null, taux: null, gain: transportExo, retenue: 0, bloc: "non_imposable" });
+  if (transportExo) add({ numero: "503", designation: "Indemnité de transport", nombre: s.joursTravailles ?? p.joursMois ?? 30, base: p.transportPlafond, taux: null, gain: transportExo, retenue: 0, bloc: "non_imposable" });
   if (s.autresIndemnitesNonImposables) add({ numero: "510", designation: "Autres indemnités non imposables", nombre: null, base: null, taux: null, gain: s.autresIndemnitesNonImposables, retenue: 0, bloc: "non_imposable" });
   add({ numero: "470", designation: "CMU (Couverture Maladie Univ.)", nombre: null, base: null, taux: null, gain: 0, retenue: cmu, bloc: "retenue" });
   if (autresRet) add({ numero: "780", designation: "Autres retenues", nombre: null, base: null, taux: null, gain: 0, retenue: autresRet, bloc: "non_imposable" });
@@ -192,7 +205,7 @@ export function calculerBulletin(s: SaisieBulletin, p: RegimeParams): ResultatBu
 
   return {
     regime: p.code, lignes: L, brutImposable, itsBrut, ricf: ricfV, its, cn, igr, cr, cmu,
-    totalRetenuesFiscalesSociales: totalFS, totalIndemnitesNonImposables: nonImpo,
+    totalRetenuesFiscalesSociales: totalFS, totalIndemnitesNonImposables: nonImpo + Math.max(0, arrondi),
     totalAutresRetenues: autresRet, netAvantArrondi: netAvant, arrondi, netAPayer,
     patronal: pat, coutSalarial: brutImposable + nonImpo + pat.total,
   };
@@ -216,6 +229,8 @@ export function regimeDepuisParametres(code: RegimeCode, j: Record<string, unkno
     cmuSalarie: n("cmu_salarie", base.cmuSalarie), cmuPatronal: n("cmu_patronal", base.cmuPatronal),
     transportPlafond: n("transport_plafond", base.transportPlafond),
     arrondiUnite: n("arrondi_unite", base.arrondiUnite),
+    arrondiMode: j["arrondi_mode"] === "proche" ? "proche" : "superieur",
+    ancienneteTauxParAn: n("anciennete_taux_par_an", 1), anciennetePlafond: n("anciennete_plafond", 25), joursMois: n("jours_mois", 30),
     retraitePatTaux: n("retraite_pat_taux", base.retraitePatTaux), retraitePatPlafond: n("retraite_pat_plafond", base.retraitePatPlafond),
     pfTaux: n("pf_taux", base.pfTaux), maternTaux: n("maternite_taux", base.maternTaux), atTaux: n("at_taux", base.atTaux),
     plafondPrestations: n("plafond_prestations", base.plafondPrestations),
