@@ -19,6 +19,9 @@ import {
   getEmployeDocumentSignedUrl,
   SEXES,
   SITUATIONS_MATRIMONIALES,
+  CIVILITES,
+  civiliteParDefaut,
+  situationsAccordees,
   TYPES_CONTRAT,
   STATUTS_EMPLOYE,
   TEMPS_TRAVAIL,
@@ -62,6 +65,7 @@ function buildInitial(employe?: Employe): EmployeFormValues {
     matricule: null,
     prenoms: null,
     sexe: null,
+    civilite: null,
     date_naissance: null,
     lieu_naissance: null,
     nationalite: "Ivoirienne",
@@ -262,6 +266,13 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
                   placeholder={editing ? employe!.matricule : "Auto si vide"}
                 />
               </Field>
+              <Field label="Civilité">
+                <SelectEnum
+                  value={form.civilite}
+                  onChange={(v) => set("civilite", v as EmployeFormValues["civilite"])}
+                  options={CIVILITES}
+                />
+              </Field>
               <Field label="Nom *">
                 <Input
                   value={form.nom_complet}
@@ -277,7 +288,11 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
               <Field label="Sexe">
                 <SelectEnum
                   value={form.sexe}
-                  onChange={(v) => set("sexe", v as EmployeFormValues["sexe"])}
+                  onChange={(v) => {
+                    set("sexe", v as EmployeFormValues["sexe"]);
+                    const c = civiliteParDefaut(v, form.situation_matrimoniale);
+                    if (c) set("civilite", c);
+                  }}
                   options={SEXES}
                 />
               </Field>
@@ -303,10 +318,12 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
               <Field label="Situation matrimoniale">
                 <SelectEnum
                   value={form.situation_matrimoniale}
-                  onChange={(v) =>
-                    set("situation_matrimoniale", v as EmployeFormValues["situation_matrimoniale"])
-                  }
-                  options={SITUATIONS_MATRIMONIALES}
+                  onChange={(v) => {
+                    set("situation_matrimoniale", v as EmployeFormValues["situation_matrimoniale"]);
+                    const c = civiliteParDefaut(form.sexe, v);
+                    if (c) set("civilite", c);
+                  }}
+                  options={situationsAccordees(form.sexe)}
                 />
               </Field>
               <Field label="N° CNI">
