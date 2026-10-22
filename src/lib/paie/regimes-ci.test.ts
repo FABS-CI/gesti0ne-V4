@@ -10,12 +10,12 @@ describe("REGIME_2024 — bulletin modèle", () => {
     expect(b.itsBrut).toBe(10700); expect(b.ricf).toBe(22000); expect(b.its).toBe(0);
   });
   it("CR 8 938", () => expect(b.cr).toBe(8938));
-  it("CMU salarié forfait 1 000 FCFA", () => expect(b.cmu).toBe(1000));
-  it("net avant arrondi 161 934, arrondi +1, net 161 935 (multiple de 5 supérieur)", () => {
-    expect(b.netAvantArrondi).toBe(161934); expect(b.arrondi).toBe(1); expect(b.netAPayer).toBe(161935);
+  it("CMU salarié forfait 500 FCFA", () => expect(b.cmu).toBe(500));
+  it("net avant arrondi 162 434, arrondi +1, net 162 435 (multiple de 5 supérieur)", () => {
+    expect(b.netAvantArrondi).toBe(162434); expect(b.arrondi).toBe(1); expect(b.netAPayer).toBe(162435);
   });
   it("charges patronales indicatives", () => {
-    expect(b.patronal).toMatchObject({ retraite: 10924, pf: 3500, maternite: 525, at: 1400, cmu: 1000 });
+    expect(b.patronal).toMatchObject({ retraite: 10924, pf: 3500, maternite: 525, at: 1400, cmu: 500 });
   });
 });
 
@@ -34,7 +34,7 @@ describe("REGIME_2022 — août 2022", () => {
   it("ITS 1 702", () => expect(b.its).toBe(1702));
   it("CN 942", () => expect(b.cn).toBe(942));
   it("CR 8 938", () => expect(b.cr).toBe(8938));
-  it("net 157 600 (IGR saisi 1 693, CMU 1 000)", () => expect(b.netAPayer).toBe(157600));
+  it("net 158 100 (IGR saisi 1 693, CMU 500)", () => expect(b.netAPayer).toBe(158100));
   it.todo("IGR 1 693 calculé par formule");
 });
 
