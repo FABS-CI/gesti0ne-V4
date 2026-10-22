@@ -1,5 +1,10 @@
 # Audit ERP — module par module
 
+## Paramètres Paie CI — demande du 22 octobre 2026
+- [ ] Source unique régime, paramètres éditables et audit, suppression du chemin legacy
+- [ ] Calcul serveur et aperçu : CMU 500 chacun, ITS 2024 nul, ancienneté, transport et arrondi supérieur à 5
+- [ ] Simulation, tests unitaires/SQL par régime et PDF du cas de référence, contrôle visuel
+
 ## Liens clients et produits (file-80)
 - [ ] Enrichir les lectures avec les identifiants réels, par lots de 200
 - [ ] Liens sur les écrans internes demandés, sans modifier PDF/public/sélecteurs
