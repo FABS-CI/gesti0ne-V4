@@ -568,6 +568,20 @@
       "when": 1792660691814,
       "tag": "0080_paie_rubriques_401_470_civilite",
       "breakpoints": true
+    },
+    {
+      "idx": 81,
+      "version": "7",
+      "when": 1792666369073,
+      "tag": "0081_paie_its_2024_nul",
+      "breakpoints": true
+    },
+    {
+      "idx": 82,
+      "version": "7",
+      "when": 1792666444764,
+      "tag": "0082_paie_arrondi_5_superieur",
+      "breakpoints": true
     }
   ]
 }
