@@ -2684,6 +2684,7 @@ export type Database = {
           categorie: string | null
           centre_cout: string | null
           certifications: Json | null
+          civilite: string | null
           commune: string | null
           competences: Json | null
           contact_urgence_lien: string | null
@@ -2744,6 +2745,7 @@ export type Database = {
           categorie?: string | null
           centre_cout?: string | null
           certifications?: Json | null
+          civilite?: string | null
           commune?: string | null
           competences?: Json | null
           contact_urgence_lien?: string | null
@@ -2804,6 +2806,7 @@ export type Database = {
           categorie?: string | null
           centre_cout?: string | null
           certifications?: Json | null
+          civilite?: string | null
           commune?: string | null
           competences?: Json | null
           contact_urgence_lien?: string | null

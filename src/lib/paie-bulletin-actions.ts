@@ -44,7 +44,7 @@ export async function buildBulletinRowPdf(bulletinId: string) {
   if (bb.employe_id) {
     const { data } = await supabase
       .from("employes")
-      .select("matricule,prenoms,poste,categorie,numero_cnps,date_embauche,departement,adresse")
+      .select("matricule,prenoms,poste,categorie,numero_cnps,date_embauche,departement,adresse,civilite")
       .eq("employe_id", bb.employe_id)
       .maybeSingle();
     employe = data;

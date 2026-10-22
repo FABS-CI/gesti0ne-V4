@@ -53,6 +53,7 @@ export type Employe = {
   // Identité
   prenoms?: string | null;
   sexe?: "M" | "F" | "autre" | null;
+  civilite?: "M" | "Mlle" | "Mme" | null;
   date_naissance?: string | null;
   lieu_naissance?: string | null;
   nationalite?: string | null;
@@ -495,6 +496,32 @@ export const SITUATIONS_MATRIMONIALES = [
   { value: "veuf", label: "Veuf(ve)" },
   { value: "union_libre", label: "Union libre" },
 ] as const;
+
+export const CIVILITES = [
+  { value: "M", label: "M (Monsieur)" },
+  { value: "Mlle", label: "Mlle (Mademoiselle)" },
+  { value: "Mme", label: "Mme (Madame)" },
+] as const;
+
+/** Civilité proposée selon le sexe et la situation matrimoniale (modifiable). */
+export function civiliteParDefaut(sexe?: string | null, situation?: string | null): "M" | "Mlle" | "Mme" | null {
+  if (sexe === "M") return "M";
+  if (sexe === "F") return situation === "celibataire" ? "Mlle" : situation ? "Mme" : null;
+  return null;
+}
+
+/** Libellés de situation matrimoniale accordés au sexe. */
+export function situationsAccordees(sexe?: string | null) {
+  const f = sexe === "F", m = sexe === "M";
+  const acc = (h: string, fe: string, both: string) => (f ? fe : m ? h : both);
+  return [
+    { value: "celibataire", label: "Célibataire" },
+    { value: "marie", label: acc("Marié", "Mariée", "Marié(e)") },
+    { value: "divorce", label: acc("Divorcé", "Divorcée", "Divorcé(e)") },
+    { value: "veuf", label: acc("Veuf", "Veuve", "Veuf / Veuve") },
+    { value: "union_libre", label: "Union libre" },
+  ] as const;
+}
 
 export const TYPES_CONTRAT = [
   { value: "CDI", label: "CDI" },

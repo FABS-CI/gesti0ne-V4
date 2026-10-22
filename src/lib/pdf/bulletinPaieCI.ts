@@ -38,6 +38,7 @@ export type BulletinEntreprise = {
 export type BulletinSalarie = {
   matricule: string;
   nomComplet: string;
+  civilite?: string | null;
   fonction?: string;
   departement?: string;
   service?: string;
@@ -300,17 +301,17 @@ export async function generateBulletinPaieCIPDF(
   box(rightX, y0, rightW, h1);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11.5);
-  const nameLines = (doc.splitTextToSize(sal.nomComplet, rightW - 8) as string[]).slice(0, 2);
+  const nameLines = (doc.splitTextToSize(`${sal.civilite ? sal.civilite + " " : ""}${sal.nomComplet}`, rightW - 8) as string[]).slice(0, 2);
   nameLines.forEach((ln, i) => text(ln, rightX + 4, y0 + 7 + i * 5, { size: 11.5, style: "bold" }));
-  text(`Poste : ${sal.fonction ?? ""}`, rightX + 4, y0 + 17.5, { size: fs - 0.5 });
-  text(`Catég. : ${sal.categorie ?? ""}`, rightX + rightW - 4, y0 + 17.5, { size: fs - 0.5, align: "right" });
-  text(`Lieu de résidence : ${capitaliser(sal.adresse)}`, rightX + 4, y0 + 22.5, { size: fs - 0.5 });
+  text(`Poste : ${sal.fonction ?? ""}`, rightX + 4, y0 + 17.5, { size: fs - 0.5, style: "bold" });
+  text(`Catég. : ${sal.categorie ?? ""}`, rightX + rightW - 4, y0 + 17.5, { size: fs - 0.5, style: "bold", align: "right" });
+  text(`Lieu de résidence : ${capitaliser(sal.adresse)}`, rightX + 4, y0 + 22.5, { size: fs - 0.5, style: "bold" });
 
   box(rightX, y0 + h1, rightW, h2);
-  text(`Matricule : ${sal.matricule ?? ""}`, rightX + 4, y0 + h1 + 6.5, { size: fs - 0.5 });
-  text(`Date d'embauche : ${dateEnLettres(sal.dateEmbauche)}`, rightX + rightW - 4, y0 + h1 + 6.5, { size: fs - 0.5, align: "right" });
-  text(`N° CNPS : ${sal.numCnps ?? ""}`, rightX + 4, y0 + h1 + 13, { size: fs - 0.5 });
-  text(`Parts : ${partsFmt(sal.parts)}`, rightX + rightW - 4, y0 + h1 + 13, { size: fs - 0.5, align: "right" });
+  text(`Matricule : ${sal.matricule ?? ""}`, rightX + 4, y0 + h1 + 6.5, { size: fs - 0.5, style: "bold" });
+  text(`Date d'embauche : ${dateEnLettres(sal.dateEmbauche)}`, rightX + rightW - 4, y0 + h1 + 6.5, { size: fs - 0.5, style: "bold", align: "right" });
+  text(`N° CNPS : ${sal.numCnps ?? ""}`, rightX + 4, y0 + h1 + 13, { size: fs - 0.5, style: "bold" });
+  text(`Parts : ${partsFmt(sal.parts)}`, rightX + rightW - 4, y0 + h1 + 13, { size: fs - 0.5, style: "bold", align: "right" });
 
   // Titre sous le cadre employeur
   text("*".repeat(25), X0 + 1, y0 + h1 + 9, { size: 12, style: "bold" });
@@ -370,11 +371,11 @@ export async function generateBulletinPaieCIPDF(
       text(ret, cx[7] - 1.5, ty, { size: fsRow, align: "right" });
     } else if (r.kind === "sub") {
       const ty = y + rowH * 0.72;
-      fitText(r.label, cx[1] + cw[1] / 2, ty, cw[1] - 3, { size: fsRow, align: "center" });
+      fitText(r.label, cx[1] + cw[1] / 2, ty, cw[1] - 3, { size: fsRow, align: "center", style: "bold" });
       const ci = r.col === "gain" ? 5 : 6;
       hline(cx[ci], cx[ci + 1], y - 0.3);
       hline(cx[ci], cx[ci + 1], y + rowH + 0.3);
-      text(moneyAlways(r.amount), cx[ci + 1] - 1.5, ty, { size: fsRow, style: "bolditalic", align: "right" });
+      text(moneyAlways(r.amount), cx[ci + 1] - 1.5, ty, { size: fsRow, style: "bold", align: "right" });
     }
     y += h;
   });

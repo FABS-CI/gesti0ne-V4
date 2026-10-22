@@ -24,6 +24,7 @@ export const employeSchema = z
     matricule: optStr,
     prenoms: optStr,
     sexe: z.enum(["M", "F", "autre"]).nullable().optional(),
+    civilite: z.enum(["M", "Mlle", "Mme"]).nullable().optional(),
     date_naissance: optDate,
     lieu_naissance: optStr,
     nationalite: optStr,
