@@ -11,8 +11,8 @@ describe("REGIME_2024 — bulletin modèle", () => {
   });
   it("CR 8 938", () => expect(b.cr).toBe(8938));
   it("CMU salarié forfait 1 000 FCFA", () => expect(b.cmu).toBe(1000));
-  it("net avant arrondi 161 934, arrondi −34, net 161 900 (CMU 1 000)", () => {
-    expect(b.netAvantArrondi).toBe(161934); expect(b.arrondi).toBe(-34); expect(b.netAPayer).toBe(161900);
+  it("net avant arrondi 161 934, arrondi +1, net 161 935 (multiple de 5 supérieur)", () => {
+    expect(b.netAvantArrondi).toBe(161934); expect(b.arrondi).toBe(1); expect(b.netAPayer).toBe(161935);
   });
   it("charges patronales indicatives", () => {
     expect(b.patronal).toMatchObject({ retraite: 10924, pf: 3500, maternite: 525, at: 1400, cmu: 1000 });
