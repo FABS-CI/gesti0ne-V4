@@ -46,6 +46,7 @@ export interface EmployeInfo {
   date_embauche?: string | null;
   departement?: string | null;
   adresse?: string | null;
+  civilite?: string | null;
 }
 
 /** Bulletin de l'année civile (mois courant inclus) servant aux cumuls. */
@@ -135,6 +136,7 @@ export function construireDonneesPdf(
     salarie: {
       matricule: emp?.matricule ?? "—",
       nomComplet: nomEtPrenoms(b.employe_nom, emp?.prenoms),
+      civilite: emp?.civilite ?? undefined,
       fonction: emp?.poste ?? undefined,
       categorie: emp?.categorie ?? undefined,
       departement: emp?.departement ?? undefined,

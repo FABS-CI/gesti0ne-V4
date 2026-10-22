@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { calculerBulletin, REGIME_2024 } from "./regimes-ci";
-import { construireDonneesPdf, type BulletinStocke, type LigneStockee } from "./bulletin-pdf-data";
+import { construireDonneesPdf, lignesPourPdf, type BulletinStocke, type LigneStockee } from "./bulletin-pdf-data";
 import { ENTREPRISE_FABS } from "@/lib/pdf/bulletinPaieCI";
 
 const res = calculerBulletin({ salaireBase: 60000, sursalaire: 77672, tauxAnciennete: 7, transport: 30000, parts: 3 }, REGIME_2024);
