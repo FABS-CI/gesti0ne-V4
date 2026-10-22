@@ -53,6 +53,7 @@ export type Employe = {
   // Identité
   prenoms?: string | null;
   sexe?: "M" | "F" | "autre" | null;
+  civilite?: "M" | "Mlle" | "Mme" | null;
   date_naissance?: string | null;
   lieu_naissance?: string | null;
   nationalite?: string | null;
