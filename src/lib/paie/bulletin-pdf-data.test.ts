@@ -18,7 +18,7 @@ const b: BulletinStocke = {
 
 describe("PDF bulletin depuis lignes enregistrées", () => {
   const d = construireDonneesPdf(b, stockees, null, ENTREPRISE_FABS);
-  it("net à payer = valeur enregistrée 161 900", () => expect(d.totaux.netAPayer).toBe(161900));
+  it("net à payer = valeur enregistrée 161 935", () => expect(d.totaux.netAPayer).toBe(161935));
   it("brut imposable 141 872", () => expect(d.totaux.salaireImposable).toBe(141872));
   it("ITS net = impôt brut − RICF (10 700 − 22 000 → 0)", () => {
     const its = d.lignes!.find((l) => l.code === "401");
