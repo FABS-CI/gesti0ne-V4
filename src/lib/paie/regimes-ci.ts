@@ -176,7 +176,7 @@ export function calculerBulletin(s: SaisieBulletin, p: RegimeParams): ResultatBu
   if (anc) add({ numero: "154", designation: "Prime d'ancienneté", nombre: null, base: sb, taux: s.tauxAnciennete ?? 0, gain: anc, retenue: 0, bloc: "imposable" });
   if (autres) add({ numero: "160", designation: "Autres gains imposables", nombre: null, base: null, taux: null, gain: autres, retenue: 0, bloc: "imposable" });
   if (transportExces) add({ numero: "503", designation: "Excédent indemnité de transport", nombre: null, base: null, taux: null, gain: transportExces, retenue: 0, bloc: "imposable" });
-  add({ numero: "413", designation: "I.T.S", nombre: null, base: brutImposable, taux: p.code === "REGIME_2022" ? p.itsTauxForfait : null, gain: 0, retenue: its, bloc: "retenue" });
+  add({ numero: "401", designation: "ITS (Part salariale)", nombre: null, base: brutImposable, taux: p.code === "REGIME_2022" ? p.itsTauxForfait : null, gain: 0, retenue: its, bloc: "retenue" });
   if (p.code === "REGIME_2022") {
     add({ numero: "420", designation: "C.N", nombre: null, base: brutImposable, taux: null, gain: 0, retenue: cn, bloc: "retenue" });
     add({ numero: "431", designation: "I.G.R", nombre: null, base: brutImposable, taux: null, gain: 0, retenue: igr, bloc: "retenue" });
@@ -184,7 +184,7 @@ export function calculerBulletin(s: SaisieBulletin, p: RegimeParams): ResultatBu
   add({ numero: "469", designation: "C.R", nombre: null, base: Math.min(brutImposable, p.crPlafond), taux: p.crTaux, gain: 0, retenue: cr, bloc: "retenue" });
   if (transportExo) add({ numero: "503", designation: "Indemnité de transport", nombre: null, base: null, taux: null, gain: transportExo, retenue: 0, bloc: "non_imposable" });
   if (s.autresIndemnitesNonImposables) add({ numero: "510", designation: "Autres indemnités non imposables", nombre: null, base: null, taux: null, gain: s.autresIndemnitesNonImposables, retenue: 0, bloc: "non_imposable" });
-  add({ numero: "776", designation: "Retenue CMU", nombre: null, base: null, taux: null, gain: 0, retenue: cmu, bloc: "non_imposable" });
+  add({ numero: "470", designation: "CMU (Couverture Maladie Univ.)", nombre: null, base: null, taux: null, gain: 0, retenue: cmu, bloc: "retenue" });
   if (autresRet) add({ numero: "780", designation: "Autres retenues", nombre: null, base: null, taux: null, gain: 0, retenue: autresRet, bloc: "non_imposable" });
   add({ numero: "900", designation: "Arrondi de paie", nombre: null, base: null, taux: null, gain: arrondi > 0 ? arrondi : 0, retenue: arrondi < 0 ? -arrondi : 0, bloc: "arrondi" });
   const patL: [string, number][] = [["Retraite (part patronale)", pat.retraite], ["Prestations familiales", pat.pf], ["Maternité", pat.maternite], ["Accidents du travail", pat.at], ["CMU patronale", pat.cmu], ["Taxes de formation (FDFP)", pat.fdfp]];
