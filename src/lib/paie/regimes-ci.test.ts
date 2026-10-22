@@ -22,6 +22,11 @@ describe("REGIME_2024 — bulletin modèle", () => {
 describe("REGIME_2024 — ITS seul", () => {
   it.each([[150000, 1, 12000], [300000, 2, 28000], [500000, 3, 59000], [1000000, 5, 148000]])(
     "%i / %i parts → %i", (brut, parts, its) => expect(its2024(brut, parts).its).toBe(its));
+  it("bulletin 2024 : ITS salarié toujours 0 même si le barème donne plus", () => {
+    const b = calculerBulletin({ salaireBase: 500000, sursalaire: 0, tauxAnciennete: 0, transport: 0, parts: 1 }, REGIME_2024);
+    expect(b.itsBrut).toBeGreaterThan(0);
+    expect(b.its).toBe(0);
+  });
 });
 
 describe("REGIME_2022 — août 2022", () => {
