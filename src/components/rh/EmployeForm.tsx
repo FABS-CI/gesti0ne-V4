@@ -123,6 +123,9 @@ function buildInitial(employe?: Employe): EmployeFormValues {
     if (v !== undefined) (merged as Record<string, unknown>)[k as string] = v as never;
   }
   merged.salaire = Number(employe.salaire ?? 0);
+  merged.sursalaire = Number(employe.sursalaire ?? 0);
+  merged.nombre_enfants = Number(employe.nombre_enfants ?? 0);
+  merged.parts = Number(employe.parts ?? 1);
   return merged;
 }
 
@@ -461,6 +464,42 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
                   value={form.salaire}
                   onChange={(e) => set("salaire", Number(e.target.value))}
                 />
+              </Field>
+              <Field label="Sursalaire (FCFA)">
+                <Input
+                  type="number"
+                  min={0}
+                  value={form.sursalaire ?? 0}
+                  onChange={(e) => set("sursalaire", Number(e.target.value) || 0)}
+                />
+              </Field>
+              <Field label="Nombre d'enfants">
+                <Input
+                  type="number"
+                  min={0}
+                  step={1}
+                  value={form.nombre_enfants ?? 0}
+                  onChange={(e) => set("nombre_enfants", Math.max(0, Math.floor(Number(e.target.value) || 0)))}
+                />
+              </Field>
+              <Field label="Parts fiscales">
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    min={1}
+                    max={5}
+                    step={0.5}
+                    value={form.parts ?? 1}
+                    onChange={(e) => set("parts", Number(e.target.value) || 1)}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => set("parts", partsFiscales(form.situation_matrimoniale, form.nombre_enfants ?? 0))}
+                  >
+                    Recalculer
+                  </Button>
+                </div>
               </Field>
               <Field label="Mode de paiement">
                 <SelectEnum
