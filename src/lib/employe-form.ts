@@ -67,11 +67,14 @@ export const employeSchema = z
     actif: z.boolean(),
     // Financier
     salaire: z.number().min(0, "Le salaire doit être positif"),
+    sursalaire: z.number().min(0, "Le sursalaire doit être positif").default(0),
+    nombre_enfants: z.number().int("Nombre entier attendu").min(0).default(0),
+    parts: z.number().min(1).max(5).default(1),
     primes: z
-      .array(z.object({ libelle: z.string().min(1), montant: z.number().min(0) }))
+      .array(z.object({ libelle: z.string().min(1), montant: z.number().min(0), rubrique_code: z.string().nullable().optional() }))
       .default([]),
     indemnites: z
-      .array(z.object({ libelle: z.string().min(1), montant: z.number().min(0) }))
+      .array(z.object({ libelle: z.string().min(1), montant: z.number().min(0), rubrique_code: z.string().nullable().optional() }))
       .default([]),
     avantages: z
       .array(z.object({ libelle: z.string().min(1), valeur: z.string().optional() }))

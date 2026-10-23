@@ -6,13 +6,8 @@ import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { listEmployes, type Employe } from "@/lib/rh-api";
-import {
-  calculerBulletin,
-  regimeDepuisParametres,
-  regimePourDate,
-  type LigneCalc,
-  type RegimeCode,
-} from "@/lib/paie/regimes-ci";
+import { Badge } from "@/components/ui/badge";
+import type { CalculBulletin, LigneServeur } from "@/lib/paie/calcul-serveur";
 import { formatNumber } from "@/lib/format";
 import { RhPageHeader } from "@/components/rh/RhPageHeader";
 import { useSaveHotkey } from "@/hooks/use-save-hotkey";
@@ -44,10 +39,10 @@ function moisCourant() {
 
 const fmt = (n: number | null | undefined) => (n ? formatNumber(n) : "");
 
-function NumField({ label, value, onChange, step }: { label: string; value: number; onChange: (n: number) => void; step?: number }) {
+function NumField({ label, value, onChange, step, source }: { label: string; value: number; onChange: (n: number) => void; step?: number; source?: string }) {
   return (
     <div className="space-y-1">
-      <Label className="text-xs">{label}</Label>
+      <Label className="flex items-center gap-1 text-xs">{label}{source && <Badge variant="outline" className="px-1 py-0 text-[10px] font-normal">{source}</Badge>}</Label>
       <Input
         type="number"
         inputMode="decimal"
@@ -68,27 +63,12 @@ function NouveauBulletinPage() {
   const [employeId, setEmployeId] = useState("");
   const [dateDebut, setDateDebut] = useState(init.debut);
   const [dateFin, setDateFin] = useState(init.fin);
-  const [jours, setJours] = useState(30);
-  const [salaireBase, setSalaireBase] = useState(0);
-  const [sursalaire, setSursalaire] = useState(0);
-  const [tauxAnc, setTauxAnc] = useState(0);
-  const [transport, setTransport] = useState(0);
-  const [autresNI, setAutresNI] = useState(0);
-  const [autresRet, setAutresRet] = useState(0);
-  const [parts, setParts] = useState(1);
+  const [ov, setOv] = useState<Record<string, number>>({});
+  const setO = (k: string) => (n: number) => setOv((o) => ({ ...o, [k]: n }));
   const [datePaiement, setDatePaiement] = useState("");
   const [modePaiement, setModePaiement] = useState("Virement");
 
   const { data: employes } = useQuery({ queryKey: ["employes-list"], queryFn: () => listEmployes() });
-  const { data: regimes } = useQuery({
-    queryKey: ["paie_regimes"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("paie_regimes").select("code, parametres");
-      if (error) throw error;
-      return data ?? [];
-    },
-  });
-
   const employe: Employe | undefined = useMemo(
     () => employes?.find((e) => e.employe_id === employeId),
     [employes, employeId],
@@ -96,37 +76,29 @@ function NouveauBulletinPage() {
 
   const onSelectEmploye = (id: string) => {
     setEmployeId(id);
+    setOv({});
     const emp = employes?.find((e) => e.employe_id === id);
-    if (!emp) return;
-    setSalaireBase(Number(emp.salaire) || 0);
-    setParts(Number(emp.parts) || 1);
-    if (emp.mode_paiement) setModePaiement(emp.mode_paiement);
+    if (emp?.mode_paiement) setModePaiement(emp.mode_paiement);
   };
 
   const avertissement = avertissementPeriode(dateDebut, datePaiement, new Date().toISOString().slice(0, 10));
-  const regimeCode: RegimeCode = regimePourDate(dateFin || init.fin);
-  const params = useMemo(() => {
-    const row = regimes?.find((r) => r.code === regimeCode);
-    return regimeDepuisParametres(regimeCode, (row?.parametres ?? null) as Record<string, unknown> | null);
-  }, [regimes, regimeCode]);
-
-  const result = useMemo(
-    () =>
-      calculerBulletin(
-        {
-          salaireBase,
-          sursalaire,
-          tauxAnciennete: tauxAnc,
-          transport,
-          autresIndemnitesNonImposables: autresNI,
-          autresRetenues: autresRet,
-          parts,
-          joursTravailles: jours,
-        },
-        params,
-      ),
-    [salaireBase, sursalaire, tauxAnc, transport, autresNI, autresRet, parts, jours, params],
-  );
+  const regimeCode = (dateFin || init.fin) < "2024-01-01" ? "REGIME_2022" : "REGIME_2024";
+  const saisie = useMemo(() => ({ ...ov }), [ov]);
+  const periodeOk = !!dateDebut && !!dateFin && dateFin >= dateDebut;
+  const { data: calc, error: calcError, isFetching } = useQuery({
+    queryKey: ["paie_calculer_bulletin", employeId, dateDebut, dateFin, saisie],
+    enabled: !!employeId && periodeOk,
+    placeholderData: (prev) => prev,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("paie_calculer_bulletin", {
+        p_employe_id: employeId, p_date_debut: dateDebut, p_date_fin: dateFin, p_saisie: saisie,
+      });
+      if (error) throw error;
+      return data as unknown as CalculBulletin;
+    },
+  });
+  const val = (k: keyof CalculBulletin & string) => ov[k] ?? Number(calc?.[k] ?? 0);
+  const src = (k: string) => (k in ov ? "Saisie manuelle" : calc?.sources?.[k]);
 
   const save = useMutation({
     mutationFn: async () => {
@@ -137,14 +109,7 @@ function NouveauBulletinPage() {
         p_date_debut: dateDebut,
         p_date_fin: dateFin,
         p_saisie: {
-          salaire_base: salaireBase,
-          sursalaire,
-          taux_anciennete: tauxAnc,
-          transport,
-          autres_indemnites_non_imposables: autresNI,
-          autres_retenues: autresRet,
-          parts,
-          jours_travailles: jours,
+          ...saisie,
           date_paiement: datePaiement || null,
           mode_paiement: modePaiement,
         },
@@ -162,10 +127,10 @@ function NouveauBulletinPage() {
 
   useSaveHotkey(() => save.mutate(), { enabled: !save.isPending && !!employe });
 
-  const lignes = result.lignes.filter((l) => l.bloc !== "patronal");
-  const imposables = lignes.filter((l) => l.bloc === "imposable");
-  const retenues = lignes.filter((l) => l.bloc === "retenue");
-  const suite = lignes.filter((l) => l.bloc === "non_imposable" || l.bloc === "arrondi");
+  const lignes = (calc?.lignes ?? []).filter((l) => l.bl !== "patronal");
+  const imposables = lignes.filter((l) => l.bl === "imposable");
+  const retenues = lignes.filter((l) => l.bl === "retenue");
+  const suite = lignes.filter((l) => l.bl === "non_imposable" || l.bl === "arrondi");
 
   return (
     <div className="space-y-4 pb-24">
@@ -207,24 +172,14 @@ function NouveauBulletinPage() {
                 <Label className="text-xs">au</Label>
                 <Input type="date" value={dateFin} onChange={(e) => setDateFin(e.target.value)} />
               </div>
-              <NumField label="Jours travaillés" value={jours} onChange={setJours} />
-              <div className="space-y-1">
-                <Label className="text-xs">Parts</Label>
-                <Select value={String(parts)} onValueChange={(v) => setParts(Number(v))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {[1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].map((p) => (
-                      <SelectItem key={p} value={String(p)}>{p.toFixed(1).replace(".", ",")}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <NumField label="Salaire de base" value={salaireBase} onChange={setSalaireBase} />
-              <NumField label="Sursalaire" value={sursalaire} onChange={setSursalaire} />
-              <NumField label="Ancienneté (%)" value={tauxAnc} onChange={setTauxAnc} step={0.5} />
-              <NumField label="Indemnité de transport" value={transport} onChange={setTransport} />
-              <NumField label="Autres indemnités non imposables" value={autresNI} onChange={setAutresNI} />
-              <NumField label="Autres retenues" value={autresRet} onChange={setAutresRet} />
+              <NumField label="Jours travaillés" value={val("jours")} onChange={setO("jours_travailles")} source={src("jours_travailles")} />
+              <NumField label="Parts" value={val("parts")} onChange={setO("parts")} step={0.5} source={src("parts")} />
+              <NumField label="Salaire de base" value={val("salaire_base")} onChange={setO("salaire_base")} source={src("salaire_base")} />
+              <NumField label="Sursalaire" value={val("sursalaire")} onChange={setO("sursalaire")} source={src("sursalaire")} />
+              <NumField label="Ancienneté (%)" value={val("taux_anciennete")} onChange={setO("taux_anciennete")} step={0.5} source={src("taux_anciennete")} />
+              <NumField label="Indemnité de transport" value={val("transport")} onChange={setO("transport")} source={src("transport")} />
+              <NumField label="Autres indemnités non imposables" value={ov.autres_indemnites_non_imposables ?? 0} onChange={setO("autres_indemnites_non_imposables")} />
+              <NumField label="Autres retenues" value={ov.autres_retenues ?? 0} onChange={setO("autres_retenues")} />
               <div className="space-y-1">
                 <Label className="text-xs">Payé le</Label>
                 <Input type="date" value={datePaiement} onChange={(e) => setDatePaiement(e.target.value)} />
@@ -239,6 +194,12 @@ function NouveauBulletinPage() {
                 </Select>
               </div>
             </div>
+            {(calc?.anomalies ?? []).length > 0 && (
+              <ul role="alert" className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs">
+                {calc!.anomalies.map((a) => <li key={a}>{a}</li>)}
+              </ul>
+            )}
+            {calcError && <p role="alert" className="text-xs text-destructive">{friendlyError(calcError as Error)}</p>}
             {avertissement && (
               <p role="alert" className="rounded-md border border-warning/40 bg-warning/10 px-3 py-2 text-xs text-foreground">
                 {avertissement}
@@ -248,7 +209,7 @@ function NouveauBulletinPage() {
               {save.isPending ? "Enregistrement…" : "Enregistrer le bulletin"}
             </Button>
             <p className="text-xs text-muted-foreground">
-              Les montants sont recalculés et enregistrés par le serveur. Le bulletin est créé en brouillon puis validé directement.
+              Les valeurs viennent de la fiche employé et des paramètres de paie ; modifier un champ crée une saisie manuelle pour ce bulletin seulement.
             </p>
           </CardContent>
         </Card>
@@ -264,27 +225,22 @@ function NouveauBulletinPage() {
                 </tr>
               </thead>
               <tbody>
-                {imposables.map((l) => <Row key={l.ordre} l={l} />)}
-                <TotalRow label="SALAIRE BRUT IMPOSABLE" gain={result.brutImposable} />
-                {retenues.map((l) => <Row key={l.ordre} l={l} />)}
-                <TotalRow label="TOTAL RETENUES FISCALES & SOCIALES" retenue={result.totalRetenuesFiscalesSociales} />
-                {suite.map((l) => <Row key={l.ordre} l={l} />)}
+                {imposables.map((l, i) => <Row key={"i" + i} l={l} />)}
+                <TotalRow label="SALAIRE BRUT IMPOSABLE" gain={calc?.brut_imposable ?? 0} />
+                {retenues.map((l, i) => <Row key={"r" + i} l={l} />)}
+                <TotalRow label="TOTAL RETENUES FISCALES & SOCIALES" retenue={calc?.total_retenues_fs ?? 0} />
+                {suite.map((l, i) => <Row key={"s" + i} l={l} />)}
               </tbody>
             </table>
             <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
-              <Cell label="Total indemnités non impo." value={result.totalIndemnitesNonImposables} />
-              <Cell label="Total autres retenues" value={result.totalAutresRetenues} />
-              <Cell label="Coût salarial" value={result.coutSalarial} />
+              <Cell label="Total indemnités non impo." value={(calc?.non_imposable ?? 0) + Math.max(0, calc?.arrondi ?? 0)} />
+              <Cell label="Total autres retenues" value={calc?.autres_retenues ?? 0} />
+              <Cell label="Coût salarial" value={calc?.cout_salarial ?? 0} />
             </div>
             <div className="mt-3 flex items-baseline justify-between border-t border-border pt-3">
               <span className="font-serif text-lg font-bold">NET À PAYER</span>
-              <span className="font-serif text-2xl font-bold tabular-nums">{formatNumber(result.netAPayer)} FCFA</span>
+              <span className="font-serif text-2xl font-bold tabular-nums">{formatNumber(calc?.net ?? 0)} FCFA{isFetching ? " …" : ""}</span>
             </div>
-            {regimeCode === "REGIME_2024" && (
-              <p className="mt-2 text-xs text-muted-foreground">
-                ITS avant réduction {formatNumber(result.itsBrut)} − réduction pour charges de famille {formatNumber(result.ricf)}.
-              </p>
-            )}
           </CardContent>
         </Card>
       </div>
@@ -292,16 +248,16 @@ function NouveauBulletinPage() {
   );
 }
 
-function Row({ l }: { l: LigneCalc }) {
+function Row({ l }: { l: LigneServeur }) {
   return (
     <tr className="[&>td]:border-x [&>td]:border-border [&>td]:px-2 [&>td]:py-1">
-      <td>{l.numero}</td>
-      <td>{l.designation}</td>
-      <td className="text-right">{l.nombre ?? ""}</td>
-      <td className="text-right">{fmt(l.base)}</td>
-      <td className="text-right">{l.taux ? String(l.taux).replace(".", ",") : ""}</td>
-      <td className="text-right">{fmt(l.gain)}</td>
-      <td className="text-right">{fmt(l.retenue)}</td>
+      <td>{l.n}</td>
+      <td>{l.d}</td>
+      <td className="text-right">{l.nb ?? ""}</td>
+      <td className="text-right">{fmt(l.b)}</td>
+      <td className="text-right">{l.t ? String(l.t).replace(".", ",") : ""}</td>
+      <td className="text-right">{fmt(l.g)}</td>
+      <td className="text-right">{fmt(l.r)}</td>
     </tr>
   );
 }
@@ -310,7 +266,7 @@ function TotalRow({ label, gain, retenue }: { label: string; gain?: number; rete
   return (
     <tr className="border-y border-border font-bold italic [&>td]:border-x [&>td]:border-border [&>td]:px-2 [&>td]:py-1">
       <td />
-      <td colSpan={4} className="text-center">{label}...</td>
+      <td colSpan={4} className="text-center">{label}</td>
       <td className="text-right">{gain != null ? formatNumber(gain) : ""}</td>
       <td className="text-right">{retenue != null ? formatNumber(retenue) : ""}</td>
     </tr>

@@ -78,11 +78,13 @@ export type Employe = {
   temps_travail?: string | null;
   categorie?: string | null;
   parts?: number | null;
+  sursalaire?: number | null;
+  nombre_enfants?: number | null;
   echelon?: string | null;
   site_affectation?: string | null;
   // Financier
-  primes?: Array<{ libelle: string; montant: number }> | null;
-  indemnites?: Array<{ libelle: string; montant: number }> | null;
+  primes?: Array<{ libelle: string; montant: number; rubrique_code?: string | null }> | null;
+  indemnites?: Array<{ libelle: string; montant: number; rubrique_code?: string | null }> | null;
   avantages?: Array<{ libelle: string; valeur?: string }> | null;
   mode_paiement?: string | null;
   banque?: string | null;

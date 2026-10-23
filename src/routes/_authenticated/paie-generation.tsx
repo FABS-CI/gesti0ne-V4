@@ -47,7 +47,7 @@ function GenerationPage() {
     () =>
       (employes ?? []).filter((e) => {
         const s = String((e as { statut?: string }).statut ?? "actif").toLowerCase();
-        return !["inactif", "sorti", "licencie", "demissionnaire", "archive"].includes(s) && Number(e.salaire) > 0;
+        return !["inactif", "sorti", "licencie", "demissionnaire", "archive"].includes(s);
       }),
     [employes],
   );
@@ -66,6 +66,23 @@ function GenerationPage() {
     },
   });
 
+  const { data: anomalies } = useQuery({
+    queryKey: ["paie_anomalies", mois, actifs.map((e) => e.employe_id).join(",")],
+    enabled: actifs.length > 0,
+    queryFn: async () => {
+      const { debut, fin } = bornes(mois);
+      const out: Record<string, string[]> = {};
+      await Promise.all(actifs.map(async (e) => {
+        const { data, error } = await supabase.rpc("paie_calculer_bulletin", {
+          p_employe_id: e.employe_id, p_date_debut: debut, p_date_fin: fin, p_saisie: {},
+        });
+        out[e.employe_id] = error ? [friendlyError(error)] : ((data as { anomalies?: string[] })?.anomalies ?? []);
+      }));
+      return out;
+    },
+  });
+  const bloque = (id: string) => (anomalies?.[id]?.length ?? 0) > 0;
+
   const toggle = (id: string) =>
     setSelection((s) => {
       const n = new Set(s);
@@ -73,7 +90,7 @@ function GenerationPage() {
       else n.add(id);
       return n;
     });
-  const disponibles = actifs.filter((e) => !existants?.has(e.employe_id));
+  const disponibles = actifs.filter((e) => !existants?.has(e.employe_id) && !bloque(e.employe_id));
   const toutCoche = disponibles.length > 0 && disponibles.every((e) => selection.has(e.employe_id));
 
   async function generer() {
@@ -86,12 +103,7 @@ function GenerationPage() {
         p_employe_id: e.employe_id,
         p_date_debut: debut,
         p_date_fin: fin,
-        p_saisie: {
-          salaire_base: Number(e.salaire) || 0,
-          parts: Number(e.parts) || 1,
-          jours_travailles: 30,
-          mode_paiement: e.mode_paiement ?? "Virement",
-        },
+        p_saisie: { mode_paiement: e.mode_paiement ?? "Virement" },
       });
       if (!error) ok++;
       setResultats((r) => ({
@@ -113,7 +125,7 @@ function GenerationPage() {
       <RhPageHeader
         backTo="/paie"
         title="Génération mensuelle des paies"
-        subtitle="Génère en brouillon les bulletins du mois à partir du salaire de base et des parts de chaque employé"
+        subtitle="Génère en brouillon les bulletins du mois à partir des fiches employés et des paramètres de paie"
         crumbs={[{ label: "Paie", to: "/paie" }, { label: "Génération" }]}
       />
       <Card>
@@ -127,7 +139,7 @@ function GenerationPage() {
             Générer {selection.size || ""} bulletin(s)
           </Button>
           <p className="text-xs text-muted-foreground">
-            Primes, transport et retenues se complètent ensuite sur chaque bulletin, avant validation.
+            Salaire, sursalaire, ancienneté, parts, primes liées à une rubrique et absences viennent des fiches. Les employés avec une anomalie ne peuvent pas être cochés.
           </p>
         </CardContent>
       </Card>
@@ -164,7 +176,7 @@ function GenerationPage() {
                       <td className="py-2">
                         <Checkbox
                           checked={selection.has(e.employe_id)}
-                          disabled={!!deja || enCours}
+                          disabled={!!deja || enCours || bloque(e.employe_id)}
                           onCheckedChange={() => toggle(e.employe_id)}
                           aria-label={`Sélectionner ${e.nom_complet}`}
                         />
@@ -180,6 +192,11 @@ function GenerationPage() {
                           </Link>
                         ) : res ? (
                           <span className="text-destructive">{res.message}</span>
+                        ) : bloque(e.employe_id) ? (
+                          <span className="text-destructive">
+                            {anomalies![e.employe_id].join(" · ")} —{" "}
+                            <Link to="/employes/$employeId" params={{ employeId: e.employe_id }} className="underline">corriger la fiche</Link>
+                          </span>
                         ) : deja ? (
                           <span className="text-muted-foreground">Bulletin déjà existant</span>
                         ) : (

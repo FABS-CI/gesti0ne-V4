@@ -32,6 +32,8 @@ import {
   type EmployeDocument,
 } from "@/lib/rh-api";
 import { employeSchema, type EmployeFormValues } from "@/lib/employe-form";
+import { partsFiscales } from "@/lib/paie/parts-fiscales";
+import { listRubriques } from "@/lib/paie/parametres-api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -96,6 +98,9 @@ function buildInitial(employe?: Employe): EmployeFormValues {
     site_affectation: null,
     actif: true,
     salaire: 0,
+    sursalaire: 0,
+    nombre_enfants: 0,
+    parts: 1,
     primes: [],
     indemnites: [],
     avantages: [],
@@ -120,6 +125,9 @@ function buildInitial(employe?: Employe): EmployeFormValues {
     if (v !== undefined) (merged as Record<string, unknown>)[k as string] = v as never;
   }
   merged.salaire = Number(employe.salaire ?? 0);
+  merged.sursalaire = Number(employe.sursalaire ?? 0);
+  merged.nombre_enfants = Number(employe.nombre_enfants ?? 0);
+  merged.parts = Number(employe.parts ?? 1);
   return merged;
 }
 
@@ -128,6 +136,8 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
   const qc = useQueryClient();
   const editing = !!employe;
   const [form, setForm] = useState<EmployeFormValues>(() => buildInitial(employe));
+  const { data: rubriquesData } = useQuery({ queryKey: ["paie_rubriques"], queryFn: listRubriques });
+  const rubriquesActives = (rubriquesData ?? []).filter((r) => r.actif).map((r) => ({ code: r.code, libelle: r.libelle }));
   const [initialSnapshot, setInitialSnapshot] = useState(() => JSON.stringify(buildInitial(employe)));
   const isDirty = JSON.stringify(form) !== initialSnapshot;
   const [tab, setTab] = useState("identite");
@@ -459,6 +469,42 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
                   onChange={(e) => set("salaire", Number(e.target.value))}
                 />
               </Field>
+              <Field label="Sursalaire (FCFA)">
+                <Input
+                  type="number"
+                  min={0}
+                  value={form.sursalaire ?? 0}
+                  onChange={(e) => set("sursalaire", Number(e.target.value) || 0)}
+                />
+              </Field>
+              <Field label="Nombre d'enfants">
+                <Input
+                  type="number"
+                  min={0}
+                  step={1}
+                  value={form.nombre_enfants ?? 0}
+                  onChange={(e) => set("nombre_enfants", Math.max(0, Math.floor(Number(e.target.value) || 0)))}
+                />
+              </Field>
+              <Field label="Parts fiscales">
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    min={1}
+                    max={5}
+                    step={0.5}
+                    value={form.parts ?? 1}
+                    onChange={(e) => set("parts", Number(e.target.value) || 1)}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => set("parts", partsFiscales(form.situation_matrimoniale, form.nombre_enfants ?? 0))}
+                  >
+                    Recalculer
+                  </Button>
+                </div>
+              </Field>
               <Field label="Mode de paiement">
                 <SelectEnum
                   value={form.mode_paiement}
@@ -482,11 +528,13 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
                 <MoneyList
                   label="Primes"
                   items={form.primes ?? []}
+                  rubriques={rubriquesActives}
                   onChange={(v) => set("primes", v)}
                 />
                 <MoneyList
                   label="Indemnités"
                   items={form.indemnites ?? []}
+                  rubriques={rubriquesActives}
                   onChange={(v) => set("indemnites", v)}
                 />
               </div>
@@ -689,14 +737,17 @@ function PhotoUpload({
   );
 }
 
+type MoneyItem = { libelle: string; montant: number; rubrique_code?: string | null };
 function MoneyList({
   label,
   items,
+  rubriques = [],
   onChange,
 }: {
   label: string;
-  items: Array<{ libelle: string; montant: number }>;
-  onChange: (v: Array<{ libelle: string; montant: number }>) => void;
+  items: MoneyItem[];
+  rubriques?: Array<{ code: string; libelle: string }>;
+  onChange: (v: MoneyItem[]) => void;
 }) {
   return (
     <div className="rounded border p-3 space-y-2">
@@ -713,7 +764,7 @@ function MoneyList({
       </div>
       {items.length === 0 && <p className="text-xs text-muted-foreground">Aucun élément.</p>}
       {items.map((it, i) => (
-        <div key={i} className="grid grid-cols-[1fr,140px,auto] gap-2">
+        <div key={i} className="grid grid-cols-[1fr,140px,160px,auto] gap-2">
           <Input
             placeholder="Libellé"
             value={it.libelle}
@@ -733,6 +784,22 @@ function MoneyList({
               onChange(next);
             }}
           />
+          <select
+            aria-label="Rubrique de paie"
+            className="h-9 rounded-md border border-input bg-background px-2 text-sm"
+            value={it.rubrique_code ?? ""}
+            onChange={(e) => {
+              const next = [...items];
+              next[i] = { ...it, rubrique_code: e.target.value || null };
+              onChange(next);
+            }}
+          >
+            <option value="">Sans rubrique</option>
+            <option value="503">503 — Transport</option>
+            {rubriques.map((r) => (
+              <option key={r.code} value={r.code}>{r.code} — {r.libelle}</option>
+            ))}
+          </select>
           <Button aria-label="Supprimer"
             type="button"
             size="icon"
@@ -1270,7 +1337,7 @@ const FIELD_TABS: Record<string, string[]> = {
     "categorie", "echelon", "site_affectation", "actif",
   ],
   financier: [
-    "salaire", "primes", "indemnites", "avantages", "mode_paiement", "banque",
+    "salaire", "sursalaire", "nombre_enfants", "parts", "primes", "indemnites", "avantages", "mode_paiement", "banque",
     "numero_compte", "devise", "centre_cout",
   ],
   administratif: [
