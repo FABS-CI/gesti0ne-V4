@@ -51,3 +51,18 @@ describe("IGR 2022 = barème ITS 2024 − RICF", () => {
     expect(igr2022(141872, 3)).toBe(0);
   });
 });
+
+describe("cas APPIA (nov. 2025, miroir du calcul serveur)", () => {
+  it("brut 160 172, CR 10 091, retenues 10 591, arrondi +4, net 179 585", () => {
+    const r = calculerBulletin(
+      { salaireBase: 75000, sursalaire: 77672, tauxAnciennete: 10, transport: 30000, parts: 3 },
+      { ...REGIME_2024, cmuSalarie: 500, arrondiUnite: 5, arrondiMode: "superieur" },
+    );
+    expect(r.brutImposable).toBe(160172);
+    expect(r.cr).toBe(10091);
+    expect(r.its).toBe(0);
+    expect(r.totalRetenuesFiscalesSociales).toBe(10591);
+    expect(r.arrondi).toBe(4);
+    expect(r.netAPayer).toBe(179585);
+  });
+});
