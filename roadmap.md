@@ -101,7 +101,13 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Migration (régimes, champs employés/bulletins, lignes) — reste: coordonnées entreprise (raison sociale, CNPS 366145, cachet)
 - [x] Calcul côté serveur à l'enregistrement, validation directe (sans approbation)
 - [x] Saisie « Nouveau bulletin » avec aperçu
-- [ ] PDF modèle FABS depuis les lignes enregistrées
+- [x] PDF modèle FABS depuis les lignes enregistrées
 - [ ] Déclarations CNPS/ITS depuis les lignes
-- [ ] Formule IGR 2022 (à fournir) ; cachet entreprise (image à fournir)
-## Retrait Centre d'approbations — en attente des 2 décisions utilisateur
+- [x] IGR 2022 = calcul de 2024 ; cachet entreprise abandonné
+- [x] Période des bulletins en français (« Octobre 2026 »), stockée et affichée
+- [x] Centre d'approbations retiré, 2 retours en attente approuvés
+## Matricule employés EP-01
+- [x] Base : génération EP-01…, 7 employés renumérotés, contraintes
+- [ ] Formulaire employé (champ en lecture seule), page Employés, texte de confirmation
+- [ ] Tests du nouveau format
+
