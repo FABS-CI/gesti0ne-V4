@@ -9424,6 +9424,7 @@ export type Database = {
         }
         Returns: string
       }
+      paie_periode_label: { Args: { _date: string }; Returns: string }
       paie_valider_bulletin: {
         Args: { p_bulletin_id: string }
         Returns: undefined
