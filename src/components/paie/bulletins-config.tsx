@@ -1,6 +1,7 @@
 import { FileDown, Wallet } from "lucide-react";
 import { BulletinActionButtons } from "@/components/paie/BulletinActionButtons";
 import type { ResourceConfig } from "@/components/crud/ResourceManager";
+import { formatPeriodeLabel } from "@/lib/paie/periode-label";
 
 const statuts = [
   { value: "brouillon", label: "Brouillon", color: "#64748B" },
@@ -38,7 +39,7 @@ export const bulletinsConfig: ResourceConfig = {
   ],
   columns: [
     { name: "employe_nom", label: "Employé" },
-    { name: "periode", label: "Période" },
+    { name: "periode", label: "Période", format: formatPeriodeLabel },
     { name: "salaire_brut", label: "Brut", type: "money", align: "right" },
     { name: "retenues", label: "Retenues", type: "money", align: "right" },
     { name: "salaire_net", label: "Net", type: "money", align: "right" },
