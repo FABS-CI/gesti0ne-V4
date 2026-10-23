@@ -974,6 +974,7 @@ export type Database = {
           saisie: Json | null
           salaire_brut: number | null
           salaire_net: number | null
+          snapshot: Json | null
           statut: string | null
           total_autres_retenues: number | null
           total_indemnites_non_imposables: number | null
@@ -1006,6 +1007,7 @@ export type Database = {
           saisie?: Json | null
           salaire_brut?: number | null
           salaire_net?: number | null
+          snapshot?: Json | null
           statut?: string | null
           total_autres_retenues?: number | null
           total_indemnites_non_imposables?: number | null
@@ -1038,6 +1040,7 @@ export type Database = {
           saisie?: Json | null
           salaire_brut?: number | null
           salaire_net?: number | null
+          snapshot?: Json | null
           statut?: string | null
           total_autres_retenues?: number | null
           total_indemnites_non_imposables?: number | null
@@ -2710,6 +2713,7 @@ export type Database = {
           nationalite: string | null
           niveau_etudes: string | null
           nom_complet: string
+          nombre_enfants: number
           numero_cni: string | null
           numero_cnps: string | null
           numero_compte: string | null
@@ -2729,6 +2733,7 @@ export type Database = {
           site_affectation: string | null
           situation_matrimoniale: string | null
           statut_employe: string | null
+          sursalaire: number
           telephone: string | null
           telephone_secondaire: string | null
           temps_travail: string | null
@@ -2771,6 +2776,7 @@ export type Database = {
           nationalite?: string | null
           niveau_etudes?: string | null
           nom_complet: string
+          nombre_enfants?: number
           numero_cni?: string | null
           numero_cnps?: string | null
           numero_compte?: string | null
@@ -2790,6 +2796,7 @@ export type Database = {
           site_affectation?: string | null
           situation_matrimoniale?: string | null
           statut_employe?: string | null
+          sursalaire?: number
           telephone?: string | null
           telephone_secondaire?: string | null
           temps_travail?: string | null
@@ -2832,6 +2839,7 @@ export type Database = {
           nationalite?: string | null
           niveau_etudes?: string | null
           nom_complet?: string
+          nombre_enfants?: number
           numero_cni?: string | null
           numero_cnps?: string | null
           numero_compte?: string | null
@@ -2851,6 +2859,7 @@ export type Database = {
           site_affectation?: string | null
           situation_matrimoniale?: string | null
           statut_employe?: string | null
+          sursalaire?: number
           telephone?: string | null
           telephone_secondaire?: string | null
           temps_travail?: string | null
@@ -4715,9 +4724,11 @@ export type Database = {
           cle: string
           code: string | null
           created_at: string
+          date_effet: string | null
           description: string | null
           libelle: string | null
           parametre_id: string
+          regime_code: string | null
           unite: string | null
           updated_at: string
           valeur: string | null
@@ -4728,9 +4739,11 @@ export type Database = {
           cle: string
           code?: string | null
           created_at?: string
+          date_effet?: string | null
           description?: string | null
           libelle?: string | null
           parametre_id?: string
+          regime_code?: string | null
           unite?: string | null
           updated_at?: string
           valeur?: string | null
@@ -4741,9 +4754,11 @@ export type Database = {
           cle?: string
           code?: string | null
           created_at?: string
+          date_effet?: string | null
           description?: string | null
           libelle?: string | null
           parametre_id?: string
+          regime_code?: string | null
           unite?: string | null
           updated_at?: string
           valeur?: string | null
@@ -6405,57 +6420,75 @@ export type Database = {
       rubriques_paie: {
         Row: {
           actif: boolean
+          afficher_si_zero: boolean
           base: string | null
+          bloc: string | null
           code: string | null
           created_at: string
           description: string | null
           formule: string | null
+          imposable: boolean
           libelle: string
           mode_calcul: string | null
           montant_fixe: number | null
+          numero: string | null
           ordre: number | null
+          plafond: number | null
           rubrique_id: string
           soumis_cnps: boolean | null
           soumis_igr: boolean | null
           soumis_its: boolean | null
+          systeme: boolean
           taux: number | null
           type: string | null
           updated_at: string
         }
         Insert: {
           actif?: boolean
+          afficher_si_zero?: boolean
           base?: string | null
+          bloc?: string | null
           code?: string | null
           created_at?: string
           description?: string | null
           formule?: string | null
+          imposable?: boolean
           libelle: string
           mode_calcul?: string | null
           montant_fixe?: number | null
+          numero?: string | null
           ordre?: number | null
+          plafond?: number | null
           rubrique_id?: string
           soumis_cnps?: boolean | null
           soumis_igr?: boolean | null
           soumis_its?: boolean | null
+          systeme?: boolean
           taux?: number | null
           type?: string | null
           updated_at?: string
         }
         Update: {
           actif?: boolean
+          afficher_si_zero?: boolean
           base?: string | null
+          bloc?: string | null
           code?: string | null
           created_at?: string
           description?: string | null
           formule?: string | null
+          imposable?: boolean
           libelle?: string
           mode_calcul?: string | null
           montant_fixe?: number | null
+          numero?: string | null
           ordre?: number | null
+          plafond?: number | null
           rubrique_id?: string
           soumis_cnps?: boolean | null
           soumis_igr?: boolean | null
           soumis_its?: boolean | null
+          systeme?: boolean
           taux?: number | null
           type?: string | null
           updated_at?: string
@@ -8081,6 +8114,10 @@ export type Database = {
         Returns: undefined
       }
       _paie_bareme: { Args: { _bareme: Json; _base: number }; Returns: number }
+      _paie_parametres_effectifs: {
+        Args: { p_date: string; p_regime: string }
+        Returns: Json
+      }
       _recalc_factures_du_paiement: {
         Args: { _paiement_id: string }
         Returns: undefined
@@ -9367,6 +9404,15 @@ export type Database = {
       normalize_phone: { Args: { phone: string }; Returns: string }
       override_payment_product_allocation: {
         Args: { _allocation_id: string; _lignes: Json; _raison: string }
+        Returns: Json
+      }
+      paie_calculer_bulletin: {
+        Args: {
+          p_date_debut: string
+          p_date_fin: string
+          p_employe_id: string
+          p_saisie?: Json
+        }
         Returns: Json
       }
       paie_enregistrer_bulletin: {
