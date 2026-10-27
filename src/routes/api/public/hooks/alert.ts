@@ -78,7 +78,8 @@ export const Route = createFileRoute("/api/public/hooks/alert")({
           .single();
 
         if (error) {
-          return new Response(JSON.stringify({ error: "Insert failed", detail: error.message }), {
+          console.error("[alert webhook] insert failed:", error.message);
+          return new Response(JSON.stringify({ error: "Insert failed" }), {
             status: 500,
             headers: { "Content-Type": "application/json", ...CORS },
           });

@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequestHeader } from "@tanstack/react-start/server";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 
@@ -27,6 +28,18 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
   };
 }
 
+const GENERIC_ERROR = "Identifiants invalides ou trop de tentatives";
+const WINDOW_MS = 15 * 60 * 1000;
+export const MAX_FAILS_PER_EMAIL = 5;
+export const MAX_FAILS_PER_IP = 20;
+
+function clientIp(): string | null {
+  const cf = getRequestHeader("cf-connecting-ip");
+  if (cf) return cf.trim().slice(0, 64);
+  const xff = getRequestHeader("x-forwarded-for");
+  return xff ? xff.split(",")[0]!.trim().slice(0, 64) : null;
+}
+
 const signInSchema = z.object({
   email: z.string().trim().toLowerCase().email().max(320),
   password: z.string().min(1).max(512),
@@ -40,6 +53,21 @@ export const signInWithPasswordServer = createServerFn({ method: "POST" })
 
     if (!supabaseUrl || !supabaseKey) {
       throw new Error("Configuration d'authentification indisponible");
+    }
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const ip = clientIp();
+    const since = new Date(Date.now() - WINDOW_MS).toISOString();
+    const [byEmail, byIp] = await Promise.all([
+      supabaseAdmin.from("login_attempts").select("id", { count: "exact", head: true })
+        .eq("email", data.email).gte("created_at", since),
+      ip
+        ? supabaseAdmin.from("login_attempts").select("id", { count: "exact", head: true })
+            .eq("ip", ip).gte("created_at", since)
+        : Promise.resolve({ count: 0 }),
+    ]);
+    if ((byEmail.count ?? 0) >= MAX_FAILS_PER_EMAIL || (byIp.count ?? 0) >= MAX_FAILS_PER_IP) {
+      throw new Error(GENERIC_ERROR);
     }
 
     const supabasePublic = createClient<Database>(supabaseUrl, supabaseKey, {
@@ -58,8 +86,10 @@ export const signInWithPasswordServer = createServerFn({ method: "POST" })
       password: data.password,
     });
 
-    if (error) throw new Error(error.message);
-    if (!authData.session) throw new Error("Session introuvable après connexion");
+    if (error || !authData.session) {
+      await supabaseAdmin.from("login_attempts").insert({ email: data.email, ip });
+      throw new Error(GENERIC_ERROR);
+    }
 
     return {
       accessToken: authData.session.access_token,
