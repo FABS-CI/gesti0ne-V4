@@ -111,3 +111,6 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [ ] Formulaire employé (champ en lecture seule), page Employés, texte de confirmation
 - [ ] Tests du nouveau format
 
+- [ ] Sécurité : ajouter un contrôle de droit aux 12 fonctions signalées par le test RLS n°11 (dont paie_enregistrer_bulletin)
+- [ ] Sécurité : tables hors migrations (backup_cron_config, signature_keys…) — attend validation après lecture des politiques
+- [ ] Test retours-integration : « permission denied for has_permission_v2 »
