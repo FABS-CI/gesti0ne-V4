@@ -15,7 +15,6 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as PresentationRouteImport } from './routes/presentation'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedAbsencesRouteImport } from './routes/_authenticated/absences'
 import { Route as AuthenticatedAccesRefuseRouteImport } from './routes/_authenticated/acces-refuse'
@@ -91,7 +90,6 @@ import { Route as AuthenticatedTransfertsRouteImport } from './routes/_authentic
 import { Route as AuthenticatedWorkflowsDefinitionsRouteImport } from './routes/_authenticated/workflows-definitions'
 import { Route as CartonColisIdRouteImport } from './routes/carton.$colisId'
 import { Route as VerifyUuidRouteImport } from './routes/verify.$uuid'
-import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AuthenticatedAbsencesIndexRouteImport } from './routes/_authenticated/absences.index'
 import { Route as AuthenticatedAbsencesNouveauRouteImport } from './routes/_authenticated/absences.nouveau'
 import { Route as AuthenticatedAchatsIndexRouteImport } from './routes/_authenticated/achats.index'
@@ -242,12 +240,6 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Char91DotmcpChar93ListToolsRoute =
-  Char91DotmcpChar93ListToolsRouteImport.update({
-    id: '/.mcp/list-tools',
-    path: '/.mcp/list-tools',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
   Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
     id: '/.well-known/oauth-protected-resource',
@@ -665,12 +657,6 @@ const VerifyUuidRoute = VerifyUuidRouteImport.update({
   path: '/verify/$uuid',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Char91DotmcpChar93InvokeToolToolRoute =
-  Char91DotmcpChar93InvokeToolToolRouteImport.update({
-    id: '/.mcp/invoke-tool/$tool',
-    path: '/.mcp/invoke-tool/$tool',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const AuthenticatedAbsencesIndexRoute =
   AuthenticatedAbsencesIndexRouteImport.update({
     id: '/',
@@ -1390,7 +1376,6 @@ export interface FileRoutesByFullPath {
   '/mcp': typeof McpRoute
   '/presentation': typeof PresentationRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/absences': typeof AuthenticatedAbsencesRouteWithChildren
   '/acces-refuse': typeof AuthenticatedAccesRefuseRoute
@@ -1466,7 +1451,6 @@ export interface FileRoutesByFullPath {
   '/workflows-definitions': typeof AuthenticatedWorkflowsDefinitionsRoute
   '/carton/$colisId': typeof CartonColisIdRoute
   '/verify/$uuid': typeof VerifyUuidRoute
-  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/absences/nouveau': typeof AuthenticatedAbsencesNouveauRoute
   '/achats/$achatId': typeof AuthenticatedAchatsAchatIdRoute
   '/achats/nouveau': typeof AuthenticatedAchatsNouveauRoute
@@ -1594,7 +1578,6 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/presentation': typeof PresentationRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/acces-refuse': typeof AuthenticatedAccesRefuseRoute
   '/alertes-stock': typeof AuthenticatedAlertesStockRoute
@@ -1649,7 +1632,6 @@ export interface FileRoutesByTo {
   '/workflows-definitions': typeof AuthenticatedWorkflowsDefinitionsRoute
   '/carton/$colisId': typeof CartonColisIdRoute
   '/verify/$uuid': typeof VerifyUuidRoute
-  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/absences/nouveau': typeof AuthenticatedAbsencesNouveauRoute
   '/achats/$achatId': typeof AuthenticatedAchatsAchatIdRoute
   '/achats/nouveau': typeof AuthenticatedAchatsNouveauRoute
@@ -1778,7 +1760,6 @@ export interface FileRoutesById {
   '/mcp': typeof McpRoute
   '/presentation': typeof PresentationRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/absences': typeof AuthenticatedAbsencesRouteWithChildren
   '/_authenticated/acces-refuse': typeof AuthenticatedAccesRefuseRoute
@@ -1854,7 +1835,6 @@ export interface FileRoutesById {
   '/_authenticated/workflows-definitions': typeof AuthenticatedWorkflowsDefinitionsRoute
   '/carton/$colisId': typeof CartonColisIdRoute
   '/verify/$uuid': typeof VerifyUuidRoute
-  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/absences/nouveau': typeof AuthenticatedAbsencesNouveauRoute
   '/_authenticated/achats/$achatId': typeof AuthenticatedAchatsAchatIdRoute
   '/_authenticated/achats/nouveau': typeof AuthenticatedAchatsNouveauRoute
@@ -1984,7 +1964,6 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/presentation'
     | '/reset-password'
-    | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/absences'
     | '/acces-refuse'
@@ -2060,7 +2039,6 @@ export interface FileRouteTypes {
     | '/workflows-definitions'
     | '/carton/$colisId'
     | '/verify/$uuid'
-    | '/.mcp/invoke-tool/$tool'
     | '/absences/nouveau'
     | '/achats/$achatId'
     | '/achats/nouveau'
@@ -2188,7 +2166,6 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/presentation'
     | '/reset-password'
-    | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/acces-refuse'
     | '/alertes-stock'
@@ -2243,7 +2220,6 @@ export interface FileRouteTypes {
     | '/workflows-definitions'
     | '/carton/$colisId'
     | '/verify/$uuid'
-    | '/.mcp/invoke-tool/$tool'
     | '/absences/nouveau'
     | '/achats/$achatId'
     | '/achats/nouveau'
@@ -2371,7 +2347,6 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/presentation'
     | '/reset-password'
-    | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/absences'
     | '/_authenticated/acces-refuse'
@@ -2447,7 +2422,6 @@ export interface FileRouteTypes {
     | '/_authenticated/workflows-definitions'
     | '/carton/$colisId'
     | '/verify/$uuid'
-    | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/absences/nouveau'
     | '/_authenticated/achats/$achatId'
     | '/_authenticated/achats/nouveau'
@@ -2577,11 +2551,9 @@ export interface RootRouteChildren {
   McpRoute: typeof McpRoute
   PresentationRoute: typeof PresentationRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
-  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   CartonColisIdRoute: typeof CartonColisIdRoute
   VerifyUuidRoute: typeof VerifyUuidRoute
-  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicPerformanceAuditRoute: typeof ApiPublicPerformanceAuditRoute
   ApiPublicBackupCronRoute: typeof ApiPublicBackupCronRoute
   ApiPublicHooksAlertRoute: typeof ApiPublicHooksAlertRoute
@@ -2633,13 +2605,6 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/.mcp/list-tools': {
-      id: '/.mcp/list-tools'
-      path: '/.mcp/list-tools'
-      fullPath: '/.mcp/list-tools'
-      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/oauth-protected-resource': {
@@ -3165,13 +3130,6 @@ declare module '@tanstack/react-router' {
       path: '/verify/$uuid'
       fullPath: '/verify/$uuid'
       preLoaderRoute: typeof VerifyUuidRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/.mcp/invoke-tool/$tool': {
-      id: '/.mcp/invoke-tool/$tool'
-      path: '/.mcp/invoke-tool/$tool'
-      fullPath: '/.mcp/invoke-tool/$tool'
-      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/absences/': {
@@ -4700,12 +4658,10 @@ const rootRouteChildren: RootRouteChildren = {
   McpRoute: McpRoute,
   PresentationRoute: PresentationRoute,
   ResetPasswordRoute: ResetPasswordRoute,
-  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   CartonColisIdRoute: CartonColisIdRoute,
   VerifyUuidRoute: VerifyUuidRoute,
-  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicPerformanceAuditRoute: ApiPublicPerformanceAuditRoute,
   ApiPublicBackupCronRoute: ApiPublicBackupCronRoute,
   ApiPublicHooksAlertRoute: ApiPublicHooksAlertRoute,
