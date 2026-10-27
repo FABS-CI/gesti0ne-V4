@@ -27,6 +27,9 @@ type Bulletin = {
   salaire_brut: number;
   retenues: number;
   salaire_net: number;
+  net_a_payer: number | null;
+  date_paiement: string | null;
+  mode_paiement: string | null;
   statut: string;
   created_at: string;
 };
@@ -194,9 +197,39 @@ function BulletinDetailPage() {
             <span className="text-muted-foreground">dont CMU salarié</span>
             <span>{formatFCFA(lignes?.find((l) => l.numero_rubrique === "776")?.retenue ?? CMU_FORFAIT_FCFA)}</span>
           </div>
-          <div className="flex justify-between border-t pt-2 text-base">
-            <span className="font-semibold">Salaire net</span>
-            <span className="font-bold text-primary">{formatFCFA(bulletin.salaire_net)}</span>
+          <div
+            className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 overflow-hidden rounded-md border-[1.5px] px-4 py-3"
+            style={{
+              backgroundColor: "#EAF1F8",
+              borderColor: "#0B2540",
+              WebkitPrintColorAdjust: "exact",
+              printColorAdjust: "exact",
+              breakInside: "avoid",
+              pageBreakInside: "avoid",
+            }}
+          >
+            <span
+              className="text-[13px] font-bold uppercase"
+              style={{ color: "#0B2540", letterSpacing: "0.5px" }}
+            >
+              Net à payer
+            </span>
+            <span className="text-right">
+              <span className="block text-[22px] font-bold tabular-nums" style={{ color: "#0B2540" }}>
+                {formatFCFA(bulletin.net_a_payer ?? bulletin.salaire_net)}
+              </span>
+              {bulletin.date_paiement && (
+                <span className="block text-[8px]" style={{ color: "#0B2540", opacity: 0.8 }}>
+                  Payé {bulletin.mode_paiement ? `par ${bulletin.mode_paiement.toLowerCase()} ` : ""}le{" "}
+                  {dateEnLettres(bulletin.date_paiement)}
+                </span>
+              )}
+            </span>
+            <span
+              aria-hidden
+              className="order-first -ml-4 -my-3 mr-1 self-stretch"
+              style={{ width: 5, backgroundColor: "#F26A1B" }}
+            />
           </div>
           <p className="pt-2 text-xs text-muted-foreground">
             Généré le {frDate(bulletin.created_at)}
