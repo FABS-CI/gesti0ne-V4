@@ -239,13 +239,15 @@ export async function generateBulletinPaieCIPDF(
   const tot = data.totaux;
 
   type Style = "normal" | "bold" | "italic" | "bolditalic";
+  type RGB = [number, number, number];
   const text = (
     s: string, x: number, y: number,
-    o: { size?: number; style?: Style; font?: "helvetica" | "times"; align?: "left" | "right" | "center" } = {},
+    o: { size?: number; style?: Style; font?: "helvetica" | "times"; align?: "left" | "right" | "center"; color?: RGB } = {},
   ) => {
     doc.setFont(o.font ?? "helvetica", o.style ?? "normal");
     doc.setFontSize(o.size ?? fs);
-    doc.setTextColor(0, 0, 0);
+    const c = o.color ?? [0, 0, 0];
+    doc.setTextColor(c[0], c[1], c[2]);
     doc.text(s, x, y, { align: o.align ?? "left" });
   };
   /** Écrit un libellé sans jamais dépasser maxW : réduit la police (jusqu'à −2 pt),
@@ -331,7 +333,7 @@ export async function generateBulletinPaieCIPDF(
   // ===== Tableau principal ================================================
   const tTop = y0 + h1 + h2 + 20;
   const headH = 9;
-  const bodyH = 128;
+  const bodyH = 124;
   const footH = 8;
   const bodyTop = tTop + headH;
   const bodyBottom = bodyTop + bodyH;
@@ -401,13 +403,37 @@ export async function generateBulletinPaieCIPDF(
   footLabel("COÛT SALARIAL :", moneyAlways(cout), fx[2], X1);
   text(moneyAlways(cout), X1 - 2, fy, { size: fs - 1.5, style: "bolditalic", align: "right" });
 
-  // ===== NET A PAYER =======================================================
-  const ny = footBottom + 12;
-  text("NET A PAYER :", X0 + TW * 0.217, ny, { size: 15, style: "bold", font: "times" });
-  text(moneyAlways(tot.netAPayer), X0 + TW * 0.52, ny, { size: 15, style: "bold", font: "times" });
+  // ===== NET A PAYER — encadré premium =====================================
+  // Fond bleu clair #EAF1F8, bordure marine #0B2540 (1,5 px), coins 6 px,
+  // filet vertical orange #F26A1B (5 px) à l'intérieur du bord gauche.
+  const NAVY: RGB = [11, 37, 64];
+  const LIGHT: RGB = [234, 241, 248];
+  const ORANGE: RGB = [242, 106, 27];
+  const NAVY_80: RGB = [55, 78, 101]; // marine à 80 % sur fond bleu clair
+  const PX = 0.3528; // px -> pt/mm (1 px ≈ 0,3528 mm)
+  const netTop = footBottom + 5;
+  const netH = 19;
+  const netBot = netTop + netH;
+  doc.setFillColor(LIGHT[0], LIGHT[1], LIGHT[2]);
+  doc.setDrawColor(NAVY[0], NAVY[1], NAVY[2]);
+  doc.setLineWidth(1.5 * PX);
+  doc.roundedRect(X0, netTop, TW, netH, 6 * PX, 6 * PX, "FD");
+  doc.setFillColor(ORANGE[0], ORANGE[1], ORANGE[2]);
+  doc.rect(X0 + 1.5 * PX, netTop + 1.5 * PX, 5 * PX, netH - 3 * PX, "F");
+  const padX = 16 * PX;
+  doc.setCharSpace(0.5);
+  text("NET À PAYER", X0 + padX + 5 * PX, netTop + 8.6, { size: 13, style: "bold", color: NAVY });
+  doc.setCharSpace(0);
+  text(`${moneyAlways(tot.netAPayer)} FCFA`, X1 - padX, netTop + 9.6, { size: 22, style: "bold", align: "right", color: NAVY });
+  if (data.paiement?.date) {
+    const mode = data.paiement.mode ? `par ${data.paiement.mode.toLowerCase()} ` : "";
+    text(`Payé ${mode}le ${dateEnLettres(data.paiement.date)}`, X1 - padX, netBot - 3.2, {
+      size: 8, align: "right", color: NAVY_80,
+    });
+  }
 
   // ===== CUMULS ANNUELS =====================================================
-  const cTop = ny + 8;
+  const cTop = netBot + 3;
   const rT = 7, rL = 7, rV = 8;
   box(X0, cTop, TW, rT + rL + rV);
   text("CUMULS ANNUELS", X0 + TW / 2, cTop + rT / 2 + 1.3, { size: fs, style: "bold", align: "center" });
