@@ -13,7 +13,7 @@
     "check:rbac-coverage": "node scripts/check-rbac-coverage.mjs",
     "format": "prettier --write .",
     "test:rls": "bash -c 'if [ -z \"$SUPABASE_DB_URL\" ]; then echo \"SKIP: SUPABASE_DB_URL not set (local dev)\"; exit 0; fi; psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f scripts/test-rls-audit.sql'",
-    "test:rls:ci": "bash -c 'if [ -z \"$SUPABASE_DB_URL\" ]; then echo \"::error::SUPABASE_DB_URL manquant — test RLS bloquant\"; exit 1; fi; psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f scripts/test-rls-audit.sql | tee rls-report.txt && ! grep -Ei \"^FAIL|EXCEPTION|ERROR:\" rls-report.txt'",
+    "test:rls:ci": "bash -c 'if [ -z \"$SUPABASE_DB_URL\" ]; then echo \"::error::SUPABASE_DB_URL manquant \u2014 test RLS bloquant\"; exit 1; fi; psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f scripts/test-rls-audit.sql | tee rls-report.txt && ! grep -Ei \"^FAIL|EXCEPTION|ERROR:\" rls-report.txt'",
     "test:e2e": "playwright test",
     "test:e2e:install": "playwright install --with-deps chromium",
     "qa:pre-deploy": "bunx vitest run && bun run test:rls:ci",
@@ -137,5 +137,8 @@
     "typescript-eslint": "^8.56.1",
     "vite": "^8.0.16",
     "vitest": "^4.1.9"
+  },
+  "overrides": {
+    "@modelcontextprotocol/sdk": "^1.32.2"
   }
 }
