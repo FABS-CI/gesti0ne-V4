@@ -155,4 +155,43 @@ BEGIN
 END
 $$;
 
+-- 11) Anti-régression : aucune fonction SECURITY DEFINER exécutable par
+-- anon/authenticated et qui écrit (INSERT/UPDATE/DELETE) ne doit être dépourvue
+-- de contrôle de droit. Les fonctions trigger sont exclues (non appelables
+-- directement). Gardes reconnues : assert_permission, rbac3_can, has_permission,
+-- is_admin, is_finance, is_hr, is_stock, is_sales, has_role, is_super_admin,
+-- can_write_module, rbac3_admin_guard.
+DO $$
+DECLARE
+  v_list text;
+  -- Liste blanche : fonctions internes légitimes sans contrôle propre.
+  v_whitelist text[] := ARRAY[
+    '_next_ref(text,regclass,text)',            -- numérotation, appelée par les RPC gardées
+    '_notifier_role(text,text,text,text,text,text,uuid,text)', -- envoi de notifications internes
+    '_recalc_solde_client_internal(uuid)',      -- recalcul dérivé, idempotent
+    '_retour_audit(uuid,text,jsonb)',           -- journal des retours
+    'log_audit_event(text,text,text,text,text,text,text,integer,jsonb,jsonb,jsonb,text,text,text,text,text,text,uuid,text,text,text,text,text,text,text,text,text,text,integer)', -- journal d'audit
+    'log_permission_denied(text,jsonb)',        -- journal des refus
+    'log_user_login(text,text,text)',           -- journal de connexion de l'appelant
+    'rbac3_log(text,text,text,text,text,jsonb,jsonb)', -- journal RBAC
+    'track_user_action(text,text,text,text,text)',     -- statistiques d'usage de l'appelant
+    'next_client_code(text)'                    -- compteur de codes clients
+  ];
+BEGIN
+  SELECT string_agg(p.oid::regprocedure::text, E'\n  ' ORDER BY 1) INTO v_list
+  FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+  WHERE n.nspname = 'public' AND p.prosecdef AND p.prokind = 'f'
+    AND p.prorettype <> 'trigger'::regtype
+    AND (has_function_privilege('authenticated', p.oid, 'execute')
+         OR has_function_privilege('anon', p.oid, 'execute'))
+    AND pg_get_functiondef(p.oid) ~* '\m(insert\s+into|update\s+[a-z_."]+\s+set|delete\s+from)\M'
+    AND pg_get_functiondef(p.oid) !~* '(assert_permission|rbac3_can|has_permission|is_admin|is_finance|is_hr|is_stock|is_sales|has_role|is_super_admin|can_write_module|rbac3_admin_guard)'
+    AND NOT (regexp_replace(p.oid::regprocedure::text, '^public\.', '') = ANY (v_whitelist));
+  IF v_list IS NOT NULL THEN
+    RAISE EXCEPTION E'FAIL: fonctions SECURITY DEFINER sans contrôle de droit :\n  %', v_list;
+  END IF;
+  RAISE NOTICE 'PASS: toutes les fonctions SECURITY DEFINER qui écrivent ont un contrôle de droit';
+END
+$$;
+
 ROLLBACK;

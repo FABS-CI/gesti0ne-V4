@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "sdk_version": "0.20.1",
+  "sdk_version": "3.3.0",
   "path": "/mcp",
   "auth": {
     "type": "oauth",
@@ -28,7 +28,7 @@
           "openWorldHint": false
         },
         "inputSchema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
           "type": "object",
           "properties": {
             "query": {
@@ -38,7 +38,8 @@
           },
           "required": [
             "query"
-          ]
+          ],
+          "additionalProperties": false
         },
         "outputSchema": null
       },
@@ -52,7 +53,7 @@
           "openWorldHint": false
         },
         "inputSchema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
           "type": "object",
           "properties": {
             "ville": {
@@ -71,7 +72,8 @@
               "minimum": 0,
               "maximum": 9007199254740991
             }
-          }
+          },
+          "additionalProperties": false
         },
         "outputSchema": null
       },
@@ -85,7 +87,7 @@
           "openWorldHint": false
         },
         "inputSchema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
           "type": "object",
           "properties": {
             "reference": {
@@ -98,7 +100,8 @@
               "format": "uuid",
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "outputSchema": null
       },
@@ -112,7 +115,7 @@
           "openWorldHint": false
         },
         "inputSchema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
           "type": "object",
           "properties": {
             "statut": {
@@ -135,7 +138,8 @@
               "minimum": 0,
               "maximum": 9007199254740991
             }
-          }
+          },
+          "additionalProperties": false
         },
         "outputSchema": null
       },
@@ -149,7 +153,7 @@
           "openWorldHint": false
         },
         "inputSchema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
           "type": "object",
           "properties": {
             "numero": {
@@ -160,7 +164,8 @@
               "format": "uuid",
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "outputSchema": null
       },
@@ -174,7 +179,7 @@
           "openWorldHint": false
         },
         "inputSchema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
           "type": "object",
           "properties": {
             "reference": {
@@ -185,7 +190,8 @@
               "format": "uuid",
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "outputSchema": null
       },
@@ -199,7 +205,7 @@
           "openWorldHint": false
         },
         "inputSchema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
           "type": "object",
           "properties": {
             "search": {
@@ -220,7 +226,8 @@
               "minimum": 0,
               "maximum": 9007199254740991
             }
-          }
+          },
+          "additionalProperties": false
         },
         "outputSchema": null
       },
@@ -234,7 +241,7 @@
           "openWorldHint": false
         },
         "inputSchema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
           "type": "object",
           "properties": {
             "reference": {
@@ -245,7 +252,8 @@
               "format": "uuid",
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "outputSchema": null
       },
@@ -259,7 +267,7 @@
           "openWorldHint": false
         },
         "inputSchema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
           "type": "object",
           "properties": {
             "statut": {
@@ -280,7 +288,8 @@
               "minimum": 0,
               "maximum": 9007199254740991
             }
-          }
+          },
+          "additionalProperties": false
         },
         "outputSchema": null
       },
@@ -294,7 +303,7 @@
           "openWorldHint": false
         },
         "inputSchema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
           "type": "object",
           "properties": {
             "reference": {
@@ -305,7 +314,8 @@
               "format": "uuid",
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "outputSchema": null
       }

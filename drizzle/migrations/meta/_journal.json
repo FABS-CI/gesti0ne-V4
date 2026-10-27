@@ -610,6 +610,13 @@
       "when": 1793103530496,
       "tag": "0086_securite_droits_acces",
       "breakpoints": true
+    },
+    {
+      "idx": 87,
+      "version": "7",
+      "when": 1793119078671,
+      "tag": "0087_securite_login_rate_limit_allocations",
+      "breakpoints": true
     }
   ]
 }

@@ -13,7 +13,7 @@
     "check:rbac-coverage": "node scripts/check-rbac-coverage.mjs",
     "format": "prettier --write .",
     "test:rls": "bash -c 'if [ -z \"$SUPABASE_DB_URL\" ]; then echo \"SKIP: SUPABASE_DB_URL not set (local dev)\"; exit 0; fi; psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f scripts/test-rls-audit.sql'",
-    "test:rls:ci": "bash -c 'if [ -z \"$SUPABASE_DB_URL\" ]; then echo \"::error::SUPABASE_DB_URL manquant — test RLS bloquant\"; exit 1; fi; psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f scripts/test-rls-audit.sql | tee rls-report.txt && ! grep -Ei \"^FAIL|EXCEPTION|ERROR:\" rls-report.txt'",
+    "test:rls:ci": "bash -c 'if [ -z \"$SUPABASE_DB_URL\" ]; then echo \"::error::SUPABASE_DB_URL manquant \u2014 test RLS bloquant\"; exit 1; fi; psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f scripts/test-rls-audit.sql | tee rls-report.txt && ! grep -Ei \"^FAIL|EXCEPTION|ERROR:\" rls-report.txt'",
     "test:e2e": "playwright test",
     "test:e2e:install": "playwright install --with-deps chromium",
     "qa:pre-deploy": "bunx vitest run && bun run test:rls:ci",
@@ -33,7 +33,7 @@
     "@fontsource/ibm-plex-sans": "^5.3.0",
     "@hookform/resolvers": "^5.2.2",
     "@lovable.dev/cloud-auth-js": "^1.1.2",
-    "@lovable.dev/mcp-js": "^0.20.0",
+    "@lovable.dev/mcp-js": "^3.3.0",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-aspect-ratio": "^1.1.8",
@@ -126,7 +126,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^15.15.0",
-    "happy-dom": "^20.10.6",
+    "happy-dom": "^21.0.4",
     "jsdom": "^29.1.1",
     "nitro": "3.0.260603-beta",
     "pdfjs-dist": "^6.1.200",
@@ -137,5 +137,8 @@
     "typescript-eslint": "^8.56.1",
     "vite": "^8.0.16",
     "vitest": "^4.1.9"
+  },
+  "overrides": {
+    "@modelcontextprotocol/sdk": "^1.32.2"
   }
 }
