@@ -4349,6 +4349,27 @@ export type Database = {
           },
         ]
       }
+      login_attempts: {
+        Row: {
+          created_at: string
+          email: string
+          id: number
+          ip: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: number
+          ip?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: number
+          ip?: string | null
+        }
+        Relationships: []
+      }
       login_history: {
         Row: {
           created_at: string
