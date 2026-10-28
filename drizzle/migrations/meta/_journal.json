@@ -638,6 +638,13 @@
       "when": 1793187541785,
       "tag": "0090_signature_keys_lecture_cles_publiques",
       "breakpoints": true
+    },
+    {
+      "idx": 91,
+      "version": "7",
+      "when": 1793191180787,
+      "tag": "0091_solde_client_formule_unique",
+      "breakpoints": true
     }
   ]
 }

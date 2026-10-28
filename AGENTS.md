@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 - Les relevés clients calculent séparément paiements affectés et retours validés, puis les combinent une seule fois dans le solde, afin d'éviter tout double comptage.
+- `clients.solde` est calculé uniquement par `solde_client_calcule` (même formule que le relevé : factures hors annulées et avoirs − affectations validées − retours validés), appliqué par `_recalc_solde_client_internal` et les triggers sur factures, paiements, payment_allocations et retours ; ne jamais écrire `clients.solde` directement, sinon le solde dépend de la dernière opération.
 - Un bon de retour dérivé d'une facture reprend les prix et remises effectifs de cette facture; le prix catalogue n'est qu'un secours pour les anciens retours sans facture.
 - `sec_replace_user_scope` accepte un dépôt principal nullable; l'appeler uniquement via `replaceUserScope` (`src/lib/sec-replace-user-scope.ts`, seul cast étroit) et ne jamais remplacer `null` par un dépôt arbitraire pour satisfaire le type généré.
 - Le Centre de pilotage lit uniquement la RPC agrégée `cockpit_overview`, qui filtre chaque bloc par `has_permission_v2` côté serveur; un bloc absent du JSON signifie « non autorisé », pour éviter de dupliquer les contrôles d'accès dans l'interface.
