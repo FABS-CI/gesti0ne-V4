@@ -144,8 +144,9 @@ export function verifyDocument(type: DocKind, data: DocBase): VerifyResult {
       issues.push({ champ: "qr.total", attendu: "nombre", recu: qr.tot });
     }
     // Cohérence du total avec les données source
+    // Montants non arrondis (ex. 232 011,6) : on compare au franc près.
     const expectedTotal = Math.round(Number(data.totalVente ?? data.montantHT ?? 0));
-    if (qr.tot !== expectedTotal) {
+    if (typeof qr.tot === "number" && Math.round(qr.tot) !== expectedTotal) {
       issues.push({ champ: "qr.total", attendu: expectedTotal, recu: qr.tot });
     }
   }
