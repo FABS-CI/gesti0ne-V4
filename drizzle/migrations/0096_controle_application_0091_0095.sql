@@ -1,0 +1,1 @@
+COMMENT ON FUNCTION public.solde_client_calcule(uuid) IS 'Seule formule du solde client (factures hors annulées et avoirs - affectations validées - retours validés). Appliquée depuis les migrations 0091-0095.';

@@ -8169,6 +8169,7 @@ export type Database = {
         Returns: undefined
       }
       _retour_traiter_auto: { Args: { _retour_id: string }; Returns: undefined }
+      _retour_valeur: { Args: { _retour_id: string }; Returns: number }
       _retour_valider_compta_core: {
         Args: {
           _commentaire?: string
@@ -9041,6 +9042,10 @@ export type Database = {
       }
       export_config_snapshot: { Args: never; Returns: Json }
       facture_encaisse: { Args: { _facture_id: string }; Returns: number }
+      facture_engage: {
+        Args: { _facture_id: string; _sauf_allocation?: string }
+        Returns: number
+      }
       factures_impayees_client: {
         Args: { _client_id: string }
         Returns: {
@@ -9895,6 +9900,7 @@ export type Database = {
         Returns: undefined
       }
       soft_delete_employe: { Args: { _employe_id: string }; Returns: undefined }
+      solde_client_calcule: { Args: { _client_id: string }; Returns: number }
       soumettre_commande: { Args: { _commande_id: string }; Returns: undefined }
       supprimer_achat: {
         Args: { _achat_id: string; _motif?: string }
