@@ -1,7 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { applyCorrections, type FNEInvoicePayload } from "./types";
 import { loadFNESettings, isProductionReady, type FNESettings } from "./settings";
-import { getFNEInvoice } from "./reads";
 
 async function submitToDGI(fneId: string, settings: FNESettings) {
   if (isProductionReady(settings)) {
@@ -162,44 +161,14 @@ export async function submitFactureToFNE(facture: {
   return { fne_id: res.fne_id, code_dgi: res.code_dgi };
 }
 
-export async function refundFNEInvoice(fneId: string, items: { id: string; quantity: number }[]) {
-  const { assertPermission } = await import("@/lib/rbac-api");
-  await assertPermission("fne.rembourser");
-  const original = await getFNEInvoice(fneId);
-  if (original.statut !== "accepted")
-    throw new Error("Seule une facture certifiée peut faire l'objet d'un avoir");
-  const settings = await loadFNESettings();
-  const refundRef = `AVR-${original.reference}-${Date.now().toString(36).toUpperCase()}`;
-  const refundAmount = items.reduce((s, it) => s + it.quantity, 0);
-  const { data: refund, error } = await supabase
-    .from("fne_factures")
-    .insert({
-      reference: refundRef,
-      invoice_type: "purchase",
-      client_nom: original.client_nom,
-      template: original.template,
-      payment_method: original.payment_method,
-      montant: -refundAmount,
-      date_emission: new Date().toISOString().slice(0, 10),
-      statut: "accepted",
-      parent_fne_id: fneId,
-      code_dgi: `${original.code_dgi}-AVR`,
-      token: crypto.randomUUID().replace(/-/g, ""),
-      source: isProductionReady(settings) ? "dgi_api" : "sandbox",
-      submitted_at: new Date().toISOString(),
-      validated_at: new Date().toISOString(),
-      items: items as never,
-      notes: `Avoir de la facture ${original.reference}`,
-    })
-    .select()
-    .single();
-  if (error) throw error;
-  await supabase.from("fne_logs").insert({
-    fne_facture_id: refund.fne_id,
-    action: "fne_refund_success",
-    statut: "succes",
-    payload: { fne_id: fneId, items } as never,
-    response: { reference: refundRef } as never,
-  });
-  return refund;
+/**
+ * Avoir sur une facture certifiée : montant, contrôle du reste à rembourser et appel
+ * DGI faits uniquement côté serveur. Sans `lignes`, rembourse tout le reste.
+ */
+export async function refundFNEInvoice(
+  fneId: string,
+  lignes?: { index: number; quantity: number }[],
+) {
+  const { refundInvoiceWithDGI } = await import("@/lib/fne.functions");
+  return refundInvoiceWithDGI({ data: { fne_id: fneId, lignes } });
 }
