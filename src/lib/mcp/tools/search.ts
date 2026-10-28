@@ -1,7 +1,7 @@
 import { pgSafe } from "@/lib/postgrest-filter";
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { getAdmin } from "../supabase";
+import { requirePermission, McpAccessError } from "../supabase";
 
 export default defineTool({
   name: "search",
@@ -12,8 +12,9 @@ export default defineTool({
     query: z.string().min(1),
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async ({ query }) => {
-    const supabase = await getAdmin();
+  handler: async ({ query }, ctx) => {
+    try {
+    const supabase = await requirePermission(ctx, "clients.lire");
     const q = pgSafe(query);
     const like = `%${q}%`;
     const [clients, produits, commandes, factures, colis] = await Promise.all([
@@ -54,5 +55,9 @@ export default defineTool({
       content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
       structuredContent: result,
     };
+    } catch (e) {
+      if (e instanceof McpAccessError) return { content: [{ type: "text", text: e.message }], isError: true };
+      throw e;
+    }
   },
 });

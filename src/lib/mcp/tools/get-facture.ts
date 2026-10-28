@@ -1,6 +1,6 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { getAdmin } from "../supabase";
+import { requirePermission, McpAccessError } from "../supabase";
 
 export default defineTool({
   name: "get_facture",
@@ -11,14 +11,15 @@ export default defineTool({
     facture_id: z.string().uuid().optional(),
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async ({ reference, facture_id }) => {
+  handler: async ({ reference, facture_id }, ctx) => {
+    try {
     if (!reference && !facture_id) {
       return {
         content: [{ type: "text", text: "Fournir reference ou facture_id." }],
         isError: true,
       };
     }
-    const supabase = await getAdmin();
+    const supabase = await requirePermission(ctx, "factures.lire");
     let q = supabase
       .from("factures")
       .select(
@@ -34,5 +35,9 @@ export default defineTool({
       content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
       structuredContent: { facture: data },
     };
+    } catch (e) {
+      if (e instanceof McpAccessError) return { content: [{ type: "text", text: e.message }], isError: true };
+      throw e;
+    }
   },
 });

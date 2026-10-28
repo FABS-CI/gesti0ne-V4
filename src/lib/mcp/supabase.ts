@@ -32,7 +32,7 @@ export async function requirePermission(ctx: ToolContext, code: string): Promise
   const { data, error } = await (sb.rpc as unknown as (
     fn: string,
     args: Record<string, unknown>,
-  ) => Promise<{ data: unknown; error: { message: string } | null }>)("rbac3_can", { _code: code });
+  ) => Promise<{ data: unknown; error: { message: string } | null }>)("rbac3_can", { _perm: code });
   if (error || data !== true) throw new McpAccessError(`Permission refusée : ${code}`);
   return sb;
 }
