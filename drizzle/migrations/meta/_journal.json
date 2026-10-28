@@ -631,6 +631,13 @@
       "when": 1793186723437,
       "tag": "0089_securite_revoke_retour_recalc",
       "breakpoints": true
+    },
+    {
+      "idx": 90,
+      "version": "7",
+      "when": 1793187541785,
+      "tag": "0090_signature_keys_lecture_cles_publiques",
+      "breakpoints": true
     }
   ]
 }
