@@ -1,6 +1,4 @@
 import { formatFCFA } from "@/lib/format";
-import { paramMap } from "@/lib/paie/parametres-api";
-import { runEngine } from "@/lib/paie/engine";
 import { PDF_COLORS, PDF_MARGINS, PDF_TABLE, getActiveTemplate } from "@/lib/pdf/pdfConfig";
 import {
   drawHeader as sharedDrawHeader,
@@ -11,29 +9,16 @@ import {
   ensurePdfQr,
   clearPdfQr,
 } from "@/lib/pdf/pdfChrome";
+import type { DeclLigne, DeclTotaux } from "@/lib/paie/declaration-lignes";
 
-export type Bulletin = {
-  bulletin_id: string;
-  employe_nom: string | null;
-  periode: string;
-  salaire_brut: number;
-  retenues: number;
-  salaire_net: number;
-};
-
-export type DeclLigne = {
-  employe: string;
-  brut: number;
-  cnpsSalarie: number;
-  cnpsPatronal: number;
-  its: number;
-  cn: number;
-  cmuSalarie: number;
-  cmuPatronal: number;
-  net: number;
-};
-
-export type DeclTotaux = Omit<DeclLigne, "employe">;
+export {
+  computeLignes,
+  computeTotaux,
+  periodesTriees,
+  type BulletinDeclare,
+  type DeclLigne,
+  type DeclTotaux,
+} from "@/lib/paie/declaration-lignes";
 
 export type PdfOpts = {
   title: string;
@@ -49,62 +34,11 @@ export function slug(s: string): string {
   return s.replace(/\s+/g, "_").replace(/[^\w-]/g, "");
 }
 
-export function computeLignes(
-  bulletins: Bulletin[] | undefined,
-  parametres: Parameters<typeof runEngine>[1] | undefined,
-  rubriques: Parameters<typeof runEngine>[2] | undefined,
-): DeclLigne[] {
-  if (!bulletins || !parametres || !rubriques) return [];
-  return bulletins.map((b) => {
-    const r = runEngine({ salaireBase: Number(b.salaire_brut) || 0 }, parametres, rubriques);
-    return {
-      employe: b.employe_nom ?? "—",
-      brut: r.salaireBrut,
-      cnpsSalarie: r.cnpsSalarie,
-      cnpsPatronal: r.cnpsPatronal,
-      its: r.its,
-      cn: r.cn,
-      cmuSalarie: r.cmuSalarie,
-      cmuPatronal: r.cmuPatronal,
-      net: r.salaireNet,
-    };
-  });
-}
-
-export function computeTotaux(lignes: DeclLigne[]): DeclTotaux {
-  return lignes.reduce<DeclTotaux>(
-    (acc, l) => ({
-      brut: acc.brut + l.brut,
-      cnpsSalarie: acc.cnpsSalarie + l.cnpsSalarie,
-      cnpsPatronal: acc.cnpsPatronal + l.cnpsPatronal,
-      its: acc.its + l.its,
-      cn: acc.cn + l.cn,
-      cmuSalarie: acc.cmuSalarie + l.cmuSalarie,
-      cmuPatronal: acc.cmuPatronal + l.cmuPatronal,
-      net: acc.net + l.net,
-    }),
-    {
-      brut: 0,
-      cnpsSalarie: 0,
-      cnpsPatronal: 0,
-      its: 0,
-      cn: 0,
-      cmuSalarie: 0,
-      cmuPatronal: 0,
-      net: 0,
-    },
-  );
-}
-
 export function buildDeclOptions(
   periode: string,
   lignes: DeclLigne[],
   totaux: DeclTotaux,
-  parametres: Parameters<typeof runEngine>[1] | undefined,
 ) {
-  const rate = (code: string, fallback: number) =>
-    parametres ? (paramMap(parametres)[code] ?? fallback) : fallback;
-
   const cnps: PdfOpts = {
     title: "DÉCLARATION CNPS",
     subtitle: `Période ${periode}`,
@@ -112,16 +46,14 @@ export function buildDeclOptions(
       "Déclaration mensuelle CNPS — Retraite, Prestations Familiales, Accident du Travail.",
     fileName: `Declaration_CNPS_${slug(periode)}.pdf`,
     head: [
-      ["Employé", "Brut", "CNPS Sal.", "CNPS Patr.", "PF+AT (estim.)", "CMU Sal.", "CMU Patr."],
+      ["Employé", "Brut", "CNPS Sal.", "CNPS Patr.", "PF+Mat.+AT", "CMU Sal.", "CMU Patr."],
     ],
     body: lignes.map((l) => [
       l.employe,
       formatFCFA(l.brut),
       formatFCFA(l.cnpsSalarie),
       formatFCFA(l.cnpsPatronal),
-      formatFCFA(
-        Math.round((l.brut * (rate("CNPS_PATRONAL_PF", 5.75) + rate("CNPS_PATRONAL_AT", 2))) / 100),
-      ),
+      formatFCFA(l.pfAt),
       formatFCFA(l.cmuSalarie),
       formatFCFA(l.cmuPatronal),
     ]),
@@ -131,11 +63,7 @@ export function buildDeclOptions(
         formatFCFA(totaux.brut),
         formatFCFA(totaux.cnpsSalarie),
         formatFCFA(totaux.cnpsPatronal),
-        formatFCFA(
-          Math.round(
-            (totaux.brut * (rate("CNPS_PATRONAL_PF", 5.75) + rate("CNPS_PATRONAL_AT", 2))) / 100,
-          ),
-        ),
+        formatFCFA(totaux.pfAt),
         formatFCFA(totaux.cmuSalarie),
         formatFCFA(totaux.cmuPatronal),
       ],
