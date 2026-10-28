@@ -89,9 +89,19 @@ export async function createFactureFromCommande(commande: Commande) {
     return existing[0];
   }
 
+  // Reprend les frais saisis sur la commande : sans eux, la validation les remettrait à zéro.
+  const type = commande.type_frais_transport;
+  const fraisCommande =
+    type === "livraison" || type === "expedition"
+      ? {
+          _type_frais_transport: type,
+          _montant_frais_transport: Number(commande.montant_frais_transport ?? 0),
+        }
+      : {};
   const { data, error } = await supabase.rpc("valider_commande", {
     _commande_id: commande.commande_id,
-  });
+    ...fraisCommande,
+  } as never);
   if (error) throw new Error(error.message);
   const row = Array.isArray(data) ? data[0] : data;
   const reference = (row as { facture_reference?: string })?.facture_reference ?? "";
