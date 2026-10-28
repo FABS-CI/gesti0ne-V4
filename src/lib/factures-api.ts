@@ -73,7 +73,7 @@ export async function listFactures(
     if (commandeIds.length === 0) return [];
   }
 
-  let query = supabase.from("factures").select("*");
+  let query = supabase.from("factures").select("*, clients(nom)");
   if (exerciceId) query = query.eq("exercice_id", exerciceId);
   if (q) query = query.or(`reference.ilike.%${pgSafe(q)}%,client_nom.ilike.%${pgSafe(q)}%`);
   if (statut) query = query.eq("statut", statut);
@@ -88,7 +88,7 @@ export async function listFactures(
   query = query.order("created_at", { ascending: false });
   const { data, error } = await query;
   if (error) throw error;
-  return (data ?? []) as Facture[];
+  return withLiveClientNom(data) as Facture[];
 }
 
 export type ListFacturesPaginatedResult = {
@@ -156,7 +156,7 @@ export async function listFacturesPaginated(params: {
   };
 
   const from = (page - 1) * pageSize;
-  let pageQuery: any = supabase.from("factures").select("*", { count: "estimated" });
+  let pageQuery: any = supabase.from("factures").select("*, clients(nom)", { count: "estimated" });
   pageQuery = applyFilters(pageQuery);
   const { data: items, error: pageErr, count } = await pageQuery
     .order("created_at", { ascending: false })
@@ -178,7 +178,7 @@ export async function listFacturesPaginated(params: {
   );
 
   return {
-    items: (items ?? []) as Facture[],
+    items: withLiveClientNom(items) as Facture[],
     totalCount: count ?? (items?.length ?? 0),
     sumMontantTotal,
     sumMontantPaye,
@@ -347,4 +347,11 @@ export const RETOUR_STATUS_META: Record<FactureRetourStatus, { label: string; co
 export async function getFactureRetours(factureId: string): Promise<FactureRetourInfo[]> {
   const map = await getRetoursByFactureIds([factureId]);
   return map[factureId] ?? [];
+}
+/** Affiche le nom actuel du client dans les listes ; `client_nom` stocké reste intact (QR, certification). */
+function withLiveClientNom(rows: unknown): unknown[] {
+  return ((rows as Array<Record<string, any>> | null) ?? []).map(({ clients, ...r }) => ({
+    ...r,
+    client_nom: clients?.nom?.trim() || r.client_nom,
+  }));
 }
