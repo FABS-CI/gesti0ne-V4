@@ -4,14 +4,14 @@ import { useQuery } from "@tanstack/react-query";
 import { ScrollText } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
-import { listParametres, listRubriques } from "@/lib/paie/parametres-api";
 import { useExerciceConsulteId } from "@/contexts/ExerciceContext";
 import {
   buildDeclOptions,
   buildPdf,
   computeLignes,
   computeTotaux,
-  type Bulletin,
+  periodesTriees,
+  type BulletinDeclare,
   type PdfOpts,
 } from "@/lib/paie-declarations-helpers";
 import { DeclarationsToolbar } from "@/components/paie-declarations/DeclarationsToolbar";
@@ -39,44 +39,38 @@ function DeclarationsPage() {
     queryFn: async () => {
       let query = supabase
         .from("bulletins_paie")
-        .select("periode")
-        .order("periode", { ascending: false });
+        .select("periode, date_fin");
       if (exerciceId) query = query.eq("exercice_id", exerciceId);
       const { data, error } = await query;
       if (error) throw error;
-      const seen = new Set<string>();
-      return (data ?? [])
-        .map((r) => r.periode as string)
-        .filter((p) => (seen.has(p) ? false : (seen.add(p), true)));
+      // Libellés « Octobre 2026 » : tri par date de fin, pas alphabétique.
+      return periodesTriees(data ?? []);
     },
   });
-
-  const { data: parametres } = useQuery({ queryKey: ["paie_parametres"], queryFn: listParametres });
-  const { data: rubriques } = useQuery({ queryKey: ["paie_rubriques"], queryFn: listRubriques });
 
   const { data: bulletins, isLoading } = useQuery({
     queryKey: ["bulletins_periode", exerciceId, periode],
     enabled: !!periode && !!exerciceId,
-    queryFn: async (): Promise<Bulletin[]> => {
+    queryFn: async (): Promise<BulletinDeclare[]> => {
+      // Montants lus sur les lignes enregistrées : les déclarations reprennent exactement les bulletins.
       let query = supabase
         .from("bulletins_paie")
-        .select("bulletin_id, employe_nom, periode, salaire_brut, retenues, salaire_net")
+        .select(
+          "bulletin_id, employe_nom, statut, salaire_brut, brut_imposable, salaire_net, net_a_payer, bulletin_lignes(numero_rubrique, code, designation, libelle, bloc, retenue)",
+        )
         .eq("periode", periode);
       if (exerciceId) query = query.eq("exercice_id", exerciceId);
       const { data, error } = await query;
       if (error) throw error;
-      return (data ?? []) as Bulletin[];
+      return (data ?? []) as BulletinDeclare[];
     },
   });
 
-  const lignes = useMemo(
-    () => computeLignes(bulletins, parametres, rubriques),
-    [bulletins, parametres, rubriques],
-  );
+  const lignes = useMemo(() => computeLignes(bulletins), [bulletins]);
   const totaux = useMemo(() => computeTotaux(lignes), [lignes]);
   const opts = useMemo(
-    () => buildDeclOptions(periode, lignes, totaux, parametres),
-    [periode, lignes, totaux, parametres],
+    () => buildDeclOptions(periode, lignes, totaux),
+    [periode, lignes, totaux],
   );
 
   const disabled = !periode || lignes.length === 0;
