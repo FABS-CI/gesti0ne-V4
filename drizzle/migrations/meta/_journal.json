@@ -687,6 +687,13 @@
       "when": 1793196301938,
       "tag": "0097_propager_nom_client_documents",
       "breakpoints": true
+    },
+    {
+      "idx": 98,
+      "version": "7",
+      "when": 1793196984204,
+      "tag": "0098_propager_nom_client_partout",
+      "breakpoints": true
     }
   ]
 }
