@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculerBulletin, its2024, igr2022, REGIME_2022, REGIME_2024, regimePourDate } from "./regimes-ci";
+import { calculerBulletin, prorataJours, its2024, igr2022, REGIME_2022, REGIME_2024, regimePourDate } from "./regimes-ci";
 
 const modele = { salaireBase: 60000, sursalaire: 77672, tauxAnciennete: 7, transport: 30000, parts: 3 };
 
@@ -64,5 +64,31 @@ describe("cas APPIA (nov. 2025, miroir du calcul serveur)", () => {
     expect(r.totalRetenuesFiscalesSociales).toBe(10591);
     expect(r.arrondi).toBe(4);
     expect(r.netAPayer).toBe(179585);
+  });
+});
+
+describe("jours non payés (miroir de paie_calculer_bulletin)", () => {
+  const base = { salaireBase: 150000, sursalaire: 30000, tauxAnciennete: 10, transport: 30000, parts: 1 };
+
+  it("mois complet : aucun prorata", () => {
+    expect(prorataJours(30, 30)).toBe(1);
+    expect(prorataJours(undefined, 30)).toBe(1);
+    expect(prorataJours(35, 30)).toBe(1);
+  });
+
+  it("10 jours d'absence sur 30 : salaire, sursalaire, ancienneté et transport aux deux tiers", () => {
+    const plein = calculerBulletin(base, REGIME_2024);
+    const absent = calculerBulletin({ ...base, joursTravailles: 20 }, REGIME_2024);
+    // 100 000 + 20 000 + 10 000 d'ancienneté
+    expect(absent.brutImposable).toBe(130000);
+    expect(plein.brutImposable).toBe(195000);
+    expect(absent.totalIndemnitesNonImposables - Math.max(0, absent.arrondi)).toBe(20000);
+    const l150 = absent.lignes.find((l) => l.numero === "150")!;
+    expect([l150.nombre, l150.base, l150.gain]).toEqual([20, 150000, 100000]);
+  });
+
+  it("absent tout le mois : rien n'est payé", () => {
+    const r = calculerBulletin({ ...base, joursTravailles: 0 }, REGIME_2024);
+    expect(r.brutImposable).toBe(0);
   });
 });

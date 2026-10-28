@@ -138,13 +138,21 @@ export function tauxAnciennete(dateEmbauche: string, dateFin: string, p: RegimeP
   return Math.min(p.anciennetePlafond ?? 25, annees * (p.ancienneteTauxParAn ?? 1));
 }
 
+/** Part payée du mois : jours travaillés / jours du mois, entre 0 et 1 (comme paie_calculer_bulletin). */
+export function prorataJours(joursTravailles: number | undefined, joursMois = 30): number {
+  if (joursTravailles == null || joursMois <= 0) return 1;
+  return Math.min(1, Math.max(0, joursTravailles) / joursMois);
+}
+
 export function calculerBulletin(s: SaisieBulletin, p: RegimeParams): ResultatBulletin {
-  const sb = Math.max(0, s.salaireBase || 0);
-  const sur = Math.max(0, s.sursalaire || 0);
+  const prorata = prorataJours(s.joursTravailles, p.joursMois ?? 30);
+  const sbPlein = Math.max(0, s.salaireBase || 0);
+  const sb = r(sbPlein * prorata);
+  const sur = r(Math.max(0, s.sursalaire || 0) * prorata);
   const tauxAnc = s.tauxAnciennete ?? (s.dateEmbauche && s.dateFin ? tauxAnciennete(s.dateEmbauche, s.dateFin, p) : 0);
   const anc = r(sb * tauxAnc / 100);
   const autres = Math.max(0, s.autresGainsImposables || 0);
-  const transport = Math.max(0, s.transport || 0);
+  const transport = r(Math.max(0, s.transport || 0) * prorata);
   const transportExo = Math.min(transport, p.transportPlafond);
   const transportExces = transport - transportExo;
   const brutImposable = sb + sur + anc + autres + transportExces;
@@ -184,7 +192,7 @@ export function calculerBulletin(s: SaisieBulletin, p: RegimeParams): ResultatBu
   const L: LigneCalc[] = [];
   let o = 0;
   const add = (l: Omit<LigneCalc, "ordre">) => L.push({ ...l, ordre: ++o });
-  add({ numero: "150", designation: "Salaire de base", nombre: s.joursTravailles ?? p.joursMois ?? 30, base: sb, taux: null, gain: sb, retenue: 0, bloc: "imposable" });
+  add({ numero: "150", designation: "Salaire de base", nombre: s.joursTravailles ?? p.joursMois ?? 30, base: sbPlein, taux: null, gain: sb, retenue: 0, bloc: "imposable" });
   if (sur) add({ numero: "153", designation: "Sursalaire", nombre: null, base: null, taux: null, gain: sur, retenue: 0, bloc: "imposable" });
   if (anc) add({ numero: "154", designation: "Prime d'ancienneté", nombre: null, base: sb, taux: tauxAnc, gain: anc, retenue: 0, bloc: "imposable" });
   if (autres) add({ numero: "160", designation: "Autres gains imposables", nombre: null, base: null, taux: null, gain: autres, retenue: 0, bloc: "imposable" });

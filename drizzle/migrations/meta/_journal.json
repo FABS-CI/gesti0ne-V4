@@ -659,6 +659,13 @@
       "when": 1793191183025,
       "tag": "0093_valider_commande_une_seule_fois",
       "breakpoints": true
+    },
+    {
+      "idx": 94,
+      "version": "7",
+      "when": 1793191184172,
+      "tag": "0094_paie_prorata_absences_prime_unique",
+      "breakpoints": true
     }
   ]
 }
