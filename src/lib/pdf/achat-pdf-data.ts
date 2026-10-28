@@ -6,7 +6,11 @@ import type { DocBase } from "@/lib/pdf/fabsTemplates";
 type LignePdf = Pick<
   AchatLigne,
   "reference_produit" | "designation" | "quantite" | "prix_unitaire" | "remise_pct" | "total_ligne"
-> & { produits?: { reference?: string | null } | null };
+> & { produits?: unknown };
+
+/** Code article de secours lu sur le produit joint, quand la ligne n'en a pas. */
+const codeProduit = (produits: unknown) =>
+  (produits as { reference?: string | null } | null | undefined)?.reference || undefined;
 
 export function buildAchatPdfData(achat: Achat, lignes: LignePdf[]): DocBase {
   // Totaux recalculés depuis les lignes (Audit points 7 et 10) : sous-total brut, puis
@@ -35,7 +39,7 @@ export function buildAchatPdfData(achat: Achat, lignes: LignePdf[]): DocBase {
       ? `Réf. Fournisseur: ${achat.reference_fournisseur}`
       : undefined,
     lignes: lignes.map((l) => ({
-      codeArticle: l.reference_produit || l.produits?.reference || undefined,
+      codeArticle: l.reference_produit || codeProduit(l.produits),
       reference: l.designation,
       qte: Number(l.quantite),
       prixUnitaire: Number(l.prix_unitaire),
