@@ -73,7 +73,7 @@ export async function listFactures(
     if (commandeIds.length === 0) return [];
   }
 
-  let query = supabase.from("factures").select("*, clients(nom)");
+  let query = supabase.from("factures").select("*");
   if (exerciceId) query = query.eq("exercice_id", exerciceId);
   if (q) query = query.or(`reference.ilike.%${pgSafe(q)}%,client_nom.ilike.%${pgSafe(q)}%`);
   if (statut) query = query.eq("statut", statut);
@@ -88,7 +88,7 @@ export async function listFactures(
   query = query.order("created_at", { ascending: false });
   const { data, error } = await query;
   if (error) throw error;
-  return withLiveClientNom(data) as Facture[];
+  return (await withLiveClientNom(data)) as Facture[];
 }
 
 export type ListFacturesPaginatedResult = {
@@ -156,7 +156,7 @@ export async function listFacturesPaginated(params: {
   };
 
   const from = (page - 1) * pageSize;
-  let pageQuery: any = supabase.from("factures").select("*, clients(nom)", { count: "estimated" });
+  let pageQuery: any = supabase.from("factures").select("*", { count: "estimated" });
   pageQuery = applyFilters(pageQuery);
   const { data: items, error: pageErr, count } = await pageQuery
     .order("created_at", { ascending: false })
@@ -178,7 +178,7 @@ export async function listFacturesPaginated(params: {
   );
 
   return {
-    items: withLiveClientNom(items) as Facture[],
+    items: (await withLiveClientNom(items)) as Facture[],
     totalCount: count ?? (items?.length ?? 0),
     sumMontantTotal,
     sumMontantPaye,
@@ -349,9 +349,13 @@ export async function getFactureRetours(factureId: string): Promise<FactureRetou
   return map[factureId] ?? [];
 }
 /** Affiche le nom actuel du client dans les listes ; `client_nom` stocké reste intact (QR, certification). */
-function withLiveClientNom(rows: unknown): unknown[] {
-  return ((rows as Array<Record<string, any>> | null) ?? []).map(({ clients, ...r }) => ({
-    ...r,
-    client_nom: clients?.nom?.trim() || r.client_nom,
-  }));
+async function withLiveClientNom(rows: unknown): Promise<unknown[]> {
+  const list = (rows as Array<Record<string, any>> | null) ?? [];
+  const ids = [...new Set(list.map((r) => r.client_id).filter(Boolean))] as string[];
+  const noms = new Map<string, string>();
+  for (let o = 0; o < ids.length; o += 200) {
+    const { data } = await supabase.from("clients").select("client_id, nom").in("client_id", ids.slice(o, o + 200));
+    for (const c of data ?? []) if (c.nom?.trim()) noms.set(c.client_id, c.nom.trim());
+  }
+  return list.map((r) => ({ ...r, client_nom: noms.get(r.client_id) ?? r.client_nom }));
 }
