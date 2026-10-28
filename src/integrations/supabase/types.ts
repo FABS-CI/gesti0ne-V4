@@ -8139,6 +8139,10 @@ export type Database = {
         Args: { p_date: string; p_regime: string }
         Returns: Json
       }
+      _propager_nom_client: {
+        Args: { _client_id: string; _nom: string }
+        Returns: undefined
+      }
       _recalc_factures_du_paiement: {
         Args: { _paiement_id: string }
         Returns: undefined
