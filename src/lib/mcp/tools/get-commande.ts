@@ -1,6 +1,6 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { getAdmin } from "../supabase";
+import { requirePermission, McpAccessError } from "../supabase";
 
 export default defineTool({
   name: "get_commande",
@@ -11,11 +11,12 @@ export default defineTool({
     commande_id: z.string().uuid().optional(),
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async ({ numero, commande_id }) => {
+  handler: async ({ numero, commande_id }, ctx) => {
+    try {
     if (!numero && !commande_id) {
       return { content: [{ type: "text", text: "Fournir numero ou commande_id." }], isError: true };
     }
-    const supabase = await getAdmin();
+    const supabase = await requirePermission(ctx, "commandes.lire");
     let q = supabase
       .from("commandes")
       .select(
@@ -39,5 +40,9 @@ export default defineTool({
       content: [{ type: "text", text: JSON.stringify(out, null, 2) }],
       structuredContent: { commande: out },
     };
+    } catch (e) {
+      if (e instanceof McpAccessError) return { content: [{ type: "text", text: e.message }], isError: true };
+      throw e;
+    }
   },
 });

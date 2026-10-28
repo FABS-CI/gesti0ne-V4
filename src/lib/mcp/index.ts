@@ -12,8 +12,10 @@ import search from "./tools/search";
 
 const SUPABASE_URL =
   (typeof process !== "undefined" && process.env?.SUPABASE_URL) ||
-  (typeof import.meta !== "undefined" && import.meta.env?.VITE_SUPABASE_URL) ||
-  "https://otjlkozaxaqmrstuhuyt.supabase.co";
+  (typeof import.meta !== "undefined" && import.meta.env?.VITE_SUPABASE_URL);
+if (!SUPABASE_URL) {
+  throw new Error("SUPABASE_URL manquant : le serveur MCP refuse de démarrer sans adresse de base.");
+}
 
 export default defineMcp({
   name: "fabsci-mcp",

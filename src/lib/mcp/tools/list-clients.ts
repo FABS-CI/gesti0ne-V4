@@ -1,6 +1,6 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { getAdmin } from "../supabase";
+import { requirePermission, McpAccessError } from "../supabase";
 
 export default defineTool({
   name: "list_clients",
@@ -13,8 +13,9 @@ export default defineTool({
     offset: z.number().int().min(0).default(0),
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async ({ ville, limit, offset }) => {
-    const supabase = await getAdmin();
+  handler: async ({ ville, limit, offset }, ctx) => {
+    try {
+    const supabase = await requirePermission(ctx, "clients.lire");
     let q = supabase
       .from("clients")
       .select(
@@ -30,5 +31,9 @@ export default defineTool({
       content: [{ type: "text", text: JSON.stringify(data ?? [], null, 2) }],
       structuredContent: { items: data ?? [], count: data?.length ?? 0 },
     };
+    } catch (e) {
+      if (e instanceof McpAccessError) return { content: [{ type: "text", text: e.message }], isError: true };
+      throw e;
+    }
   },
 });

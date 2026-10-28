@@ -1,6 +1,6 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { getAdmin } from "../supabase";
+import { requirePermission, McpAccessError } from "../supabase";
 
 export default defineTool({
   name: "get_colis",
@@ -11,11 +11,12 @@ export default defineTool({
     colis_id: z.string().uuid().optional(),
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async ({ reference, colis_id }) => {
+  handler: async ({ reference, colis_id }, ctx) => {
+    try {
     if (!reference && !colis_id) {
       return { content: [{ type: "text", text: "Fournir reference ou colis_id." }], isError: true };
     }
-    const supabase = await getAdmin();
+    const supabase = await requirePermission(ctx, "commandes.lire");
     let q = supabase.from("colis").select("*").limit(1);
     if (colis_id) q = q.eq("colis_id", colis_id);
     else if (reference) q = q.eq("reference", reference);
@@ -32,5 +33,9 @@ export default defineTool({
       content: [{ type: "text", text: JSON.stringify(out, null, 2) }],
       structuredContent: { colis: out },
     };
+    } catch (e) {
+      if (e instanceof McpAccessError) return { content: [{ type: "text", text: e.message }], isError: true };
+      throw e;
+    }
   },
 });
