@@ -57,6 +57,7 @@ import {
 } from "@/components/ui/select";
 import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog";
 import { generateApprovisionnementPDF } from "@/lib/pdf/fabsTemplates";
+import { buildAchatPdfData } from "@/lib/pdf/achat-pdf-data";
 import { viewBlobAsync } from "@/lib/pdf/actions";
 import { ProductCoverThumb } from "@/components/produits/ProductCoverThumb";
 
@@ -220,28 +221,8 @@ function ApprovisionnementsPage() {
     try {
       const [achat, lignes] = await Promise.all([getAchat(id), getAchatLignes(id)]);
       if (!achat) throw new Error("Approvisionnement introuvable");
-      const blobPromise = generateApprovisionnementPDF({
-        reference: achat.reference,
-        date: achat.date_achat,
-        clientNom: achat.fournisseurs?.raison_sociale ?? "—",
-        codeClient: achat.fournisseurs?.reference ?? achat.reference_fournisseur ?? undefined,
-        clientTel: achat.fournisseurs?.telephone ?? undefined,
-        emailClient: achat.fournisseurs?.email ?? undefined,
-        adresseClient: achat.fournisseurs?.adresse ?? undefined,
-        villeClient: achat.fournisseurs?.ville ?? undefined,
-        representant: achat.fournisseurs?.representant ?? undefined,
-        lignes: lignes.map((l) => ({
-          codeArticle: l.reference_produit ?? undefined,
-          reference: l.designation,
-          qte: Number(l.quantite),
-          prixUnitaire: Number(l.prix_unitaire),
-          remisePct: Number(l.remise_pct ?? 0),
-          montant: Number(l.total_ligne),
-        })),
-        totalVente: Number(achat.montant),
-        montantHT: Number(achat.montant),
-        totalTTC: Number(achat.montant),
-      });
+      // Même construction que la fiche : sous-total brut, remise sur lignes, net.
+      const blobPromise = generateApprovisionnementPDF(buildAchatPdfData(achat, lignes));
       await viewBlobAsync(Promise.resolve(blobPromise), {
         title: `Reçu ${achat.reference}`,
         filename: `approvisionnement_${achat.reference}.pdf`,

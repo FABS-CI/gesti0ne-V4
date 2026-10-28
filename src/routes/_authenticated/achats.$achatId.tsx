@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { getAchat, getAchatLignes, STATUT_ACHAT_LABEL } from "@/lib/achats-api";
 import { formatDate, formatFCFA } from "@/lib/format";
 import { generateApprovisionnementPDF } from "@/lib/pdf/fabsTemplates";
+import { buildAchatPdfData } from "@/lib/pdf/achat-pdf-data";
 import { printCached, viewCached } from "@/lib/pdf/actions";
 import { pdfCacheKey } from "@/lib/pdf/pdfCache";
 import { Button } from "@/components/ui/button";
@@ -58,50 +59,7 @@ function AchatDetailPage() {
 
   const buildBlob = async () => {
     if (!achat) throw new Error("Approvisionnement introuvable");
-
-    // Calcul des totaux à partir des lignes pour garantir la cohérence (Audit point 7 & 10)
-    const totalBrut = lignes.reduce((s, l) => s + Number(l.quantite) * Number(l.prix_unitaire), 0);
-    const totalRemiseLignes = lignes.reduce((s, l) => {
-      const q = Number(l.quantite);
-      const p = Number(l.prix_unitaire);
-      const r = Number(l.remise_pct ?? 0);
-      return s + (q * p * r) / 100;
-    }, 0);
-
-    // Calcul du pourcentage moyen de remise (si homogène)
-    const remisePctMoyenne = totalBrut > 0 ? (totalRemiseLignes / totalBrut) * 100 : 0;
-
-    return generateApprovisionnementPDF({
-      id: achat.achat_id,
-      br_id: achat.achat_id,
-      reference: achat.reference,
-      date: achat.date_achat,
-      clientNom: achat.fournisseurs?.raison_sociale ?? "—",
-      codeClient: achat.fournisseurs?.reference ?? achat.reference_fournisseur ?? undefined,
-      clientTel: achat.fournisseurs?.telephone ?? undefined,
-      emailClient: achat.fournisseurs?.email ?? undefined,
-      adresseClient: achat.fournisseurs?.adresse ?? undefined,
-      villeClient: achat.fournisseurs?.ville ?? undefined,
-      representant: achat.fournisseurs?.representant ?? undefined,
-      modePaiement: achat.reference_fournisseur ? `Réf. Fournisseur: ${achat.reference_fournisseur}` : undefined,
-      lignes: lignes.map((l) => ({
-        codeArticle: l.reference_produit || (l as any).produits?.reference || undefined,
-        reference: l.designation,
-        qte: Number(l.quantite),
-        prixUnitaire: Number(l.prix_unitaire),
-        remisePct: Number(l.remise_pct ?? 0),
-        montant: Number(l.total_ligne),
-      })),
-      totalVente: totalBrut,
-      remiseLigneTotal: totalRemiseLignes,
-      remisePct: remisePctMoyenne,
-      remiseGlobalePct: 0,
-      remiseGlobale: 0,
-      montantHT: totalBrut - totalRemiseLignes,
-      totalTTC: totalBrut - totalRemiseLignes,
-      montant: Number(achat.montant),
-      notes: achat.notes ?? undefined,
-    });
+    return generateApprovisionnementPDF(buildAchatPdfData(achat, lignes));
   };
   const cacheKey = pdfCacheKey("BA", achat?.reference ?? achatId, achat?.updated_at);
 
