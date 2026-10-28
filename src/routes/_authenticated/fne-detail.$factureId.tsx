@@ -57,10 +57,11 @@ function FNEDetail() {
     queryFn: () => getFNEInvoice(factureId),
   });
   const refund = useMutation({
-    mutationFn: () => refundFNEInvoice(factureId, [{ id: factureId, quantity: 1 }]),
-    onSuccess: () => {
-      toast.success("Avoir émis");
+    mutationFn: () => refundFNEInvoice(factureId),
+    onSuccess: (avoir) => {
+      toast.success(`Avoir ${avoir.code_dgi ?? ""} émis : ${formatFCFA(Number(avoir.montant ?? 0))}`);
       qc.invalidateQueries({ queryKey: ["fne-invoice", factureId] });
+      qc.invalidateQueries({ queryKey: ["fne-list"] });
     },
     onError: (e: Error) => toast.error(friendlyError(e)),
   });
@@ -153,13 +154,18 @@ function FNEDetail() {
               {retry.isPending ? "Envoi…" : "Réessayer"}
             </Button>
           )}
-          {s === "accepted" && (
+          {s === "accepted" && !f.parent_fne_id && (
             <Button
               variant="destructive"
               size="sm"
               disabled={refund.isPending}
               onClick={async () => {
-                if (await askConfirm("Émettre un avoir pour cette facture certifiée ?")) refund.mutate();
+                if (
+                  await askConfirm(
+                    "Émettre un avoir pour tout le reste de cette facture certifiée ? L'avoir sera certifié par la DGI.",
+                  )
+                )
+                  refund.mutate();
               }}
             >
               <Undo2 className="h-4 w-4 mr-1" />
