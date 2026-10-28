@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public._retour_recalc_totaux(uuid) FROM public, anon, authenticated;
