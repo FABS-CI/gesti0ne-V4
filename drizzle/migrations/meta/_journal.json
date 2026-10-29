@@ -715,6 +715,13 @@
       "when": 1793267430365,
       "tag": "0101_paie_plafond_prestations_controles",
       "breakpoints": true
+    },
+    {
+      "idx": 102,
+      "version": "7",
+      "when": 1793269059739,
+      "tag": "0102_rh_paie_integrite",
+      "breakpoints": true
     }
   ]
 }

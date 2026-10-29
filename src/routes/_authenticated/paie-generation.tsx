@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { listEmployes } from "@/lib/rh-api";
 import { formatNumber } from "@/lib/format";
 import { friendlyError } from "@/lib/friendly-error";
+import { eligibilitePaie, type EmployeEligibilite } from "@/lib/paie/eligibilite";
 import { RhPageHeader } from "@/components/rh/RhPageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -43,14 +44,18 @@ function GenerationPage() {
   const [resultats, setResultats] = useState<Record<string, Resultat>>({});
 
   const { data: employes, isLoading } = useQuery({ queryKey: ["employes-list"], queryFn: () => listEmployes() });
-  const actifs = useMemo(
-    () =>
-      (employes ?? []).filter((e) => {
-        const s = String((e as { statut?: string }).statut ?? "actif").toLowerCase();
-        return !["inactif", "sorti", "licencie", "demissionnaire", "archive"].includes(s);
-      }),
-    [employes],
-  );
+  // Statut de la fiche, embauche et fin de contrat comparés à la période choisie.
+  const { actifs, exclus } = useMemo(() => {
+    const { debut, fin } = bornes(mois);
+    const actifs: NonNullable<typeof employes> = [];
+    const exclus: { e: NonNullable<typeof employes>[number]; raison: string }[] = [];
+    for (const e of employes ?? []) {
+      const r = eligibilitePaie(e as EmployeEligibilite, debut, fin);
+      if (r.eligible) actifs.push(e);
+      else exclus.push({ e, raison: r.raison });
+    }
+    return { actifs, exclus };
+  }, [employes, mois]);
 
   const { data: existants } = useQuery({
     queryKey: ["bulletins_paie", "mois", mois],
@@ -81,7 +86,9 @@ function GenerationPage() {
       return out;
     },
   });
-  const bloque = (id: string) => (anomalies?.[id]?.length ?? 0) > 0;
+  // Tant que le contrôle n'a pas répondu, l'employé ne peut pas être coché.
+  const enControle = (id: string) => anomalies?.[id] === undefined;
+  const bloque = (id: string) => enControle(id) || (anomalies?.[id]?.length ?? 0) > 0;
 
   const toggle = (id: string) =>
     setSelection((s) => {
@@ -192,6 +199,8 @@ function GenerationPage() {
                           </Link>
                         ) : res ? (
                           <span className="text-destructive">{res.message}</span>
+                        ) : enControle(e.employe_id) ? (
+                          <span className="text-muted-foreground">Contrôle en cours…</span>
                         ) : bloque(e.employe_id) ? (
                           <span className="text-destructive">
                             {anomalies![e.employe_id].join(" · ")} —{" "}
@@ -211,6 +220,26 @@ function GenerationPage() {
           )}
         </CardContent>
       </Card>
+      {exclus.length > 0 && (
+        <Card>
+          <CardContent className="space-y-2 pt-6 text-sm">
+            <p className="font-medium">{exclus.length} employé(s) non proposé(s) pour ce mois</p>
+            <p className="text-xs text-muted-foreground">
+              Une régularisation reste possible bulletin par bulletin depuis Paie → Nouveau bulletin.
+            </p>
+            <ul className="divide-y">
+              {exclus.map(({ e, raison }) => (
+                <li key={e.employe_id} className="flex flex-wrap justify-between gap-2 py-1.5">
+                  <span>
+                    {e.nom_complet} <span className="text-muted-foreground">{e.matricule ?? ""}</span>
+                  </span>
+                  <span className="text-muted-foreground">{raison}</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

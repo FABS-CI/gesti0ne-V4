@@ -9,8 +9,18 @@ import {
   type LigneStockee,
 } from "@/lib/paie/bulletin-pdf-data";
 
-/** CMU : forfait mensuel fixe (salarié et employeur). */
-export const CMU_FORFAIT_FCFA = 1000;
+/**
+ * Retenue CMU salarié lue dans les lignes enregistrées : rubrique 470 (moteur depuis la
+ * migration 0084) ou 776 (bulletins plus anciens). null si le bulletin n'en a pas : on
+ * n'affiche jamais un forfait supposé (l'ancien repli de 1 000 FCFA était faux, la part
+ * salariale étant de 500 FCFA).
+ */
+export function cmuSalarieDe(
+  lignes: { numero_rubrique: string | null; retenue: number | null }[] | null | undefined,
+): number | null {
+  const l = (lignes ?? []).find((x) => x.numero_rubrique === "470" || x.numero_rubrique === "776");
+  return l ? Number(l.retenue ?? 0) : null;
+}
 
 /** Statuts pouvant encore être validés. */
 export const STATUTS_VALIDABLES = ["brouillon", "genere"] as const;

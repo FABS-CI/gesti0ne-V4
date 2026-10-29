@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatDate, formatFCFA } from "@/lib/format";
 import type { LigneStockee } from "@/lib/paie/bulletin-pdf-data";
 import { BulletinActionButtons } from "@/components/paie/BulletinActionButtons";
-import { CMU_FORFAIT_FCFA } from "@/lib/paie-bulletin-actions";
+import { cmuSalarieDe } from "@/lib/paie-bulletin-actions";
 import { dateEnLettres } from "@/lib/pdf/bulletinPaieCI";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -196,7 +196,7 @@ function BulletinDetailPage() {
           </div>
           <div className="flex justify-between pl-4 text-xs">
             <span className="text-muted-foreground">dont CMU salarié</span>
-            <span>{formatFCFA(lignes?.find((l) => l.numero_rubrique === "776")?.retenue ?? CMU_FORFAIT_FCFA)}</span>
+            <span>{cmuSalarieDe(lignes) === null ? "—" : formatFCFA(cmuSalarieDe(lignes))}</span>
           </div>
           <div
             className="relative flex flex-wrap items-center justify-between gap-x-4 gap-y-1 overflow-hidden rounded-md border-[1.5px] py-3 pl-[23px] pr-4"
