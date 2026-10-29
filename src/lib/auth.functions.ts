@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 
 import type { Database } from "@/integrations/supabase/types";
+import { isLoginBlocked, LOGIN_WINDOW_MS } from "@/lib/login-rate-limit";
 
 function isNewSupabaseApiKey(value: string): boolean {
   return value.startsWith("sb_publishable_") || value.startsWith("sb_secret_");
@@ -29,9 +30,6 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
 }
 
 const GENERIC_ERROR = "Identifiants invalides ou trop de tentatives";
-const WINDOW_MS = 15 * 60 * 1000;
-export const MAX_FAILS_PER_EMAIL = 5;
-export const MAX_FAILS_PER_IP = 20;
 
 function clientIp(): string | null {
   const cf = getRequestHeader("cf-connecting-ip");
@@ -57,16 +55,21 @@ export const signInWithPasswordServer = createServerFn({ method: "POST" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const ip = clientIp();
-    const since = new Date(Date.now() - WINDOW_MS).toISOString();
-    const [byEmail, byIp] = await Promise.all([
+    const since = new Date(Date.now() - LOGIN_WINDOW_MS).toISOString();
+    const recentFails = () =>
       supabaseAdmin.from("login_attempts").select("id", { count: "exact", head: true })
-        .eq("email", data.email).gte("created_at", since),
-      ip
-        ? supabaseAdmin.from("login_attempts").select("id", { count: "exact", head: true })
-            .eq("ip", ip).gte("created_at", since)
-        : Promise.resolve({ count: 0 }),
+        .gte("created_at", since);
+    const [byEmailIp, byEmail, byIp] = await Promise.all([
+      ip ? recentFails().eq("email", data.email).eq("ip", ip)
+        : recentFails().eq("email", data.email).is("ip", null),
+      recentFails().eq("email", data.email),
+      ip ? recentFails().eq("ip", ip) : Promise.resolve({ count: 0 }),
     ]);
-    if ((byEmail.count ?? 0) >= MAX_FAILS_PER_EMAIL || (byIp.count ?? 0) >= MAX_FAILS_PER_IP) {
+    if (isLoginBlocked({
+      emailIp: byEmailIp.count ?? 0,
+      email: byEmail.count ?? 0,
+      ip: byIp.count ?? 0,
+    })) {
       throw new Error(GENERIC_ERROR);
     }
 
