@@ -8111,6 +8111,7 @@ export type Database = {
         Args: { fields: Json; n: Json; o: Json; prix: boolean }
         Returns: string
       }
+      _document_signe: { Args: { _document_id: string }; Returns: boolean }
       _facture_diff_label: {
         Args: { n: Json; o: Json; prix: boolean }
         Returns: string
@@ -8121,6 +8122,7 @@ export type Database = {
         Args: { _col: string; _prefix: string; _table: unknown }
         Returns: string
       }
+      _nom_client_signe: { Args: { _document_id: string }; Returns: string }
       _notifier_role: {
         Args: {
           _document_id: string
