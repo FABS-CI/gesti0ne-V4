@@ -199,7 +199,7 @@ export const groups: Group[] = [
       { title: "Plan Comptable", url: "/plan-comptable", icon: ListTree, ready: true },
       { title: "Balance Comptable", url: "/balance", icon: Scale, ready: true },
       { title: "Grand Livre", url: "/grand-livre", icon: FileText, ready: true },
-      { title: "États Comptables", url: "/etats-comptables", icon: FileText, ready: true },
+      { title: "États financiers annuels", url: "/etats-comptables", icon: FileText, ready: true },
       { title: "Export FEC", url: "/comptabilite/fec", icon: FileText, ready: true },
       { title: "Rapports Comptables", url: "/rapports-comptables", icon: BarChart3, ready: true },
       { title: "Exercices", url: "/exercices", icon: CalendarDays, ready: true },
