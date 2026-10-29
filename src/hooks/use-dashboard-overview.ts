@@ -20,6 +20,21 @@ type DashboardFullRPC = {
   stockBas: { titre: string; stock: number; seuil_alerte: number }[];
 };
 
+// L'API Supabase plafonne une lecture (1 000 lignes par défaut) : sans pagination,
+// les frais de tournées seraient sous-estimés et des alertes de stock manqueraient.
+const PAGE = 1000;
+export async function fetchAllPages<T>(
+  page: (from: number, to: number) => PromiseLike<{ data: T[] | null; error: unknown }>,
+): Promise<T[]> {
+  const all: T[] = [];
+  for (let from = 0; ; from += PAGE) {
+    const { data, error } = await page(from, from + PAGE - 1);
+    if (error) throw error;
+    all.push(...(data ?? []));
+    if ((data?.length ?? 0) < PAGE) return all;
+  }
+}
+
 export function useDashboardOverview(periode: Periode, exerciceId: string | null) {
   return useQuery({
     queryKey: ["dashboard-overview", periode, exerciceId],
@@ -40,14 +55,27 @@ export function useDashboardOverview(periode: Periode, exerciceId: string | null
           _exercice_id: exerciceId!,
           _periode_jours: Number(periode),
         } as never),
-        supabase
-          .from("tournees")
-          .select("cout_total")
-          .gte("date_tournee", sinceIso),
-        supabase.from("v_produits").select("titre, stock, seuil_alerte").eq("actif", true),
+        fetchAllPages((from, to) =>
+          supabase
+            .from("tournees")
+            .select("cout_total")
+            .gte("date_tournee", sinceIso)
+            .order("tournee_id")
+            .range(from, to),
+        ),
+        fetchAllPages((from, to) =>
+          supabase
+            .from("v_produits")
+            .select("titre, stock, seuil_alerte")
+            .eq("actif", true)
+            .order("produit_id")
+            .range(from, to),
+        ),
       ]);
 
+      // Une requête en échec doit afficher l'erreur, jamais des indicateurs à 0.
       if (clientsStats.error) throw clientsStats.error;
+      if (overview.error) throw overview.error;
       const cs = (clientsStats.data ?? { total: 0, actifs: 0, solde_total: 0 }) as {
         total: number | string;
         actifs: number | string;
@@ -58,7 +86,7 @@ export function useDashboardOverview(periode: Periode, exerciceId: string | null
       const soldeTotal = Number(cs.solde_total) || 0;
 
       const ov = (overview.data ?? {}) as Partial<DashboardFullRPC>;
-      const fraisTournees = (tournees.data ?? []).reduce(
+      const fraisTournees = tournees.reduce(
         (a, r) => a + Number(r.cout_total ?? 0),
         0,
       );
@@ -83,10 +111,8 @@ export function useDashboardOverview(periode: Periode, exerciceId: string | null
         }
       }
 
-      if (overview.error) throw overview.error;
-      if (alertes.error) throw alertes.error;
       // Liste et compteur issus de la même source (stock réel agrégé des dépôts).
-      const stockBasList = (alertes.data ?? [])
+      const stockBasList = alertes
         .map((p) => ({
           titre: p.titre ?? "",
           stock: Number(p.stock ?? 0),
