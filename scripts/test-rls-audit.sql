@@ -1,17 +1,31 @@
 -- Vérifie que seuls les rôles habilités peuvent lire l'audit des annulations
 -- de paiement et exécuter la RPC associée.
 --
--- Usage: psql -f scripts/test-rls-audit.sql
--- Sortie attendue: chaque bloc affiche "PASS ..." ; toute exception = FAIL.
+-- Usage: psql -X -v ON_ERROR_STOP=1 [-v strict=on] -f scripts/test-rls-audit.sql
+-- Sortie attendue: chaque bloc affiche "PASS ..." ; toute exception = FAIL
+-- et, grâce à ON_ERROR_STOP, un code de sortie non nul.
+-- strict=on (CI) : un contrôle SKIP (droits insuffisants) est un échec, car un
+-- test non exécuté ne doit jamais compter comme réussi.
+--
+-- Lecture seule : tout le script tourne dans une transaction READ ONLY, annulée
+-- à la fin. Postgres refuse toute écriture, même par une fonction appelée.
 --
 -- IMPORTANT : la source de vérité des rôles est `rbac2_user_roles` /
 -- `rbac2_roles` (moteur RBAC actif de l'application). La table legacy
 -- `user_roles` (v0/v1) n'est plus référencée nulle part dans `src/` et ne doit
 -- PAS être utilisée ici : elle donnerait un test toujours vert sur une table morte.
 
-\set ON_ERROR_STOP off
+-- Une assertion en échec doit arrêter le script avec un code non nul.
+-- (Auparavant « \set ON_ERROR_STOP off » ici annulait le -v ON_ERROR_STOP=1 de la CI :
+-- psql sortait toujours avec 0 et le test ne pouvait pas échouer.)
+\set ON_ERROR_STOP on
+\if :{?strict}
+\else
+\set strict off
+\endif
 
-BEGIN;
+BEGIN TRANSACTION READ ONLY;
+SELECT set_config('rls_audit.strict', :'strict', true);
 
 DO $$
 DECLARE
@@ -55,6 +69,9 @@ BEGIN
     RAISE NOTICE 'PASS: is_admin/is_finance discriminent correctement les rôles rbac2';
   EXCEPTION WHEN insufficient_privilege THEN
     -- Rôle psql restreint (sandbox) : les checks structurels ci-dessous restent valides.
+    IF current_setting('rls_audit.strict', true) = 'on' THEN
+      RAISE EXCEPTION 'FAIL: contrôle 1 non exécuté (EXECUTE refusé sur is_admin/is_finance)';
+    END IF;
     RAISE NOTICE 'SKIP: EXECUTE refusé sur is_admin/is_finance (rôle psql restreint)';
   END;
 
@@ -113,6 +130,9 @@ BEGIN
     END IF;
     RAISE NOTICE 'PASS: gate RPC bloquerait un utilisateur standard';
   EXCEPTION WHEN insufficient_privilege THEN
+    IF current_setting('rls_audit.strict', true) = 'on' THEN
+      RAISE EXCEPTION 'FAIL: contrôle 6 non exécuté (EXECUTE refusé sur le gate RPC)';
+    END IF;
     RAISE NOTICE 'SKIP: EXECUTE refusé sur le gate RPC (rôle psql restreint)';
   END;
 

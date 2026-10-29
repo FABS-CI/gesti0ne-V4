@@ -5,13 +5,35 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Moindre privilège : la CI lit le code, elle n'écrit rien sur le dépôt.
+permissions:
+  contents: read
+
+# Une nouvelle poussée sur la même pull request annule l'exécution précédente.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# `shell: bash` = bash -eo pipefail : une commande en échec dans un pipe fait échouer l'étape.
+defaults:
+  run:
+    shell: bash
+
+# Actions épinglées sur un SHA (tags v4/v2 vérifiés le 29/10/2026) : un tag déplacé
+# ne peut pas injecter de code dans la CI. Bun épinglé pour une installation reproductible.
+env:
+  BUN_VERSION: "1.4.4"
+
 jobs:
   typecheck:
     name: TypeScript typecheck (tsgo)
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
       - run: bun install --frozen-lockfile
       # Bloque toute régression TS (TS2304 « Cannot find name », mauvais schéma search, etc.)
       - run: bun run typecheck
@@ -19,119 +41,222 @@ jobs:
   unit:
     name: Unit + a11y (vitest + jest-axe)
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
       - run: bun install --frozen-lockfile
       - run: bunx vitest run
 
+  # Contrôles qui exigent un environnement externe (secrets). Règle commune :
+  #   - sur une pull request, un secret absent = contrôle NON exécuté, signalé en
+  #     avertissement (mode développement : la PR reste lisible) ;
+  #   - sur main, un secret absent = échec : un contrôle obligatoire non exécuté
+  #     ne compte jamais comme réussi, et deploy-guard refuse la publication.
   rls:
     name: RLS + RPC audit (psql)
     runs-on: ubuntu-latest
-    # Requiert le secret SUPABASE_DB_URL (URL postgres d'une base de TEST, jamais la production :
-    # l'audit y écrit des données). Sans le secret, le job est sauté avec un avertissement
-    # au lieu de laisser la CI toujours rouge ; typecheck et tests unitaires restent bloquants.
+    timeout-minutes: 10
+    outputs:
+      executed: ${{ steps.run.outputs.executed }}
+    # SUPABASE_DB_URL : URL postgres d'une base de TEST, avec un rôle de lecture
+    # suffisant (catalogues, rbac2_user_roles, EXECUTE sur is_admin/is_finance/has_permission).
+    # Le script tourne dans une transaction READ ONLY annulée : il n'écrit rien.
     steps:
-      - uses: actions/checkout@v4
       - name: Vérifier présence du secret DB
         id: secret
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
-          if [ -z "$SUPABASE_DB_URL" ]; then
-            echo "::warning::SUPABASE_DB_URL absent — tests RLS/RPC NON exécutés. Ajoutez le secret (base de test) pour les activer."
-            echo "present=false" >> "$GITHUB_OUTPUT"
-          else
+          if [ -n "$SUPABASE_DB_URL" ]; then
             echo "present=true" >> "$GITHUB_OUTPUT"
+          elif [ "$GITHUB_REF" = "refs/heads/main" ]; then
+            echo "::error::Contrôle obligatoire non exécuté : secret SUPABASE_DB_URL absent (audit RLS/RPC)."
+            exit 1
+          else
+            echo "::warning::Audit RLS/RPC NON exécuté : secret SUPABASE_DB_URL absent. Il sera exigé sur main."
+            echo "present=false" >> "$GITHUB_OUTPUT"
           fi
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        if: steps.secret.outputs.present == 'true'
       - name: Install psql
         if: steps.secret.outputs.present == 'true'
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
       - name: Exécuter les tests RLS/RPC
-        if: steps.secret.outputs.present == 'true'
+        id: run
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
-        run: psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f scripts/test-rls-audit.sql | tee rls-report.txt
-      - name: Détecter les FAIL dans le rapport
-        if: steps.secret.outputs.present == 'true'
+          PRESENT: ${{ steps.secret.outputs.present }}
         run: |
-          if grep -Ei "^FAIL|EXCEPTION|ERROR:" rls-report.txt; then
+          set -Eeuo pipefail
+          if [ "$PRESENT" != "true" ]; then
+            echo "executed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # -X : ignore ~/.psqlrc ; ON_ERROR_STOP=1 : la première assertion en échec
+          # (RAISE EXCEPTION 'FAIL: …') arrête psql avec un code non nul ;
+          # strict=on : un test SKIP (droits insuffisants) devient un échec.
+          # 2>&1 : les NOTICE (PASS/SKIP) et les ERROR vont aussi dans le rapport.
+          psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -v strict=on \
+            -f scripts/test-rls-audit.sql 2>&1 | tee rls-report.txt
+          # Le code de sortie de psql fait foi ; ces contrôles attrapent seulement une
+          # régression du script (ex. ON_ERROR_STOP désactivé, bloc final jamais atteint).
+          if grep -Eq "(^|: )(FAIL|ERROR)|EXCEPTION" rls-report.txt; then
             echo "::error::Test RLS/RPC en échec — publication bloquée."
             exit 1
           fi
+          grep -q "PASS: toutes les fonctions SECURITY DEFINER" rls-report.txt || {
+            echo "::error::Rapport RLS incomplet : le dernier contrôle n'a pas été atteint."
+            exit 1
+          }
+          echo "executed=true" >> "$GITHUB_OUTPUT"
       - name: Upload rapport RLS
         if: always() && steps.secret.outputs.present == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: rls-audit-report
           path: rls-report.txt
-          retention-days: 30
+          retention-days: 14
 
   e2e:
     name: Playwright e2e (${{ matrix.project }})
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      executed: ${{ steps.run.outputs.executed }}
     strategy:
       fail-fast: false
       matrix:
         project: [desktop, mobile]
-    # Requiert le secret E2E_BASE_URL (application de TEST). Sans lui, le job est sauté
-    # avec un avertissement, comme le job rls.
+    # Les tests e2e CRÉENT et SUPPRIMENT des données (clients, commandes, colis…).
+    # E2E_BASE_URL doit viser une application de TEST reliée à une base de test.
+    # La variable de dépôt E2E_TARGET_IS_TEST=true est la confirmation humaine que
+    # c'est le cas : sans elle, rien n'est lancé, même si les secrets existent.
     steps:
-      - name: Vérifier présence du secret E2E
+      - name: Vérifier secrets et cible e2e
         id: secret
         env:
           E2E_BASE_URL: ${{ secrets.E2E_BASE_URL }}
+          E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
+          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
+          E2E_TARGET_IS_TEST: ${{ vars.E2E_TARGET_IS_TEST }}
         run: |
-          if [ -z "$E2E_BASE_URL" ]; then
-            echo "::warning::E2E_BASE_URL absent — tests e2e NON exécutés. Ajoutez le secret (application de test) pour les activer."
-            echo "present=false" >> "$GITHUB_OUTPUT"
-          else
+          missing=""
+          [ -n "$E2E_BASE_URL" ] || missing="$missing E2E_BASE_URL"
+          [ -n "$E2E_TEST_EMAIL" ] || missing="$missing E2E_TEST_EMAIL"
+          [ -n "$E2E_TEST_PASSWORD" ] || missing="$missing E2E_TEST_PASSWORD"
+          [ "$E2E_TARGET_IS_TEST" = "true" ] || missing="$missing vars.E2E_TARGET_IS_TEST=true"
+          if [ -z "$missing" ]; then
             echo "present=true" >> "$GITHUB_OUTPUT"
+          elif [ "$GITHUB_REF" = "refs/heads/main" ]; then
+            echo "::error::Contrôle obligatoire non exécuté : tests e2e, manque :$missing"
+            exit 1
+          else
+            echo "::warning::Tests e2e NON exécutés, manque :$missing. Ils seront exigés sur main."
+            echo "present=false" >> "$GITHUB_OUTPUT"
           fi
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         if: steps.secret.outputs.present == 'true'
-      - uses: oven-sh/setup-bun@v2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         if: steps.secret.outputs.present == 'true'
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
       - if: steps.secret.outputs.present == 'true'
         run: bun install --frozen-lockfile
       - if: steps.secret.outputs.present == 'true'
         run: bunx playwright install --with-deps chromium
-      - if: steps.secret.outputs.present == 'true'
-        run: bunx playwright test --project=${{ matrix.project }}
+      - name: Lancer les tests e2e
+        id: run
         env:
+          PRESENT: ${{ steps.secret.outputs.present }}
+          PROJECT: ${{ matrix.project }}
           E2E_BASE_URL: ${{ secrets.E2E_BASE_URL }}
           E2E_CLIENT_URL: ${{ secrets.E2E_CLIENT_URL }}
+          E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
+          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
+        run: |
+          set -Eeuo pipefail
+          if [ "$PRESENT" != "true" ]; then
+            echo "executed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          bunx playwright test --project="$PROJECT"
+          # Une suite où tout est « skipped » ne prouve rien : au moins un test doit avoir réellement réussi.
+          node -e '
+            const s = require("./playwright-report/results.json").stats;
+            console.log(`e2e : ${s.expected} réussis, ${s.unexpected} échoués, ${s.flaky} instables, ${s.skipped} ignorés`);
+            if (!(s.expected > 0)) { console.error("::error::Aucun test e2e réellement exécuté."); process.exit(1); }
+          '
+          echo "executed=true" >> "$GITHUB_OUTPUT"
+      # Rapports conservés 7 jours : ils contiennent des captures de données métier.
+      # Les traces (qui enregistrent les valeurs saisies, mot de passe compris) sont
+      # désactivées en CI dans playwright.config.ts.
       - name: Upload Playwright report
         if: always() && steps.secret.outputs.present == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: playwright-report-${{ matrix.project }}
           path: playwright-report
-          retention-days: 14
-      - name: Upload Playwright traces & videos
+          retention-days: 7
+      - name: Upload Playwright screenshots & videos
         if: always() && steps.secret.outputs.present == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: playwright-test-results-${{ matrix.project }}
           path: test-results
-          retention-days: 14
+          retention-days: 7
 
+  # Barrière de validation, pas un déploiement : Lovable publie indépendamment de GitHub.
+  # Pour qu'elle protège main, rendre « Deploy guard » obligatoire dans la protection
+  # de branche (voir docs/ci.md).
   deploy-guard:
     name: Deploy guard (bloque la publication en cas d'échec)
     needs: [typecheck, unit, rls, e2e]
-    # always() : le garde s'exécute même si un job a échoué ou a été annulé,
+    # always() : le garde s'exécute même si un job a échoué, a été annulé ou ignoré,
     # pour échouer explicitement au lieu d'être simplement « ignoré ».
     if: always() && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: Vérifier le résultat de chaque job de test
+      - name: Vérifier chaque contrôle obligatoire
+        env:
+          TYPECHECK: ${{ needs.typecheck.result }}
+          UNIT: ${{ needs.unit.result }}
+          RLS: ${{ needs.rls.result }}
+          RLS_EXECUTED: ${{ needs.rls.outputs.executed }}
+          E2E: ${{ needs.e2e.result }}
+          E2E_EXECUTED: ${{ needs.e2e.outputs.executed }}
         run: |
-          echo "typecheck=${{ needs.typecheck.result }} unit=${{ needs.unit.result }} rls=${{ needs.rls.result }} e2e=${{ needs.e2e.result }}"
-          if [ "${{ needs.typecheck.result }}" != "success" ] || \
-             [ "${{ needs.unit.result }}" != "success" ] || \
-             [ "${{ needs.rls.result }}" != "success" ] || \
-             [ "${{ needs.e2e.result }}" != "success" ]; then
-            echo "::error::Au moins un job de test n'a pas réussi — publication bloquée."
+          set -Eeuo pipefail
+          ok=true
+          {
+            echo "## Deploy guard — ${GITHUB_EVENT_NAME} sur ${GITHUB_REF_NAME}"
+            echo ""
+            echo "| Contrôle | Résultat | Exécuté |"
+            echo "|---|---|---|"
+          } >> "$GITHUB_STEP_SUMMARY"
+          check() {
+            local name="$1" result="$2" executed="$3"
+            echo "| $name | ${result:-absent} | ${executed:-non} |" >> "$GITHUB_STEP_SUMMARY"
+            echo "$name : résultat=${result:-absent} exécuté=${executed:-non}"
+            # Seul « success » compte : failure, cancelled, skipped ou absent bloquent.
+            if [ "$result" != "success" ]; then
+              echo "::error::$name : résultat « ${result:-absent} » — publication bloquée."
+              ok=false
+            elif [ "$executed" != "true" ]; then
+              echo "::error::$name : contrôle non exécuté — publication bloquée."
+              ok=false
+            fi
+          }
+          check "typecheck" "$TYPECHECK" "true"
+          check "unit" "$UNIT" "true"
+          check "rls" "$RLS" "$RLS_EXECUTED"
+          check "e2e" "$E2E" "$E2E_EXECUTED"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$ok" != "true" ]; then
+            echo "**Publication refusée.**" >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
-          echo "Tous les tests (typecheck, unitaires, RLS/RPC, e2e) sont passés — publication autorisée."
+          echo "**Tous les contrôles obligatoires ont été exécutés et ont réussi.**" >> "$GITHUB_STEP_SUMMARY"

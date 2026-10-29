@@ -17,6 +17,8 @@ export default defineConfig({
   timeout: 60_000,
   expect: { timeout: 10_000 },
   fullyParallel: false,
+  // Un test.only oublié ferait passer la CI en n'exécutant qu'un seul test.
+  forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: 1,
   reporter: process.env.CI
@@ -29,19 +31,28 @@ export default defineConfig({
     : [["list"]],
   use: {
     baseURL: process.env.E2E_BASE_URL ?? "http://localhost:8080",
-    // Mode CI plus strict : trace complète + screenshot + vidéo sur échec
-    // pour diagnostiquer rapidement les régressions de navigation.
-    trace: process.env.CI ? "on-first-retry" : "retain-on-failure",
+    // Pas de trace en CI : une trace enregistre les valeurs saisies (mot de passe du
+    // compte de test compris) et serait publiée dans les artefacts. Screenshot et
+    // vidéo sur échec suffisent au diagnostic ; en local la trace reste disponible.
+    trace: process.env.CI ? "off" : "retain-on-failure",
     screenshot: { mode: "only-on-failure", fullPage: true },
     video: process.env.CI ? "retain-on-failure" : "off",
     actionTimeout: 15_000,
     navigationTimeout: 20_000,
     viewport: { width: 1280, height: 900 },
   },
+  // Noms attendus par la CI (--project=desktop|mobile) et par les specs
+  // (testInfo.project.name === "mobile") : avec un seul projet « chromium »,
+  // la CI échouait (« Project(s) "desktop" not found ») et les tests mobiles
+  // étaient toujours ignorés. Pixel 7 = Chromium, seul navigateur installé en CI.
   projects: [
     {
-      name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      name: "desktop",
+      use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 900 } },
+    },
+    {
+      name: "mobile",
+      use: { ...devices["Pixel 7"] },
     },
   ],
   webServer: process.env.E2E_BASE_URL

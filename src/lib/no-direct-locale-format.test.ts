@@ -3,7 +3,8 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 // Les écrans passent par src/lib/format.ts ; PDF, étiquettes et composants de base exclus.
-const SKIP = /(pdf|etiquet|label|qr|print|\.test\.|components\/ui\/)/i;
+// [\\/] : les chemins ont des « \ » sous Windows, des « / » ailleurs.
+const SKIP = /(pdf|etiquet|label|qr|print|\.test\.|components[\\/]ui[\\/])/i;
 const DIRECT = /\.toLocale(Date|Time)?String\(/;
 
 function walk(dir: string, out: string[] = []): string[] {
