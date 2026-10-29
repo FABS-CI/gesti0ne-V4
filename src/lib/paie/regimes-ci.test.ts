@@ -14,8 +14,14 @@ describe("REGIME_2024 — bulletin modèle", () => {
   it("net avant arrondi 162 434, arrondi +1, net 162 435 (multiple de 5 supérieur)", () => {
     expect(b.netAvantArrondi).toBe(162434); expect(b.arrondi).toBe(1); expect(b.netAPayer).toBe(162435);
   });
-  it("charges patronales indicatives", () => {
-    expect(b.patronal).toMatchObject({ retraite: 10924, pf: 3500, maternite: 525, at: 1400, cmu: 500 });
+  // Plafond PF / maternité / AT = 75 000 FCFA depuis le 01/01/2023 (communiqué CNPS, décret 2022-986) :
+  // 75 000 × 5 % = 3 750 ; × 0,75 % = 562,5 → 563 ; × 2 % = 1 500. Retraite : 141 872 × 7,7 % = 10 924.
+  it("charges patronales indicatives (plafond 75 000)", () => {
+    expect(b.patronal).toMatchObject({ retraite: 10924, pf: 3750, maternite: 563, at: 1500, cmu: 500 });
+  });
+  it("régime 2022 (avant 2023) : plafond prestations 70 000", () => {
+    const b22 = calculerBulletin(modele, REGIME_2022);
+    expect(b22.patronal).toMatchObject({ pf: 3500, maternite: 525, at: 1400 });
   });
 });
 

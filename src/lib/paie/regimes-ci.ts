@@ -37,7 +37,8 @@ export const REGIME_2024: RegimeParams = {
   arrondiUnite: 5, arrondiMode: "superieur",
   ancienneteTauxParAn: 1, anciennetePlafond: 25, joursMois: 30,
   retraitePatTaux: 7.7, retraitePatPlafond: 3375000,
-  pfTaux: 5, maternTaux: 0.75, atTaux: 2, plafondPrestations: 70000,
+  // Plafond PF / maternité / AT : 75 000 FCFA depuis le 01/01/2023 (communiqué CNPS, décret 2022-986).
+  pfTaux: 5, maternTaux: 0.75, atTaux: 2, plafondPrestations: 75000,
   fdfpActif: false, fdfpTaux: 0,
   cnAbattement: 0, cnBareme: [],
 };
@@ -48,6 +49,9 @@ export const REGIME_2022: RegimeParams = {
   itsBareme: [],
   itsTauxForfait: 1.2,
   ricfParDemiPart: 0,
+  // 70 000 FCFA jusqu'au 31/12/2022 ; le moteur SQL passe à 75 000 pour 2023 (paramètre daté,
+  // migration 0101), ce miroir sans date garde la valeur d'origine du régime.
+  plafondPrestations: 70000,
   cnAbattement: 80,
   cnBareme: [
     { max: 50000, taux: 0 }, { max: 130000, taux: 1.5 }, { max: 200000, taux: 5 }, { max: Infinity, taux: 10 },

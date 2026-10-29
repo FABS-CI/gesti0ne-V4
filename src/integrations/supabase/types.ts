@@ -8137,6 +8137,10 @@ export type Database = {
         Returns: undefined
       }
       _paie_bareme: { Args: { _bareme: Json; _base: number }; Returns: number }
+      _paie_parametres_controle: {
+        Args: { p: Json; p_regime: string }
+        Returns: string[]
+      }
       _paie_parametres_effectifs: {
         Args: { p_date: string; p_regime: string }
         Returns: Json
