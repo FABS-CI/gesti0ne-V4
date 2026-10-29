@@ -34,6 +34,7 @@ import {
   type EtatsFinanciers,
   type Ligne,
 } from "@/lib/etats-financiers/syscohada";
+import { calculerNotes, type NoteCalculee } from "@/lib/etats-financiers/notes";
 import { calculerTft, LIGNES_TFT, type Tft } from "@/lib/etats-financiers/tft";
 import { exportCsv } from "@/lib/export-csv";
 import { formatDate, formatFCFA } from "@/lib/format";
@@ -47,7 +48,7 @@ export const Route = createFileRoute("/_authenticated/etats-comptables")({
 const libelleExercice = (e: Exercice) =>
   e.code || `${formatDate(e.date_debut)} – ${formatDate(e.date_fin)}`;
 
-type EtatsExercice = EtatsFinanciers & { tft: Tft };
+type EtatsExercice = EtatsFinanciers & { tft: Tft; notes: NoteCalculee[] };
 
 /** Veille d'une date ISO (AAAA-MM-JJ). */
 function veille(date: string): string {
@@ -64,7 +65,7 @@ async function chargerEtats(e: Exercice): Promise<EtatsExercice> {
   ]);
   const cloture = calculerEtatsFinanciers(cumul, periode);
   const tft = calculerTft(calculerEtatsFinanciers(ouverture, []), cloture, periode);
-  return { ...cloture, tft };
+  return { ...cloture, tft, notes: calculerNotes(cumul, periode) };
 }
 
 const montant = (n: number | undefined) => (n ? formatFCFA(n, false) : "—");
@@ -189,6 +190,7 @@ function EtatsFinanciersPage() {
               <TabsTrigger value="passif">Bilan passif</TabsTrigger>
               <TabsTrigger value="resultat">Compte de résultat</TabsTrigger>
               <TabsTrigger value="tft">TFT</TabsTrigger>
+              <TabsTrigger value="notes">Notes annexes</TabsTrigger>
             </TabsList>
             <TabsContent value="actif">
               <BoutonExport onClick={() => exporter("actif")} />
@@ -205,6 +207,14 @@ function EtatsFinanciersPage() {
             <TabsContent value="tft">
               <BoutonExport onClick={() => exporter("tft")} />
               <TableSimple lignes={LIGNES_TFT} n={n.tft.valeurs} n1={n1?.tft.valeurs} />
+            </TabsContent>
+            <TabsContent value="notes">
+              <NotesAnnexes
+                notes={n.notes}
+                notesN1={n1?.notes}
+                nomN={libelleExercice(exercice)}
+                nomN1={exerciceN1 ? libelleExercice(exerciceN1) : "N-1"}
+              />
             </TabsContent>
           </Tabs>
           <p className="text-xs text-muted-foreground">
@@ -367,5 +377,102 @@ function TableSimple({
         </ResponsiveTable>
       </CardContent>
     </Card>
+  );
+}
+
+function NotesAnnexes({
+  notes,
+  notesN1,
+  nomN,
+  nomN1,
+}: {
+  notes: NoteCalculee[];
+  notesN1?: NoteCalculee[];
+  nomN: string;
+  nomN1: string;
+}) {
+  const [numero, setNumero] = useState(notes[0]?.numero ?? "");
+  const note = notes.find((n) => n.numero === numero) ?? notes[0];
+  if (!note) return null;
+  // N-1 rapproché par libellé : une ligne « non ventilé » peut n'exister qu'une année.
+  const montantsN1 = new Map(
+    notesN1?.find((n) => n.numero === note.numero)?.lignes.map((l) => [l.libelle, l.montant]),
+  );
+  const variation = (n: number, n1: number | undefined) =>
+    n1 ? `${Math.round(((n - n1) / Math.abs(n1)) * 1000) / 10} %` : "";
+  const titre = `NOTE ${note.numero} : ${note.titre.toUpperCase()}`;
+  const lignes = note.lignes.map((l) => ({ ...l, n1: montantsN1.get(l.libelle) }));
+
+  return (
+    <>
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+        <Select value={note.numero} onValueChange={setNumero}>
+          <SelectTrigger className="w-80">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {notes.map((n) => (
+              <SelectItem key={n.numero} value={n.numero}>
+                Note {n.numero} : {n.titre}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() =>
+            exportCsv(
+              `note-${note.numero}-${nomN}`,
+              ["Libellés", nomN, nomN1, "Variation"],
+              lignes.map((l) => [
+                l.libelle,
+                montant(l.montant),
+                montant(l.n1),
+                variation(l.montant, l.n1),
+              ]),
+              { pageTitle: `${titre} — ${nomN}` },
+            )
+          }
+        >
+          <Download className="mr-2 h-4 w-4" /> PDF
+        </Button>
+      </div>
+      <Card>
+        <CardContent className="p-0">
+          <ResponsiveTable stickyFirstCol>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{titre}</TableHead>
+                  <TableHead className="text-right">Année N</TableHead>
+                  <TableHead className="text-right">Année N-1</TableHead>
+                  <TableHead className="text-right">Variation</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {lignes.map((l, i) => (
+                  <TableRow
+                    key={`${i}-${l.libelle}`}
+                    className={l.niveau === "detail" ? undefined : "bg-muted/50 font-semibold"}
+                  >
+                    <TableCell>{l.libelle}</TableCell>
+                    <TableCell className="text-right tabular-nums">{montant(l.montant)}</TableCell>
+                    <TableCell className="text-right tabular-nums">{montant(l.n1)}</TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {variation(l.montant, l.n1)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </ResponsiveTable>
+        </CardContent>
+      </Card>
+      <p className="mt-2 text-xs text-muted-foreground">
+        Notes calculées depuis les sous-comptes SYSCOHADA. Les autres notes (immobilisations,
+        effectifs, échéances, engagements, commentaires) restent à compléter dans la liasse.
+      </p>
+    </>
   );
 }
