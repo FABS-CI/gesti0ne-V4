@@ -34,6 +34,7 @@ import {
   type EtatsFinanciers,
   type Ligne,
 } from "@/lib/etats-financiers/syscohada";
+import { calculerTft, LIGNES_TFT, type Tft } from "@/lib/etats-financiers/tft";
 import { exportCsv } from "@/lib/export-csv";
 import { formatDate, formatFCFA } from "@/lib/format";
 
@@ -46,12 +47,24 @@ export const Route = createFileRoute("/_authenticated/etats-comptables")({
 const libelleExercice = (e: Exercice) =>
   e.code || `${formatDate(e.date_debut)} – ${formatDate(e.date_fin)}`;
 
-async function chargerEtats(e: Exercice): Promise<EtatsFinanciers> {
-  const [cumul, periode] = await Promise.all([
+type EtatsExercice = EtatsFinanciers & { tft: Tft };
+
+/** Veille d'une date ISO (AAAA-MM-JJ). */
+function veille(date: string): string {
+  const d = new Date(`${date.slice(0, 10)}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() - 1);
+  return d.toISOString().slice(0, 10);
+}
+
+async function chargerEtats(e: Exercice): Promise<EtatsExercice> {
+  const [ouverture, cumul, periode] = await Promise.all([
+    getBalance(undefined, veille(e.date_debut)),
     getBalance(undefined, e.date_fin),
     getBalance(e.date_debut, e.date_fin),
   ]);
-  return calculerEtatsFinanciers(cumul, periode);
+  const cloture = calculerEtatsFinanciers(cumul, periode);
+  const tft = calculerTft(calculerEtatsFinanciers(ouverture, []), cloture, periode);
+  return { ...cloture, tft };
 }
 
 const montant = (n: number | undefined) => (n ? formatFCFA(n, false) : "—");
@@ -86,12 +99,13 @@ function EtatsFinanciersPage() {
   const n = qN.data;
   const n1 = qN1.data;
 
-  const exporter = (onglet: "actif" | "passif" | "resultat") => {
+  const exporter = (onglet: "actif" | "passif" | "resultat" | "tft") => {
     if (!n || !exercice) return;
     const titre = {
       actif: "BILAN — ACTIF",
       passif: "BILAN — PASSIF",
       resultat: "COMPTE DE RÉSULTAT",
+      tft: "TABLEAU DES FLUX DE TRÉSORERIE",
     }[onglet];
     const nomN = libelleExercice(exercice);
     const nomN1 = exerciceN1 ? libelleExercice(exerciceN1) : "N-1";
@@ -112,10 +126,12 @@ function EtatsFinanciersPage() {
       );
       return;
     }
-    const lignes = onglet === "passif" ? LIGNES_PASSIF : LIGNES_RESULTAT;
-    const valeurs = (ef?: EtatsFinanciers) => (onglet === "passif" ? ef?.passif : ef?.resultat);
+    const lignes = { passif: LIGNES_PASSIF, resultat: LIGNES_RESULTAT, tft: LIGNES_TFT }[onglet];
+    const valeurs = (ef?: EtatsExercice) =>
+      ({ passif: ef?.passif, resultat: ef?.resultat, tft: ef?.tft.valeurs })[onglet];
+    const fichier = { passif: "bilan-passif", resultat: "compte-de-resultat", tft: "tft" }[onglet];
     exportCsv(
-      `${onglet === "passif" ? "bilan-passif" : "compte-de-resultat"}-${nomN}`,
+      `${fichier}-${nomN}`,
       ["Réf", "Libellé", "Note", nomN, nomN1],
       lignes.map((l) => [
         l.ref,
@@ -136,7 +152,7 @@ function EtatsFinanciersPage() {
             <FileText className="h-6 w-6" /> États financiers
           </h1>
           <p className="text-sm text-muted-foreground">
-            Bilan et compte de résultat SYSCOHADA révisé (système normal), calculés depuis la
+            Bilan, compte de résultat et TFT SYSCOHADA révisé (système normal), calculés depuis la
             balance
           </p>
         </div>
@@ -172,6 +188,7 @@ function EtatsFinanciersPage() {
               <TabsTrigger value="actif">Bilan actif</TabsTrigger>
               <TabsTrigger value="passif">Bilan passif</TabsTrigger>
               <TabsTrigger value="resultat">Compte de résultat</TabsTrigger>
+              <TabsTrigger value="tft">TFT</TabsTrigger>
             </TabsList>
             <TabsContent value="actif">
               <BoutonExport onClick={() => exporter("actif")} />
@@ -184,6 +201,10 @@ function EtatsFinanciersPage() {
             <TabsContent value="resultat">
               <BoutonExport onClick={() => exporter("resultat")} />
               <TableSimple lignes={LIGNES_RESULTAT} n={n.resultat} n1={n1?.resultat} />
+            </TabsContent>
+            <TabsContent value="tft">
+              <BoutonExport onClick={() => exporter("tft")} />
+              <TableSimple lignes={LIGNES_TFT} n={n.tft.valeurs} n1={n1?.tft.valeurs} />
             </TabsContent>
           </Tabs>
           <p className="text-xs text-muted-foreground">
@@ -208,9 +229,13 @@ function BoutonExport({ onClick }: { onClick: () => void }) {
   );
 }
 
-function Controles({ ef }: { ef: EtatsFinanciers }) {
+function Controles({ ef }: { ef: EtatsExercice }) {
   const { ecartBilan, ecartResultat } = ef.controles;
   const anomalies: string[] = [];
+  if (ef.tft.ecartTresorerie)
+    anomalies.push(
+      `TFT : la trésorerie de clôture calculée diffère du bilan de ${formatFCFA(ef.tft.ecartTresorerie)} (écart de réévaluation ou de conversion ?).`,
+    );
   if (ecartBilan)
     anomalies.push(`Bilan déséquilibré : actif − passif = ${formatFCFA(ecartBilan)}.`);
   if (ecartResultat)
