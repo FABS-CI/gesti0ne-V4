@@ -1,0 +1,1 @@
+COMMENT ON FUNCTION public._propager_nom_client(uuid, text) IS 'Propage le nom du client aux seuls documents non signés (ni certifiés ni acceptés par la DGI).';
