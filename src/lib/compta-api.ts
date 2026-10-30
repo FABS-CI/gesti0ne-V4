@@ -96,6 +96,26 @@ export async function getBalance(
 
 }
 
+export type ComptePlan = {
+  compte_id: string;
+  numero: string;
+  libelle: string;
+  classe: number;
+  type: string;
+  parent_numero: string | null;
+  actif: boolean;
+};
+
+/** Comptes du référentiel SYSCOHADA, dans l'ordre des numéros. */
+export async function getPlanComptable(): Promise<ComptePlan[]> {
+  const { data, error } = await supabase
+    .from("plan_comptable")
+    .select("compte_id, numero, libelle, classe, type, parent_numero, actif")
+    .order("numero");
+  if (error) throw error;
+  return (data ?? []) as ComptePlan[];
+}
+
 export type DashboardCompta = {
   produits: number; // classe 7
   charges: number; // classe 6
