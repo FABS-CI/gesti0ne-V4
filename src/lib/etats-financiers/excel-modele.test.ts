@@ -8,6 +8,7 @@ import { calculerTft } from "@/lib/etats-financiers/tft";
 import { SOLDES_2025 } from "@/lib/etats-financiers/fixtures-2025";
 import { calculerNotes, type NoteCalculee } from "@/lib/etats-financiers/notes";
 import { calculerNotesImmobilisations } from "@/lib/etats-financiers/notes-immobilisations";
+import { serieExcel } from "@/lib/etats-financiers/fiches-modele";
 import { CORRESPONDANCES_NOTES_2025, libelleComparable } from "@/lib/etats-financiers/notes-modele";
 import {
   ecrireCellule,
@@ -390,5 +391,113 @@ describe("table de correspondance des notes", () => {
         .map((c) => `NOTE ${numero} : ${c.ligne}`);
     });
     expect(orphelines).toEqual([]);
+  });
+});
+
+describe("remplirModele — fiches R1, R2, R4", () => {
+  function modeleFiches(): Uint8Array {
+    const wb = XLSX.utils.book_new();
+    const r1 = XLSX.utils.aoa_to_sheet([["FICHE R1"]]);
+    r1.N8 = { t: "n", v: 45658 };
+    r1.S8 = { t: "n", v: 46022 };
+    r1.H10 = { t: "n", v: 46022 };
+    r1.H12 = { t: "n", v: 45657 };
+    r1.U12 = { t: "n", v: 12 };
+    r1.D14 = { t: "s", v: "ANCIEN-RCCM" };
+    r1.Q17 = { t: "s", v: "C180100" };
+    r1.C20 = { t: "s", v: "ANCIENNE DENOMINATION" };
+    r1.Q47 = { t: "s", v: "Oui" };
+    r1.C50 = { t: "s", v: "", f: "+C32" };
+    r1["!ref"] = "A1:V60";
+    XLSX.utils.book_append_sheet(wb, r1, "FICHE R1");
+    const r2 = XLSX.utils.aoa_to_sheet([["FICHE R2"]]);
+    r2.A28 = { t: "s", v: "TRAVAUX D'IMPRIMERIE" };
+    r2.Y28 = { t: "n", v: 1 };
+    r2["!ref"] = "A1:AI30";
+    XLSX.utils.book_append_sheet(wb, r2, "FICHE R2");
+    const r4 = XLSX.utils.aoa_to_sheet([["FICHE R4"]]);
+    XLSX.utils.sheet_add_aoa(
+      r4,
+      [
+        ["NOTE 3C bis", "", "", "", "", "", "", "", "X", ""],
+        ["NOTE 7", "", "", "", "", "", "", "", "", "X"],
+        ["NOTE 13", "", "", "", "", "", "", "", "X", ""],
+      ],
+      { origin: "A9" },
+    );
+    XLSX.utils.book_append_sheet(wb, r4, "FICHE R4");
+    return XLSX.write(wb, { type: "array", bookType: "xlsx" }) as Uint8Array;
+  }
+
+  const note7: NoteCalculee = {
+    numero: "7",
+    titre: "Clients",
+    lignes: [{ libelle: "TOTAL BRUT CLIENTS", montant: 1000, niveau: "total" }],
+  };
+
+  async function remplir(precedent: boolean) {
+    const { fichier, rapport } = await remplirModele({
+      modele: modeleFiches(),
+      n: {
+        ...etats2025(),
+        notes: [note7],
+        immobilisations: [
+          {
+            numero: "3C BIS",
+            titre: "",
+            colonnes: [{ cle: "cloture", libelle: "" }],
+            lignes: [{ libelle: "TOTAL GENERAL", niveau: "general", valeurs: { cloture: 0 } }],
+            hypotheses: [],
+          },
+        ],
+      },
+      exercice: { date_debut: "2026-01-01", date_fin: "2026-12-31" },
+      exerciceN1: precedent ? { date_debut: "2025-01-01", date_fin: "2025-12-31" } : null,
+      identite: {
+        denomination: "EDITION FABS-CI",
+        rccm: "CI-ABJ-2023",
+        signataire_nom: "ALI MAMIN",
+      },
+    });
+    return { ws: XLSX.read(fichier, { type: "array", cellFormula: true }).Sheets, rapport };
+  }
+
+  it("R1 : dates de l'exercice, identification de l'ERP, renseignements de l'année vidés", async () => {
+    const { ws, rapport } = await remplir(true);
+    const r1 = ws["FICHE R1"];
+    expect([r1.N8.v, r1.S8.v]).toEqual([46023, 46387]); // 01/01/2026, 31/12/2026
+    expect([r1.H12.v, r1.U12.v]).toEqual([46022, 12]); // 31/12/2025, 12 mois
+    expect(r1.H10?.v).toBeUndefined(); // arrêté des comptes
+    expect(r1.Q47?.v).toBeUndefined(); // approbation par l'assemblée
+    expect([r1.D14.v, r1.C20.v, r1.C50.v]).toEqual(["CI-ABJ-2023", "EDITION FABS-CI", "ALI MAMIN"]);
+    expect(r1.C50.f).toBeUndefined();
+    // Absent de l'ERP : valeur du modèle conservée et signalée.
+    expect(r1.Q17.v).toBe("C180100");
+    expect(rapport.ficheR1Reprise).toEqual(["Code activité principale (ZI)"]);
+    expect(rapport.fichesRemplies).toEqual(["FICHE R1", "FICHE R2", "FICHE R4"]);
+  });
+
+  it("R1 sans exercice précédent : renseignements N-1 vidés", async () => {
+    const r1 = (await remplir(false)).ws["FICHE R1"];
+    expect(r1.H12?.v).toBeUndefined();
+    expect(r1.U12?.v).toBeUndefined();
+  });
+
+  it("R2 : chiffre d'affaires sur l'activité principale, hypothèse signalée", async () => {
+    const { ws, rapport } = await remplir(true);
+    expect(ws["FICHE R2"].Y28.v).toBe(515_053_551);
+    expect(rapport.hypotheses.join(" ")).toMatch(/FICHE R2 : .*TRAVAUX D'IMPRIMERIE/);
+  });
+
+  it("R4 : A si la note a des montants, N/A sinon ; notes non calculées inchangées", async () => {
+    const r4 = (await remplir(true)).ws["FICHE R4"];
+    expect([r4.I10?.v, r4.J10?.v]).toEqual(["X", undefined]); // NOTE 7 : 1 000
+    expect([r4.I9?.v, r4.J9?.v]).toEqual([undefined, "X"]); // NOTE 3C bis : aucun montant
+    expect(r4.I11.v).toBe("X"); // NOTE 13 : non calculée, marque du modèle conservée
+  });
+
+  it("numéro de série Excel des dates", () => {
+    expect(serieExcel("2025-01-01")).toBe(45658);
+    expect(serieExcel("2025-12-31")).toBe(46022);
   });
 });

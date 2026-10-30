@@ -189,6 +189,9 @@ function EtatsFinanciersPage() {
             n1,
             exercice: { ...exercice, libelle: libelleExercice(exercice) },
             exerciceN1: exerciceN1 && n1 ? { libelle: libelleExercice(exerciceN1) } : null,
+            precedent: exerciceN1
+              ? { date_debut: exerciceN1.date_debut, date_fin: exerciceN1.date_fin }
+              : null,
             identite,
             controles,
             version: versionFigee

@@ -33,6 +33,12 @@ import {
   libelleComparable,
   type CorrespondanceNote,
 } from "@/lib/etats-financiers/notes-modele";
+import {
+  FICHE_R1_2025,
+  FICHE_R2_2025,
+  FICHE_R4_2025,
+  serieExcel,
+} from "@/lib/etats-financiers/fiches-modele";
 
 type Valeur = number | string | null;
 
@@ -90,12 +96,14 @@ export const BLOCS_MODELE_2025: Bloc[] = [
 /** Feuilles recalculées par leurs formules à partir des feuilles remplies. */
 const FEUILLES_CALCULEES = ["ACTIF", "PASSIF"];
 
+/** Champs de la fiche d'identification (identite.ts), par clé. */
 export type IdentiteExport = {
   denomination?: string;
   sigle?: string;
   adresse?: string;
   ncc?: string;
   ntd?: string;
+  [cle: string]: string | undefined;
 };
 
 export type RapportExport = {
@@ -107,6 +115,10 @@ export type RapportExport = {
   feuillesAVerifier: string[];
   /** Feuilles de notes remplies depuis les notes calculées. */
   notesRemplies: string[];
+  /** Fiches R mises à jour. */
+  fichesRemplies: string[];
+  /** Champs de la fiche R1 absents de l'ERP : valeur du modèle conservée, à vérifier. */
+  ficheR1Reprise: string[];
   /** Hypothèses faites pour placer des montants (zone, groupe), à vérifier. */
   hypotheses: string[];
   n1Absent: boolean;
@@ -287,6 +299,8 @@ export type ParametresExport = {
   n: EtatsExport;
   n1?: EtatsExport;
   exercice: { date_debut: string; date_fin: string };
+  /** Exercice précédent (fiche R1) ; absent : renseignements N-1 vidés. */
+  exerciceN1?: { date_debut: string; date_fin: string } | null;
   identite: IdentiteExport;
   /** Lignes d'information ajoutées à la feuille de rapport (version du dossier…). */
   informations?: Array<[string, string]>;
@@ -339,6 +353,8 @@ export async function remplirModele(
     feuillesMisesAJour: [],
     feuillesAVerifier: [],
     notesRemplies: [],
+    fichesRemplies: [],
+    ficheR1Reprise: [],
     hypotheses: [],
     n1Absent: !p.n1,
   };
@@ -464,6 +480,85 @@ export async function remplirModele(
     rapport.notesRemplies.push(feuille);
   }
 
+  // ─── Fiches R1, R2, R4 (fiches-modele.ts) ─────────────────────────────────
+  const r1 = lu.Sheets[FICHE_R1_2025.feuille];
+  if (r1) {
+    const f = FICHE_R1_2025.feuille;
+    const n1 = p.exerciceN1;
+    for (const c of FICHE_R1_2025.champs) {
+      if ("vider" in c) ecrire(f, c.cellule, null);
+      else if ("exercice" in c) {
+        const v =
+          c.exercice === "debut"
+            ? serieExcel(p.exercice.date_debut)
+            : c.exercice === "fin"
+              ? serieExcel(p.exercice.date_fin)
+              : !n1
+                ? null
+                : c.exercice === "fin_n1"
+                  ? serieExcel(n1.date_fin)
+                  : dureeMois(n1.date_debut, n1.date_fin);
+        ecrire(f, c.cellule, v);
+      } else {
+        const v = p.identite[c.identite]?.trim();
+        if (v) ecrire(f, c.cellule, v);
+        else {
+          const x = r1[c.cellule] as XLSX.CellObject | undefined;
+          if (x?.f || (x?.v != null && String(x.v).trim() !== ""))
+            rapport.ficheR1Reprise.push(c.libelle);
+        }
+      }
+    }
+    rapport.fichesRemplies.push(f);
+  }
+  const r2 = lu.Sheets[FICHE_R2_2025.feuille];
+  const activite = r2?.[FICHE_R2_2025.libelleActivite]?.v;
+  if (r2 && activite != null && String(activite).trim()) {
+    ecrire(FICHE_R2_2025.feuille, FICHE_R2_2025.chiffreAffaires, Math.round(p.n.resultat.XB ?? 0));
+    rapport.hypotheses.push(
+      `${FICHE_R2_2025.feuille} : chiffre d'affaires de l'exercice reporté sur l'activité « ${String(activite).trim()} » ; le répartir s'il y a plusieurs activités.`,
+    );
+    rapport.fichesRemplies.push(FICHE_R2_2025.feuille);
+  }
+  const r4 = lu.Sheets[FICHE_R4_2025.feuille];
+  if (r4) {
+    // Note applicable : au moins un montant non nul en N ou N-1.
+    const applicable = new Map<string, boolean>();
+    const marquer = (numero: string, montants: Array<number | null | undefined>) =>
+      applicable.set(
+        numero,
+        (applicable.get(numero) ?? false) || montants.some((m) => !!m && Math.round(m) !== 0),
+      );
+    for (const e of [p.n, p.n1]) {
+      for (const n of e?.notes ?? [])
+        marquer(
+          n.numero,
+          n.lignes.map((l) => l.montant),
+        );
+      for (const t of e?.immobilisations ?? [])
+        marquer(
+          t.numero,
+          t.lignes.flatMap((l) => Object.values(l.valeurs)),
+        );
+    }
+    const lignes = new Map<string, number>();
+    const plage = XLSX.utils.decode_range(r4["!ref"] ?? "A1");
+    for (let r = plage.s.r; r <= plage.e.r; r++) {
+      const v = r4[XLSX.utils.encode_cell({ r, c: 0 })]?.v;
+      if (v != null) lignes.set(libelleComparable(String(v)), r + 1);
+    }
+    for (const [numero, oui] of applicable) {
+      const r = lignes.get(libelleComparable(`NOTE ${numero}`));
+      if (r == null) {
+        rapport.introuvables.push(`${FICHE_R4_2025.feuille} : NOTE ${numero}`);
+        continue;
+      }
+      ecrire(FICHE_R4_2025.feuille, `${FICHE_R4_2025.applicable}${r}`, oui ? "X" : null);
+      ecrire(FICHE_R4_2025.feuille, `${FICHE_R4_2025.nonApplicable}${r}`, oui ? null : "X");
+    }
+    rapport.fichesRemplies.push(FICHE_R4_2025.feuille);
+  }
+
   // En-têtes d'identification de toutes les feuilles.
   for (const nom of lu.SheetNames) {
     const ws = lu.Sheets[nom];
@@ -495,6 +590,7 @@ export async function remplirModele(
   const remplies = new Set([
     ...blocs.map((b) => b.feuille).filter((f) => lu.Sheets[f]),
     ...rapport.notesRemplies,
+    ...rapport.fichesRemplies,
   ]);
   rapport.feuillesMisesAJour = [...remplies, ...FEUILLES_CALCULEES.filter((f) => lu.Sheets[f])];
   // Feuilles avec des montants saisis (hors formules) sous l'en-tête : à compléter.
@@ -543,6 +639,22 @@ function lignesRapport(p: ParametresExport, r: RapportExport): string[][] {
           [
             "Notes annexes",
             `${r.notesRemplies.join(", ")} : remplies depuis la comptabilité. Dans ces notes, une ligne vide n'est pas calculée par l'ERP et reste à compléter ; les colonnes d'échéances et les commentaires aussi.`,
+          ],
+        ]
+      : []),
+    ...(r.fichesRemplies.length
+      ? [
+          [
+            "Fiches",
+            `${r.fichesRemplies.join(", ")} : identification, dates de l'exercice, chiffre d'affaires et notes applicables (A / N/A) mis à jour. Date d'arrêté des comptes, approbation par l'assemblée et date de signature vidées, à compléter. FICHE R3 (dirigeants) non modifiée.`,
+          ],
+        ]
+      : []),
+    ...(r.ficheR1Reprise.length
+      ? [
+          [
+            "FICHE R1 à vérifier",
+            `Absents de l'ERP, repris du modèle : ${r.ficheR1Reprise.join(", ")}.`,
           ],
         ]
       : []),

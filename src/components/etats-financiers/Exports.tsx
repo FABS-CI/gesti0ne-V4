@@ -57,6 +57,7 @@ export function ExportsDossier({ donnees }: { donnees: DonneesExport }) {
         n: donnees.n,
         n1: donnees.n1,
         exercice: donnees.exercice,
+        exerciceN1: donnees.precedent ?? null,
         identite: identiteExport(donnees.identite),
         informations: [
           ["Dossier", donnees.version ?? "Données actuelles, non enregistrées"],
@@ -164,10 +165,11 @@ export function ExportsDossier({ donnees }: { donnees: DonneesExport }) {
           )}
           <p className="text-xs text-muted-foreground">
             L'export remplit le bilan, le compte de résultat, le TFT, 27 notes annexes calculées
-            depuis la comptabilité (3A à 3D, 4 à 11, 14, 15A, 16A, 17 à 27A, 29) et les en-têtes ;
-            formules, mise en page, zones d'impression et macros du modèle sont conservées. Les
-            autres notes et les fiches R restent à compléter : la feuille « ERP - LISEZ-MOI » les
-            liste, avec les hypothèses faites.
+            depuis la comptabilité (3A à 3D, 4 à 11, 14, 15A, 16A, 17 à 27A, 29), les fiches R1, R2
+            et R4 et les en-têtes ; formules, mise en page, zones d'impression et macros du modèle
+            sont conservées. Les autres notes, la fiche R3 (dirigeants) et les renseignements de
+            l'année (arrêté des comptes, approbation, signature) restent à compléter : la feuille «
+            ERP - LISEZ-MOI » les liste, avec les hypothèses faites.
           </p>
         </div>
       </CardContent>
