@@ -200,7 +200,12 @@ describe("remplirModele — notes annexes", () => {
       { libelle: "Clients effets à recevoir (hors groupe)", montant: 0, niveau: "detail" },
       { libelle: "Autres comptes (non ventilé)", montant: 12, niveau: "detail" },
       { libelle: "TOTAL BRUT CLIENTS", montant: clients + 12, niveau: "total" },
-      { libelle: "Dépréciations des comptes clients", montant: depreciation, niveau: "detail" },
+      {
+        libelle: "Dépréciations des comptes clients",
+        montant: depreciation,
+        niveau: "detail",
+        deduite: true,
+      },
     ],
   });
   const note21: NoteCalculee = {
@@ -227,7 +232,7 @@ describe("remplirModele — notes annexes", () => {
     expect([s.E9.v, s.F9.v]).toEqual([1000, 800]);
     // « (hors groupe) » de l'ERP ↔ « (hors réserves de propriété et groupe) » du modèle.
     expect([s.E10.v, s.F10.v]).toEqual([0, 0]);
-    // Dépréciation négative dans l'ERP, positive dans le modèle (TOTAL NET = brut − dép.).
+    // Dépréciation (déduite) négative dans l'ERP, positive dans le modèle (TOTAL NET = brut − dép.).
     expect([s.E13.v, s.F13.v]).toEqual([300, 100]);
     expect(ws["NOTE 21"].F9.v).toBe(500);
   });
@@ -283,8 +288,8 @@ describe.skipIf(!MODELE)("remplirModele — classeur DGI 2025 réel", () => {
     });
     expect(macros).toBe(true);
     expect(rapport.introuvables).toEqual([]);
-    // Les 10 notes calculées trouvent toutes leurs lignes dans le modèle.
-    expect(rapport.notesRemplies).toHaveLength(14);
+    // Les 23 notes et les 4 tableaux des notes 3 trouvent toutes leurs lignes dans le modèle.
+    expect(rapport.notesRemplies).toHaveLength(27);
     const apres = XLSX.read(fichier, { type: "array", bookVBA: true });
     expect(apres.vbaraw).toBeTruthy();
     // Colonnes N du bilan et du compte de résultat : identiques au classeur déposé.

@@ -291,6 +291,8 @@ function posteAmortissement(compte: string): string | null {
   if (/^49[2-7]/.test(compte)) return "BJ";
   if (compte.startsWith("498")) return "BA";
   if (compte.startsWith("590")) return "BQ";
+  // 591 : dépréciation des titres et valeurs à encaisser (poste BR), pas de la trésorerie.
+  if (compte.startsWith("591")) return "BR";
   if (compte.startsWith("59")) return "BS";
   return null;
 }

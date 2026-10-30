@@ -411,7 +411,7 @@ export async function remplirModele(
         continue;
       }
       if (formule(r, f.colN)) continue;
-      const signe = corr?.signe ?? 1;
+      const signe = corr?.signe ?? (l.deduite ? -1 : 1);
       const vN = Math.round(signe * l.montant);
       const ligneN1 = notesN1?.lignes.find((x) => x.libelle === l.libelle);
       const vN1 = p.n1 ? Math.round(signe * (ligneN1?.montant ?? 0)) : null;

@@ -12,7 +12,7 @@ export type CorrespondanceNote = {
   ligne: string;
   /** Libellé de la ligne du modèle. */
   modele: string;
-  /** -1 : montant à reporter en positif (dépréciations, déduites par le modèle). */
+  /** -1 : montant à reporter en positif (les lignes de dépréciation le sont d'office). */
   signe?: -1;
   /** Hypothèse faite pour placer le montant, à vérifier avant dépôt. */
   hypothese?: string;
@@ -33,11 +33,6 @@ export const CORRESPONDANCES_NOTES_2025: Record<string, CorrespondanceNote[]> = 
       modele: "Clients, avances reçues hors groupe",
       hypothese: GROUPE,
     },
-    {
-      ligne: "Dépréciations des comptes clients",
-      modele: "Dépréciations des comptes clients",
-      signe: -1,
-    },
   ],
   "11": [
     { ligne: "Banques, dépôts à terme", modele: "Banques, dépôt à terme" },
@@ -46,7 +41,6 @@ export const CORRESPONDANCES_NOTES_2025: Record<string, CorrespondanceNote[]> = 
       ligne: "Établissements financiers intérêts courus",
       modele: "Etablissement financiers intérêts courus",
     },
-    { ligne: "Dépréciations", modele: "Dépréciations", signe: -1 },
   ],
   "17": [
     {

@@ -9,12 +9,16 @@
 
 import type { BalanceRow } from "@/lib/compta-api";
 
-/** actif : solde débiteur ; passif : solde créditeur ; charges / produits : exercice. */
-type Source = "actif" | "passif" | "charges" | "produits";
+/**
+ * actif : solde débiteur ; passif : solde créditeur ; charges / produits : exercice ;
+ * capitaux : solde créditeur signé (un report à nouveau débiteur reste négatif).
+ */
+type Source = "actif" | "passif" | "capitaux" | "charges" | "produits";
 
 type Detail = { libelle: string; prefixes: string[]; exclus?: string[] };
 type Section = {
-  total: string;
+  /** Absent : lignes sans total dans le modèle (ex. réserves libres, report à nouveau). */
+  total?: string;
   prefixes: string[];
   exclus?: string[];
   source?: Source;
@@ -28,7 +32,7 @@ type NoteDef = {
   /** Total des sections, si la note en a plusieurs. */
   totalGeneral?: string;
   /** Dépréciations déduites du total brut de la première section. */
-  depreciations?: { libelle: string; prefixes: string[]; totalNet: string };
+  depreciations?: { lignes: Array<{ libelle: string; prefixes: string[] }>; totalNet: string };
 };
 
 export const NOTES: NoteDef[] = [
@@ -71,8 +75,7 @@ export const NOTES: NoteDef[] = [
       },
     ],
     depreciations: {
-      libelle: "Dépréciations des comptes clients",
-      prefixes: ["491"],
+      lignes: [{ libelle: "Dépréciations des comptes clients", prefixes: ["491"] }],
       totalNet: "TOTAL NET DE DÉPRÉCIATIONS",
     },
   },
@@ -101,9 +104,8 @@ export const NOTES: NoteDef[] = [
       },
     ],
     depreciations: {
-      libelle: "Dépréciations",
       // 592 à 594 : banques, établissements financiers, instruments de trésorerie.
-      prefixes: ["592", "593", "594"],
+      lignes: [{ libelle: "Dépréciations", prefixes: ["592", "593", "594"] }],
       totalNet: "TOTAL NET DE DÉPRÉCIATIONS",
     },
   },
@@ -353,10 +355,460 @@ export const NOTES: NoteDef[] = [
       },
     ],
   },
+  // ─── Notes ajoutées : libellés exacts du modèle DGI ──────────────────────────
+  // Seuls les comptes dont le rattachement est certain sont ventilés ; le reste
+  // apparaît en « non ventilé » (signalé à l'export), jamais sur une ligne au hasard.
+  {
+    numero: "4",
+    titre: "Immobilisations financières",
+    source: "actif",
+    sections: [
+      {
+        total: "TOTAL BRUT",
+        prefixes: ["26", "27"],
+        lignes: [
+          { libelle: "Titres de participation", prefixes: ["26"] },
+          { libelle: "Prêts et créances", prefixes: ["271"] },
+          { libelle: "Prêt au personnel", prefixes: ["272"] },
+          { libelle: "Créances sur l'état", prefixes: ["273"] },
+          { libelle: "Titres immobilisés", prefixes: ["274"] },
+          { libelle: "Dépôts et cautionnements", prefixes: ["275"] },
+          { libelle: "Intérêts courus", prefixes: ["276"] },
+          {
+            libelle: "Créances rattachées à des avances et participations à des GIE",
+            prefixes: ["277"],
+          },
+          { libelle: "Immobilisations financières diverses", prefixes: ["278"] },
+        ],
+      },
+    ],
+    depreciations: {
+      lignes: [
+        { libelle: "Dépréciations des titres de participation", prefixes: ["296"] },
+        { libelle: "Dépréciations des autres immobilisations financières", prefixes: ["297"] },
+      ],
+      totalNet: "TOTAL NET DE DEPRECIATION",
+    },
+  },
+  {
+    numero: "5",
+    titre: "Actif circulant HAO",
+    source: "actif",
+    sections: [
+      {
+        total: "TOTAL BRUT",
+        prefixes: ["48"],
+        lignes: [
+          { libelle: "Créances sur cessions d'immobilisations", prefixes: ["485"] },
+          {
+            libelle: "Autres créances hors activités ordinaires",
+            prefixes: ["48"],
+            exclus: ["485"],
+          },
+        ],
+      },
+    ],
+    depreciations: {
+      lignes: [{ libelle: "Dépréciations des créances HAO", prefixes: ["498"] }],
+      totalNet: "TOTAL NET DE DEPRECIATIONS",
+    },
+  },
+  {
+    numero: "6",
+    titre: "Stocks et en cours",
+    source: "actif",
+    sections: [
+      {
+        total: "TOTAL BRUT STOCKS ET EN COURS",
+        prefixes: ["31", "32", "33", "34", "35", "36", "37", "38"],
+        lignes: [
+          { libelle: "Marchandises", prefixes: ["31"] },
+          { libelle: "Matières premières et fournitures liées", prefixes: ["32"] },
+          { libelle: "Autres approvisionnements", prefixes: ["33"] },
+          { libelle: "Produits en cours", prefixes: ["34"] },
+          { libelle: "Services en cours", prefixes: ["35"] },
+          { libelle: "Produits finis", prefixes: ["36"] },
+          { libelle: "Produits intermédiaires", prefixes: ["37"] },
+          { libelle: "Stocks en cours de route, en consignation ou en dépôt", prefixes: ["38"] },
+        ],
+      },
+    ],
+    depreciations: {
+      lignes: [{ libelle: "Dépréciations des stocks", prefixes: ["39"] }],
+      totalNet: "TOTAL NET DE DEPRECIATIONS",
+    },
+  },
+  {
+    numero: "8",
+    titre: "Autres créances",
+    source: "actif",
+    sections: [
+      {
+        // Mêmes comptes que le poste BJ du bilan.
+        total: "TOTAL BRUT AUTRES CREANCES",
+        prefixes: ["42", "43", "44", "45", "46", "47", "185"],
+        exclus: ["478", "479"],
+        lignes: [
+          { libelle: "Personnel", prefixes: ["42"] },
+          { libelle: "Organismes sociaux", prefixes: ["43"] },
+          { libelle: "Etat et Collectivités publiques", prefixes: ["44"] },
+          { libelle: "Organismes internationaux", prefixes: ["45"] },
+          { libelle: "Apporteurs, associés et groupe", prefixes: ["46"] },
+          {
+            libelle:
+              "Compte transitoire ajustement spécial lié à la révision du SYSCOHADA (Voir Notes 8A & 8C)",
+            prefixes: ["475"],
+          },
+          { libelle: "Autres débiteurs divers", prefixes: ["47"], exclus: ["475"] },
+          {
+            libelle: "Comptes permanents non bloqués des établissements et des succursales",
+            prefixes: ["185"],
+          },
+        ],
+      },
+    ],
+    depreciations: {
+      lignes: [
+        {
+          libelle: "Dépréciations des autres créances",
+          prefixes: ["492", "493", "494", "495", "496", "497"],
+        },
+      ],
+      totalNet: "TOTAL NET DE DEPRECIATIONS",
+    },
+  },
+  {
+    numero: "9",
+    titre: "Titres de placement",
+    source: "actif",
+    sections: [
+      {
+        total: "TOTAL BRUT TITRES",
+        prefixes: ["50"],
+        lignes: [
+          { libelle: "Titres de trésor et bons de caisse à court terme", prefixes: ["501"] },
+          { libelle: "Actions", prefixes: ["502"] },
+          { libelle: "Obligations", prefixes: ["503"] },
+          { libelle: "Bons de souscription", prefixes: ["504"] },
+          { libelle: "Titres négociables hors régions", prefixes: ["505"] },
+          { libelle: "Intérêts courus", prefixes: ["506"] },
+          { libelle: "Autres valeurs assimilées", prefixes: ["508"] },
+        ],
+      },
+    ],
+    depreciations: {
+      lignes: [{ libelle: "Dépréciations des titres", prefixes: ["590"] }],
+      totalNet: "TOTAL NET DE DEPRECIATIONS",
+    },
+  },
+  {
+    numero: "10",
+    titre: "Valeurs à encaisser",
+    source: "actif",
+    sections: [
+      {
+        total: "TOTAL BRUT VALEURS A ENCAISSER",
+        prefixes: ["51"],
+        lignes: [
+          { libelle: "Effets à encaisser", prefixes: ["511"] },
+          { libelle: "Effets à l'encaissement", prefixes: ["512"] },
+          { libelle: "Chèques à encaisser", prefixes: ["513"] },
+          { libelle: "Chèques à l'encaissement", prefixes: ["514"] },
+          { libelle: "Cartes de crédit à encaisser", prefixes: ["515"] },
+          { libelle: "Autres valeurs à encaisser", prefixes: ["518"] },
+        ],
+      },
+    ],
+    depreciations: {
+      lignes: [{ libelle: "Dépréciations des valeurs à encaisser", prefixes: ["591"] }],
+      totalNet: "TOTAL NET DE DEPRECIATIONS",
+    },
+  },
+  {
+    numero: "14",
+    titre: "Primes et réserves",
+    source: "capitaux",
+    sections: [
+      {
+        total: "TOTAL PRIMES",
+        prefixes: ["105"],
+        lignes: [
+          { libelle: "Primes d'émission", prefixes: ["1051"] },
+          { libelle: "Prime d'apport", prefixes: ["1052"] },
+          { libelle: "Prime de fusion", prefixes: ["1053"] },
+          { libelle: "Prime de conversion", prefixes: ["1054"] },
+          { libelle: "Autres primes", prefixes: ["1058"] },
+        ],
+      },
+      {
+        total: "TOTAL RESERVES INDISPONIBLES",
+        prefixes: ["111", "112", "113"],
+        lignes: [
+          { libelle: "Réserves légales", prefixes: ["111"] },
+          { libelle: "Réserves statutaires", prefixes: ["112"] },
+          { libelle: "Réserves de plus-values nettes à long terme", prefixes: ["1131"] },
+          {
+            libelle:
+              "Réserves d'attribution gratuite d'actions au personnel salarié et aux dirigeants",
+            prefixes: ["1132"],
+          },
+          { libelle: "Autres réserves réglementées", prefixes: ["113"], exclus: ["1131", "1132"] },
+        ],
+      },
+      {
+        prefixes: [],
+        lignes: [
+          { libelle: "Réserves libres", prefixes: ["118"] },
+          { libelle: "Report à nouveau", prefixes: ["12"] },
+        ],
+      },
+    ],
+  },
+  {
+    numero: "15A",
+    titre: "Subventions d'investissement et provisions réglementées",
+    source: "capitaux",
+    sections: [
+      {
+        total: "TOTAL SUBVENTIONS",
+        prefixes: ["14"],
+        lignes: [
+          { libelle: "État", prefixes: ["1411"] },
+          { libelle: "Régions", prefixes: ["1412"] },
+          { libelle: "Départements", prefixes: ["1413"] },
+          { libelle: "Communes et collectivités publiques décentralisées", prefixes: ["1414"] },
+          { libelle: "Entités publiques ou mixtes", prefixes: ["1415"] },
+          { libelle: "Entités et organismes privés", prefixes: ["1416"] },
+          { libelle: "Organismes internationaux", prefixes: ["1417"] },
+          { libelle: "Autres", prefixes: ["1418", "148"] },
+        ],
+      },
+      {
+        total: "TOTAL PROVISIONS REGLEMENTEES",
+        prefixes: ["15"],
+        lignes: [
+          { libelle: "Amortissements dérogatoires", prefixes: ["151"] },
+          { libelle: "Plus-value de cession à réinvestir", prefixes: ["152"] },
+          { libelle: "Provisions spéciales de réévaluation", prefixes: ["154"] },
+          { libelle: "Provisions réglementées relatives aux immobilisations", prefixes: ["155"] },
+          { libelle: "Provisions réglementées relatives aux stocks", prefixes: ["156"] },
+          { libelle: "Provisions pour investissement", prefixes: ["157"] },
+          { libelle: "Autres provisions et fonds réglementés", prefixes: ["153", "158"] },
+        ],
+      },
+    ],
+    totalGeneral: "TOTAL SUBVENTIONS ET PROVISIONS REGLEMENTEES",
+  },
+  {
+    numero: "16A",
+    titre: "Dettes financières et ressources assimilées",
+    source: "passif",
+    sections: [
+      {
+        // Postes DA, DB et DC du bilan.
+        total: "TOTAL EMPRUNTS ET DETTES FINANCIERES",
+        prefixes: ["16", "181", "182", "183", "184"],
+        lignes: [
+          { libelle: "Emprunts obligataires", prefixes: ["161"] },
+          { libelle: "Emprunts et dettes auprès des établissements de crédit", prefixes: ["162"] },
+          { libelle: "Avances reçues de l'Etat", prefixes: ["163"] },
+          { libelle: "Avances reçues et comptes courants bloqués", prefixes: ["164"] },
+          { libelle: "Dépôts et cautionnements reçus", prefixes: ["165"] },
+          { libelle: "Intérêts courus", prefixes: ["166"] },
+          { libelle: "Avances et dettes assorties de conditions particulières", prefixes: ["167"] },
+          { libelle: "Autres emprunts et dettes", prefixes: ["168"] },
+          {
+            libelle: "Dettes liées à des participations et sociétés en participation",
+            prefixes: ["181", "182", "183"],
+          },
+          {
+            libelle: "Comptes permanents bloqués des établissements et succursales",
+            prefixes: ["184"],
+          },
+        ],
+      },
+      {
+        total: "TOTAL DETTES DE LOCATION ACQUISITION",
+        prefixes: ["17"],
+        lignes: [
+          { libelle: "Crédit bail immobilier", prefixes: ["172"] },
+          { libelle: "Crédit bail mobilier", prefixes: ["173"] },
+          { libelle: "Location vente", prefixes: ["174"] },
+          { libelle: "Intérêts courus", prefixes: ["176"] },
+          { libelle: "Autres dettes de location acquisition", prefixes: ["178"] },
+        ],
+      },
+      {
+        total: "TOTAL PROVISIONS POUR RISQUES ET CHARGES",
+        prefixes: ["19"],
+        lignes: [
+          { libelle: "Provisions pour litiges", prefixes: ["191"] },
+          { libelle: "Provisions pour garantie donnés aux clients", prefixes: ["192"] },
+          { libelle: "Provisions pour pertes sur marchés à achèvement futur", prefixes: ["193"] },
+          { libelle: "Provisions pour pertes de change", prefixes: ["194"] },
+          { libelle: "Provisions pour impôts", prefixes: ["195"] },
+          {
+            libelle: "Provisions pour pensions et obligations assimilées - engagements de retraite",
+            prefixes: ["196"],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    numero: "19",
+    titre: "Autres dettes et provisions pour risques et charges",
+    source: "passif",
+    sections: [
+      {
+        total: "TOTAL DETTES ASSOCIES",
+        prefixes: ["45", "46"],
+        lignes: [
+          { libelle: "Organismes internationaux", prefixes: ["45"] },
+          { libelle: "Apporteurs, opérations sur le capital", prefixes: ["461"] },
+          { libelle: "Associés, compte courant", prefixes: ["462"] },
+          { libelle: "Associés dividendes à payer", prefixes: ["465"] },
+          { libelle: "Groupe, comptes courants", prefixes: ["466"] },
+          {
+            libelle: "Autres dettes associés",
+            prefixes: ["46"],
+            exclus: ["461", "462", "465", "466"],
+          },
+        ],
+      },
+      {
+        total: "TOTAL CREDITEURS DIVERS",
+        prefixes: ["47"],
+        exclus: ["478", "479"],
+        lignes: [
+          { libelle: "Créditeurs divers", prefixes: ["471"] },
+          {
+            libelle:
+              "Compte transitoire ajustement spécial lié à la révision du SYSCOHADA (Voir Note 8B)",
+            prefixes: ["475"],
+          },
+          {
+            libelle: "Autres créditeurs divers",
+            prefixes: ["47"],
+            exclus: ["471", "472", "473", "474", "475"],
+          },
+        ],
+      },
+      {
+        total: "TOTAL COMPTES DE LIAISON",
+        prefixes: ["185", "186", "187", "188"],
+        lignes: [
+          {
+            libelle: "Comptes permanents non bloqués des établissements et des succursales",
+            prefixes: ["185"],
+          },
+          { libelle: "Comptes de liaison charges et produits", prefixes: ["186", "187"] },
+          { libelle: "Comptes de liaison des sociétés en participation", prefixes: ["188"] },
+        ],
+      },
+    ],
+    totalGeneral: "TOTAL AUTRES DETTES",
+  },
+  {
+    numero: "20",
+    titre: "Banques, crédits d'escompte et de trésorerie",
+    source: "passif",
+    sections: [
+      {
+        total: "TOTAL: BANQUES, CREDITS D'ESCOMPTE ET DE TRESORERIE",
+        prefixes: ["564", "565"],
+        lignes: [
+          { libelle: "Escomptes de crédit de campagne", prefixes: ["564"] },
+          { libelle: "Escomptes de crédit ordinaires", prefixes: ["565"] },
+        ],
+      },
+      {
+        // Poste DR : comptes 52 à 58 créditeurs, 56 hors escomptes.
+        total: "TOTAL: BANQUES, CREDITS DE TRESORERIE",
+        prefixes: ["52", "53", "54", "55", "56", "57", "58"],
+        exclus: ["564", "565"],
+        lignes: [
+          { libelle: "Banques locales", prefixes: ["521"] },
+          { libelle: "Banques autres états région", prefixes: ["522"] },
+          { libelle: "Autres Banques", prefixes: ["523", "524", "525"] },
+          { libelle: "Banques intérêts courus", prefixes: ["526"] },
+          { libelle: "Crédit de trésorerie", prefixes: ["561"] },
+        ],
+      },
+    ],
+    totalGeneral: "TOTAL GENERAL",
+  },
+  {
+    numero: "27A",
+    titre: "Charges de personnel",
+    source: "charges",
+    sections: [
+      {
+        total: "TOTAL",
+        prefixes: ["66"],
+        lignes: [
+          { libelle: "Rémunérations directes versées au personnel national", prefixes: ["661"] },
+          {
+            libelle: "Rémunérations directes versées au personnel non national",
+            prefixes: ["662"],
+          },
+          { libelle: "Indemnités forfaitaires versées au personnel", prefixes: ["663"] },
+          { libelle: "Charges sociales (personnel national)", prefixes: ["664"] },
+          { libelle: "Charges sociales (personnel non national)", prefixes: ["665"] },
+          {
+            libelle: "Rémunérations et charges sociales de l'exploitant individuel",
+            prefixes: ["666"],
+          },
+          { libelle: "Rémunération transférée de personnel extérieur", prefixes: ["667"] },
+          { libelle: "Autres charges sociales", prefixes: ["668"] },
+        ],
+      },
+    ],
+  },
+  {
+    numero: "29",
+    titre: "Charges et revenus financiers",
+    source: "charges",
+    sections: [
+      {
+        total: "SOUS TOTAL : FRAIS FINANCIERS (A)",
+        prefixes: ["67"],
+        lignes: [
+          { libelle: "Intérêts des emprunts", prefixes: ["671"] },
+          { libelle: "Intérêts dans loyers de locations acquisition", prefixes: ["672"] },
+          { libelle: "Escomptes accordés", prefixes: ["673"] },
+          { libelle: "Autres intérêts", prefixes: ["674"] },
+          { libelle: "Escomptes des effets de commerce", prefixes: ["675"] },
+          { libelle: "Pertes de change financières", prefixes: ["676"] },
+          { libelle: "Pertes sur cessions de titres de placement", prefixes: ["677"] },
+        ],
+      },
+      {
+        total: "SOUS TOTAL : REVENUS FINANCIERS (B)",
+        prefixes: ["77"],
+        source: "produits",
+        lignes: [
+          { libelle: "Intérêts de prêts et créances diverses", prefixes: ["771"] },
+          { libelle: "Revenus de participations et autres titres immobilisés", prefixes: ["772"] },
+          { libelle: "Escomptes obtenus", prefixes: ["773"] },
+          { libelle: "Revenus de placement", prefixes: ["774"] },
+          { libelle: "Intérêts dans loyers de location-financement", prefixes: ["775"] },
+          { libelle: "Gains de change financiers", prefixes: ["776"] },
+          { libelle: "Gains sur cessions de titres de placement", prefixes: ["777"] },
+        ],
+      },
+    ],
+  },
 ];
 
 export type NiveauLigne = "detail" | "total" | "general";
-export type LigneNote = { libelle: string; montant: number; niveau: NiveauLigne };
+export type LigneNote = {
+  libelle: string;
+  montant: number;
+  niveau: NiveauLigne;
+  /** Dépréciation : négative ici, déduite du brut ; positive dans la liasse. */
+  deduite?: boolean;
+};
 export type NoteCalculee = { numero: string; titre: string; lignes: LigneNote[] };
 
 const correspond = (compte: string, prefixes: string[], exclus: string[] = []) =>
@@ -372,6 +824,7 @@ export function calculerNotes(cumul: BalanceRow[], periode: BalanceRow[]): NoteC
   const montant = (r: BalanceRow, source: Source): number | null => {
     if (source === "actif") return r.solde > 0 ? r.solde : null;
     if (source === "passif") return r.solde < 0 ? -r.solde : null;
+    if (source === "capitaux") return -r.solde;
     return source === "charges" ? r.solde : -r.solde;
   };
   const somme = (source: Source, prefixes: string[], exclus?: string[]) => {
@@ -397,15 +850,19 @@ export function calculerNotes(cumul: BalanceRow[], periode: BalanceRow[]): NoteC
         detail += v;
         lignes.push({ libelle: l.libelle, montant: v, niveau: "detail" });
       }
-      const total = somme(source, section.prefixes, section.exclus);
+      const total = section.total ? somme(source, section.prefixes, section.exclus) : detail;
       const reste = Math.round((total - detail) * 100) / 100;
       if (section.lignes.length && reste)
         lignes.push({ libelle: "Autres comptes (non ventilé)", montant: reste, niveau: "detail" });
-      lignes.push({ libelle: section.total, montant: total, niveau: "total" });
+      if (section.total) lignes.push({ libelle: section.total, montant: total, niveau: "total" });
       general += total;
       if (i === 0 && note.depreciations) {
-        const dep = -somme("passif", note.depreciations.prefixes);
-        lignes.push({ libelle: note.depreciations.libelle, montant: dep, niveau: "detail" });
+        let dep = 0;
+        for (const d of note.depreciations.lignes) {
+          const v = -somme("passif", d.prefixes);
+          dep += v;
+          lignes.push({ libelle: d.libelle, montant: v, niveau: "detail", deduite: true });
+        }
         lignes.push({
           libelle: note.depreciations.totalNet,
           montant: total + dep,
