@@ -27,6 +27,7 @@ import { usePermissions } from "@/hooks/use-permissions";
 import { formatFCFA } from "@/lib/format";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 import { friendlyError } from "@/lib/friendly-error";
+import { ControleIntegriteCard } from "@/components/comptabilite/ControleIntegriteCard";
 
 export const Route = createFileRoute("/_authenticated/comptabilite/audit")({
   component: ComptaAuditPage,
@@ -352,6 +353,8 @@ function ComptaAuditPage() {
           </ResponsiveTable>
         </CardContent>
       </Card>
+
+      <ControleIntegriteCard />
     </div>
   );
 }
