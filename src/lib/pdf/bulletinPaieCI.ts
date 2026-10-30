@@ -414,7 +414,7 @@ export async function generateBulletinPaieCIPDF(
   const padX = 16 * PX;
   const netLabel = "NET À PAYER";
   const netAmount = `${moneyAlways(tot.netAPayer)} FCFA`;
-  const gap = 6;
+  const netGap = 6;
   doc.setFont("helvetica", "bold");
   doc.setFontSize(13);
   doc.setCharSpace(0.5 * PX);
@@ -422,7 +422,7 @@ export async function generateBulletinPaieCIPDF(
   doc.setCharSpace(0);
   doc.setFontSize(22);
   const amountW = doc.getTextWidth(netAmount);
-  const netW = Math.min(TW, padX * 2 + labelW + gap + amountW);
+  const netW = Math.min(TW, padX * 2 + labelW + netGap + amountW);
   const netX = X0 + (TW - netW) / 2;
   const netH = padY * 2 + 8;
   const netBot = netTop + netH;
