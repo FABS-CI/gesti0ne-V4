@@ -9,33 +9,49 @@ jobs:
   k6-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      SUPABASE_URL:       ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY:  ${{ secrets.SUPABASE_ANON_KEY }}
+      TEST_EMAIL:         ${{ secrets.K6_TEST_EMAIL }}
+      TEST_PASSWORD:      ${{ secrets.K6_TEST_PASSWORD }}
+      TEST_CLIENT_ID:     ${{ secrets.K6_TEST_CLIENT_ID }}
+      BASE_URL:           ${{ secrets.K6_BASE_URL }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install k6
+      # Le test se connecte avec un compte dédié (voir scripts/load/k6-smoke.js).
+      # Sans ses secrets, il est ignoré avec un avertissement au lieu d'échouer.
+      - name: Check k6 secrets
+        id: secrets
         run: |
-          sudo gpg -k
-          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg \
-            --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
-          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" \
-            | sudo tee /etc/apt/sources.list.d/k6.list
-          sudo apt-get update
-          sudo apt-get install -y k6
+          manquants=""
+          for v in SUPABASE_URL SUPABASE_ANON_KEY TEST_EMAIL TEST_PASSWORD TEST_CLIENT_ID; do
+            [ -n "${!v}" ] || manquants="$manquants $v"
+          done
+          if [ -n "$manquants" ]; then
+            echo "::warning title=k6-smoke ignoré::Secrets absents :$manquants (SUPABASE_URL, SUPABASE_ANON_KEY, K6_TEST_EMAIL, K6_TEST_PASSWORD, K6_TEST_CLIENT_ID à configurer dans Settings > Secrets and variables > Actions)"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Action officielle Grafana : binaire k6 téléchargé directement. Le dépôt apt
+      # dl.k6.io est désormais signé par une autre clé (NO_PUBKEY C780D0BDB1A69C86)
+      # et refusait l'installation.
+      - name: Install k6
+        if: steps.secrets.outputs.ok == 'true'
+        uses: grafana/setup-k6-action@v1
 
       - name: Run k6 smoke scenario only
+        if: steps.secrets.outputs.ok == 'true'
         env:
-          SUPABASE_URL:       ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY:  ${{ secrets.SUPABASE_ANON_KEY }}
-          TEST_EMAIL:         ${{ secrets.K6_TEST_EMAIL }}
-          TEST_PASSWORD:      ${{ secrets.K6_TEST_PASSWORD }}
-          TEST_CLIENT_ID:     ${{ secrets.K6_TEST_CLIENT_ID }}
-          BASE_URL:           ${{ secrets.K6_BASE_URL }}
-        # PR = smoke uniquement (30s / 5 VUs). Le scénario "ramp" reste dispo
-        # en manuel via workflow_dispatch en supprimant --exclude-scenarios.
-        run: k6 run --exclude-scenarios=ramp scripts/load/k6-smoke.js
+          # PR = smoke uniquement (30s / 5 VUs). Le scénario "ramp" reste dispo
+          # en manuel : SCENARIOS=smoke,ramp (k6 n'a pas d'option --exclude-scenarios).
+          SCENARIOS: smoke
+        run: k6 run scripts/load/k6-smoke.js
 
       - name: Upload k6 summary
-        if: always()
+        if: always() && steps.secrets.outputs.ok == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: k6-summary

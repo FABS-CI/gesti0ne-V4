@@ -51,6 +51,12 @@ CALLS = [
 
 REQUIRED = ["EDITIONS FABS-CI", "CODE", "FABS-QA-2026-0001", "DÉSIGNATION"]
 
+# Modules chargés avant les générations (voir le warm-up dans main).
+WARMUP = [
+    "/src/lib/pdf/fabsTemplates.ts",
+    "/src/integrations/supabase/client.ts",
+]
+
 
 async def main() -> int:
     failures = 0
@@ -58,31 +64,61 @@ async def main() -> int:
         b = await p.chromium.launch(headless=True)
         ctx = await b.new_context(viewport={"width": 1280, "height": 1800})
         page = await ctx.new_page()
+        # Une ré-optimisation Vite peut retenir le serveur au-delà de 30 s.
+        page.set_default_navigation_timeout(90_000)
         page.on("pageerror", lambda e: print("PAGEERROR:", e))
-        await page.goto("http://localhost:8080/auth", wait_until="domcontentloaded")
-        # Warm-up : précharge le module pour éviter une navigation HMR
-        # pendant le premier evaluate (qui détruirait le contexte).
-        for _ in range(3):
+
+        async def accueil():
+            await page.goto("http://localhost:8080/auth", wait_until="domcontentloaded")
+
+        def script(fn: str) -> str:
+            args = "data, 'QA'" if fn == "generateAvoirPDF" else "data"
+            return f"""async (data) => {{
+                const m = await import('/src/lib/pdf/fabsTemplates.ts');
+                const blob = await m.{fn}({args});
+                const buf = new Uint8Array(await blob.arrayBuffer());
+                let bin = '';
+                for (let i = 0; i < buf.length; i++) bin += String.fromCharCode(buf[i]);
+                return btoa(bin);
+            }}"""
+
+        await accueil()
+        # Échauffement : Vite optimise les dépendances au premier import et recharge
+        # alors la page, ce qui détruit le contexte d'un evaluate en cours. Certaines
+        # ne sont chargées qu'à la demande pendant la génération (client Supabase
+        # pour les factures et proformas…). On précharge les modules, puis on génère
+        # une première fois chaque document sans l'évaluer, jusqu'à ce qu'aucun
+        # rechargement ne se produise : le passage contrôlé ci-dessous part d'un
+        # serveur stable.
+        for module in WARMUP:
             try:
-                await page.evaluate("() => import('/src/lib/pdf/fabsTemplates.ts')")
-                await page.wait_for_timeout(300)
-                break
+                await page.evaluate(f"() => import('{module}').then(() => true, () => true)")
             except Exception:
-                await page.goto("http://localhost:8080/auth", wait_until="domcontentloaded")
+                await accueil()
+        for _ in range(3):
+            stable = True
+            for _code, fn in CALLS:
+                try:
+                    await page.evaluate(script(fn), SAMPLE)
+                except Exception:
+                    stable = False
+                    await page.wait_for_timeout(2000)
+                    await accueil()
+            if stable:
+                break
+        await accueil()
         for code, fn in CALLS:
             try:
-                args = "data, 'QA'" if fn == "generateAvoirPDF" else "data"
-                b64 = await page.evaluate(
-                    f"""async (data) => {{
-                        const m = await import('/src/lib/pdf/fabsTemplates.ts');
-                        const blob = await m.{fn}({args});
-                        const buf = new Uint8Array(await blob.arrayBuffer());
-                        let bin = '';
-                        for (let i = 0; i < buf.length; i++) bin += String.fromCharCode(buf[i]);
-                        return btoa(bin);
-                    }}""",
-                    SAMPLE,
-                )
+                # Rechargement résiduel pendant la génération : on recharge la page et
+                # on recommence (au plus 3 essais) ; toute autre erreur est un échec.
+                for essai in range(3):
+                    try:
+                        b64 = await page.evaluate(script(fn), SAMPLE)
+                        break
+                    except Exception as e:
+                        if "Execution context was destroyed" not in str(e) or essai == 2:
+                            raise
+                        await accueil()
                 pdf = OUT / f"{code}.pdf"
                 pdf.write_bytes(base64.b64decode(b64))
                 subprocess.run(["pdftoppm", "-jpeg", "-r", "90", str(pdf), str(SHOTS / code)], check=True)
@@ -98,6 +134,8 @@ async def main() -> int:
                 failures += 1
         await b.close()
     print(f"\nScreenshots → {SHOTS}")
+    # Lu par le workflow : le nombre attendu suit la liste CALLS.
+    print(f"Documents : {len(CALLS) - failures}/{len(CALLS)}")
     return failures
 
 
