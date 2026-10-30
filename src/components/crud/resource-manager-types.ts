@@ -99,6 +99,10 @@ export type ResourceConfig = {
   hideCsvExport?: boolean;
   rowActions?: RowAction[];
   readOnly?: boolean;
+  /** Ligne modifiable (bouton « Modifier ») ; toutes par défaut. */
+  canEditRow?: (row: Row) => boolean;
+  /** Ligne supprimable (bouton « Supprimer ») ; toutes par défaut. */
+  canDeleteRow?: (row: Row) => boolean;
   orderField?: string;
   advancedFilters?: AdvancedFiltersConfig;
   pdfExport?: { title: string; filename?: string };

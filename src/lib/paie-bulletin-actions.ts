@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { callRpc } from "@/lib/rpc";
 import { downloadBlob } from "@/lib/pdf/fabsTemplates";
 import { generateBulletinPaieCIPDF, bulletinFileName, ENTREPRISE_FABS } from "@/lib/pdf/bulletinPaieCI";
 import {
@@ -9,17 +10,26 @@ import {
   type LigneStockee,
 } from "@/lib/paie/bulletin-pdf-data";
 
-/** CMU : forfait mensuel fixe (salarié et employeur). */
-export const CMU_FORFAIT_FCFA = 1000;
-
-/** Statuts pouvant encore être validés. */
+/** Statuts pouvant encore être validés (et supprimés : brouillons). */
 export const STATUTS_VALIDABLES = ["brouillon", "genere"] as const;
 export const estValidable = (statut: unknown) =>
   (STATUTS_VALIDABLES as readonly string[]).includes(String(statut));
+/** Seul un bulletin validé non payé s'annule (motif requis, écriture contre-passée). */
+export const estAnnulable = (statut: unknown) => statut === "valide";
 
 /** Validation directe, droits vérifiés côté serveur. */
 export async function validerBulletin(bulletinId: string) {
   const { error } = await supabase.rpc("paie_valider_bulletin", { p_bulletin_id: bulletinId });
+  if (error) throw error;
+}
+
+/** Annulation tracée (migration 0110) : l'écriture du bulletin est contre-passée. */
+export async function annulerBulletin(bulletinId: string, motif: string) {
+  const { error } = await callRpc(
+    "paie_annuler_bulletin",
+    { p_bulletin_id: bulletinId, p_motif: motif },
+    { module: "paie", recordId: bulletinId },
+  );
   if (error) throw error;
 }
 

@@ -102,6 +102,19 @@ export async function updateTransaction(id: string, input: TransactionInput) {
   return data as Transaction;
 }
 
+/**
+ * Annule une transaction : elle sort des totaux mais reste dans l'historique. Une
+ * transaction validée ne se supprime ni ne se modifie plus (contrôlé en base).
+ */
+export async function annulerTransaction(id: string) {
+  const { error } = await supabase
+    .from("transactions")
+    .update({ statut: "annule" })
+    .eq("transaction_id", id);
+  if (error) throw error;
+}
+
+/** Suppression : seulement une transaction en attente (contrôlé en base). */
 export async function deleteTransaction(id: string) {
   const { error } = await supabase.from("transactions").delete().eq("transaction_id", id);
   if (error) throw error;

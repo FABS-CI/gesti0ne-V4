@@ -1,4 +1,4 @@
-import { Pencil, Trash2, Wallet } from "lucide-react";
+import { Ban, Pencil, Trash2, Wallet } from "lucide-react";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -24,10 +24,13 @@ type Props = {
   transactions: Transaction[];
   isLoading: boolean;
   onEdit: (t: Transaction) => void;
+  /** Suppression : transaction en attente seulement. */
   onDelete: (id: string) => void;
+  /** Annulation : transaction validée (elle reste dans l'historique). */
+  onAnnuler: (id: string) => void;
 };
 
-export function TransactionsTable({ transactions, isLoading, onEdit, onDelete }: Props) {
+export function TransactionsTable({ transactions, isLoading, onEdit, onDelete, onAnnuler }: Props) {
   const { confirm, dialog: confirmDialog } = useConfirmDelete();
   return (
     <div className="rounded-lg border">
@@ -70,7 +73,9 @@ export function TransactionsTable({ transactions, isLoading, onEdit, onDelete }:
               return (
                 <TableRow key={t.transaction_id}>
                   <TableCell className="font-mono text-xs">{t.reference}</TableCell>
-                  <TableCell className="whitespace-nowrap">{formatDate(t.date_transaction)}</TableCell>
+                  <TableCell className="whitespace-nowrap">
+                    {formatDate(t.date_transaction)}
+                  </TableCell>
                   <TableCell className="font-medium">{t.libelle}</TableCell>
                   <TableCell>{CATEGORIE_TRANSACTION_LABEL[t.categorie] ?? t.categorie}</TableCell>
                   <TableCell>
@@ -97,26 +102,57 @@ export function TransactionsTable({ transactions, isLoading, onEdit, onDelete }:
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button aria-label="Modifier" variant="ghost" size="icon" onClick={() => onEdit(t)}>
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Can permission="finances.supprimer">
-                      <Button aria-label="Supprimer"
+                    {t.statut !== "annule" && (
+                      <Button
+                        aria-label="Modifier"
                         variant="ghost"
                         size="icon"
-                        onClick={async () => {
-                          const r = await confirm({
-                            title: "Supprimer cette transaction ?",
-                            entityLabel: "la transaction",
-                            entityName: t.reference ?? undefined,
-                          });
-                          if (r === false) return;
-                          onDelete(t.transaction_id);
-                        }}
+                        onClick={() => onEdit(t)}
                       >
-                        <Trash2 className="h-4 w-4 text-destructive" />
+                        <Pencil className="h-4 w-4" />
                       </Button>
-                    </Can>
+                    )}
+                    {t.statut === "valide" && (
+                      <Can permission="finances.supprimer">
+                        <Button
+                          aria-label="Annuler la transaction"
+                          title="Annuler (la transaction reste dans l'historique)"
+                          variant="ghost"
+                          size="icon"
+                          onClick={async () => {
+                            const r = await confirm({
+                              title: "Annuler cette transaction ?",
+                              entityLabel: "la transaction",
+                              entityName: t.reference ?? undefined,
+                            });
+                            if (r === false) return;
+                            onAnnuler(t.transaction_id);
+                          }}
+                        >
+                          <Ban className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </Can>
+                    )}
+                    {t.statut === "en_attente" && (
+                      <Can permission="finances.supprimer">
+                        <Button
+                          aria-label="Supprimer"
+                          variant="ghost"
+                          size="icon"
+                          onClick={async () => {
+                            const r = await confirm({
+                              title: "Supprimer cette transaction ?",
+                              entityLabel: "la transaction",
+                              entityName: t.reference ?? undefined,
+                            });
+                            if (r === false) return;
+                            onDelete(t.transaction_id);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </Can>
+                    )}
                   </TableCell>
                 </TableRow>
               );
