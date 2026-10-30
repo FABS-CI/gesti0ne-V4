@@ -10,19 +10,17 @@ export type DonneesExport = {
   n1?: EtatsPourPdf;
   exercice: { date_debut: string; date_fin: string; libelle: string };
   exerciceN1: { libelle: string } | null;
+  /** Exercice précédent, même sans données (dates de la fiche R1). */
+  precedent?: { date_debut: string; date_fin: string } | null;
   identite: Record<string, ValeurIdentite>;
   controles: Controle[];
   /** Version du dossier exportée ; absent : données actuelles non enregistrées. */
   version?: string;
 };
 
-export const identiteExport = (i: Record<string, ValeurIdentite>) => ({
-  denomination: i.denomination?.valeur,
-  sigle: i.sigle?.valeur,
-  adresse: i.adresse?.valeur,
-  ncc: i.ncc?.valeur,
-  ntd: i.ntd?.valeur,
-});
+/** Tous les champs renseignés de la fiche d'identification, par clé. */
+export const identiteExport = (i: Record<string, ValeurIdentite>): Record<string, string> =>
+  Object.fromEntries(Object.entries(i).flatMap(([cle, v]) => (v?.valeur ? [[cle, v.valeur]] : [])));
 
 export const anneeExport = (d: DonneesExport) => d.exercice.date_fin.slice(0, 4);
 

@@ -15,9 +15,14 @@ import {
 import { LIGNES_TFT } from "@/lib/etats-financiers/tft";
 import type { EtatsPourXml } from "@/lib/etats-financiers/xml-edi";
 import type { NoteCalculee } from "@/lib/etats-financiers/notes";
+import type { NoteTableau } from "@/lib/etats-financiers/notes-immobilisations";
 import { dureeMois, type Controle } from "@/lib/etats-financiers/controles";
 
-export type EtatsPourPdf = EtatsPourXml & { notes: NoteCalculee[] };
+export type EtatsPourPdf = EtatsPourXml & {
+  notes: NoteCalculee[];
+  /** Notes 3A, 3C, 3C BIS, 3D (absentes des dossiers enregistrés avant leur ajout). */
+  immobilisations?: NoteTableau[];
+};
 
 export type ParametresPdf = {
   n: EtatsPourPdf;
@@ -189,9 +194,47 @@ function pageGarde(doc: jsPDF, p: ParametresPdf) {
   doc.setTextColor(0, 0, 0);
 }
 
+/** Notes 3 : tableaux de mouvements en paysage, hypothèses sous le tableau. */
+function pagesImmobilisations(doc: jsPDF, p: ParametresPdf, tableaux: NoteTableau[]) {
+  tableaux.forEach((t, i) => {
+    // La section commence sur une page portrait : remplacée par une page paysage.
+    if (i === 0) doc.deletePage(doc.getNumberOfPages());
+    doc.addPage("a4", "landscape");
+    tableau(
+      doc,
+      p,
+      `NOTE ${t.numero} : ${t.titre.toUpperCase()}`,
+      ["Rubriques", ...t.colonnes.map((c) => c.libelle)],
+      t.lignes.map((l) => [l.libelle, ...t.colonnes.map((c) => montantPdf(l.valeurs[c.cle]))]),
+      new Set(t.lignes.flatMap((l, j) => (l.niveau === "detail" ? [] : [j]))),
+      t.colonnes.map((_c, j) => j + 1),
+    );
+    const notes = [
+      ...t.hypotheses.map((h) => `Hypothèse : ${h}.`),
+      "Case vide : montant non disponible dans la comptabilité, à compléter.",
+    ];
+    let y = (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 5;
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(7.5);
+    doc.setTextColor(90, 90, 90);
+    for (const n of notes) {
+      const lignes = doc.splitTextToSize(
+        texteWinAnsi(n),
+        doc.internal.pageSize.getWidth() - 2 * MARGE,
+      );
+      doc.text(lignes, MARGE, y);
+      y += 3.6 * lignes.length;
+    }
+    doc.setTextColor(0, 0, 0);
+  });
+  // Les autres notes reprennent en portrait.
+  if (tableaux.length && p.n.notes.length) doc.addPage("a4", "portrait");
+}
+
 function pageNotes(doc: jsPDF, p: ParametresPdf) {
   const nomN = p.exercice.libelle;
   const nomN1 = p.exerciceN1?.libelle ?? "N-1";
+  pagesImmobilisations(doc, p, p.n.immobilisations ?? []);
   p.n.notes.forEach((note, i) => {
     if (i > 0) doc.addPage("a4", "portrait");
     const n1 = new Map(

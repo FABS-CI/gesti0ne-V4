@@ -6,7 +6,9 @@
 //   - les cellules de montants des feuilles BILAN, RESULTAT et TFT, repérées par le
 //     code du poste (AD, CA, TA, ZA…) et non par une position fixe ;
 //   - les en-têtes d'identification (=SOCIETE, =NCC…), dont les noms définis
-//     pointent vers un classeur externe absent : remplacés par leur valeur.
+//     pointent vers un classeur externe absent : remplacés par leur valeur ;
+//   - les lignes saisies des notes calculées par l'ERP (notes-modele.ts), les
+//     autres lignes de ces notes étant vidées.
 // Les feuilles ACTIF et PASSIF sont des formules sur BILAN : recalculées à
 // l'ouverture (fullCalcOnLoad). Une feuille « ERP - LISEZ-MOI » ajoutée en fin de
 // classeur liste ce qui a été mis à jour et ce qui reste à compléter.
@@ -22,7 +24,21 @@ import {
 } from "@/lib/etats-financiers/syscohada";
 import { LIGNES_TFT } from "@/lib/etats-financiers/tft";
 import type { EtatsPourXml } from "@/lib/etats-financiers/xml-edi";
+import type { NoteCalculee } from "@/lib/etats-financiers/notes";
+import type { NoteTableau } from "@/lib/etats-financiers/notes-immobilisations";
 import { dureeMois } from "@/lib/etats-financiers/controles";
+import {
+  COLONNES_TABLEAUX_2025,
+  CORRESPONDANCES_NOTES_2025,
+  libelleComparable,
+  type CorrespondanceNote,
+} from "@/lib/etats-financiers/notes-modele";
+import {
+  FICHE_R1_2025,
+  FICHE_R2_2025,
+  FICHE_R4_2025,
+  serieExcel,
+} from "@/lib/etats-financiers/fiches-modele";
 
 type Valeur = number | string | null;
 
@@ -80,12 +96,14 @@ export const BLOCS_MODELE_2025: Bloc[] = [
 /** Feuilles recalculées par leurs formules à partir des feuilles remplies. */
 const FEUILLES_CALCULEES = ["ACTIF", "PASSIF"];
 
+/** Champs de la fiche d'identification (identite.ts), par clé. */
 export type IdentiteExport = {
   denomination?: string;
   sigle?: string;
   adresse?: string;
   ncc?: string;
   ntd?: string;
+  [cle: string]: string | undefined;
 };
 
 export type RapportExport = {
@@ -95,6 +113,14 @@ export type RapportExport = {
   feuillesMisesAJour: string[];
   /** Feuilles contenant des montants saisis que l'ERP ne met pas à jour. */
   feuillesAVerifier: string[];
+  /** Feuilles de notes remplies depuis les notes calculées. */
+  notesRemplies: string[];
+  /** Fiches R mises à jour. */
+  fichesRemplies: string[];
+  /** Champs de la fiche R1 absents de l'ERP : valeur du modèle conservée, à vérifier. */
+  ficheR1Reprise: string[];
+  /** Hypothèses faites pour placer des montants (zone, groupe), à vérifier. */
+  hypotheses: string[];
   n1Absent: boolean;
 };
 
@@ -266,16 +292,52 @@ const NOMS_IDENTITE: Record<string, (p: ParametresExport) => Valeur> = {
   DUREE: (p) => dureeMois(p.exercice.date_debut, p.exercice.date_fin),
 };
 
+type EtatsExport = EtatsPourXml & { notes?: NoteCalculee[]; immobilisations?: NoteTableau[] };
+
 export type ParametresExport = {
   modele: ArrayBuffer | Uint8Array;
-  n: EtatsPourXml;
-  n1?: EtatsPourXml;
+  n: EtatsExport;
+  n1?: EtatsExport;
   exercice: { date_debut: string; date_fin: string };
+  /** Exercice précédent (fiche R1) ; absent : renseignements N-1 vidés. */
+  exerciceN1?: { date_debut: string; date_fin: string } | null;
   identite: IdentiteExport;
   /** Lignes d'information ajoutées à la feuille de rapport (version du dossier…). */
   informations?: Array<[string, string]>;
   blocs?: Bloc[];
+  correspondancesNotes?: Record<string, CorrespondanceNote[]>;
+  colonnesTableaux?: Record<string, Record<string, string>>;
 };
+
+/**
+ * Feuille « NOTE n » : colonnes « Année N » et « Année N-1 » de l'en-tête, et
+ * lignes de saisie (sous l'en-tête, jusqu'au « Commentaire »), par libellé.
+ */
+function lireFeuilleNote(ws: XLSX.WorkSheet) {
+  const plage = XLSX.utils.decode_range(ws["!ref"] ?? "A1");
+  const texte = (r: number, c: number) => {
+    const v = ws[XLSX.utils.encode_cell({ r, c })]?.v;
+    return v == null ? "" : libelleComparable(String(v));
+  };
+  let entete = -1;
+  let colN = -1;
+  let colN1 = -1;
+  for (let r = plage.s.r; r <= Math.min(plage.e.r, 20) && entete < 0; r++)
+    for (let c = 1; c <= plage.e.c; c++) {
+      if (texte(r, c) === "annee n") colN = c;
+      if (texte(r, c) === "annee n-1") colN1 = c;
+      if (colN >= 0 && colN1 >= 0) entete = r;
+    }
+  if (entete < 0) return null;
+  const lignes = new Map<string, number>();
+  let fin = entete + 1;
+  for (; fin <= plage.e.r; fin++) {
+    const libelle = texte(fin, 0);
+    if (libelle.startsWith("commentaire")) break;
+    if (libelle) lignes.set(libelle, fin);
+  }
+  return { colN, colN1, debut: entete + 1, fin: fin - 1, derniereColonne: plage.e.c, lignes };
+}
 
 export async function remplirModele(
   p: ParametresExport,
@@ -290,6 +352,10 @@ export async function remplirModele(
     introuvables: [],
     feuillesMisesAJour: [],
     feuillesAVerifier: [],
+    notesRemplies: [],
+    fichesRemplies: [],
+    ficheR1Reprise: [],
+    hypotheses: [],
     n1Absent: !p.n1,
   };
 
@@ -325,6 +391,174 @@ export async function remplirModele(
     }
   }
 
+  // Notes annexes : les montants saisis du modèle sont effacés (une ligne que
+  // l'ERP ne calcule pas reste vide, à compléter, plutôt qu'aux chiffres d'une
+  // autre année), puis chaque ligne calculée est placée sur sa ligne du modèle.
+  // Les totaux du modèle sont des formules : ils se recalculent.
+  const correspondances = p.correspondancesNotes ?? CORRESPONDANCES_NOTES_2025;
+  for (const note of p.n.notes ?? []) {
+    const feuille = `NOTE ${note.numero}`;
+    const ws = lu.Sheets[feuille];
+    const f = ws && lireFeuilleNote(ws);
+    if (!f) {
+      rapport.introuvables.push(`${feuille} : feuille ou colonnes « Année N / N-1 » absentes`);
+      continue;
+    }
+    const cellule = (r: number, c: number) => XLSX.utils.encode_cell({ r, c });
+    const formule = (r: number, c: number) => !!(ws[cellule(r, c)] as XLSX.CellObject)?.f;
+    for (let r = f.debut; r <= f.fin; r++) {
+      if (formule(r, f.colN)) continue;
+      for (let c = f.colN; c <= f.derniereColonne; c++) {
+        const x = ws[cellule(r, c)] as XLSX.CellObject | undefined;
+        if (x?.t === "n" && !x.f) ecrire(feuille, cellule(r, c), null);
+      }
+    }
+    const notesN1 = p.n1?.notes?.find((x) => x.numero === note.numero);
+    for (const l of note.lignes) {
+      const corr = correspondances[note.numero]?.find(
+        (c) => libelleComparable(c.ligne) === libelleComparable(l.libelle),
+      );
+      const r = f.lignes.get(libelleComparable(corr?.modele ?? l.libelle));
+      if (r == null) {
+        if (l.niveau === "detail")
+          rapport.introuvables.push(
+            `${feuille} : « ${l.libelle} »${l.montant ? ` (${Math.round(l.montant)})` : ""}`,
+          );
+        continue;
+      }
+      if (formule(r, f.colN)) continue;
+      const signe = corr?.signe ?? (l.deduite ? -1 : 1);
+      const vN = Math.round(signe * l.montant);
+      const ligneN1 = notesN1?.lignes.find((x) => x.libelle === l.libelle);
+      const vN1 = p.n1 ? Math.round(signe * (ligneN1?.montant ?? 0)) : null;
+      ecrire(feuille, cellule(r, f.colN), vN);
+      ecrire(feuille, cellule(r, f.colN1), vN1);
+      if (corr?.hypothese && (vN || vN1)) {
+        const h = `${feuille} : ${corr.hypothese}.`;
+        if (!rapport.hypotheses.includes(h)) rapport.hypotheses.push(h);
+      }
+    }
+    rapport.notesRemplies.push(feuille);
+  }
+
+  // Notes 3 (tableaux de mouvements) : chaque ligne repérée par son libellé en
+  // colonne A, chaque colonne calculée à sa colonne du modèle ; une cellule du
+  // modèle en formule (totaux, J = D + F − H…) n'est pas écrite.
+  const colonnesTableaux = p.colonnesTableaux ?? COLONNES_TABLEAUX_2025;
+  for (const t of p.n.immobilisations ?? []) {
+    const feuille = `NOTE ${t.numero}`;
+    const ws = lu.Sheets[feuille];
+    const colonnes = colonnesTableaux[t.numero];
+    if (!ws || !colonnes) {
+      rapport.introuvables.push(`${feuille} : feuille ou disposition absente du modèle`);
+      continue;
+    }
+    const lignes = new Map<string, number>();
+    const plage = XLSX.utils.decode_range(ws["!ref"] ?? "A1");
+    for (let r = plage.s.r; r <= plage.e.r; r++) {
+      const v = ws[XLSX.utils.encode_cell({ r, c: 0 })]?.v;
+      if (v == null) continue;
+      const libelle = libelleComparable(String(v));
+      if (libelle.startsWith("commentaire")) break;
+      if (!lignes.has(libelle)) lignes.set(libelle, r + 1);
+    }
+    for (const l of t.lignes) {
+      const r = lignes.get(libelleComparable(l.libelle));
+      if (r == null) {
+        rapport.introuvables.push(`${feuille} : « ${l.libelle} »`);
+        continue;
+      }
+      for (const [cle, colonne] of Object.entries(colonnes)) {
+        if ((ws[`${colonne}${r}`] as XLSX.CellObject | undefined)?.f) continue;
+        ecrire(feuille, `${colonne}${r}`, l.valeurs[cle] ?? null);
+      }
+    }
+    for (const h of t.hypotheses) {
+      const texte = `${feuille} : ${h}.`;
+      if (!rapport.hypotheses.includes(texte)) rapport.hypotheses.push(texte);
+    }
+    rapport.notesRemplies.push(feuille);
+  }
+
+  // ─── Fiches R1, R2, R4 (fiches-modele.ts) ─────────────────────────────────
+  const r1 = lu.Sheets[FICHE_R1_2025.feuille];
+  if (r1) {
+    const f = FICHE_R1_2025.feuille;
+    const n1 = p.exerciceN1;
+    for (const c of FICHE_R1_2025.champs) {
+      if ("vider" in c) ecrire(f, c.cellule, null);
+      else if ("exercice" in c) {
+        const v =
+          c.exercice === "debut"
+            ? serieExcel(p.exercice.date_debut)
+            : c.exercice === "fin"
+              ? serieExcel(p.exercice.date_fin)
+              : !n1
+                ? null
+                : c.exercice === "fin_n1"
+                  ? serieExcel(n1.date_fin)
+                  : dureeMois(n1.date_debut, n1.date_fin);
+        ecrire(f, c.cellule, v);
+      } else {
+        const v = p.identite[c.identite]?.trim();
+        if (v) ecrire(f, c.cellule, v);
+        else {
+          const x = r1[c.cellule] as XLSX.CellObject | undefined;
+          if (x?.f || (x?.v != null && String(x.v).trim() !== ""))
+            rapport.ficheR1Reprise.push(c.libelle);
+        }
+      }
+    }
+    rapport.fichesRemplies.push(f);
+  }
+  const r2 = lu.Sheets[FICHE_R2_2025.feuille];
+  const activite = r2?.[FICHE_R2_2025.libelleActivite]?.v;
+  if (r2 && activite != null && String(activite).trim()) {
+    ecrire(FICHE_R2_2025.feuille, FICHE_R2_2025.chiffreAffaires, Math.round(p.n.resultat.XB ?? 0));
+    rapport.hypotheses.push(
+      `${FICHE_R2_2025.feuille} : chiffre d'affaires de l'exercice reporté sur l'activité « ${String(activite).trim()} » ; le répartir s'il y a plusieurs activités.`,
+    );
+    rapport.fichesRemplies.push(FICHE_R2_2025.feuille);
+  }
+  const r4 = lu.Sheets[FICHE_R4_2025.feuille];
+  if (r4) {
+    // Note applicable : au moins un montant non nul en N ou N-1.
+    const applicable = new Map<string, boolean>();
+    const marquer = (numero: string, montants: Array<number | null | undefined>) =>
+      applicable.set(
+        numero,
+        (applicable.get(numero) ?? false) || montants.some((m) => !!m && Math.round(m) !== 0),
+      );
+    for (const e of [p.n, p.n1]) {
+      for (const n of e?.notes ?? [])
+        marquer(
+          n.numero,
+          n.lignes.map((l) => l.montant),
+        );
+      for (const t of e?.immobilisations ?? [])
+        marquer(
+          t.numero,
+          t.lignes.flatMap((l) => Object.values(l.valeurs)),
+        );
+    }
+    const lignes = new Map<string, number>();
+    const plage = XLSX.utils.decode_range(r4["!ref"] ?? "A1");
+    for (let r = plage.s.r; r <= plage.e.r; r++) {
+      const v = r4[XLSX.utils.encode_cell({ r, c: 0 })]?.v;
+      if (v != null) lignes.set(libelleComparable(String(v)), r + 1);
+    }
+    for (const [numero, oui] of applicable) {
+      const r = lignes.get(libelleComparable(`NOTE ${numero}`));
+      if (r == null) {
+        rapport.introuvables.push(`${FICHE_R4_2025.feuille} : NOTE ${numero}`);
+        continue;
+      }
+      ecrire(FICHE_R4_2025.feuille, `${FICHE_R4_2025.applicable}${r}`, oui ? "X" : null);
+      ecrire(FICHE_R4_2025.feuille, `${FICHE_R4_2025.nonApplicable}${r}`, oui ? null : "X");
+    }
+    rapport.fichesRemplies.push(FICHE_R4_2025.feuille);
+  }
+
   // En-têtes d'identification de toutes les feuilles.
   for (const nom of lu.SheetNames) {
     const ws = lu.Sheets[nom];
@@ -353,7 +587,11 @@ export async function remplirModele(
     zip.file(chemin, xml);
   }
 
-  const remplies = new Set(blocs.map((b) => b.feuille).filter((f) => lu.Sheets[f]));
+  const remplies = new Set([
+    ...blocs.map((b) => b.feuille).filter((f) => lu.Sheets[f]),
+    ...rapport.notesRemplies,
+    ...rapport.fichesRemplies,
+  ]);
   rapport.feuillesMisesAJour = [...remplies, ...FEUILLES_CALCULEES.filter((f) => lu.Sheets[f])];
   // Feuilles avec des montants saisis (hors formules) sous l'en-tête : à compléter.
   for (const nom of lu.SheetNames) {
@@ -396,6 +634,37 @@ function lignesRapport(p: ParametresExport, r: RapportExport): string[][] {
       "Recalcul",
       "Formules recalculées à l'ouverture. Si Excel demande d'activer le contenu ou de mettre à jour les liaisons, choisir de ne pas mettre à jour les liaisons externes.",
     ],
+    ...(r.notesRemplies.length
+      ? [
+          [
+            "Notes annexes",
+            `${r.notesRemplies.join(", ")} : remplies depuis la comptabilité. Dans ces notes, une ligne vide n'est pas calculée par l'ERP et reste à compléter ; les colonnes d'échéances et les commentaires aussi.`,
+          ],
+        ]
+      : []),
+    ...(r.fichesRemplies.length
+      ? [
+          [
+            "Fiches",
+            `${r.fichesRemplies.join(", ")} : identification, dates de l'exercice, chiffre d'affaires et notes applicables (A / N/A) mis à jour. Date d'arrêté des comptes, approbation par l'assemblée et date de signature vidées, à compléter. FICHE R3 (dirigeants) non modifiée.`,
+          ],
+        ]
+      : []),
+    ...(r.ficheR1Reprise.length
+      ? [
+          [
+            "FICHE R1 à vérifier",
+            `Absents de l'ERP, repris du modèle : ${r.ficheR1Reprise.join(", ")}.`,
+          ],
+        ]
+      : []),
+    ...(r.hypotheses.length
+      ? [
+          ["", ""],
+          ["HYPOTHÈSES À VÉRIFIER", "Montants placés selon une hypothèse :"],
+          ...r.hypotheses.map((h) => ["", h]),
+        ]
+      : []),
     ["", ""],
     [
       "À COMPLÉTER",

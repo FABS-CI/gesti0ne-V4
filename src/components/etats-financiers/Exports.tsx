@@ -57,6 +57,7 @@ export function ExportsDossier({ donnees }: { donnees: DonneesExport }) {
         n: donnees.n,
         n1: donnees.n1,
         exercice: donnees.exercice,
+        exerciceN1: donnees.precedent ?? null,
         identite: identiteExport(donnees.identite),
         informations: [
           ["Dossier", donnees.version ?? "Données actuelles, non enregistrées"],
@@ -73,9 +74,16 @@ export function ExportsDossier({ donnees }: { donnees: DonneesExport }) {
         nomFichierExcel(anneeExport(donnees), macros),
       );
       const reste = rapport.feuillesAVerifier.length;
-      const msg = `Classeur exporté : ${rapport.cellules} cellules mises à jour.${reste ? ` ${reste} feuille(s) (notes, fiches) restent à compléter : voir la feuille « ERP - LISEZ-MOI ».` : ""}`;
-      if (rapport.introuvables.length)
-        toast.warning(`${msg} Postes absents du modèle : ${rapport.introuvables.join(", ")}.`);
+      const msg = `Classeur exporté : ${rapport.cellules} cellules mises à jour, dont ${rapport.notesRemplies.length} note(s) annexe(s).${reste ? ` ${reste} feuille(s) (autres notes, fiches) restent à compléter : voir la feuille « ERP - LISEZ-MOI ».` : ""}`;
+      const alertes = [
+        ...(rapport.hypotheses.length
+          ? [`Hypothèses à vérifier : ${rapport.hypotheses.join(" ")}`]
+          : []),
+        ...(rapport.introuvables.length
+          ? [`Non placés dans le modèle : ${rapport.introuvables.join(", ")}.`]
+          : []),
+      ];
+      if (alertes.length) toast.warning([msg, ...alertes].join(" "), { duration: 15000 });
       else toast.success(msg);
     } catch (e) {
       toast.error(friendlyError(e, "Export Excel impossible"));
@@ -156,10 +164,12 @@ export function ExportsDossier({ donnees }: { donnees: DonneesExport }) {
             </>
           )}
           <p className="text-xs text-muted-foreground">
-            L'export remplit le bilan, le compte de résultat et le TFT (N et N-1) et les en-têtes ;
-            formules, mise en page, zones d'impression et macros du modèle sont conservées. Les
-            notes et fiches R ne sont pas encore remplies : la feuille « ERP - LISEZ-MOI » les
-            liste.
+            L'export remplit le bilan, le compte de résultat, le TFT, 27 notes annexes calculées
+            depuis la comptabilité (3A à 3D, 4 à 11, 14, 15A, 16A, 17 à 27A, 29), les fiches R1, R2
+            et R4 et les en-têtes ; formules, mise en page, zones d'impression et macros du modèle
+            sont conservées. Les autres notes, la fiche R3 (dirigeants) et les renseignements de
+            l'année (arrêté des comptes, approbation, signature) restent à compléter : la feuille «
+            ERP - LISEZ-MOI » les liste, avec les hypothèses faites.
           </p>
         </div>
       </CardContent>

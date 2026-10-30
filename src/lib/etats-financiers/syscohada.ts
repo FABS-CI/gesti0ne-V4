@@ -291,8 +291,25 @@ function posteAmortissement(compte: string): string | null {
   if (/^49[2-7]/.test(compte)) return "BJ";
   if (compte.startsWith("498")) return "BA";
   if (compte.startsWith("590")) return "BQ";
+  // 591 : dépréciation des titres et valeurs à encaisser (poste BR), pas de la trésorerie.
+  if (compte.startsWith("591")) return "BR";
   if (compte.startsWith("59")) return "BS";
   return null;
+}
+
+/**
+ * Immobilisation d'un compte de classe 2, selon les mêmes règles que le bilan :
+ * poste d'actif (AE à AS) et nature (brut, amortissement 28x, dépréciation 29x).
+ * Sert aux notes 3, qui recoupent ainsi l'actif immobilisé.
+ */
+export function posteImmobilisation(
+  compte: string,
+): { poste: string; nature: "brut" | "amort" | "deprec" } | null {
+  const c = compte.trim();
+  if (!c.startsWith("2")) return null;
+  const nature = c.startsWith("28") ? "amort" : c.startsWith("29") ? "deprec" : "brut";
+  const poste = nature === "brut" ? trouverPoste(REGLES_BILAN, c, "D") : posteAmortissement(c);
+  return poste ? { poste, nature } : null;
 }
 
 // ─── Calcul ──────────────────────────────────────────────────────────────────
