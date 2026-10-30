@@ -17,16 +17,25 @@ import http from "k6/http";
 import { check, sleep, group } from "k6";
 import { Trend, Rate } from "k6/metrics";
 
+const SCENARIOS = {
+  smoke: { executor: "constant-vus", vus: 5, duration: "30s" },
+  ramp:  { executor: "ramping-vus", startTime: "35s", startVUs: 0,
+           stages: [
+             { duration: "30s", target: 20 },
+             { duration: "1m",  target: 20 },
+             { duration: "20s", target: 0  },
+           ] },
+};
+
+// Scénarios à lancer : SCENARIOS=smoke (CI des pull requests), défaut smoke,ramp.
+// (k6 n'a pas d'option --exclude-scenarios.)
+const CHOISIS = (__ENV.SCENARIOS || "smoke,ramp").split(",").map((s) => s.trim()).filter(Boolean);
+for (const nom of CHOISIS) {
+  if (!SCENARIOS[nom]) throw new Error(`Scénario inconnu : ${nom} (smoke, ramp)`);
+}
+
 export const options = {
-  scenarios: {
-    smoke: { executor: "constant-vus", vus: 5, duration: "30s" },
-    ramp:  { executor: "ramping-vus", startTime: "35s", startVUs: 0,
-             stages: [
-               { duration: "30s", target: 20 },
-               { duration: "1m",  target: 20 },
-               { duration: "20s", target: 0  },
-             ] },
-  },
+  scenarios: Object.fromEntries(CHOISIS.map((nom) => [nom, SCENARIOS[nom]])),
   thresholds: {
     http_req_failed:   ["rate<0.02"],
     http_req_duration: ["p(95)<1500"],
