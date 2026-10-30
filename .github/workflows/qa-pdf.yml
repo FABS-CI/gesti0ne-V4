@@ -33,7 +33,7 @@ jobs:
             sleep 2
           done
           echo "dev server failed to start" && exit 1
-      - name: "Run QA suite (strict: 6/6 docs must pass)"
+      - name: "Run QA suite (strict: every document must pass)"
         run: |
           python scripts/qa-pdf-render.py | tee /tmp/qa.log
           # Seuil strict : un seul ✗ fait échouer le job
@@ -41,9 +41,12 @@ jobs:
             echo "Régression de rendu détectée" >&2
             exit 1
           fi
-          # Vérifie qu'on a bien 6 documents validés
+          # Tous les documents de la liste du script sont validés (total annoncé
+          # par le script : ajouter un document ne demande pas de modifier ce seuil).
+          total=$(sed -nE 's#^Documents : [0-9]+/([0-9]+)$#\1#p' /tmp/qa.log)
           ok=$(grep -cE "^✓" /tmp/qa.log || true)
-          test "$ok" = "6" || { echo "Attendu 6 ✓, obtenu $ok"; exit 1; }
+          test -n "$total" && test "$total" -gt 0 || { echo "Total des documents introuvable"; exit 1; }
+          test "$ok" = "$total" || { echo "Attendu $total ✓, obtenu $ok"; exit 1; }
       - name: Upload screenshots on failure
         if: failure()
         uses: actions/upload-artifact@v4

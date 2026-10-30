@@ -51,6 +51,12 @@ CALLS = [
 
 REQUIRED = ["EDITIONS FABS-CI", "CODE", "FABS-QA-2026-0001", "DÉSIGNATION"]
 
+# Modules chargés avant les générations (voir le warm-up dans main).
+WARMUP = [
+    "/src/lib/pdf/fabsTemplates.ts",
+    "/src/integrations/supabase/client.ts",
+]
+
 
 async def main() -> int:
     failures = 0
@@ -60,29 +66,41 @@ async def main() -> int:
         page = await ctx.new_page()
         page.on("pageerror", lambda e: print("PAGEERROR:", e))
         await page.goto("http://localhost:8080/auth", wait_until="domcontentloaded")
-        # Warm-up : précharge le module pour éviter une navigation HMR
-        # pendant le premier evaluate (qui détruirait le contexte).
-        for _ in range(3):
-            try:
-                await page.evaluate("() => import('/src/lib/pdf/fabsTemplates.ts')")
-                await page.wait_for_timeout(300)
-                break
-            except Exception:
-                await page.goto("http://localhost:8080/auth", wait_until="domcontentloaded")
+        # Warm-up : précharge les modules pour que Vite optimise leurs dépendances
+        # avant les evaluate. Une dépendance découverte en cours de route (ex. le
+        # client Supabase, chargé à la demande pour les factures et proformas)
+        # provoque un rechargement complet qui détruit le contexte d'exécution.
+        for module in WARMUP:
+            for _ in range(3):
+                try:
+                    await page.evaluate(f"() => import('{module}').then(() => true, () => true)")
+                    break
+                except Exception:
+                    await page.goto("http://localhost:8080/auth", wait_until="domcontentloaded")
+        # Laisse passer un éventuel rechargement déclenché par l'optimisation.
+        await page.wait_for_timeout(2000)
+        await page.goto("http://localhost:8080/auth", wait_until="domcontentloaded")
         for code, fn in CALLS:
             try:
                 args = "data, 'QA'" if fn == "generateAvoirPDF" else "data"
-                b64 = await page.evaluate(
-                    f"""async (data) => {{
+                script = f"""async (data) => {{
                         const m = await import('/src/lib/pdf/fabsTemplates.ts');
                         const blob = await m.{fn}({args});
                         const buf = new Uint8Array(await blob.arrayBuffer());
                         let bin = '';
                         for (let i = 0; i < buf.length; i++) bin += String.fromCharCode(buf[i]);
                         return btoa(bin);
-                    }}""",
-                    SAMPLE,
-                )
+                    }}"""
+                # Rechargement Vite pendant la génération : on recharge la page et
+                # on recommence (au plus 3 essais) ; toute autre erreur est un échec.
+                for essai in range(3):
+                    try:
+                        b64 = await page.evaluate(script, SAMPLE)
+                        break
+                    except Exception as e:
+                        if "Execution context was destroyed" not in str(e) or essai == 2:
+                            raise
+                        await page.goto("http://localhost:8080/auth", wait_until="domcontentloaded")
                 pdf = OUT / f"{code}.pdf"
                 pdf.write_bytes(base64.b64decode(b64))
                 subprocess.run(["pdftoppm", "-jpeg", "-r", "90", str(pdf), str(SHOTS / code)], check=True)
@@ -98,6 +116,8 @@ async def main() -> int:
                 failures += 1
         await b.close()
     print(f"\nScreenshots → {SHOTS}")
+    # Lu par le workflow : le nombre attendu suit la liste CALLS.
+    print(f"Documents : {len(CALLS) - failures}/{len(CALLS)}")
     return failures
 
 
