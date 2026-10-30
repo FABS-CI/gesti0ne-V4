@@ -410,24 +410,36 @@ export async function generateBulletinPaieCIPDF(
   const LIGHT: RGB = [234, 241, 248];
   const ORANGE: RGB = [242, 106, 27];
   const NAVY_80: RGB = [55, 78, 101]; // marine à 80 % sur fond bleu clair
-  const PX = 0.3528; // px -> pt/mm (1 px ≈ 0,3528 mm)
+  const PX = 0.2646; // 1 px CSS = 0,2646 mm
   const netTop = footBottom + 5;
-  const netH = 19;
+  const padY = 12 * PX;
+  const padX = 16 * PX;
+  const hasSub = !!data.paiement?.date;
+  const netH = padY * 2 + 8 + (hasSub ? 4 : 0);
   const netBot = netTop + netH;
+  const R = 6 * PX;
   doc.setFillColor(LIGHT[0], LIGHT[1], LIGHT[2]);
+  doc.roundedRect(X0, netTop, TW, netH, R, R, "F");
+  // Filet orange découpé par les coins arrondis (overflow hidden)
+  const d = doc as unknown as { saveGraphicsState: () => void; restoreGraphicsState: () => void; clip: () => void; discardPath: () => void; roundedRect: (...a: unknown[]) => void };
+  d.saveGraphicsState();
+  d.roundedRect(X0, netTop, TW, netH, R, R, null);
+  d.clip();
+  d.discardPath();
+  doc.setFillColor(ORANGE[0], ORANGE[1], ORANGE[2]);
+  doc.rect(X0, netTop, 1.5 * PX + 5 * PX, netH, "F");
+  d.restoreGraphicsState();
   doc.setDrawColor(NAVY[0], NAVY[1], NAVY[2]);
   doc.setLineWidth(1.5 * PX);
-  doc.roundedRect(X0, netTop, TW, netH, 6 * PX, 6 * PX, "FD");
-  doc.setFillColor(ORANGE[0], ORANGE[1], ORANGE[2]);
-  doc.rect(X0 + 1.5 * PX, netTop + 1.5 * PX, 5 * PX, netH - 3 * PX, "F");
-  const padX = 16 * PX;
-  doc.setCharSpace(0.5);
-  text("NET À PAYER", X0 + padX + 5 * PX, netTop + 8.6, { size: 13, style: "bold", color: NAVY });
+  doc.roundedRect(X0, netTop, TW, netH, R, R, "S");
+  const baseY = netTop + padY + 7.2; // ligne de base commune libellé / montant
+  doc.setCharSpace(0.5 * PX);
+  text("NET À PAYER", X0 + 6.5 * PX + padX, baseY, { size: 13, style: "bold", color: NAVY });
   doc.setCharSpace(0);
-  text(`${moneyAlways(tot.netAPayer)} FCFA`, X1 - padX, netTop + 9.6, { size: 22, style: "bold", align: "right", color: NAVY });
-  if (data.paiement?.date) {
-    const mode = data.paiement.mode ? `par ${data.paiement.mode.toLowerCase()} ` : "";
-    text(`Payé ${mode}le ${dateEnLettres(data.paiement.date)}`, X1 - padX, netBot - 3.2, {
+  text(`${moneyAlways(tot.netAPayer)} FCFA`, X1 - padX, baseY, { size: 22, style: "bold", align: "right", color: NAVY });
+  if (hasSub) {
+    const mode = data.paiement!.mode ? `par ${data.paiement!.mode.toLowerCase()} ` : "";
+    text(`Payé ${mode}le ${dateEnLettres(data.paiement!.date)}`, X1 - padX, baseY + 4, {
       size: 8, align: "right", color: NAVY_80,
     });
   }
