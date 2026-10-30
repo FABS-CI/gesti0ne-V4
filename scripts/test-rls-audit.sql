@@ -194,4 +194,25 @@ BEGIN
 END
 $$;
 
+-- 12) Le plan comptable doit rester lisible par la simple consultation :
+-- une policy SELECT gardée par le droit plan_comptable.voir doit exister.
+-- Sans elle, seule la policy d'écriture (comptabilite.modifier) filtre les
+-- SELECT, et un compte en lecture seule ne voit aucun compte du plan.
+DO $$
+DECLARE v_count integer;
+BEGIN
+  SELECT count(*) INTO v_count
+  FROM pg_policy p
+  JOIN pg_roles r ON r.oid = any(p.polroles)
+  WHERE p.polrelid = 'public.plan_comptable'::regclass
+    AND p.polcmd in ('r','*')
+    AND r.rolname = 'authenticated'
+    AND pg_get_expr(p.polqual, p.polrelid) ~* 'plan_comptable\.voir';
+  IF v_count = 0 THEN
+    RAISE EXCEPTION 'FAIL: aucune policy de lecture du plan comptable pour plan_comptable.voir';
+  END IF;
+  RAISE NOTICE 'PASS: lecture du plan comptable ouverte aux droits de consultation';
+END
+$$;
+
 ROLLBACK;
