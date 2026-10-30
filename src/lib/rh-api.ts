@@ -347,6 +347,7 @@ export async function getRHDashboard(): Promise<RHDashboardStats> {
   ).length;
   const absencesEnCours = absences.filter((a) => {
     const debut = a.date_debut;
+    if (a.statut === "rejetee") return false; // absence rejetée : pas en cours
     return debut !== null && debut <= todayStr && (a.date_fin ?? todayStr) >= todayStr;
   }).length;
   const contratsExpirantBientot = contrats.filter(

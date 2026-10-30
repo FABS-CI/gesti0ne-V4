@@ -2,12 +2,14 @@ import { FileDown, Wallet } from "lucide-react";
 import { BulletinActionButtons } from "@/components/paie/BulletinActionButtons";
 import type { ResourceConfig } from "@/components/crud/ResourceManager";
 import { formatPeriodeLabel } from "@/lib/paie/periode-label";
+import { estValidable } from "@/lib/paie-bulletin-actions";
 
 const statuts = [
   { value: "brouillon", label: "Brouillon", color: "#64748B" },
   { value: "genere", label: "Généré", color: "#3B82F6" },
   { value: "valide", label: "Validé", color: "#10B981" },
   { value: "paye", label: "Payé", color: "#14B8A6" },
+  { value: "annule", label: "Annulé", color: "#DC2626" },
 ];
 
 export const bulletinsConfig: ResourceConfig = {
@@ -21,6 +23,10 @@ export const bulletinsConfig: ResourceConfig = {
   csvName: "bulletins_paie",
   searchFields: ["employe_nom", "periode"],
   newHref: "/paie/nouveau",
+  // Montants calculés par le serveur : pas de saisie libre. Un brouillon se supprime
+  // (puis se recalcule) ; un bulletin validé s'annule (bouton dédié, motif requis).
+  canEditRow: () => false,
+  canDeleteRow: (row) => estValidable(row.statut),
   statusFilter: { field: "statut", options: statuts },
   periodFilter: { field: "periode" },
   syncFiltersToUrl: true,

@@ -757,6 +757,13 @@
       "when": 1793383394005,
       "tag": "0109_finances_integrite",
       "breakpoints": true
+    },
+    {
+      "idx": 110,
+      "version": "7",
+      "when": 1793383394006,
+      "tag": "0110_paie_integrite_bulletins",
+      "breakpoints": true
     }
   ]
 }
