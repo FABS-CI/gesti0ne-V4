@@ -163,10 +163,10 @@ export function ExportsDossier({ donnees }: { donnees: DonneesExport }) {
             </>
           )}
           <p className="text-xs text-muted-foreground">
-            L'export remplit le bilan, le compte de résultat, le TFT, les notes 7, 11, 17, 18 et 21
-            à 26 (N et N-1) et les en-têtes ; formules, mise en page, zones d'impression et macros
-            du modèle sont conservées. Les autres notes et les fiches R restent à compléter : la
-            feuille « ERP - LISEZ-MOI » les liste, avec les hypothèses faites.
+            L'export remplit le bilan, le compte de résultat, le TFT, les notes 3A, 3C, 3C BIS, 3D,
+            7, 11, 17, 18 et 21 à 26 et les en-têtes ; formules, mise en page, zones d'impression et
+            macros du modèle sont conservées. Les autres notes et les fiches R restent à compléter :
+            la feuille « ERP - LISEZ-MOI » les liste, avec les hypothèses faites.
           </p>
         </div>
       </CardContent>

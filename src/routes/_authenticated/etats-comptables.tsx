@@ -51,6 +51,7 @@ import {
 } from "@/lib/etats-financiers/donnees-api";
 import { construireContenu, etatDossier } from "@/lib/etats-financiers/dossiers";
 import { PanneauDossier } from "@/components/etats-financiers/Dossier";
+import { NotesImmobilisations } from "@/components/etats-financiers/NotesImmobilisations";
 import { ExportsDossier } from "@/components/etats-financiers/Exports";
 import { exporterPdf, type DonneesExport } from "@/lib/etats-financiers/exports";
 import type { Section } from "@/lib/etats-financiers/dossier-pdf";
@@ -342,7 +343,10 @@ function EtatsFinanciersPage() {
               <BoutonExport onClick={() => exporter("tft")} />
               <TableSimple lignes={LIGNES_TFT} n={n.tft.valeurs} n1={n1?.tft.valeurs} />
             </TabsContent>
-            <TabsContent value="notes">
+            <TabsContent value="notes" className="space-y-6">
+              {n.immobilisations && n.immobilisations.length > 0 && (
+                <NotesImmobilisations tableaux={n.immobilisations} />
+              )}
               <NotesAnnexes
                 notes={n.notes}
                 notesN1={n1?.notes}
@@ -555,8 +559,9 @@ function NotesAnnexes({
         </CardContent>
       </Card>
       <p className="mt-2 text-xs text-muted-foreground">
-        Notes calculées depuis les sous-comptes SYSCOHADA. Les autres notes (immobilisations,
-        effectifs, échéances, engagements, commentaires) restent à compléter dans la liasse.
+        Notes calculées depuis les sous-comptes SYSCOHADA. Les autres notes (location-acquisition,
+        réévaluations, effectifs, échéances, engagements, commentaires) restent à compléter dans la
+        liasse.
       </p>
     </>
   );

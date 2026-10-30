@@ -10,6 +10,10 @@ import { calculerEtatsFinanciers, type EtatsFinanciers } from "@/lib/etats-finan
 import { calculerTft, type Tft } from "@/lib/etats-financiers/tft";
 import { calculerNotes, type NoteCalculee } from "@/lib/etats-financiers/notes";
 import {
+  calculerNotesImmobilisations,
+  type NoteTableau,
+} from "@/lib/etats-financiers/notes-immobilisations";
+import {
   assemblerDonnees,
   type BalanceImportee,
   type DonneesExercice,
@@ -129,6 +133,8 @@ export async function importerBalance(
 export type EtatsExercice = EtatsFinanciers & {
   tft: Tft;
   notes: NoteCalculee[];
+  /** Notes 3A, 3C, 3C BIS, 3D (absentes des dossiers enregistrés avant leur ajout). */
+  immobilisations?: NoteTableau[];
   donnees: DonneesExercice;
   /** Bilan calculé sur les soldes d'ouverture. */
   ouvertureEf: EtatsFinanciers;
@@ -167,6 +173,7 @@ export async function chargerExercice(
     ...ef,
     tft: calculerTft(ouvertureEf, ef, donnees.periode),
     notes: calculerNotes(donnees.cumul, donnees.periode),
+    immobilisations: calculerNotesImmobilisations(donnees),
     donnees,
     ouvertureEf,
     completude: donnees.source === "erp" ? completude : null,

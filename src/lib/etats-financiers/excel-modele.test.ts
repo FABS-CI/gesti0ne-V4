@@ -7,6 +7,7 @@ import { calculerEtatsFinanciers } from "@/lib/etats-financiers/syscohada";
 import { calculerTft } from "@/lib/etats-financiers/tft";
 import { SOLDES_2025 } from "@/lib/etats-financiers/fixtures-2025";
 import { calculerNotes, type NoteCalculee } from "@/lib/etats-financiers/notes";
+import { calculerNotesImmobilisations } from "@/lib/etats-financiers/notes-immobilisations";
 import { CORRESPONDANCES_NOTES_2025, libelleComparable } from "@/lib/etats-financiers/notes-modele";
 import {
   ecrireCellule,
@@ -266,14 +267,24 @@ describe.skipIf(!MODELE)("remplirModele — classeur DGI 2025 réel", () => {
     const b = SOLDES_2025.map(ligne);
     const { fichier, macros, rapport } = await remplirModele({
       modele,
-      n: { ...etats2025(), notes: calculerNotes(b, b) },
+      n: {
+        ...etats2025(),
+        notes: calculerNotes(b, b),
+        immobilisations: calculerNotesImmobilisations({
+          ouverture: [],
+          periode: b,
+          cumul: b,
+          ouvertureConnue: false,
+          mouvementsConnus: true,
+        }),
+      },
       exercice,
       identite,
     });
     expect(macros).toBe(true);
     expect(rapport.introuvables).toEqual([]);
     // Les 10 notes calculées trouvent toutes leurs lignes dans le modèle.
-    expect(rapport.notesRemplies).toHaveLength(10);
+    expect(rapport.notesRemplies).toHaveLength(14);
     const apres = XLSX.read(fichier, { type: "array", bookVBA: true });
     expect(apres.vbaraw).toBeTruthy();
     // Colonnes N du bilan et du compte de résultat : identiques au classeur déposé.
@@ -294,6 +305,69 @@ describe.skipIf(!MODELE)("remplirModele — classeur DGI 2025 réel", () => {
     }
     expect(ecarts).toEqual([]);
     expect(apres.SheetNames.length).toBe(avant.SheetNames.length + 1);
+  });
+});
+
+describe("remplirModele — notes 3 (tableaux de mouvements)", () => {
+  it("écrit chaque colonne à sa place, sans toucher aux formules du modèle", async () => {
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet([["NOTE 3C BIS"]]);
+    XLSX.utils.sheet_add_aoa(
+      ws,
+      [
+        ["Matériel de transport", "", "", 9, "", 9, "", 9],
+        ["IMMOBILISATIONS CORPORELLES"],
+        ["Commentaire :", "", "", 42],
+      ],
+      { origin: "A21" },
+    );
+    ws.J21 = { t: "n", v: 0, f: "D21+F21-H21" };
+    ws.D22 = { t: "n", v: 0, f: "SUM(D21:D21)" };
+    ws["!ref"] = "A1:J23";
+    XLSX.utils.book_append_sheet(wb, ws, "NOTE 3C BIS");
+    const modele = XLSX.write(wb, { type: "array", bookType: "xlsx" }) as Uint8Array;
+    const { fichier, rapport } = await remplirModele({
+      modele,
+      n: {
+        ...etats2025(),
+        immobilisations: [
+          {
+            numero: "3C BIS",
+            titre: "Dépréciations",
+            colonnes: [
+              { cle: "ouverture", libelle: "" },
+              { cle: "dotations", libelle: "" },
+              { cle: "diminutions", libelle: "" },
+              { cle: "cloture", libelle: "" },
+            ],
+            lignes: [
+              {
+                libelle: "Matériel de transport",
+                niveau: "detail",
+                valeurs: { ouverture: 100, dotations: 50, diminutions: null, cloture: 150 },
+              },
+              {
+                libelle: "IMMOBILISATIONS CORPORELLES",
+                niveau: "total",
+                valeurs: { ouverture: 100, dotations: 50, diminutions: null, cloture: 150 },
+              },
+            ],
+            hypotheses: ["essai"],
+          },
+        ],
+      },
+      exercice,
+      identite,
+    });
+    const s = XLSX.read(fichier, { type: "array", cellFormula: true }).Sheets["NOTE 3C BIS"];
+    expect([s.D21.v, s.F21.v]).toEqual([100, 50]);
+    expect(s.H21?.v).toBeUndefined(); // inconnu : vidé, pas zéro
+    expect(s.J21.f).toBe("D21+F21-H21"); // clôture du modèle en formule : conservée
+    expect(s.D22.f).toBe("SUM(D21:D21)"); // total en formule : conservé
+    expect(s.F22.v).toBe(50); // total saisi dans le modèle : écrit
+    expect(s.D23.v).toBe(42); // sous « Commentaire » : non touché
+    expect(rapport.notesRemplies).toEqual(["NOTE 3C BIS"]);
+    expect(rapport.hypotheses).toEqual(["NOTE 3C BIS : essai."]);
   });
 });
 

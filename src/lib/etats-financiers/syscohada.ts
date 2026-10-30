@@ -295,6 +295,21 @@ function posteAmortissement(compte: string): string | null {
   return null;
 }
 
+/**
+ * Immobilisation d'un compte de classe 2, selon les mêmes règles que le bilan :
+ * poste d'actif (AE à AS) et nature (brut, amortissement 28x, dépréciation 29x).
+ * Sert aux notes 3, qui recoupent ainsi l'actif immobilisé.
+ */
+export function posteImmobilisation(
+  compte: string,
+): { poste: string; nature: "brut" | "amort" | "deprec" } | null {
+  const c = compte.trim();
+  if (!c.startsWith("2")) return null;
+  const nature = c.startsWith("28") ? "amort" : c.startsWith("29") ? "deprec" : "brut";
+  const poste = nature === "brut" ? trouverPoste(REGLES_BILAN, c, "D") : posteAmortissement(c);
+  return poste ? { poste, nature } : null;
+}
+
 // ─── Calcul ──────────────────────────────────────────────────────────────────
 export type MontantActif = { brut: number; amort: number; net: number };
 

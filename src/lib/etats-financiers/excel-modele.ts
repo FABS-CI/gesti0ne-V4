@@ -25,8 +25,10 @@ import {
 import { LIGNES_TFT } from "@/lib/etats-financiers/tft";
 import type { EtatsPourXml } from "@/lib/etats-financiers/xml-edi";
 import type { NoteCalculee } from "@/lib/etats-financiers/notes";
+import type { NoteTableau } from "@/lib/etats-financiers/notes-immobilisations";
 import { dureeMois } from "@/lib/etats-financiers/controles";
 import {
+  COLONNES_TABLEAUX_2025,
   CORRESPONDANCES_NOTES_2025,
   libelleComparable,
   type CorrespondanceNote,
@@ -278,7 +280,7 @@ const NOMS_IDENTITE: Record<string, (p: ParametresExport) => Valeur> = {
   DUREE: (p) => dureeMois(p.exercice.date_debut, p.exercice.date_fin),
 };
 
-type EtatsExport = EtatsPourXml & { notes?: NoteCalculee[] };
+type EtatsExport = EtatsPourXml & { notes?: NoteCalculee[]; immobilisations?: NoteTableau[] };
 
 export type ParametresExport = {
   modele: ArrayBuffer | Uint8Array;
@@ -290,6 +292,7 @@ export type ParametresExport = {
   informations?: Array<[string, string]>;
   blocs?: Bloc[];
   correspondancesNotes?: Record<string, CorrespondanceNote[]>;
+  colonnesTableaux?: Record<string, Record<string, string>>;
 };
 
 /**
@@ -418,6 +421,45 @@ export async function remplirModele(
         const h = `${feuille} : ${corr.hypothese}.`;
         if (!rapport.hypotheses.includes(h)) rapport.hypotheses.push(h);
       }
+    }
+    rapport.notesRemplies.push(feuille);
+  }
+
+  // Notes 3 (tableaux de mouvements) : chaque ligne repérée par son libellé en
+  // colonne A, chaque colonne calculée à sa colonne du modèle ; une cellule du
+  // modèle en formule (totaux, J = D + F − H…) n'est pas écrite.
+  const colonnesTableaux = p.colonnesTableaux ?? COLONNES_TABLEAUX_2025;
+  for (const t of p.n.immobilisations ?? []) {
+    const feuille = `NOTE ${t.numero}`;
+    const ws = lu.Sheets[feuille];
+    const colonnes = colonnesTableaux[t.numero];
+    if (!ws || !colonnes) {
+      rapport.introuvables.push(`${feuille} : feuille ou disposition absente du modèle`);
+      continue;
+    }
+    const lignes = new Map<string, number>();
+    const plage = XLSX.utils.decode_range(ws["!ref"] ?? "A1");
+    for (let r = plage.s.r; r <= plage.e.r; r++) {
+      const v = ws[XLSX.utils.encode_cell({ r, c: 0 })]?.v;
+      if (v == null) continue;
+      const libelle = libelleComparable(String(v));
+      if (libelle.startsWith("commentaire")) break;
+      if (!lignes.has(libelle)) lignes.set(libelle, r + 1);
+    }
+    for (const l of t.lignes) {
+      const r = lignes.get(libelleComparable(l.libelle));
+      if (r == null) {
+        rapport.introuvables.push(`${feuille} : « ${l.libelle} »`);
+        continue;
+      }
+      for (const [cle, colonne] of Object.entries(colonnes)) {
+        if ((ws[`${colonne}${r}`] as XLSX.CellObject | undefined)?.f) continue;
+        ecrire(feuille, `${colonne}${r}`, l.valeurs[cle] ?? null);
+      }
+    }
+    for (const h of t.hypotheses) {
+      const texte = `${feuille} : ${h}.`;
+      if (!rapport.hypotheses.includes(texte)) rapport.hypotheses.push(texte);
     }
     rapport.notesRemplies.push(feuille);
   }

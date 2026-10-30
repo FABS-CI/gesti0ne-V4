@@ -140,3 +140,30 @@ export function libelleComparable(s: string): string {
     .trim()
     .toLowerCase();
 }
+
+/**
+ * Notes 3 (tableaux de mouvements) : colonne du modèle DGI 2025 pour chaque
+ * colonne calculée (notes-immobilisations.ts). Une cellule du modèle qui contient
+ * une formule n'est jamais écrite.
+ */
+export const COLONNES_TABLEAUX_2025: Record<string, Record<string, string>> = {
+  "3A": {
+    ouverture: "D",
+    acquisitions: "E",
+    virements_plus: "F",
+    reevaluation: "G",
+    cessions: "H",
+    virements_moins: "I",
+    cloture: "J",
+  },
+  "3C": {
+    ouverture: "D",
+    dotations: "F",
+    diminutions: "H",
+    reprises: "J",
+    virements: "L",
+    cloture: "N",
+  },
+  "3C BIS": { ouverture: "D", dotations: "F", diminutions: "H", cloture: "J" },
+  "3D": { brut: "D", amort: "E", vnc: "F", prix: "G", plus_value: "H" },
+};
