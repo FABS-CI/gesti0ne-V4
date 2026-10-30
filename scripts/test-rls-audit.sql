@@ -205,7 +205,7 @@ BEGIN
   FROM pg_policy p
   JOIN pg_roles r ON r.oid = any(p.polroles)
   WHERE p.polrelid = 'public.plan_comptable'::regclass
-    AND p.polcmd in ('s','*')
+    AND p.polcmd in ('r','*')
     AND r.rolname = 'authenticated'
     AND pg_get_expr(p.polqual, p.polrelid) ~* 'plan_comptable\.voir';
   IF v_count = 0 THEN
