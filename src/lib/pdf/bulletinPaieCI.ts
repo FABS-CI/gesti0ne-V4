@@ -403,46 +403,39 @@ export async function generateBulletinPaieCIPDF(
   footLabel("COÛT SALARIAL :", moneyAlways(cout), fx[2], X1);
   text(moneyAlways(cout), X1 - 2, fy, { size: fs - 1.5, style: "bolditalic", align: "right" });
 
-  // ===== NET A PAYER — encadré premium =====================================
-  // Fond bleu clair #EAF1F8, bordure marine #0B2540 (1,5 px), coins 6 px,
-  // filet vertical orange #F26A1B (5 px) à l'intérieur du bord gauche.
+  // ===== NET A PAYER — bande centrée =======================================
+  // Fond bleu clair #EAF1F8, bordure marine #0B2540 (1,5 px), coins 6 px.
+  // La bande n'entoure que le libellé et le montant, centrés sur la page.
   const NAVY: RGB = [11, 37, 64];
   const LIGHT: RGB = [234, 241, 248];
-  const ORANGE: RGB = [242, 106, 27];
-  const NAVY_80: RGB = [55, 78, 101]; // marine à 80 % sur fond bleu clair
   const PX = 0.2646; // 1 px CSS = 0,2646 mm
   const netTop = footBottom + 5;
   const padY = 12 * PX;
   const padX = 16 * PX;
-  const hasSub = !!data.paiement?.date;
-  const netH = padY * 2 + 8 + (hasSub ? 4 : 0);
+  const netLabel = "NET À PAYER";
+  const netAmount = `${moneyAlways(tot.netAPayer)} FCFA`;
+  const netGap = 6;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(13);
+  doc.setCharSpace(0.5 * PX);
+  const labelW = doc.getTextWidth(netLabel) + netLabel.length * 0.5 * PX;
+  doc.setCharSpace(0);
+  doc.setFontSize(22);
+  const amountW = doc.getTextWidth(netAmount);
+  const netW = Math.min(TW, padX * 2 + labelW + netGap + amountW);
+  const netX = X0 + (TW - netW) / 2;
+  const netH = padY * 2 + 8;
   const netBot = netTop + netH;
   const R = 6 * PX;
   doc.setFillColor(LIGHT[0], LIGHT[1], LIGHT[2]);
-  doc.roundedRect(X0, netTop, TW, netH, R, R, "F");
-  // Filet orange découpé par les coins arrondis (overflow hidden)
-  const d = doc as unknown as { saveGraphicsState: () => void; restoreGraphicsState: () => void; clip: () => void; discardPath: () => void; roundedRect: (...a: unknown[]) => void };
-  d.saveGraphicsState();
-  d.roundedRect(X0, netTop, TW, netH, R, R, null);
-  d.clip();
-  d.discardPath();
-  doc.setFillColor(ORANGE[0], ORANGE[1], ORANGE[2]);
-  doc.rect(X0, netTop, 1.5 * PX + 5 * PX, netH, "F");
-  d.restoreGraphicsState();
   doc.setDrawColor(NAVY[0], NAVY[1], NAVY[2]);
   doc.setLineWidth(1.5 * PX);
-  doc.roundedRect(X0, netTop, TW, netH, R, R, "S");
+  doc.roundedRect(netX, netTop, netW, netH, R, R, "FD");
   const baseY = netTop + padY + 7.2; // ligne de base commune libellé / montant
   doc.setCharSpace(0.5 * PX);
-  text("NET À PAYER", X0 + 6.5 * PX + padX, baseY, { size: 13, style: "bold", color: NAVY });
+  text(netLabel, netX + padX, baseY, { size: 13, style: "bold", color: NAVY });
   doc.setCharSpace(0);
-  text(`${moneyAlways(tot.netAPayer)} FCFA`, X1 - padX, baseY, { size: 22, style: "bold", align: "right", color: NAVY });
-  if (hasSub) {
-    const mode = data.paiement!.mode ? `par ${data.paiement!.mode.toLowerCase()} ` : "";
-    text(`Payé ${mode}le ${dateEnLettres(data.paiement!.date)}`, X1 - padX, baseY + 4, {
-      size: 8, align: "right", color: NAVY_80,
-    });
-  }
+  text(netAmount, netX + netW - padX, baseY, { size: 22, style: "bold", align: "right", color: NAVY });
 
   // ===== CUMULS ANNUELS =====================================================
   const cTop = netBot + 3;
