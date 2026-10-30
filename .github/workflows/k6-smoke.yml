@@ -26,9 +26,10 @@ jobs:
           TEST_PASSWORD:      ${{ secrets.K6_TEST_PASSWORD }}
           TEST_CLIENT_ID:     ${{ secrets.K6_TEST_CLIENT_ID }}
           BASE_URL:           ${{ secrets.K6_BASE_URL }}
-        # PR = smoke uniquement (30s / 5 VUs). Le scénario "ramp" reste dispo
-        # en manuel via workflow_dispatch en supprimant --exclude-scenarios.
-        run: k6 run --exclude-scenarios=ramp scripts/load/k6-smoke.js
+          # PR = smoke uniquement (30s / 5 VUs). Le scénario "ramp" reste dispo
+          # en manuel : SCENARIOS=smoke,ramp (k6 n'a pas d'option --exclude-scenarios).
+          SCENARIOS:          smoke
+        run: k6 run scripts/load/k6-smoke.js
 
       - name: Upload k6 summary
         if: always()
