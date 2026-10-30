@@ -18,6 +18,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { ExercicesTable } from "@/components/exercices/index/ExercicesTable";
 import { CloturePreviewDialog } from "@/components/exercices/index/CloturePreviewDialog";
 import { EditExerciceDialog } from "@/components/exercices/index/EditExerciceDialog";
@@ -44,6 +46,8 @@ function ExercicesPage() {
   const [activerSuivant, setActiverSuivant] = useState(true);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [editing, setEditing] = useState<EditingExercice | null>(null);
+  const [aRouvrir, setARouvrir] = useState<{ exercice_id: string; code: string } | null>(null);
+  const [motif, setMotif] = useState("");
 
   const { data: preview, isFetching: previewLoading } = useQuery<PreviewResult>({
     queryKey: ["cloture-preview", previewFor],
@@ -75,6 +79,26 @@ function ExercicesPage() {
       );
       setConfirmOpen(false);
       setPreviewFor(null);
+      qc.invalidateQueries();
+    },
+    onError: (e: Error) => toast.error(friendlyError(e)),
+  });
+
+  // Réouverture tracée (motif, auteur, date) : seule voie pour modifier un exercice clôturé.
+  const rouvrirMut = useMutation({
+    mutationFn: async () => {
+      const { error } = await callRpc("compta_rouvrir_exercice", {
+        p_exercice_id: aRouvrir!.exercice_id,
+        p_motif: motif.trim(),
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success(
+        `Exercice ${aRouvrir?.code ?? ""} rouvert : réouverture enregistrée avec son motif.`,
+      );
+      setARouvrir(null);
+      setMotif("");
       qc.invalidateQueries();
     },
     onError: (e: Error) => toast.error(friendlyError(e)),
@@ -134,7 +158,44 @@ function ExercicesPage() {
         canCloturer={canCloturer}
         onEdit={setEditing}
         onPreviewCloture={setPreviewFor}
+        onRouvrir={(e) => {
+          setMotif("");
+          setARouvrir(e);
+        }}
       />
+
+      <Dialog open={!!aRouvrir} onOpenChange={(o) => !o && setARouvrir(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Rouvrir l&apos;exercice {aRouvrir?.code}</DialogTitle>
+            <DialogDescription>
+              L&apos;exercice redevient modifiable. La réouverture est enregistrée avec son motif,
+              son auteur et sa date ; les soldes déjà reportés ne sont pas annulés.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="motif-reouverture">Motif (obligatoire)</Label>
+            <Textarea
+              id="motif-reouverture"
+              value={motif}
+              onChange={(e) => setMotif(e.target.value)}
+              rows={3}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setARouvrir(null)}>
+              Annuler
+            </Button>
+            <Button
+              disabled={rouvrirMut.isPending || motif.trim().length < 5}
+              onClick={() => rouvrirMut.mutate()}
+            >
+              {rouvrirMut.isPending && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}
+              Rouvrir
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <CloturePreviewDialog
         open={!!previewFor}

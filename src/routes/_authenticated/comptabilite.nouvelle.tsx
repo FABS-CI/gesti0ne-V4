@@ -43,13 +43,14 @@ type LigneForm = {
 
 const emptyLigne = (): LigneForm => ({ compte: "", compte_libelle: "", debit: 0, credit: 0 });
 
+// Codes de journaux_comptables, ceux des écritures automatiques : une saisie dans
+// un code inconnu ne serait rattachée à aucun journal. La paie est passée en OD.
 const JOURNAUX = [
-  { value: "VT", label: "VT — Ventes" },
-  { value: "AC", label: "AC — Achats" },
-  { value: "BQ", label: "BQ — Banque" },
-  { value: "CA", label: "CA — Caisse" },
-  { value: "OD", label: "OD — Opérations diverses" },
-  { value: "PA", label: "PA — Paie" },
+  { value: "VTE", label: "VTE — Ventes" },
+  { value: "ACH", label: "ACH — Achats" },
+  { value: "BAN", label: "BAN — Banque" },
+  { value: "CAI", label: "CAI — Caisse" },
+  { value: "OD", label: "OD — Opérations diverses (dont paie)" },
 ];
 
 function NouvelleEcriturePage() {
@@ -66,7 +67,14 @@ function NouvelleEcriturePage() {
   const totals = useMemo(() => {
     const d = lignes.reduce((s, l) => s + (Number(l.debit) || 0), 0);
     const c = lignes.reduce((s, l) => s + (Number(l.credit) || 0), 0);
-    return { debit: d, credit: c, diff: d - c, balanced: d === c && d > 0 };
+    // Au centime : en virgule flottante, 0,1 + 0,2 ≠ 0,3.
+    const centimes = (n: number) => Math.round(n * 100);
+    return {
+      debit: d,
+      credit: c,
+      diff: d - c,
+      balanced: centimes(d) === centimes(c) && centimes(d) > 0,
+    };
   }, [lignes]);
 
   const updateLigne = (i: number, patch: Partial<LigneForm>) => {
@@ -83,31 +91,27 @@ function NouvelleEcriturePage() {
       const valid = lignes.filter((l) => l.compte.trim() && (l.debit > 0 || l.credit > 0));
       if (valid.length < 2) throw new Error("Au moins 2 lignes valides sont requises.");
 
-      const ref = reference.trim() || `${journal}-${Date.now().toString().slice(-6)}`;
-      const { data: ec, error: e1 } = await supabase
-        .from("ecritures_comptables")
-        .insert({
-          date_ecriture: dateEcriture,
-          journal,
-          reference: ref,
-          libelle: libelle.trim(),
-          montant_total: totals.debit,
-          source_type: "manuel",
-        })
-        .select()
-        .single();
-      if (e1) throw e1;
-
-      const rows = valid.map((l) => ({
-        ecriture_id: ec.ecriture_id,
-        compte: l.compte.trim(),
-        compte_libelle: l.compte_libelle.trim() || l.compte.trim(),
-        debit: Number(l.debit) || 0,
-        credit: Number(l.credit) || 0,
-      }));
-      const { error: e2 } = await supabase.from("ecriture_lignes").insert(rows);
-      if (e2) throw e2;
-      return ec;
+      // En-tête et lignes dans une seule transaction côté serveur : équilibre, droits
+      // et exercice ouvert y sont revérifiés ; un refus n'enregistre rien.
+      const { data, error } = await (
+        supabase.rpc as unknown as (
+          fn: string,
+          args: Record<string, unknown>,
+        ) => Promise<{ data: unknown; error: Error | null }>
+      )("compta_saisir_ecriture", {
+        p_date: dateEcriture,
+        p_journal: journal,
+        p_reference: reference.trim() || null,
+        p_libelle: libelle.trim(),
+        p_lignes: valid.map((l) => ({
+          compte: l.compte.trim(),
+          compte_libelle: l.compte_libelle.trim() || l.compte.trim(),
+          debit: Number(l.debit) || 0,
+          credit: Number(l.credit) || 0,
+        })),
+      });
+      if (error) throw error;
+      return data as string;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["comptabilite"] });
@@ -231,7 +235,8 @@ function NouvelleEcriturePage() {
                     />
                   </TableCell>
                   <TableCell>
-                    <Button aria-label="Supprimer"
+                    <Button
+                      aria-label="Supprimer"
                       size="icon"
                       variant="ghost"
                       onClick={() => removeLigne(i)}
@@ -256,9 +261,7 @@ function NouvelleEcriturePage() {
             </div>
             <div
               className={
-                totals.balanced
-                  ? "font-semibold text-success"
-                  : "font-semibold text-destructive"
+                totals.balanced ? "font-semibold text-success" : "font-semibold text-destructive"
               }
             >
               {totals.balanced ? "Équilibré" : `Écart : ${formatFCFA(Math.abs(totals.diff))}`}

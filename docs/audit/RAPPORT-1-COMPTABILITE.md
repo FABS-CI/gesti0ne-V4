@@ -1,0 +1,76 @@
+# Rapport d'audit — Module Comptabilité (GESTIONE V4)
+
+Date : 30/10/2026 · Branche : `audit/comptabilite` · Migration : `0108_compta_integrite_ecritures.sql`
+
+Ce rapport couvre la première étape de l'audit (Comptabilité, priorité critique). Finances,
+Ressources humaines et les interactions entre modules suivront, un module à la fois.
+
+## Méthode et limites
+
+- **Pas d'accès à la base réelle.** Le job CI « RLS + RPC audit » est sauté : le secret
+  `SUPABASE_DB_URL` n'est pas configuré. L'état de la base a été établi à partir des
+  migrations et de `src/integrations/supabase/types.ts`, généré depuis la base le 30/10.
+- **Les migrations ne se rejouent pas linéairement.** Certaines tables ont été recréées
+  sans `IF NOT EXISTS`, ce qui montre que le projet a été réinitialisé à un moment. Chaque
+  garde-fou est donc **redéfini et rattaché de façon idempotente** : la migration 0108
+  produit le bon état quel que soit l'état actuel, et se rejoue sans erreur.
+- **Tests sur un vrai PostgreSQL.** PGlite (PostgreSQL 17 en WebAssembly) charge les
+  fonctions du projet telles que définies par les migrations, applique 0108, puis rejoue les
+  scénarios : `src/lib/compta/integrite-ecritures.test.ts` (17 tests, exécutés par la CI).
+  Avant correction, chaque anomalie a été **reproduite** sur l'état actuel.
+
+## Bugs détectés et corrigés
+
+| #   | Problème                                                                                                                                                                                                                                            | Gravité  | Fichier                                                                                                                                | Correction                                                                                                                                                                     | Test                                                                                                              | Résultat                                                                                                                                       |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Les écritures de l'ERP sont au statut `valide` (générateurs, `_ecriture_sync`), mais les contrôles d'équilibre ne testaient que `validee` : **l'égalité débit = crédit n'était imposée sur aucune écriture**                                        | Critique | `0108` (`guard_ecriture_balance`, `guard_ecriture_validate`)                                                                           | Les deux statuts sont reconnus ; contrôle différé à la fin de la transaction (une écriture peut se construire ligne par ligne) ; valider une écriture vide est refusé          | Écriture validée déséquilibrée ; écriture équilibrée en plusieurs instructions ; brouillon déséquilibré à valider | Reproduit avant ; corrigé : refusée, acceptée, refusée                                                                                         |
+| 2   | Les verrous (24 h, exercice clos) ne portaient que sur l'en-tête : **les lignes, qui portent les montants, restaient modifiables**, même sur une écriture ancienne                                                                                  | Critique | `0108` (`trg_ecriture_lignes_verrou`)                                                                                                  | Les lignes suivent les verrous de leur en-tête : exercice clôturé, plus de 24 h, écriture contre-passée                                                                        | Modifier, supprimer, ajouter une ligne d'une écriture de 3 jours                                                  | Reproduit avant ; corrigé : refusé                                                                                                             |
+| 3   | Le verrou d'exercice clôturé lisait le statut dans le type `exercice_statut`, **absent de la base** (statut texte) : il ne pouvait pas fonctionner                                                                                                  | Critique | `0108` (`_compta_exercice_clos`, `trg_ecritures_exercice_ouvert`)                                                                      | Lecture du statut texte d'`exercices_comptables` ; nouvelle écriture refusée dans un exercice `cloture` ou `archive`                                                           | Écriture datée de 2025 (clôturé)                                                                                  | Reproduit avant ; corrigé : refusée                                                                                                            |
+| 4   | Annuler une facture, changer son montant ou dé-valider un paiement / achat **supprimait l'écriture** (`_delete_ecriture_piece`). Selon l'état de la base : annulation **impossible** (« Suppression interdite ») ou écriture **effacée sans trace** | Critique | `0108` (`_delete_ecriture_piece`)                                                                                                      | **Contre-passation** SYSCOHADA : écriture inverse (débit ↔ crédit) datée du jour, originale conservée et liée (`contrepassee_par` / `contrepassation_de`) ; aucune suppression | Créer, annuler, réactiver une facture, changer son montant                                                        | Reproduit avant (échec « Suppression interdite ») ; corrigé : soldes 411 / 701 justes à chaque étape, 5 écritures conservées, une seule active |
+| 5   | Saisie manuelle en **deux requêtes** (en-tête puis lignes) : un échec laissait un en-tête sans lignes ; équilibre vérifié seulement dans le navigateur                                                                                              | Majeure  | `0108` (`compta_saisir_ecriture`), `comptabilite.nouvelle.tsx`                                                                         | Fonction serveur unique et transactionnelle : droit `comptabilite.creer`, au moins 2 lignes, montants positifs, débit OU crédit, équilibre, exercice ouvert                    | Saisie valide ; 6 saisies invalides ; sans le droit                                                               | Corrigé : enregistrée ; refusées sans en-tête orphelin ; refusée sans droit                                                                    |
+| 6   | Écran de saisie : codes de journaux **`VT`, `AC`, `BQ`, `CA`, `PA`** inexistants en base (`VTE`, `ACH`, `BAN`, `CAI`, `OD`) : écriture rattachée à aucun journal                                                                                    | Majeure  | `comptabilite.nouvelle.tsx`                                                                                                            | Codes alignés sur `journaux_comptables` ; `PA` retiré (pas de journal de paie : l'ERP passe la paie en OD)                                                                     | Typecheck, lint                                                                                                   | Corrigé                                                                                                                                        |
+| 7   | Contrôle d'équilibre de l'écran en virgule flottante (0,1 + 0,2 ≠ 0,3) : écriture équilibrée avec centimes refusée                                                                                                                                  | Mineure  | `comptabilite.nouvelle.tsx`                                                                                                            | Comparaison au centime                                                                                                                                                         | Typecheck, lint                                                                                                   | Corrigé                                                                                                                                        |
+| 8   | Un exercice clôturé pouvait être **rouvert ou redaté sans motif ni trace** depuis « Modifier » ; aucune réouverture prévue                                                                                                                          | Majeure  | `0108` (`trg_exercice_clos_protege`, `compta_rouvrir_exercice`, `exercices_reouvertures`), `exercices.index.tsx`, `ExercicesTable.tsx` | Statut et dates d'un exercice clôturé bloqués hors réouverture ; bouton « Rouvrir » (droit `exercices.cloturer`, motif obligatoire, journal des réouvertures)                  | Modification directe ; réouverture sans droit, sans motif, puis motivée ; écriture après réouverture              | Corrigé : refusée, refusées, tracée, acceptée                                                                                                  |
+| 9   | En-tête : suppression et modification après 24 h protégées seulement si les déclencheurs existaient encore                                                                                                                                          | Majeure  | `0108` (`trg_ecritures_no_delete`, `trg_ecritures_no_modif_ancienne`)                                                                  | Redéfinis et rattachés de façon idempotente ; l'exercice clôturé bloque aussi la modification ; seul le marquage de contre-passation passe                                     | Modifier / supprimer une écriture de 3 jours ; contexte technique                                                 | Corrigé : refusé ; rôle service autorisé                                                                                                       |
+
+## Contrôles SYSCOHADA
+
+- **Partie double** : imposée en base sur toute écriture validée (bug 1).
+- **Intangibilité** : une écriture de plus de 24 h ou d'un exercice clôturé ne se modifie
+  plus, ni par son en-tête ni par ses lignes ; on l'annule par **contre-passation** (bugs 2, 4, 9).
+- **Clôture** : exercice clôturé verrouillé ; réouverture uniquement motivée et tracée (bugs 3, 8).
+- **Journaux** : la saisie manuelle utilise les journaux de la base (bug 6).
+
+## Calculs vérifiés
+
+- Soldes 411 / 701 d'une facture à chaque étape : création, annulation, réactivation,
+  changement de montant (contre-passations comprises).
+- Égalité débit / crédit au centime, en base et à l'écran.
+- Notes annexes et états financiers recoupés avec le bilan (tests du module États financiers,
+  `notes-bilan.test.ts`), dont la correction du compte 591 (poste BR).
+
+## Cohérence des états financiers
+
+`compta_balance`, et donc la balance, le grand livre et les états financiers, additionne **toutes
+les écritures, quel que soit leur statut**. Une paire écriture / contre-passation s'annule, ce
+qui garde les états justes après annulation.
+
+## Anomalies restantes (non corrigées)
+
+| Anomalie                                                                                                                                                                       | Gravité     | Pourquoi non corrigée                                    | Action proposée                                                                                                                     |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------- | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Les écritures manuelles d'avant 0108 sont au statut `brouillon` (défaut de colonne) et **entrent dans la balance sans contrôle d'équilibre**                                   | Majeure     | Données existantes : à examiner, pas à réécrire en masse | Lister avec `compta_ecritures_desequilibrees()` (écritures déséquilibrées ou vides, avec statut) puis corriger par contre-passation |
+| La clôture reporte les soldes clients depuis `factures.montant_paye`, pas depuis la comptabilité ni `solde_client_calcule` ; elle ne vérifie pas l'équilibre avant de clôturer | Majeure     | Réécrit toute la clôture                                 | Prochaine étape : clôture fondée sur la balance, bloquée si `compta_ecritures_desequilibrees()` n'est pas vide                      |
+| TVA : une facture passe tout le TTC en 701, sans compte 443                                                                                                                    | À confirmer | Juste si les ventes de livres sont exonérées             | Confirmer le régime de TVA de FABS-CI                                                                                               |
+| Pas de dotations aux amortissements automatiques ni de registre des immobilisations                                                                                            | Majeure     | Fonctionnalité absente                                   | Module immobilisations (Finances)                                                                                                   |
+| Comptes saisis non vérifiés contre le plan comptable                                                                                                                           | Mineure     | Comptes auxiliaires existants à recenser                 | Contrôle d'existence dans `plan_comptable`                                                                                          |
+| Le job CI « RLS + RPC audit » ne s'exécute pas                                                                                                                                 | Majeure     | Secret `SUPABASE_DB_URL` (base de **test**) absent       | Créer le secret pour vérifier droits et RLS sur une vraie base                                                                      |
+
+## Vérifications
+
+- `bun run typecheck` (tsgo) et ESLint : propres sur les fichiers modifiés.
+- Vitest : 536 tests passent, dont les 17 nouveaux tests SQL. Le seul échec,
+  `no-direct-locale-format` sur `src/components/ui/calendar.tsx`, existait déjà et ne se
+  produit que sous Windows (il passe dans la CI Linux).
+- **Non vérifié** : l'application de 0108 sur la base Supabase réelle et l'essai des écrans
+  dans l'ERP en ligne.

@@ -85,11 +85,13 @@ describe("Déclarations de paie", () => {
     expect([d.cnpsSalarie, d.its, d.cmuSalarie]).toEqual([18900, 8430, 1000]);
   });
 
-  it("exclut les bulletins annulés et totalise les autres", () => {
+  it("exclut les bulletins annulés et les brouillons, totalise les validés et payés", () => {
     const lignes = computeLignes([
       bulletin(),
       bulletin({ bulletin_id: "b2", statut: "annule" }),
-      bulletin({ bulletin_id: "b3" }),
+      bulletin({ bulletin_id: "b3", statut: "paye" }),
+      bulletin({ bulletin_id: "b4", statut: "brouillon" }),
+      bulletin({ bulletin_id: "b5", statut: "genere" }),
     ]);
     expect(lignes).toHaveLength(2);
     const t = computeTotaux(lignes);

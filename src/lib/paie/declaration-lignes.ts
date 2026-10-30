@@ -43,8 +43,12 @@ export type DeclTotaux = Omit<DeclLigne, "employe">;
 
 const num = (v: unknown) => Number(v) || 0;
 
-/** Bulletins annulés exclus, comme dans les rapports de paie. */
-export const estDeclarable = (b: Pick<BulletinDeclare, "statut">) => !/annul/i.test(b.statut ?? "");
+/**
+ * Seuls les bulletins validés ou payés sont déclarés : ce sont aussi les seuls
+ * comptabilisés (431 / 447). Brouillons et bulletins annulés exclus.
+ */
+export const estDeclarable = (b: Pick<BulletinDeclare, "statut">) =>
+  b.statut === "valide" || b.statut === "paye";
 
 type Poste = Exclude<keyof DeclLigne, "employe" | "brut" | "net">;
 

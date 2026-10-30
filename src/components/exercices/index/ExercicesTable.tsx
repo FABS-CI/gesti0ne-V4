@@ -1,5 +1,5 @@
 import { formatDateLong } from "@/lib/format";
-import { Lock, Pencil } from "lucide-react";
+import { Lock, LockOpen, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,6 +29,8 @@ type Props = {
   canCloturer: boolean;
   onEdit: (e: EditingExercice) => void;
   onPreviewCloture: (id: string) => void;
+  /** Exercice clôturé à rouvrir (motif demandé ensuite). */
+  onRouvrir: (e: { exercice_id: string; code: string }) => void;
 };
 
 export function ExercicesTable({
@@ -37,6 +39,7 @@ export function ExercicesTable({
   canCloturer,
   onEdit,
   onPreviewCloture,
+  onRouvrir,
 }: Props) {
   return (
     <Card>
@@ -58,9 +61,7 @@ export function ExercicesTable({
               <TableRow key={ex.exercice_id}>
                 <TableCell className="font-semibold">{ex.code}</TableCell>
                 <TableCell className="text-sm">
-                  {formatDateLong(ex.date_debut)}{" "}
-                  →{" "}
-                  {formatDateLong(ex.date_fin)}
+                  {formatDateLong(ex.date_debut)} → {formatDateLong(ex.date_fin)}
                 </TableCell>
                 <TableCell>
                   <Badge variant={ex.is_actif ? "default" : "outline"}>
@@ -96,6 +97,16 @@ export function ExercicesTable({
                       >
                         <Lock className="mr-1 h-3.5 w-3.5" />
                         Aperçu clôture
+                      </Button>
+                    )}
+                    {(ex.statut === "cloture" || ex.statut === "archive") && canCloturer && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => onRouvrir({ exercice_id: ex.exercice_id, code: ex.code })}
+                      >
+                        <LockOpen className="mr-1 h-3.5 w-3.5" />
+                        Rouvrir
                       </Button>
                     )}
                   </div>
