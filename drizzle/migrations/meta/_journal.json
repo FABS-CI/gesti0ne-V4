@@ -736,6 +736,13 @@
       "when": 1793383394002,
       "tag": "0106_controle_application_0103_0105",
       "breakpoints": true
+    },
+    {
+      "idx": 107,
+      "version": "7",
+      "when": 1793383394003,
+      "tag": "0107_ecriture_auto_bulletin_paie",
+      "breakpoints": true
     }
   ]
 }

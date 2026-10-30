@@ -9361,6 +9361,10 @@ export type Database = {
       }
       generate_client_reference: { Args: never; Returns: string }
       generate_ecriture_achat: { Args: { _achat_id: string }; Returns: string }
+      generate_ecriture_bulletin: {
+        Args: { _bulletin_id: string }
+        Returns: string
+      }
       generate_ecriture_facture: {
         Args: { _facture_id: string }
         Returns: string
