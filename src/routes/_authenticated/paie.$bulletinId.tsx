@@ -7,7 +7,6 @@ import { formatDate, formatFCFA } from "@/lib/format";
 import type { LigneStockee } from "@/lib/paie/bulletin-pdf-data";
 import { BulletinActionButtons } from "@/components/paie/BulletinActionButtons";
 import { CMU_FORFAIT_FCFA } from "@/lib/paie-bulletin-actions";
-import { dateEnLettres } from "@/lib/pdf/bulletinPaieCI";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
