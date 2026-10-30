@@ -10,6 +10,7 @@ import {
   STATUT_TRANSACTION_LABEL,
   TYPE_TRANSACTION_LABEL,
   createTransaction,
+  annulerTransaction,
   deleteTransaction,
   listTransactions,
   updateTransaction,
@@ -69,7 +70,9 @@ function FinancesPage() {
     let recettes = 0;
     let depenses = 0;
     for (const t of transactions) {
-      if (t.statut === "annule") continue;
+      // Seules les transactions validées : une transaction en attente n'a pas encore
+      // fait entrer ou sortir d'argent.
+      if (t.statut !== "valide") continue;
       if (t.type === "recette") recettes += Number(t.montant);
       else depenses += Number(t.montant);
     }
@@ -92,6 +95,15 @@ function FinancesPage() {
     onSuccess: () => {
       invalidateTransaction(queryClient);
       toast.success("Transaction supprimée");
+    },
+    onError: (e: unknown) => toast.error(friendlyError(e, "Erreur")),
+  });
+
+  const annulerMutation = useMutation({
+    mutationFn: (id: string) => annulerTransaction(id),
+    onSuccess: () => {
+      invalidateTransaction(queryClient);
+      toast.success("Transaction annulée : elle reste dans l'historique");
     },
     onError: (e: unknown) => toast.error(friendlyError(e, "Erreur")),
   });
@@ -187,6 +199,7 @@ function FinancesPage() {
         isLoading={isLoading}
         onEdit={openEdit}
         onDelete={(id) => deleteMutation.mutate(id)}
+        onAnnuler={(id) => annulerMutation.mutate(id)}
       />
 
       <TransactionFormDialog

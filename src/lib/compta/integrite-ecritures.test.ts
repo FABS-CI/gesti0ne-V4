@@ -4,40 +4,11 @@
 // sont reprises telles que définies par les migrations ; la migration 0108 est
 // appliquée telle quelle, puis rejouée pour vérifier qu'elle est idempotente.
 
-import { readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
 import { PGlite } from "@electric-sql/pglite";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-const MIGRATION = "drizzle/migrations/0108_compta_integrite_ecritures.sql";
-const FICHIERS = [
-  ...readdirSync("supabase/migrations")
-    .filter((f) => f.endsWith(".sql"))
-    .sort()
-    .map((f) => join("supabase/migrations", f)),
-  ...readdirSync("drizzle/migrations")
-    .filter((f) => f.endsWith(".sql"))
-    .sort()
-    .map((f) => join("drizzle/migrations", f)),
-];
+import { TECHNIQUE, UTILISATEUR, fonctionMigration, migration } from "@/test/pg-migrations";
 
-/** Dernière définition d'une fonction dans les migrations (texte jusqu'au « $$; »). */
-function fonction(nom: string): string {
-  let dernier: string | null = null;
-  const motif = `CREATE OR REPLACE FUNCTION public.${nom}(`;
-  for (const f of FICHIERS) {
-    const s = readFileSync(f, "utf8");
-    for (let i = s.indexOf(motif); i >= 0; i = s.indexOf(motif, i + 1)) {
-      const fin = s.indexOf("$$", s.indexOf("$$", i) + 2);
-      dernier = s.slice(i, s.indexOf(";", fin) + 1);
-    }
-  }
-  if (!dernier) throw new Error(`fonction introuvable : ${nom}`);
-  return dernier;
-}
-
-const UTILISATEUR = `SELECT set_config('request.jwt.claims', '{"role":"authenticated","sub":"00000000-0000-0000-0000-000000000001"}', false);`;
-const TECHNIQUE = `SELECT set_config('request.jwt.claims', '', false);`;
 const ID_EQ = "11111111-1111-1111-1111-111111111111";
 
 let db: PGlite;
@@ -108,7 +79,7 @@ beforeAll(async () => {
     "generate_ecriture_facture",
     "_trg_facture_ecriture",
   ]) {
-    await db.exec(fonction(f));
+    await db.exec(fonctionMigration(`${f}(`));
   }
   await db.exec(`
     CREATE TRIGGER trg_ecriture_sync BEFORE INSERT OR UPDATE ON public.ecritures_comptables FOR EACH ROW EXECUTE FUNCTION public._ecriture_sync();
@@ -123,7 +94,7 @@ beforeAll(async () => {
                VALUES ('ANCIENNE-DESEQ', '2026-02-01', 'valide') RETURNING ecriture_id)
     INSERT INTO public.ecriture_lignes (ecriture_id, compte, debit, credit) SELECT ecriture_id, '601', 500, 0 FROM e;
   `);
-  await db.exec(readFileSync(MIGRATION, "utf8"));
+  await db.exec(migration("0108_compta_integrite_ecritures.sql"));
   await db.exec(UTILISATEUR);
 }, 60_000);
 
@@ -133,7 +104,9 @@ afterAll(async () => {
 
 describe("migration 0108", () => {
   it("se rejoue sans erreur (idempotente)", async () => {
-    expect(await erreur(TECHNIQUE + readFileSync(MIGRATION, "utf8") + UTILISATEUR)).toBeNull();
+    expect(
+      await erreur(TECHNIQUE + migration("0108_compta_integrite_ecritures.sql") + UTILISATEUR),
+    ).toBeNull();
   });
 });
 
