@@ -798,6 +798,95 @@ export type Database = {
         }
         Relationships: []
       }
+      balances_importees: {
+        Row: {
+          libelle: string | null
+          lot_id: string
+          mvt_credit: number | null
+          mvt_debit: number | null
+          numero_compte: string
+          solde: number
+        }
+        Insert: {
+          libelle?: string | null
+          lot_id: string
+          mvt_credit?: number | null
+          mvt_debit?: number | null
+          numero_compte: string
+          solde: number
+        }
+        Update: {
+          libelle?: string | null
+          lot_id?: string
+          mvt_credit?: number | null
+          mvt_debit?: number | null
+          numero_compte?: string
+          solde?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "balances_importees_lot_id_fkey"
+            columns: ["lot_id"]
+            isOneToOne: false
+            referencedRelation: "balances_importees_lots"
+            referencedColumns: ["lot_id"]
+          },
+        ]
+      }
+      balances_importees_lots: {
+        Row: {
+          avec_mouvements: boolean
+          exercice_id: string
+          fichier: string | null
+          importe_le: string
+          importe_par: string | null
+          lot_id: string
+          nb_comptes: number
+          remplace_le: string | null
+          total_credit: number
+          total_debit: number
+        }
+        Insert: {
+          avec_mouvements?: boolean
+          exercice_id: string
+          fichier?: string | null
+          importe_le?: string
+          importe_par?: string | null
+          lot_id?: string
+          nb_comptes: number
+          remplace_le?: string | null
+          total_credit: number
+          total_debit: number
+        }
+        Update: {
+          avec_mouvements?: boolean
+          exercice_id?: string
+          fichier?: string | null
+          importe_le?: string
+          importe_par?: string | null
+          lot_id?: string
+          nb_comptes?: number
+          remplace_le?: string | null
+          total_credit?: number
+          total_debit?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "balances_importees_lots_exercice_id_fkey"
+            columns: ["exercice_id"]
+            isOneToOne: false
+            referencedRelation: "exercices"
+            referencedColumns: ["exercice_id"]
+          },
+          {
+            foreignKeyName: "balances_importees_lots_exercice_id_fkey"
+            columns: ["exercice_id"]
+            isOneToOne: false
+            referencedRelation: "exercices_comptables"
+            referencedColumns: ["exercice_id"]
+          },
+        ]
+      }
       bons_livraison: {
         Row: {
           adresse_livraison: string | null
@@ -2867,6 +2956,126 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
           ville?: string | null
+        }
+        Relationships: []
+      }
+      etats_financiers_dossiers: {
+        Row: {
+          commentaire_validation: string | null
+          contenu: Json
+          devalide_le: string | null
+          devalide_par: string | null
+          dossier_id: string
+          empreinte: string
+          exercice_id: string
+          genere_le: string
+          genere_par: string | null
+          motif_devalidation: string | null
+          nb_avertissements: number
+          nb_bloquants: number
+          preparation: string
+          source: string
+          statut: string
+          valide_le: string | null
+          valide_par: string | null
+          version: number
+          version_modele: string
+          version_regles: string
+        }
+        Insert: {
+          commentaire_validation?: string | null
+          contenu: Json
+          devalide_le?: string | null
+          devalide_par?: string | null
+          dossier_id?: string
+          empreinte: string
+          exercice_id: string
+          genere_le?: string
+          genere_par?: string | null
+          motif_devalidation?: string | null
+          nb_avertissements?: number
+          nb_bloquants?: number
+          preparation: string
+          source: string
+          statut?: string
+          valide_le?: string | null
+          valide_par?: string | null
+          version: number
+          version_modele: string
+          version_regles: string
+        }
+        Update: {
+          commentaire_validation?: string | null
+          contenu?: Json
+          devalide_le?: string | null
+          devalide_par?: string | null
+          dossier_id?: string
+          empreinte?: string
+          exercice_id?: string
+          genere_le?: string
+          genere_par?: string | null
+          motif_devalidation?: string | null
+          nb_avertissements?: number
+          nb_bloquants?: number
+          preparation?: string
+          source?: string
+          statut?: string
+          valide_le?: string | null
+          valide_par?: string | null
+          version?: number
+          version_modele?: string
+          version_regles?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "etats_financiers_dossiers_exercice_id_fkey"
+            columns: ["exercice_id"]
+            isOneToOne: false
+            referencedRelation: "exercices"
+            referencedColumns: ["exercice_id"]
+          },
+          {
+            foreignKeyName: "etats_financiers_dossiers_exercice_id_fkey"
+            columns: ["exercice_id"]
+            isOneToOne: false
+            referencedRelation: "exercices_comptables"
+            referencedColumns: ["exercice_id"]
+          },
+        ]
+      }
+      etats_financiers_modeles: {
+        Row: {
+          avec_macros: boolean
+          chemin: string
+          depose_le: string
+          depose_par: string | null
+          modele_id: string
+          nom_fichier: string
+          remplace_le: string | null
+          sha256: string
+          taille: number
+        }
+        Insert: {
+          avec_macros?: boolean
+          chemin: string
+          depose_le?: string
+          depose_par?: string | null
+          modele_id?: string
+          nom_fichier: string
+          remplace_le?: string | null
+          sha256: string
+          taille: number
+        }
+        Update: {
+          avec_macros?: boolean
+          chemin?: string
+          depose_le?: string
+          depose_par?: string | null
+          modele_id?: string
+          nom_fichier?: string
+          remplace_le?: string | null
+          sha256?: string
+          taille?: number
         }
         Relationships: []
       }
@@ -9023,6 +9232,72 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      etats_financiers_completude: {
+        Args: { p_debut: string; p_fin: string }
+        Returns: Json
+      }
+      etats_financiers_empreinte: {
+        Args: { p_exercice_id: string }
+        Returns: string
+      }
+      etats_financiers_enregistrer_dossier: {
+        Args: {
+          p_contenu: Json
+          p_exercice_id: string
+          p_nb_avertissements: number
+          p_nb_bloquants: number
+          p_preparation: string
+          p_source: string
+          p_version_modele: string
+          p_version_regles: string
+        }
+        Returns: string
+      }
+      etats_financiers_enregistrer_modele: {
+        Args: {
+          p_avec_macros: boolean
+          p_chemin: string
+          p_nom_fichier: string
+          p_sha256: string
+          p_taille: number
+        }
+        Returns: string
+      }
+      etats_financiers_historique: {
+        Args: { p_exercice_id: string }
+        Returns: {
+          commentaire_validation: string
+          devalide_le: string
+          devalide_par_nom: string
+          dossier_id: string
+          empreinte: string
+          genere_le: string
+          genere_par_nom: string
+          motif_devalidation: string
+          nb_avertissements: number
+          nb_bloquants: number
+          preparation: string
+          source: string
+          statut: string
+          valide_le: string
+          valide_par_nom: string
+          version: number
+          version_modele: string
+          version_regles: string
+        }[]
+      }
+      etats_financiers_importer_balance: {
+        Args: { p_exercice_id: string; p_fichier: string; p_lignes: Json }
+        Returns: string
+      }
+      etats_financiers_rouvrir_dossier: {
+        Args: { p_dossier_id: string; p_motif: string }
+        Returns: undefined
+      }
+      etats_financiers_valider_dossier: {
+        Args: { p_commentaire: string; p_dossier_id: string }
+        Returns: undefined
       }
       executer_cloture_exercice: {
         Args: { _activer_suivant?: boolean; _exercice_id: string }
