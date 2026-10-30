@@ -51,6 +51,11 @@ import {
 } from "@/lib/etats-financiers/donnees-api";
 import { construireContenu, etatDossier } from "@/lib/etats-financiers/dossiers";
 import { PanneauDossier } from "@/components/etats-financiers/Dossier";
+import { ExportsDossier } from "@/components/etats-financiers/Exports";
+import { exporterPdf, type DonneesExport } from "@/lib/etats-financiers/exports";
+import type { Section } from "@/lib/etats-financiers/dossier-pdf";
+import { toast } from "sonner";
+import { friendlyError } from "@/lib/friendly-error";
 import { controler, statutPreparation, type Controle } from "@/lib/etats-financiers/controles";
 import type { ValeurIdentite } from "@/lib/etats-financiers/identite";
 import {
@@ -174,49 +179,33 @@ function EtatsFinanciersPage() {
   const controles = versionAffichee ? (fige?.controles ?? null) : controlesActuels;
   const identite = versionAffichee ? fige?.identite : identiteActuelle;
 
-  const exporter = (onglet: "actif" | "passif" | "resultat" | "tft") => {
-    if (!n || !exercice) return;
-    const titre = {
-      actif: "BILAN — ACTIF",
-      passif: "BILAN — PASSIF",
-      resultat: "COMPTE DE RÉSULTAT",
-      tft: "TABLEAU DES FLUX DE TRÉSORERIE",
-    }[onglet];
-    const nomN = libelleExercice(exercice);
-    const nomN1 = exerciceN1 ? libelleExercice(exerciceN1) : "N-1";
-    if (onglet === "actif") {
-      exportCsv(
-        `bilan-actif-${nomN}`,
-        ["Réf", "Actif", "Note", "Brut", "Amort. et dépréc.", `Net ${nomN}`, `Net ${nomN1}`],
-        LIGNES_ACTIF.map((l) => [
-          l.ref,
-          l.libelle,
-          l.note ?? "",
-          montant(n.actif[l.ref].brut),
-          montant(n.actif[l.ref].amort),
-          montant(n.actif[l.ref].net),
-          montant(n1?.actif[l.ref].net),
-        ]),
-        { pageTitle: `${titre} — ${nomN}` },
+  // Données exportées (PDF, Excel) : celles affichées, version comprise.
+  const donneesExport = useMemo<DonneesExport | null>(
+    () =>
+      n && exercice && identite && controles
+        ? {
+            n,
+            n1,
+            exercice: { ...exercice, libelle: libelleExercice(exercice) },
+            exerciceN1: exerciceN1 && n1 ? { libelle: libelleExercice(exerciceN1) } : null,
+            identite,
+            controles,
+            version: versionFigee
+              ? `Version ${versionFigee.version}${
+                  versionFigee.statut === "valide" && versionFigee.valide_le
+                    ? ` validée le ${formatDateTime(versionFigee.valide_le)}`
+                    : ` générée le ${formatDateTime(versionFigee.genere_le)}`
+                }`
+              : undefined,
+          }
+        : null,
+    [n, n1, exercice, exerciceN1, identite, controles, versionFigee],
+  );
+  const exporter = (section: Section) => {
+    if (donneesExport)
+      exporterPdf(donneesExport, section).catch((e) =>
+        toast.error(friendlyError(e, "Export PDF impossible")),
       );
-      return;
-    }
-    const lignes = { passif: LIGNES_PASSIF, resultat: LIGNES_RESULTAT, tft: LIGNES_TFT }[onglet];
-    const valeurs = (ef?: EtatsAffiches) =>
-      ({ passif: ef?.passif, resultat: ef?.resultat, tft: ef?.tft.valeurs })[onglet];
-    const fichier = { passif: "bilan-passif", resultat: "compte-de-resultat", tft: "tft" }[onglet];
-    exportCsv(
-      `${fichier}-${nomN}`,
-      ["Réf", "Libellé", "Note", nomN, nomN1],
-      lignes.map((l) => [
-        l.ref,
-        l.libelle,
-        l.note ?? "",
-        montant(valeurs(n)?.[l.ref]),
-        montant(valeurs(n1)?.[l.ref]),
-      ]),
-      { pageTitle: `${titre} — ${nomN}` },
-    );
   };
 
   return (
@@ -326,6 +315,7 @@ function EtatsFinanciersPage() {
                 />
               )}
               {identiteActuelle && <Identification identite={identiteActuelle} />}
+              {donneesExport && <ExportsDossier donnees={donneesExport} />}
               {identite && controles && (
                 <ExportEdi
                   n={n}

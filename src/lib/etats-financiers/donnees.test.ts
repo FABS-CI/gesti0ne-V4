@@ -17,6 +17,7 @@ import {
   statutPreparation,
   type Completude,
 } from "@/lib/etats-financiers/controles";
+import { SOLDES_2025 } from "@/lib/etats-financiers/fixtures-2025";
 
 const ligne = (compte: string, solde: number): BalanceRow => ({
   compte,
@@ -52,29 +53,7 @@ const ERP_VIDE: DonneesErp = {
 };
 
 // Balance de clôture 2025 d'EDITION FABS-CI (soldes de la liasse DGI).
-const BALANCE_2025 = importee([
-  ["1013", -10_000_000],
-  ["1111", -3_089_874],
-  ["1211", -42_296_092],
-  ["2441", 2_500_000],
-  ["28441", -1_812_500],
-  ["2451", 2_850_000],
-  ["28451", -2_850_000],
-  ["4111", 53_781_256],
-  ["4011", -12_856_500],
-  ["4411", -11_395_805],
-  ["4431", -7_982_315],
-  ["5211", 67_339_243],
-  ["7011", -515_053_551],
-  ["6011", 410_742_724],
-  ["6041", 9_698_400],
-  ["6181", 2_248_500],
-  ["6221", 6_755_550],
-  ["6411", 2_894_023],
-  ["6611", 36_881_136],
-  ["6813", 250_000],
-  ["8911", 11_395_805],
-]);
+const BALANCE_2025 = importee(SOLDES_2025);
 
 describe("assemblerDonnees — priorité ERP, balance importée en complément", () => {
   it("exercice sans écriture : la balance importée redonne la liasse 2025", () => {

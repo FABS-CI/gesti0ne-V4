@@ -250,3 +250,60 @@ export async function rouvrirDossier(dossierId: string, motif: string) {
   });
   if (error) throw error;
 }
+
+// ─── Modèle Excel de la liasse (migration 0105) ──────────────────────────────
+const BUCKET_MODELES = "etats-financiers-modeles";
+
+export type ModeleLiasse = {
+  modele_id: string;
+  chemin: string;
+  nom_fichier: string;
+  taille: number;
+  sha256: string;
+  avec_macros: boolean;
+  depose_le: string;
+};
+
+/** Modèle en vigueur ; null s'il n'a pas été déposé (ou migration absente). */
+export async function getModeleActif(): Promise<ModeleLiasse | null> {
+  const { data, error } = await table("etats_financiers_modeles")
+    .select("modele_id, chemin, nom_fichier, taille, sha256, avec_macros, depose_le")
+    .is("remplace_le", null)
+    .maybeSingle();
+  if (error || !data) return null;
+  return data as unknown as ModeleLiasse;
+}
+
+async function sha256(buf: ArrayBuffer): Promise<string> {
+  const h = await crypto.subtle.digest("SHA-256", buf);
+  return [...new Uint8Array(h)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/** Dépose un nouveau modèle ; le précédent reste conservé (historique). */
+export async function deposerModele(file: File): Promise<string> {
+  const buf = await file.arrayBuffer();
+  const empreinte = await sha256(buf);
+  const macros = /\.xlsm$/i.test(file.name);
+  // Horodaté : chaque dépôt est un fichier distinct, jamais écrasé.
+  const horodatage = new Date().toISOString().replace(/[:.]/g, "-");
+  const chemin = `${horodatage}-${empreinte.slice(0, 12)}.${macros ? "xlsm" : "xlsx"}`;
+  const { error: up } = await supabase.storage
+    .from(BUCKET_MODELES)
+    .upload(chemin, buf, { contentType: file.type || "application/octet-stream", upsert: false });
+  if (up) throw up;
+  const { data, error } = await rpc("etats_financiers_enregistrer_modele", {
+    p_chemin: chemin,
+    p_nom_fichier: file.name,
+    p_taille: file.size,
+    p_sha256: empreinte,
+    p_avec_macros: macros,
+  });
+  if (error) throw error;
+  return data as string;
+}
+
+export async function chargerModele(m: ModeleLiasse): Promise<ArrayBuffer> {
+  const { data, error } = await supabase.storage.from(BUCKET_MODELES).download(m.chemin);
+  if (error) throw error;
+  return data.arrayBuffer();
+}
