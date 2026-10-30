@@ -6,6 +6,8 @@ import type { BalanceRow } from "@/lib/compta-api";
 import { calculerEtatsFinanciers } from "@/lib/etats-financiers/syscohada";
 import { calculerTft } from "@/lib/etats-financiers/tft";
 import { SOLDES_2025 } from "@/lib/etats-financiers/fixtures-2025";
+import { calculerNotes, type NoteCalculee } from "@/lib/etats-financiers/notes";
+import { CORRESPONDANCES_NOTES_2025, libelleComparable } from "@/lib/etats-financiers/notes-modele";
 import {
   ecrireCellule,
   nomFichierExcel,
@@ -150,20 +152,128 @@ describe("remplirModele — petit modèle", () => {
   });
 });
 
+describe("remplirModele — notes annexes", () => {
+  /** Feuille NOTE 7 réduite : en-tête « Année N / N-1 », totaux en formules, échéances. */
+  function modeleNotes(): Uint8Array {
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet([["NOTE 7 : CLIENTS"]]);
+    XLSX.utils.sheet_add_aoa(
+      ws,
+      [
+        ["Libellés", "", "", "", "Année N", "Année N-1", "Variation", "Échéance"],
+        ["Clients (hors réserves de propriété et Groupe)", "", "", "", 999, 888, "", 777],
+        ["Clients effets à recevoir (hors réserves de propriété et groupe)", "", "", "", 5, 5],
+        ["Clients avec réserves de propriété", "", "", "", 6, 6],
+        ["TOTAL BRUT CLIENTS"],
+        ["Dépréciations des comptes clients", "", "", "", 0, 0],
+        ["Commentaire :", "", "", "", 42],
+      ],
+      { origin: "A8" },
+    );
+    ws.E12 = { t: "n", v: 0, f: "SUM(E9:E11)" };
+    ws.G9 = { t: "n", v: 0, f: 'IF(F9,(E9-F9)/F9,"")' };
+    ws["!ref"] = "A1:H14";
+    XLSX.utils.book_append_sheet(wb, ws, "NOTE 7");
+    const n21 = XLSX.utils.aoa_to_sheet([["NOTE 21"]]);
+    XLSX.utils.sheet_add_aoa(
+      n21,
+      [
+        ["Libellés", "", "", "", "", "Année N", "Année N-1"],
+        ["Ventes de marchandises dans l'Etat partie", "", "", "", "", 1, 1],
+      ],
+      { origin: "A8" },
+    );
+    XLSX.utils.book_append_sheet(wb, n21, "NOTE 21");
+    return XLSX.write(wb, { type: "array", bookType: "xlsx" }) as Uint8Array;
+  }
+
+  const note7 = (clients: number, depreciation: number): NoteCalculee => ({
+    numero: "7",
+    titre: "Clients",
+    lignes: [
+      {
+        libelle: "Clients (hors réserves de propriété et groupe)",
+        montant: clients,
+        niveau: "detail",
+      },
+      { libelle: "Clients effets à recevoir (hors groupe)", montant: 0, niveau: "detail" },
+      { libelle: "Autres comptes (non ventilé)", montant: 12, niveau: "detail" },
+      { libelle: "TOTAL BRUT CLIENTS", montant: clients + 12, niveau: "total" },
+      { libelle: "Dépréciations des comptes clients", montant: depreciation, niveau: "detail" },
+    ],
+  });
+  const note21: NoteCalculee = {
+    numero: "21",
+    titre: "Chiffre d'affaires",
+    lignes: [{ libelle: "Ventes de marchandises", montant: 500, niveau: "detail" }],
+  };
+
+  async function remplir(n1: boolean) {
+    const n = { ...etats2025(), notes: [note7(1000, -300), note21] };
+    const { fichier, rapport } = await remplirModele({
+      modele: modeleNotes(),
+      n,
+      n1: n1 ? { ...etats2025(), notes: [note7(800, -100), note21] } : undefined,
+      exercice,
+      identite,
+    });
+    return { ws: XLSX.read(fichier, { type: "array", cellFormula: true }).Sheets, rapport };
+  }
+
+  it("place chaque ligne sur son libellé, correspondances explicites comprises", async () => {
+    const { ws } = await remplir(true);
+    const s = ws["NOTE 7"];
+    expect([s.E9.v, s.F9.v]).toEqual([1000, 800]);
+    // « (hors groupe) » de l'ERP ↔ « (hors réserves de propriété et groupe) » du modèle.
+    expect([s.E10.v, s.F10.v]).toEqual([0, 0]);
+    // Dépréciation négative dans l'ERP, positive dans le modèle (TOTAL NET = brut − dép.).
+    expect([s.E13.v, s.F13.v]).toEqual([300, 100]);
+    expect(ws["NOTE 21"].F9.v).toBe(500);
+  });
+
+  it("ligne non calculée et échéances : vidées, jamais laissées aux chiffres du modèle", async () => {
+    const { ws } = await remplir(true);
+    const s = ws["NOTE 7"];
+    expect(s.E11?.v).toBeUndefined(); // réserves de propriété : absente des notes calculées
+    expect(s.H9?.v).toBeUndefined(); // échéance du modèle effacée
+    expect(s.E12.f).toBe("SUM(E9:E11)"); // total : formule conservée
+    expect(s.G9.f).toBeDefined(); // variation : formule conservée
+    expect(s.E14.v).toBe(42); // sous « Commentaire » : non touché
+  });
+
+  it("sans N-1 : colonne N-1 vide", async () => {
+    const { ws } = await remplir(false);
+    expect(ws["NOTE 7"].F9?.v).toBeUndefined();
+  });
+
+  it("ligne sans place dans le modèle et hypothèses : signalées", async () => {
+    const { rapport } = await remplir(true);
+    expect(rapport.introuvables).toContain("NOTE 7 : « Autres comptes (non ventilé) » (12)");
+    expect(rapport.notesRemplies).toEqual(["NOTE 7", "NOTE 21"]);
+    expect(rapport.hypotheses).toHaveLength(1);
+    expect(rapport.hypotheses[0]).toMatch(/NOTE 21 : .*Etat partie/);
+    expect(rapport.feuillesMisesAJour).toContain("NOTE 7");
+    expect(rapport.feuillesAVerifier).not.toContain("NOTE 7");
+  });
+});
+
 // Classeur réel (confidentiel, hors dépôt) : MODELE_LIASSE=chemin/vers/le/modele.xlsm
 const MODELE = process.env.MODELE_LIASSE;
 describe.skipIf(!MODELE)("remplirModele — classeur DGI 2025 réel", () => {
   it("les montants écrits pour 2025 sont ceux du classeur, macros conservées", async () => {
     const modele = new Uint8Array(readFileSync(MODELE!));
     const avant = XLSX.read(modele, { type: "array" });
+    const b = SOLDES_2025.map(ligne);
     const { fichier, macros, rapport } = await remplirModele({
       modele,
-      n: etats2025(),
+      n: { ...etats2025(), notes: calculerNotes(b, b) },
       exercice,
       identite,
     });
     expect(macros).toBe(true);
     expect(rapport.introuvables).toEqual([]);
+    // Les 10 notes calculées trouvent toutes leurs lignes dans le modèle.
+    expect(rapport.notesRemplies).toHaveLength(10);
     const apres = XLSX.read(fichier, { type: "array", bookVBA: true });
     expect(apres.vbaraw).toBeTruthy();
     // Colonnes N du bilan et du compte de résultat : identiques au classeur déposé.
@@ -184,5 +294,22 @@ describe.skipIf(!MODELE)("remplirModele — classeur DGI 2025 réel", () => {
     }
     expect(ecarts).toEqual([]);
     expect(apres.SheetNames.length).toBe(avant.SheetNames.length + 1);
+  });
+});
+
+describe("table de correspondance des notes", () => {
+  it("chaque libellé de la table existe dans les notes calculées (pas d'entrée orpheline)", () => {
+    const calculees = calculerNotes([], []);
+    const orphelines = Object.entries(CORRESPONDANCES_NOTES_2025).flatMap(([numero, corr]) => {
+      const libelles = new Set(
+        calculees
+          .find((n) => n.numero === numero)
+          ?.lignes.map((l) => libelleComparable(l.libelle)) ?? [],
+      );
+      return corr
+        .filter((c) => !libelles.has(libelleComparable(c.ligne)))
+        .map((c) => `NOTE ${numero} : ${c.ligne}`);
+    });
+    expect(orphelines).toEqual([]);
   });
 });
