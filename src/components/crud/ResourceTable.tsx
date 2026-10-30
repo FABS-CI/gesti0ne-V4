@@ -132,18 +132,22 @@ export function ResourceTable({ config, rows, isLoading, onEdit, onDelete }: Pro
                   })}
                   {!config.readOnly && (
                     <>
-                      <Button aria-label="Modifier" variant="ghost" size="icon" onClick={() => onEdit(row)}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button aria-label="Supprimer"
-                        variant="ghost"
-                        size="icon"
-                        onClick={async () => {
-                          if (await askConfirm("Supprimer cet élément ?")) onDelete(row[config.idField]);
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
+                      {(config.canEditRow?.(row) ?? true) && (
+                        <Button aria-label="Modifier" variant="ghost" size="icon" onClick={() => onEdit(row)}>
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      )}
+                      {(config.canDeleteRow?.(row) ?? true) && (
+                        <Button aria-label="Supprimer"
+                          variant="ghost"
+                          size="icon"
+                          onClick={async () => {
+                            if (await askConfirm("Supprimer cet élément ?")) onDelete(row[config.idField]);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      )}
                     </>
                   )}
                 </TableCell>

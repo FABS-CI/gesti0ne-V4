@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatDate, formatFCFA } from "@/lib/format";
 import type { LigneStockee } from "@/lib/paie/bulletin-pdf-data";
 import { BulletinActionButtons } from "@/components/paie/BulletinActionButtons";
-import { CMU_FORFAIT_FCFA } from "@/lib/paie-bulletin-actions";
 import { dateEnLettres } from "@/lib/pdf/bulletinPaieCI";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -40,6 +39,7 @@ const STATUTS: Record<string, { label: string; color: string }> = {
   genere: { label: "Généré", color: "#3B82F6" },
   valide: { label: "Validé", color: "#10B981" },
   paye: { label: "Payé", color: "#14B8A6" },
+  annule: { label: "Annulé", color: "#DC2626" },
 };
 
 async function getBulletin(id: string) {
@@ -87,6 +87,9 @@ function BulletinDetailPage() {
     );
 
   const st = STATUTS[bulletin.statut];
+  // CMU salariée enregistrée : rubrique 470 (bulletins anciens : 776). Aucun montant supposé.
+  const cmuSalarie =
+    lignes?.find((l) => l.numero_rubrique === "470" || l.numero_rubrique === "776")?.retenue ?? null;
 
   return (
     <div className="space-y-6">
@@ -196,7 +199,7 @@ function BulletinDetailPage() {
           </div>
           <div className="flex justify-between pl-4 text-xs">
             <span className="text-muted-foreground">dont CMU salarié</span>
-            <span>{formatFCFA(lignes?.find((l) => l.numero_rubrique === "776")?.retenue ?? CMU_FORFAIT_FCFA)}</span>
+            <span>{cmuSalarie == null ? "—" : formatFCFA(cmuSalarie)}</span>
           </div>
           <div
             className="relative flex flex-wrap items-center justify-between gap-x-4 gap-y-1 overflow-hidden rounded-md border-[1.5px] py-3 pl-[23px] pr-4"

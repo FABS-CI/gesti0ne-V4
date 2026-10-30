@@ -211,18 +211,22 @@ export const REPORTS: ReportDef[] = [
       { key: "libelle", label: "Libellé" },
       { key: "mode_paiement", label: "Mode" },
       { key: "montant", label: "Montant", money: true },
+      { key: "statut", label: "Statut" },
     ],
     fetcher: async (exerciceId) => {
       let q = supabase
         .from("transactions")
-        .select("reference, date_transaction, type, categorie, libelle, mode_paiement, montant")
+        .select("reference, date_transaction, type, categorie, libelle, mode_paiement, montant, statut")
         .order("date_transaction", { ascending: false });
       if (exerciceId) q = q.eq("exercice_id", exerciceId);
       const { data, error } = await q;
       if (error) throw error;
       return (data ?? []) as Record<string, unknown>[];
     },
-    summary: (rows) => {
+    summary: (allRows) => {
+      // Totaux sur les transactions validées seulement, comme l'écran Finances
+      // (en attente et annulées listées, mais hors totaux).
+      const rows = allRows.filter((r) => r.statut === "valide");
       const recettes = rows
         .filter((r) => String(r.type ?? "").toLowerCase() === "recette")
         .reduce((a, r) => a + Number(r.montant ?? 0), 0);

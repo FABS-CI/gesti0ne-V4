@@ -27,7 +27,8 @@ function PaieDashboardPage() {
       if (exerciceId) query = query.eq("exercice_id", exerciceId);
       const { data, error } = await query;
       if (error) throw error;
-      const rows = data ?? [];
+      // Bulletins annulés exclus : la période refaite serait sinon comptée deux fois.
+      const rows = (data ?? []).filter((r) => r.statut !== "annule");
       const masse = rows.reduce((s, r) => s + Number(r.salaire_brut || 0), 0);
       const retenues = rows.reduce((s, r) => s + Number(r.retenues || 0), 0);
       const nets = rows.reduce((s, r) => s + Number(r.salaire_net || 0), 0);
