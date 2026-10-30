@@ -23,10 +23,15 @@ import {
   resoudreIdentite,
   type ValeurIdentite,
 } from "@/lib/etats-financiers/identite";
+import {
+  parametresEnregistrement,
+  type ContenuDossier,
+  type VersionDossier,
+} from "@/lib/etats-financiers/dossiers";
 
 export type PeriodeExercice = { exercice_id: string; date_debut: string; date_fin: string };
 
-// Tables et RPC de la migration 0103, absentes des types générés tant qu'ils
+// Tables et RPC des migrations 0103 et 0104, absentes des types générés tant qu'ils
 // ne sont pas régénérés : accès non typé, résultats typés ici.
 const table = dynFrom;
 const rpc = (fn: string, args: Record<string, unknown>) =>
@@ -193,5 +198,55 @@ export async function enregistrerIdentite(valeurs: Record<string, string>) {
   const { error } = await supabase
     .from("parametres_entreprise")
     .upsert(lignes, { onConflict: "cle" });
+  if (error) throw error;
+}
+
+// ─── Dossier annuel (migration 0104) ─────────────────────────────────────────
+/** Versions du dossier d'un exercice, la plus récente d'abord ; vide si la migration manque. */
+export async function getHistoriqueDossier(exerciceId: string): Promise<VersionDossier[]> {
+  const { data, error } = await rpc("etats_financiers_historique", { p_exercice_id: exerciceId });
+  if (error) return [];
+  return (data ?? []) as VersionDossier[];
+}
+
+/** Empreinte actuelle des données de l'exercice ; null si indisponible. */
+export async function getEmpreinte(exerciceId: string): Promise<string | null> {
+  const { data, error } = await rpc("etats_financiers_empreinte", { p_exercice_id: exerciceId });
+  if (error) return null;
+  return data as string;
+}
+
+/** Contenu figé d'une version. */
+export async function getContenuDossier(dossierId: string): Promise<ContenuDossier> {
+  const { data, error } = await table("etats_financiers_dossiers")
+    .select("contenu")
+    .eq("dossier_id", dossierId)
+    .single();
+  if (error) throw error;
+  return (data as unknown as { contenu: ContenuDossier }).contenu;
+}
+
+export async function enregistrerDossier(contenu: ContenuDossier): Promise<string> {
+  const { data, error } = await rpc(
+    "etats_financiers_enregistrer_dossier",
+    parametresEnregistrement(contenu),
+  );
+  if (error) throw error;
+  return data as string;
+}
+
+export async function validerDossier(dossierId: string, commentaire: string) {
+  const { error } = await rpc("etats_financiers_valider_dossier", {
+    p_dossier_id: dossierId,
+    p_commentaire: commentaire,
+  });
+  if (error) throw error;
+}
+
+export async function rouvrirDossier(dossierId: string, motif: string) {
+  const { error } = await rpc("etats_financiers_rouvrir_dossier", {
+    p_dossier_id: dossierId,
+    p_motif: motif,
+  });
   if (error) throw error;
 }

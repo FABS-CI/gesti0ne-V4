@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { AlertTriangle, Download, FileCode2, FileText } from "lucide-react";
+import { AlertTriangle, Download, FileCode2, FileText, Lock } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -43,9 +43,14 @@ import { LIGNES_TFT } from "@/lib/etats-financiers/tft";
 import {
   chargerExercice,
   exercicePrecedent,
+  getContenuDossier,
+  getEmpreinte,
+  getHistoriqueDossier,
   getIdentite,
   type EtatsExercice,
 } from "@/lib/etats-financiers/donnees-api";
+import { construireContenu, etatDossier } from "@/lib/etats-financiers/dossiers";
+import { PanneauDossier } from "@/components/etats-financiers/Dossier";
 import { controler, statutPreparation, type Controle } from "@/lib/etats-financiers/controles";
 import type { ValeurIdentite } from "@/lib/etats-financiers/identite";
 import {
@@ -56,7 +61,7 @@ import {
 } from "@/lib/etats-financiers/xml-edi";
 import { exportCsv } from "@/lib/export-csv";
 import { downloadBlob } from "@/lib/fec-helpers";
-import { formatDate, formatFCFA } from "@/lib/format";
+import { formatDate, formatDateTime, formatFCFA } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/etats-comptables")({
   component: EtatsFinanciersPage,
@@ -66,6 +71,9 @@ export const Route = createFileRoute("/_authenticated/etats-comptables")({
 
 const libelleExercice = (e: Exercice) =>
   e.code || `${formatDate(e.date_debut)} – ${formatDate(e.date_fin)}`;
+
+/** États calculés (données actuelles) ou figés (version enregistrée du dossier). */
+type EtatsAffiches = Omit<EtatsExercice, "balanceImportee">;
 
 const montant = (n: number | undefined) => (n ? formatFCFA(n, false) : "—");
 const estTotal = (l: Ligne) => !!l.somme;
@@ -92,27 +100,79 @@ function EtatsFinanciersPage() {
     enabled: !!exerciceN1,
   });
   const qIdentite = useQuery({ queryKey: ["etats-financiers-identite"], queryFn: getIdentite });
-  const n = qN.data;
+  const nActuel = qN.data;
   // N-1 sans aucune donnée : colonne vide plutôt que des zéros trompeurs.
-  const n1 = qN1.data?.donnees.source === "aucune" ? undefined : qN1.data;
-  const identite = qIdentite.data;
-  const controles = useMemo<Controle[] | null>(
+  const n1Actuel = qN1.data?.donnees.source === "aucune" ? undefined : qN1.data;
+  const identiteActuelle = qIdentite.data;
+  const controlesActuels = useMemo<Controle[] | null>(
     () =>
-      n && exercice && identite
+      nActuel && exercice && identiteActuelle
         ? controler({
             exercice,
             exerciceN1,
-            donnees: n.donnees,
-            ef: n,
-            tft: n.tft,
-            ouverture: n.ouvertureEf,
-            efN1: n1 ?? null,
-            completude: n.completude,
-            identite,
+            donnees: nActuel.donnees,
+            ef: nActuel,
+            tft: nActuel.tft,
+            ouverture: nActuel.ouvertureEf,
+            efN1: n1Actuel ?? null,
+            completude: nActuel.completude,
+            identite: identiteActuelle,
           })
         : null,
-    [n, n1, exercice, exerciceN1, identite],
+    [nActuel, n1Actuel, exercice, exerciceN1, identiteActuelle],
   );
+
+  // ─── Dossier annuel : versions figées ──────────────────────────────────────
+  const qVersions = useQuery({
+    queryKey: ["etats-financiers-dossier", "versions", exercice?.exercice_id],
+    queryFn: () => getHistoriqueDossier(exercice!.exercice_id),
+    enabled: !!exercice,
+  });
+  const qEmpreinte = useQuery({
+    queryKey: ["etats-financiers-dossier", "empreinte", exercice?.exercice_id],
+    queryFn: () => getEmpreinte(exercice!.exercice_id),
+    enabled: !!exercice,
+  });
+  const versions = qVersions.data ?? [];
+  const etat = etatDossier(versions, qEmpreinte.data ?? null);
+  // Version affichée, par exercice ; par défaut la version validée, sinon les données actuelles.
+  const [affichage, setAffichage] = useState<Record<string, string | null>>({});
+  const versionAffichee = !exercice
+    ? null
+    : exercice.exercice_id in affichage
+      ? affichage[exercice.exercice_id]
+      : etat.etape === "valide"
+        ? etat.version.dossier_id
+        : null;
+  const qContenu = useQuery({
+    queryKey: ["etats-financiers-dossier", "contenu", versionAffichee],
+    queryFn: () => getContenuDossier(versionAffichee!),
+    enabled: !!versionAffichee,
+    staleTime: Infinity,
+  });
+  const fige = versionAffichee ? qContenu.data : undefined;
+  const versionFigee = fige ? versions.find((v) => v.dossier_id === versionAffichee) : undefined;
+  const contenuActuel = useMemo(
+    () =>
+      exercice && nActuel && controlesActuels && identiteActuelle
+        ? construireContenu({
+            exercice,
+            exerciceN1,
+            libelle: (e) => libelleExercice(e as Exercice),
+            n: nActuel,
+            n1: n1Actuel,
+            controles: controlesActuels,
+            identite: identiteActuelle,
+          })
+        : null,
+    [exercice, exerciceN1, nActuel, n1Actuel, controlesActuels, identiteActuelle],
+  );
+
+  // États affichés : la version figée consultée, sinon les données actuelles.
+  const n: EtatsAffiches | undefined = versionAffichee ? fige?.n : nActuel;
+  const n1: EtatsAffiches | undefined = versionAffichee ? (fige?.n1 ?? undefined) : n1Actuel;
+  const controles = versionAffichee ? (fige?.controles ?? null) : controlesActuels;
+  const identite = versionAffichee ? fige?.identite : identiteActuelle;
 
   const exporter = (onglet: "actif" | "passif" | "resultat" | "tft") => {
     if (!n || !exercice) return;
@@ -142,7 +202,7 @@ function EtatsFinanciersPage() {
       return;
     }
     const lignes = { passif: LIGNES_PASSIF, resultat: LIGNES_RESULTAT, tft: LIGNES_TFT }[onglet];
-    const valeurs = (ef?: EtatsExercice) =>
+    const valeurs = (ef?: EtatsAffiches) =>
       ({ passif: ef?.passif, resultat: ef?.resultat, tft: ef?.tft.valeurs })[onglet];
     const fichier = { passif: "bilan-passif", resultat: "compte-de-resultat", tft: "tft" }[onglet];
     exportCsv(
@@ -195,6 +255,39 @@ function EtatsFinanciersPage() {
       {!exercice && <p className="text-muted-foreground">Aucun exercice comptable.</p>}
       {exercice && qN.isLoading && <p className="text-muted-foreground">Calcul des états…</p>}
 
+      {exercice && (
+        <PanneauDossier
+          etat={etat}
+          versions={versions}
+          contenuActuel={contenuActuel}
+          versionAffichee={versionAffichee}
+          onAfficher={(id) => setAffichage({ ...affichage, [exercice.exercice_id]: id })}
+        />
+      )}
+      {versionAffichee && qContenu.isLoading && (
+        <p className="text-muted-foreground">Chargement de la version enregistrée…</p>
+      )}
+      {versionFigee && (
+        <Alert>
+          <Lock className="h-4 w-4" />
+          <AlertTitle>
+            Version {versionFigee.version} du dossier ({formatDateTime(versionFigee.genere_le)})
+          </AlertTitle>
+          <AlertDescription className="flex flex-wrap items-center gap-2">
+            Montants et contrôles tels qu'enregistrés à la génération
+            {versionFigee.statut === "valide" ? " et validés" : ""}, indépendamment des écritures
+            saisies depuis.
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setAffichage({ ...affichage, [exercice!.exercice_id]: null })}
+            >
+              Voir les données actuelles
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {n && exercice && (
         <>
           {controles && (
@@ -218,11 +311,13 @@ function EtatsFinanciersPage() {
             </TabsList>
             <TabsContent value="preparation" className="space-y-4">
               {controles && <ListeControles controles={controles} />}
-              <SourceDonnees
-                exerciceId={exercice.exercice_id}
-                libelleExercice={libelleExercice(exercice)}
-                etats={n}
-              />
+              {nActuel && (
+                <SourceDonnees
+                  exerciceId={exercice.exercice_id}
+                  libelleExercice={libelleExercice(exercice)}
+                  etats={nActuel}
+                />
+              )}
               {exerciceN1 && qN1.data?.donnees.source === "aucune" && (
                 <SourceDonnees
                   exerciceId={exerciceN1.exercice_id}
@@ -230,7 +325,7 @@ function EtatsFinanciersPage() {
                   etats={qN1.data}
                 />
               )}
-              {identite && <Identification identite={identite} />}
+              {identiteActuelle && <Identification identite={identiteActuelle} />}
               {identite && controles && (
                 <ExportEdi
                   n={n}
@@ -484,8 +579,8 @@ function ExportEdi({
   identite,
   controles,
 }: {
-  n: EtatsExercice;
-  n1?: EtatsExercice;
+  n: EtatsAffiches;
+  n1?: EtatsAffiches;
   exercice: Exercice;
   identite: Record<string, ValeurIdentite>;
   controles: Controle[];

@@ -120,7 +120,11 @@ export function SourceDonnees({
       await importerBalance(exerciceId, lecture.fichier, lecture.lignes);
       toast.success(`Balance importée pour ${libelleExercice} (${lecture.lignes.length} comptes).`);
       setLecture(null);
-      await qc.invalidateQueries({ queryKey: ["etats-financiers"] });
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["etats-financiers"] }),
+        // L'empreinte des données change : le dossier généré n'est plus à jour.
+        qc.invalidateQueries({ queryKey: ["etats-financiers-dossier"] }),
+      ]);
     } catch (e) {
       toast.error(friendlyError(e, "Import refusé"));
     } finally {
