@@ -1037,6 +1037,8 @@ export type Database = {
       }
       bulletins_paie: {
         Row: {
+          annule_le: string | null
+          annule_par: string | null
           arrondi: number | null
           brut_imposable: number | null
           bulletin_id: string
@@ -1053,6 +1055,7 @@ export type Database = {
           exercice_id: string | null
           jours_travailles: number
           mode_paiement: string | null
+          motif_annulation: string | null
           net_a_payer: number | null
           parts: number | null
           pdf_url: string | null
@@ -1070,6 +1073,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          annule_le?: string | null
+          annule_par?: string | null
           arrondi?: number | null
           brut_imposable?: number | null
           bulletin_id?: string
@@ -1086,6 +1091,7 @@ export type Database = {
           exercice_id?: string | null
           jours_travailles?: number
           mode_paiement?: string | null
+          motif_annulation?: string | null
           net_a_payer?: number | null
           parts?: number | null
           pdf_url?: string | null
@@ -1103,6 +1109,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          annule_le?: string | null
+          annule_par?: string | null
           arrondi?: number | null
           brut_imposable?: number | null
           bulletin_id?: string
@@ -1119,6 +1127,7 @@ export type Database = {
           exercice_id?: string | null
           jours_travailles?: number
           mode_paiement?: string | null
+          motif_annulation?: string | null
           net_a_payer?: number | null
           parts?: number | null
           pdf_url?: string | null
@@ -2665,6 +2674,9 @@ export type Database = {
       }
       ecritures_comptables: {
         Row: {
+          contrepassation_de: string | null
+          contrepassee_le: string | null
+          contrepassee_par: string | null
           created_at: string
           date_ecriture: string | null
           ecriture_id: string
@@ -2683,6 +2695,9 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          contrepassation_de?: string | null
+          contrepassee_le?: string | null
+          contrepassee_par?: string | null
           created_at?: string
           date_ecriture?: string | null
           ecriture_id?: string
@@ -2701,6 +2716,9 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          contrepassation_de?: string | null
+          contrepassee_le?: string | null
+          contrepassee_par?: string | null
           created_at?: string
           date_ecriture?: string | null
           ecriture_id?: string
@@ -3230,6 +3248,48 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      exercices_reouvertures: {
+        Row: {
+          ancien_statut: string
+          exercice_id: string
+          motif: string
+          reouverture_id: string
+          rouvert_le: string
+          rouvert_par: string | null
+        }
+        Insert: {
+          ancien_statut: string
+          exercice_id: string
+          motif: string
+          reouverture_id?: string
+          rouvert_le?: string
+          rouvert_par?: string | null
+        }
+        Update: {
+          ancien_statut?: string
+          exercice_id?: string
+          motif?: string
+          reouverture_id?: string
+          rouvert_le?: string
+          rouvert_par?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercices_reouvertures_exercice_id_fkey"
+            columns: ["exercice_id"]
+            isOneToOne: false
+            referencedRelation: "exercices"
+            referencedColumns: ["exercice_id"]
+          },
+          {
+            foreignKeyName: "exercices_reouvertures_exercice_id_fkey"
+            columns: ["exercice_id"]
+            isOneToOne: false
+            referencedRelation: "exercices_comptables"
+            referencedColumns: ["exercice_id"]
+          },
+        ]
       }
       expeditions: {
         Row: {
@@ -8307,6 +8367,27 @@ export type Database = {
           urgence: string
         }[]
       }
+      _compta_cloture_controles: {
+        Args: { p_exercice_id: string }
+        Returns: Json
+      }
+      _compta_contexte_technique: { Args: never; Returns: boolean }
+      _compta_exercice_clos: {
+        Args: { _exercice_id: string }
+        Returns: boolean
+      }
+      _compta_libelle_suivant: {
+        Args: { x: Database["public"]["Tables"]["exercices_comptables"]["Row"] }
+        Returns: string
+      }
+      _compta_maj_contrepassation_seule: {
+        Args: {
+          _new: Database["public"]["Tables"]["ecritures_comptables"]["Row"]
+          _old: Database["public"]["Tables"]["ecritures_comptables"]["Row"]
+        }
+        Returns: boolean
+      }
+      _compta_statut_valide: { Args: { _statut: string }; Returns: boolean }
       _compte_mode_paiement: {
         Args: { _mode: string }
         Returns: {
@@ -8346,10 +8427,17 @@ export type Database = {
         Returns: undefined
       }
       _paie_bareme: { Args: { _bareme: Json; _base: number }; Returns: number }
+      _paie_operation: { Args: never; Returns: string }
       _paie_parametres_effectifs: {
         Args: { p_date: string; p_regime: string }
         Returns: Json
       }
+      _plan_compte_utilise: {
+        Args: { _compte_id: string; _numero: string }
+        Returns: boolean
+      }
+      _plan_parent: { Args: { _numero: string }; Returns: string }
+      _plan_type: { Args: { _numero: string }; Returns: string }
       _propager_nom_client: {
         Args: { _client_id: string; _nom: string }
         Returns: undefined
@@ -8681,6 +8769,10 @@ export type Database = {
         }[]
       }
       audit_stock_resume: { Args: never; Returns: Json }
+      calcul_solde_fournisseur: {
+        Args: { _exercice_id: string; _fournisseur_id: string }
+        Returns: number
+      }
       can_access_depot: {
         Args: { _depot_id: string; _user_id: string }
         Returns: boolean
@@ -8726,7 +8818,112 @@ export type Database = {
           solde: number
         }[]
       }
+      compta_balance_exercice: {
+        Args: { p_exercice_id: string }
+        Returns: {
+          calcule: boolean
+          libelle: string
+          mouvement_credit: number
+          mouvement_debit: number
+          numero_compte: string
+          ouverture_credit: number
+          ouverture_debit: number
+          solde_credit: number
+          solde_debit: number
+        }[]
+      }
+      compta_ecritures_desequilibrees: {
+        Args: never
+        Returns: {
+          date_ecriture: string
+          ecriture_id: string
+          libelle: string
+          nb_lignes: number
+          reference: string
+          statut: string
+          total_credit: number
+          total_debit: number
+        }[]
+      }
+      compta_neutraliser_ecriture: {
+        Args: { p_ecriture_id: string; p_motif: string }
+        Returns: string
+      }
+      compta_pieces_comptabilisees_plusieurs_fois: {
+        Args: never
+        Returns: {
+          montant_total: number
+          nb_ecritures: number
+          piece_id: string
+          reference: string
+          type_piece: string
+        }[]
+      }
+      compta_plan_comptable: {
+        Args: never
+        Returns: {
+          actif: boolean
+          classe: number
+          compte_id: string
+          dans_plan: boolean
+          dernier_mouvement: string
+          libelle: string
+          nb_lignes: number
+          numero: string
+          parent_numero: string
+          total_credit: number
+          total_debit: number
+          type: string
+        }[]
+      }
+      compta_plan_enregistrer: {
+        Args: {
+          p_actif?: boolean
+          p_compte_id: string
+          p_libelle: string
+          p_numero: string
+        }
+        Returns: string
+      }
+      compta_plan_importer_absents: { Args: never; Returns: number }
+      compta_rouvrir_exercice: {
+        Args: { p_exercice_id: string; p_motif: string }
+        Returns: undefined
+      }
+      compta_saisir_ecriture: {
+        Args: {
+          p_date: string
+          p_journal: string
+          p_libelle: string
+          p_lignes: Json
+          p_reference: string
+        }
+        Returns: string
+      }
+      compta_soldes_ouverture_doublons: {
+        Args: never
+        Returns: {
+          client_id: string
+          client_nom: string
+          exercice: string
+          exercice_id: string
+          factures_anterieures: number
+          montant: number
+          montant_factures_anterieures: number
+        }[]
+      }
       confirmer_achat: { Args: { _achat_id: string }; Returns: undefined }
+      controle_integrite_global: {
+        Args: never
+        Returns: {
+          anomalie: string
+          domaine: string
+          montant_ecritures: number
+          montant_piece: number
+          piece: string
+          reference: string
+        }[]
+      }
       convertir_commande_en_bl: {
         Args: {
           _adresse_livraison?: string
@@ -9727,6 +9924,10 @@ export type Database = {
         Args: { _allocation_id: string; _lignes: Json; _raison: string }
         Returns: Json
       }
+      paie_annuler_bulletin: {
+        Args: { p_bulletin_id: string; p_motif: string }
+        Returns: undefined
+      }
       paie_calculer_bulletin: {
         Args: {
           p_date_debut: string
@@ -9735,6 +9936,19 @@ export type Database = {
           p_saisie?: Json
         }
         Returns: Json
+      }
+      paie_controle_ecarts: {
+        Args: never
+        Returns: {
+          anomalie: string
+          bulletin_id: string
+          employe_nom: string
+          montant_bulletin: number
+          montant_ecritures: number
+          periode: string
+          reference: string
+          statut: string
+        }[]
       }
       paie_enregistrer_bulletin: {
         Args: {
