@@ -8367,6 +8367,22 @@ export type Database = {
           urgence: string
         }[]
       }
+      _commande_assert_droit: {
+        Args: { _droit: string; _statut: string }
+        Returns: undefined
+      }
+      _commande_avant_validation: {
+        Args: { _statut: string }
+        Returns: boolean
+      }
+      _commande_facture_dgi: {
+        Args: { _commande_id: string }
+        Returns: boolean
+      }
+      _commande_marchandise_partie: {
+        Args: { _commande_id: string }
+        Returns: boolean
+      }
       _compta_cloture_controles: {
         Args: { p_exercice_id: string }
         Returns: Json
