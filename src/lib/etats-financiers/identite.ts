@@ -65,7 +65,9 @@ export type ValeurIdentite = {
 /** Informations du pied de page des documents FABS-CI (pdfChrome), dernier recours. */
 export const IDENTITE_PIED_DE_PAGE: Record<string, string> = {
   denomination: "EDITIONS FABS-CI",
-  adresse: "BP 693 Bingerville",
+  ncc: "2302562N",
+  rccm: "CI-ABJ-2020-B-12345",
+  adresse: "BP 673 Bingerville - Côte d'Ivoire",
   adresse_geographique:
     "Bingerville, Qt N'GOTTO, Immeuble cité Angan A. fils et petits-fils, Rez de chaussée",
   telephone: "2122800995 / +225 0759737123",
