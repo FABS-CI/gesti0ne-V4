@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
-
+import { callRpc } from "@/lib/rpc";
 
 export type LigneCompta = {
   ligne_id: string;
@@ -84,8 +84,7 @@ export async function getBalance(
     p_exercice_id: exerciceId ?? undefined,
   });
   if (error) throw error;
-  type BalanceRpcRow =
-    Database["public"]["Functions"]["compta_balance"]["Returns"][number];
+  type BalanceRpcRow = Database["public"]["Functions"]["compta_balance"]["Returns"][number];
   return ((data ?? []) as BalanceRpcRow[]).map((r) => ({
     compte: r.numero_compte,
     compte_libelle: r.libelle ?? "",
@@ -93,7 +92,47 @@ export async function getBalance(
     credit: Number(r.credit ?? 0),
     solde: Number(r.solde ?? 0),
   }));
+}
 
+export type BalanceExerciceRow = {
+  compte: string;
+  compte_libelle: string;
+  /** Ligne calculée : résultats antérieurs non affectés (report à nouveau). */
+  calcule: boolean;
+  ouvertureDebit: number;
+  ouvertureCredit: number;
+  mouvementDebit: number;
+  mouvementCredit: number;
+  soldeDebit: number;
+  soldeCredit: number;
+};
+
+/** Balance d'un exercice à six colonnes, à-nouveaux calculés (RPC 0112). */
+export async function getBalanceExercice(exerciceId: string): Promise<BalanceExerciceRow[]> {
+  const { data, error } = await callRpc("compta_balance_exercice", { p_exercice_id: exerciceId });
+  if (error) throw error;
+  type Row = {
+    numero_compte: string;
+    libelle: string | null;
+    calcule: boolean;
+    ouverture_debit: number;
+    ouverture_credit: number;
+    mouvement_debit: number;
+    mouvement_credit: number;
+    solde_debit: number;
+    solde_credit: number;
+  };
+  return ((data ?? []) as Row[]).map((r) => ({
+    compte: r.numero_compte,
+    compte_libelle: r.libelle ?? "",
+    calcule: r.calcule,
+    ouvertureDebit: Number(r.ouverture_debit ?? 0),
+    ouvertureCredit: Number(r.ouverture_credit ?? 0),
+    mouvementDebit: Number(r.mouvement_debit ?? 0),
+    mouvementCredit: Number(r.mouvement_credit ?? 0),
+    soldeDebit: Number(r.solde_debit ?? 0),
+    soldeCredit: Number(r.solde_credit ?? 0),
+  }));
 }
 
 export type DashboardCompta = {

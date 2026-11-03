@@ -28,6 +28,7 @@ import { formatFCFA } from "@/lib/format";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 import { friendlyError } from "@/lib/friendly-error";
 import { ControleIntegriteCard } from "@/components/comptabilite/ControleIntegriteCard";
+import { SoldesOuvertureDoublonsCard } from "@/components/comptabilite/SoldesOuvertureDoublonsCard";
 
 export const Route = createFileRoute("/_authenticated/comptabilite/audit")({
   component: ComptaAuditPage,
@@ -355,6 +356,7 @@ function ComptaAuditPage() {
       </Card>
 
       <ControleIntegriteCard />
+      <SoldesOuvertureDoublonsCard />
     </div>
   );
 }

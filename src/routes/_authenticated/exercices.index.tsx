@@ -73,9 +73,9 @@ function ExercicesPage() {
       return data;
     },
     onSuccess: (res: unknown) => {
-      const r = res as { nb_clients_reportes: number; nb_fournisseurs_reportes: number };
+      const r = res as { exercice_suivant_cree: boolean; nb_fournisseurs_reportes: number };
       toast.success(
-        `Exercice clôturé. ${r.nb_clients_reportes} client(s) et ${r.nb_fournisseurs_reportes} fournisseur(s) reportés.`,
+        `Exercice clôturé${r.exercice_suivant_cree ? ", exercice suivant créé" : ""}. ${r.nb_fournisseurs_reportes} fournisseur(s) avec achats non payés reportés.`,
       );
       setConfirmOpen(false);
       setPreviewFor(null);
@@ -134,7 +134,7 @@ function ExercicesPage() {
             Exercices comptables
           </h1>
           <p className="text-sm text-muted-foreground">
-            Gérez les années scolaires et exécutez la clôture avec report des soldes.
+            Gérez les exercices et clôturez-les après contrôle de la comptabilité.
           </p>
         </div>
         <div className="flex gap-2">
@@ -213,8 +213,8 @@ function ExercicesPage() {
           <DialogHeader>
             <DialogTitle>Confirmer la clôture définitive</DialogTitle>
             <DialogDescription>
-              Cette action est irréversible : les soldes seront reportés dans l'exercice suivant, et
-              l'exercice courant passera en lecture seule.
+              L'exercice passera en lecture seule : plus aucune écriture ne pourra y être ajoutée ni
+              modifiée, sauf réouverture motivée et tracée.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
