@@ -785,6 +785,13 @@
       "when": 1793556194007,
       "tag": "0113_plan_comptable",
       "breakpoints": true
+    },
+    {
+      "idx": 114,
+      "version": "7",
+      "when": 1793642594007,
+      "tag": "0114_compta_tableau_de_bord",
+      "breakpoints": true
     }
   ]
 }

@@ -177,10 +177,12 @@ export async function getPlanComptable(): Promise<CompteRow[]> {
 export type DashboardCompta = {
   produits: number; // classe 7
   charges: number; // classe 6
+  /** Hors activités ordinaires (classe 8), net. */
+  hao: number;
   resultat: number;
   tresorerie: number; // classe 5
-  creancesClients: number; // 411
-  dettesFournisseurs: number; // 401
+  creancesClients: number; // 41
+  dettesFournisseurs: number; // 40
 };
 
 export async function getDashboardCompta(
@@ -188,26 +190,78 @@ export async function getDashboardCompta(
   to?: string,
   exerciceId?: string | null,
 ): Promise<DashboardCompta> {
-  const bal = await getBalance(from, to, exerciceId);
+  // Résultat : mouvements de la période. Bilan (trésorerie, tiers) : balance cumulée
+  // jusqu'à la fin de la période, soldes d'ouverture compris (sans quoi la trésorerie
+  // ne montrait que les mouvements de la période).
+  const [periode, cumul] = await Promise.all([
+    getBalance(from, to, exerciceId),
+    getBalance(undefined, to),
+  ]);
   let produits = 0,
     charges = 0,
+    hao = 0,
     tresorerie = 0,
     creancesClients = 0,
     dettesFournisseurs = 0;
-  for (const r of bal) {
+  for (const r of periode) {
     const c = r.compte.trim();
     if (c.startsWith("7")) produits += r.credit - r.debit;
     else if (c.startsWith("6")) charges += r.debit - r.credit;
-    else if (c.startsWith("5")) tresorerie += r.debit - r.credit;
-    else if (c.startsWith("411")) creancesClients += r.debit - r.credit;
-    else if (c.startsWith("401")) dettesFournisseurs += r.credit - r.debit;
+    else if (c.startsWith("8")) hao += r.credit - r.debit;
+  }
+  for (const r of cumul) {
+    const c = r.compte.trim();
+    if (c.startsWith("5")) tresorerie += r.debit - r.credit;
+    else if (c.startsWith("41")) creancesClients += r.debit - r.credit;
+    else if (c.startsWith("40")) dettesFournisseurs += r.credit - r.debit;
   }
   return {
     produits,
     charges,
-    resultat: produits - charges,
+    hao,
+    resultat: produits - charges + hao,
     tresorerie,
     creancesClients,
     dettesFournisseurs,
   };
+}
+
+export type TableauDeBordCompta = {
+  periode: { debut: string; fin: string; situation: string };
+  ecritures: { total: number; validees: number; brouillons: number; annulees: number };
+  mouvements: {
+    debit: number;
+    credit: number;
+    soldes_debiteurs: number;
+    soldes_crediteurs: number;
+    comptes_mouvementes: number;
+  };
+  resultat: {
+    chiffre_affaires: number;
+    produits: number;
+    charges: number;
+    hao: number;
+    resultat: number;
+  };
+  situation: {
+    tresorerie: number;
+    creances_clients: number;
+    dettes_fournisseurs: number;
+    dettes_sociales_fiscales: number;
+  };
+  mensuel: {
+    mois: string;
+    chiffre_affaires: number;
+    produits: number;
+    charges: number;
+    resultat: number;
+  }[];
+  charges_par_compte: { compte: string; libelle: string; montant: number }[];
+};
+
+/** Indicateurs d'un exercice, calculés en base (RPC compta_tableau_de_bord, 0114). */
+export async function getTableauDeBordCompta(exerciceId: string): Promise<TableauDeBordCompta> {
+  const { data, error } = await callRpc("compta_tableau_de_bord", { p_exercice_id: exerciceId });
+  if (error) throw error;
+  return data as TableauDeBordCompta;
 }
