@@ -65,6 +65,7 @@ export type ValeurIdentite = {
 /** Informations du pied de page des documents FABS-CI (pdfChrome), dernier recours. */
 export const IDENTITE_PIED_DE_PAGE: Record<string, string> = {
   denomination: "EDITIONS FABS-CI",
+  sigle: "FABS-CI",
   ncc: "2302562N",
   rccm: "CI-ABJ-2020-B-12345",
   adresse: "BP 673 Bingerville - Côte d'Ivoire",
