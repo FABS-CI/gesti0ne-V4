@@ -95,3 +95,13 @@ export function formatDayMonth(date: string | Date | null | undefined): string {
   if (isNaN(d.getTime())) return String(date);
   return dateFnsFormat(d, "dd/MM");
 }
+
+/** Téléphone ivoirien au format +225 07 59 69 98 11 ; toute autre saisie est rendue telle quelle. */
+export function formatTelephone(tel: string | null | undefined): string {
+  const brut = String(tel ?? "").trim();
+  if (!brut) return "—";
+  const chiffres = brut.replace(/\D/g, "").replace(/^00/, "");
+  const local = chiffres.length === 13 && chiffres.startsWith("225") ? chiffres.slice(3) : chiffres;
+  if (local.length !== 10) return brut;
+  return `+225 ${local.match(/\d{2}/g)!.join(" ")}`;
+}

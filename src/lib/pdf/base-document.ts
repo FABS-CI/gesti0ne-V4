@@ -1,3 +1,4 @@
+import { COMPANY } from "@/lib/company";
 import { formatDocumentReference } from "@/lib/document-reference";
 import tamponPayeUrl from "@/assets/tampon-paye.png";
 
@@ -401,8 +402,8 @@ export class BaseDocument {
     if (!isListeProduits) {
       this.page.drawText("EDITIONS FABS-CI", { x: MARGINS.x, y: yBot, size: footerTextSize + 1, font: this.fonts.bold });
       this.page.drawText("BP 673 Bingerville - Côte d'Ivoire", { x: MARGINS.x, y: yBot - 10, size: footerTextSize, font: this.fonts.regular });
-      this.page.drawText("RCCM : CI-ABJ-2020-B-12345", { x: MARGINS.x, y: yBot - 19, size: footerTextSize, font: this.fonts.regular });
-      this.page.drawText("NCC : 2302562N", { x: MARGINS.x, y: yBot - 28, size: footerTextSize, font: this.fonts.regular });
+      this.page.drawText(`RCCM : ${COMPANY.rccm}`, { x: MARGINS.x, y: yBot - 19, size: footerTextSize, font: this.fonts.regular });
+      this.page.drawText(`NCC : ${COMPANY.ncc}`, { x: MARGINS.x, y: yBot - 28, size: footerTextSize, font: this.fonts.regular });
     }
 
     const cx = MARGINS.x + colW;
@@ -656,7 +657,7 @@ export class BaseDocument {
     return y - boxH - 20;
   }
 
-  drawTable(y: number, colonnes: { label: string, key: string, width: number }[], lignes: DocLigne[], options?: { showClientReception?: boolean }): number {
+  drawTable(y: number, colonnes: { label: string, key: string, width: number }[], lignes: DocLigne[], options?: { showClientReception?: boolean; boldKeys?: string[] }): number {
     const drawColLines = (top: number, bottom: number, w = 0.5) => {
       let vx = MARGINS.x;
       [0, ...colonnes.map((c) => c.width)].forEach((cw, idx) => {
@@ -685,8 +686,10 @@ export class BaseDocument {
     let curY = y - 20;
     const fontSize = 10;
     const colHPadding = 5;
-    // Toutes les données des lignes en noir gras (règle commune documents de vente).
-    const cellFont = (_key: string) => this.fonts.bold;
+    // Données des lignes en noir gras (règle commune documents de vente), sauf si
+    // boldKeys limite le gras à certaines colonnes (relevé : solde seul).
+    const cellFont = (key: string) =>
+      !options?.boldKeys || options.boldKeys.includes(key) ? this.fonts.bold : this.fonts.regular;
 
     lignes.forEach((l, i) => {
       let maxRowH = 22;

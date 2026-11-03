@@ -1,7 +1,7 @@
 import { formatDocumentReference } from "@/lib/document-reference";
 
 import { BaseDocument, BODY, roundedRect, COLORS, MARGINS, PAGE, CONTENT_W, CONTENT_BOTTOM } from "./base-document";
-import { formatFCFA } from "@/lib/format";
+import { formatFCFA, formatTelephone } from "@/lib/format";
 import tamponUrl from "@/assets/tampon-comptabilite.png";
 
 const ROW_H = 20;
@@ -39,7 +39,7 @@ export class StatementDocument extends BaseDocument {
       solde: l.soldeProgressif || 0,
     }));
 
-    y = this.drawTable(y, colonnes, lignes);
+    y = this.drawTable(y, colonnes, lignes, { boldKeys: ["solde"] });
     
     // Récapitulatif + zone COMPTABILITÉ : gardés ensemble sur la même page.
     const rows = this.summaryRows(data);
@@ -81,7 +81,7 @@ export class StatementDocument extends BaseDocument {
     const kv = [
       { l: "Ville", v: this.data.client.ville || "—" },
       { l: "Représentant", v: this.data.client.representant || "—" },
-      { l: "Téléphone", v: this.data.client.telephone || "—" },
+      { l: "Téléphone", v: formatTelephone(this.data.client.telephone) },
     ];
 
     const kvTop = y - 32 - nomH - 8;
@@ -128,7 +128,7 @@ export class StatementDocument extends BaseDocument {
     }
   }
 
-  /** Lignes du récapitulatif : les montants à 0 sont omis, le solde toujours affiché. */
+  /** Lignes du récapitulatif : paiements, retours et solde toujours affichés, les autres montants à 0 omis. */
   summaryRows(data: any): Array<{ label: string; value: number; total?: boolean }> {
     const totalDebit = Number(data.totalDebit ?? data.lignes.reduce((a: number, l: any) => a + (l.debit || 0), 0));
     const totalPaiement = Number(data.totalPaiement ?? data.lignes
@@ -143,8 +143,8 @@ export class StatementDocument extends BaseDocument {
     const transport = Number(data.totalTransport ?? 0);
     const rows: Array<{ label: string; value: number; total?: boolean }> = [];
     if (totalDebit !== 0) rows.push({ label: "Total Débit", value: totalDebit });
-    if (totalPaiement > 0) rows.push({ label: "Total Paiement", value: totalPaiement });
-    if (totalRetours > 0) rows.push({ label: "Total Retours", value: totalRetours });
+    rows.push({ label: "Total Paiement", value: totalPaiement });
+    rows.push({ label: "Total Retours", value: totalRetours });
     // Information seule : déjà comprise dans les factures, jamais ajoutée au solde.
     if (transport > 0) rows.push({ label: "Frais de transport compris dans les factures", value: transport });
     rows.push({
