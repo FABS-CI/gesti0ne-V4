@@ -90,9 +90,12 @@ function NewFNE() {
     onError: (e: Error) => toast.error(friendlyError(e)),
   });
 
+  // Facture à une entreprise (B2B) : le NCC du client est demandé ici, pas à la création du client.
+  const nccManquant = template === "B2B" && !clientNcc.trim();
   const canSubmit =
     clientName.trim() &&
     clientPhone.trim() &&
+    !nccManquant &&
     items.every((it) => it.description.trim() && it.amount > 0);
 
   return (
@@ -187,12 +190,18 @@ function NewFNE() {
                 <Input value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} />
               </div>
               <div>
-                <Label>NCC client</Label>
+                <Label>NCC client{template === "B2B" && " *"}</Label>
                 <Input
                   value={clientNcc}
                   onChange={(e) => setClientNcc(e.target.value)}
                   placeholder="(B2B uniquement)"
+                  aria-invalid={nccManquant}
                 />
+                {nccManquant && (
+                  <p className="mt-1 text-xs text-destructive">
+                    Obligatoire pour une facture à une entreprise (B2B).
+                  </p>
+                )}
               </div>
               <div>
                 <Label>Vendeur</Label>
