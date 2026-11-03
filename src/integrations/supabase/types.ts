@@ -8884,6 +8884,16 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      creer_ecriture_manuelle: {
+        Args: {
+          _date: string
+          _journal: string
+          _libelle: string
+          _lignes: Json
+          _reference: string
+        }
+        Returns: string
+      }
       creer_incident_stock: {
         Args: { _payload: Json }
         Returns: {
