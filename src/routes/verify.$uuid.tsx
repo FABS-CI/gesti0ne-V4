@@ -545,8 +545,8 @@ function VerificationPage() {
   );
 }
 
-const RC_RCCM = "CI-ABJ-2020-B-12345";
-const RC_NCC = "2302562N";
+const RC_RCCM = COMPANY.rccm;
+const RC_NCC = COMPANY.ncc;
 
 function fmtDay(d: string) {
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(d);

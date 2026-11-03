@@ -123,6 +123,7 @@ export const ENTREPRISE_FABS: BulletinEntreprise = {
   raisonSociale: COMPANY.nom,
   adresse: "BP 693 BINGERVILLE",
   telephone: "+225 0759737123",
+  rccm: COMPANY.rccm,
   cnpsEmployeur: "366145",
 };
 
@@ -299,6 +300,7 @@ export async function generateBulletinPaieCIPDF(
   text(ent.adresse ?? "", X0 + 4, y0 + 15, { size: fs - 0.5 });
   if (ent.telephone) text(`Tél. ${ent.telephone}`, X0 + leftW - 4, y0 + 15, { size: fs - 0.5, align: "right" });
   if (ent.cnpsEmployeur) text(`CNPS Employeur: ${ent.cnpsEmployeur}`, X0 + 4, y0 + 20.5, { size: fs - 0.5 });
+  if (ent.rccm) text(`RCCM: ${ent.rccm}`, X0 + leftW - 4, y0 + 20.5, { size: fs - 0.5, align: "right" });
 
   box(rightX, y0, rightW, h1);
   doc.setFont("helvetica", "bold");

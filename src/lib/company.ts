@@ -3,6 +3,8 @@ export const COMPANY = {
   adresse: "Bingerville, Quartier N'Gotto, Immeuble Cité Angan A. fils et petits-fils, RDC, BP 693",
   telephones: ["+225 07 59 73 71 23", "+225 21 22 80 09 95"],
   email: "edition693fabs@gmail.com",
+  rccm: "CI-ABJ-03-2023-B12-03073",
+  ncc: "2302562N",
   dg: "ALI MAMIN",
   devise: "FCFA",
   tva: "Exonéré 0%",

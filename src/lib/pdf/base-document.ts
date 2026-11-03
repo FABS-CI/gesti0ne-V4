@@ -1,3 +1,4 @@
+import { COMPANY } from "@/lib/company";
 import { formatDocumentReference } from "@/lib/document-reference";
 import tamponPayeUrl from "@/assets/tampon-paye.png";
 
@@ -401,8 +402,8 @@ export class BaseDocument {
     if (!isListeProduits) {
       this.page.drawText("EDITIONS FABS-CI", { x: MARGINS.x, y: yBot, size: footerTextSize + 1, font: this.fonts.bold });
       this.page.drawText("BP 673 Bingerville - Côte d'Ivoire", { x: MARGINS.x, y: yBot - 10, size: footerTextSize, font: this.fonts.regular });
-      this.page.drawText("RCCM : CI-ABJ-2020-B-12345", { x: MARGINS.x, y: yBot - 19, size: footerTextSize, font: this.fonts.regular });
-      this.page.drawText("NCC : 2302562N", { x: MARGINS.x, y: yBot - 28, size: footerTextSize, font: this.fonts.regular });
+      this.page.drawText(`RCCM : ${COMPANY.rccm}`, { x: MARGINS.x, y: yBot - 19, size: footerTextSize, font: this.fonts.regular });
+      this.page.drawText(`NCC : ${COMPANY.ncc}`, { x: MARGINS.x, y: yBot - 28, size: footerTextSize, font: this.fonts.regular });
     }
 
     const cx = MARGINS.x + colW;
