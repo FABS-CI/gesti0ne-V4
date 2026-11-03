@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ClientForm } from "@/components/clients/form/ClientForm";
+import { ClientRapideForm } from "@/components/clients/form/ClientRapideForm";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
 export const Route = createFileRoute("/_authenticated/clients/nouveau")({
-  component: () => <ClientForm />,
+  component: () => <ClientRapideForm />,
   errorComponent: RouteError,
   notFoundComponent: RouteNotFound,
 });

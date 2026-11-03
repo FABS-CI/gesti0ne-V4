@@ -68,6 +68,29 @@ export const clientFormSchema = z.object({
 
 export type ClientFormValues = z.infer<typeof clientFormSchema>;
 
+/** Téléphone saisi → 10 chiffres ivoiriens (indicatif +225 / 00225 retiré), sinon chiffres bruts. */
+export function telephoneChiffres(tel: string): string {
+  const chiffres = tel.replace(/\D/g, "").replace(/^00/, "");
+  return chiffres.length === 13 && chiffres.startsWith("225") ? chiffres.slice(3) : chiffres;
+}
+
+/**
+ * Création rapide d'un client : cinq informations, le reste se complète depuis la fiche.
+ * Le téléphone est stocké en 10 chiffres (format des clients existants), affiché en +225.
+ */
+export const clientRapideSchema = z.object({
+  nom: z.string().trim().min(1, "Entrez le nom du client").max(200),
+  type_client: z.string().min(1, "Choisissez un type"),
+  representant: z.string().trim().max(200).optional().or(z.literal("")),
+  telephone: z
+    .string()
+    .transform(telephoneChiffres)
+    .refine((t) => t.length === 10, "Numéro à 10 chiffres attendu (ex. 07 59 69 98 11)"),
+  ville: z.string().trim().min(1, "Choisissez la ville").max(100),
+});
+
+export type ClientRapideValues = z.output<typeof clientRapideSchema>;
+
 export const META_MARK = "\n---META---\n";
 
 const META_KEYS = [
