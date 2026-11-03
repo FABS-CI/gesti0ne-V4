@@ -64,9 +64,10 @@ function NouvelleEcriturePage() {
   const [lignes, setLignes] = useState<LigneForm[]>([emptyLigne(), emptyLigne()]);
 
   const totals = useMemo(() => {
-    const d = lignes.reduce((s, l) => s + (Number(l.debit) || 0), 0);
-    const c = lignes.reduce((s, l) => s + (Number(l.credit) || 0), 0);
-    return { debit: d, credit: c, diff: d - c, balanced: d === c && d > 0 };
+    const cents = (n: number) => Math.round((Number(n) || 0) * 100);
+    const d = lignes.reduce((s, l) => s + cents(l.debit), 0);
+    const c = lignes.reduce((s, l) => s + cents(l.credit), 0);
+    return { debit: d / 100, credit: c / 100, diff: (d - c) / 100, balanced: d === c && d > 0 };
   }, [lignes]);
 
   const updateLigne = (i: number, patch: Partial<LigneForm>) => {
@@ -80,34 +81,26 @@ function NouvelleEcriturePage() {
     mutationFn: async () => {
       if (!libelle.trim()) throw new Error("Libellé requis");
       if (!totals.balanced) throw new Error("L'écriture doit être équilibrée (débit = crédit).");
+      if (lignes.some((l) => Number(l.debit) > 0 && Number(l.credit) > 0))
+        throw new Error("Une ligne ne peut pas avoir à la fois un débit et un crédit.");
       const valid = lignes.filter((l) => l.compte.trim() && (l.debit > 0 || l.credit > 0));
       if (valid.length < 2) throw new Error("Au moins 2 lignes valides sont requises.");
 
-      const ref = reference.trim() || `${journal}-${Date.now().toString().slice(-6)}`;
-      const { data: ec, error: e1 } = await supabase
-        .from("ecritures_comptables")
-        .insert({
-          date_ecriture: dateEcriture,
-          journal,
-          reference: ref,
-          libelle: libelle.trim(),
-          montant_total: totals.debit,
-          source_type: "manuel",
-        })
-        .select()
-        .single();
-      if (e1) throw e1;
-
-      const rows = valid.map((l) => ({
-        ecriture_id: ec.ecriture_id,
-        compte: l.compte.trim(),
-        compte_libelle: l.compte_libelle.trim() || l.compte.trim(),
-        debit: Number(l.debit) || 0,
-        credit: Number(l.credit) || 0,
-      }));
-      const { error: e2 } = await supabase.from("ecriture_lignes").insert(rows);
-      if (e2) throw e2;
-      return ec;
+      // Une seule transaction serveur : en-tête + lignes, ou rien.
+      const { data: id, error } = await supabase.rpc("creer_ecriture_manuelle", {
+        _date: dateEcriture,
+        _journal: journal,
+        _reference: reference.trim(),
+        _libelle: libelle.trim(),
+        _lignes: valid.map((l) => ({
+          compte: l.compte.trim(),
+          compte_libelle: l.compte_libelle.trim(),
+          debit: Number(l.debit) || 0,
+          credit: Number(l.credit) || 0,
+        })),
+      });
+      if (error) throw error;
+      return id;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["comptabilite"] });
