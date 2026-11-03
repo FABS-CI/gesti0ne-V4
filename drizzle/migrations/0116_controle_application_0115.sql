@@ -1,0 +1,1 @@
+COMMENT ON FUNCTION public._commande_assert_droit(text, text) IS 'Droit sur une commande : brouillon -> commandes.creer suffit ; sinon le droit demandé (migration 0115).';
