@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Loader2, Plus, Save, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { formatFCFA } from "@/lib/format";
+import { getPlanComptable } from "@/lib/compta-api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -64,6 +65,16 @@ function NouvelleEcriturePage() {
   const [libelle, setLibelle] = useState("");
   const [lignes, setLignes] = useState<LigneForm[]>([emptyLigne(), emptyLigne()]);
 
+  // Comptes actifs du plan : seuls comptes acceptés par le serveur (migration 0113).
+  const { data: plan = [] } = useQuery({ queryKey: ["plan-comptable"], queryFn: getPlanComptable });
+  const comptesActifs = useMemo(
+    () => new Map(plan.filter((c) => c.dans_plan && c.actif).map((c) => [c.numero, c.libelle])),
+    [plan],
+  );
+  const compteInconnu = (l: LigneForm) =>
+    plan.length > 0 && !!l.compte.trim() && !comptesActifs.has(l.compte.trim());
+  const comptesInconnus = lignes.filter(compteInconnu).length;
+
   const totals = useMemo(() => {
     const d = lignes.reduce((s, l) => s + (Number(l.debit) || 0), 0);
     const c = lignes.reduce((s, l) => s + (Number(l.credit) || 0), 0);
@@ -90,6 +101,8 @@ function NouvelleEcriturePage() {
       if (!totals.balanced) throw new Error("L'écriture doit être équilibrée (débit = crédit).");
       const valid = lignes.filter((l) => l.compte.trim() && (l.debit > 0 || l.credit > 0));
       if (valid.length < 2) throw new Error("Au moins 2 lignes valides sont requises.");
+      if (comptesInconnus > 0)
+        throw new Error("Un compte est absent du plan comptable ou désactivé.");
 
       // En-tête et lignes dans une seule transaction côté serveur : équilibre, droits
       // et exercice ouvert y sont revérifiés ; un refus n'enregistre rien.
@@ -105,7 +118,8 @@ function NouvelleEcriturePage() {
         p_libelle: libelle.trim(),
         p_lignes: valid.map((l) => ({
           compte: l.compte.trim(),
-          compte_libelle: l.compte_libelle.trim() || l.compte.trim(),
+          // Vide : le serveur reprend le libellé du compte dans le plan.
+          compte_libelle: l.compte_libelle.trim() || null,
           debit: Number(l.debit) || 0,
           credit: Number(l.credit) || 0,
         })),
@@ -202,16 +216,21 @@ function NouvelleEcriturePage() {
                   <TableCell>
                     <Input
                       className="font-mono"
+                      list="plan-comptes"
+                      aria-invalid={compteInconnu(l)}
                       value={l.compte}
-                      onChange={(e) => updateLigne(i, { compte: e.target.value })}
-                      placeholder="411000"
+                      onChange={(e) => updateLigne(i, { compte: e.target.value.trim() })}
+                      placeholder="411"
                     />
+                    {compteInconnu(l) && (
+                      <p className="mt-1 text-xs text-destructive">Absent du plan</p>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Input
                       value={l.compte_libelle}
                       onChange={(e) => updateLigne(i, { compte_libelle: e.target.value })}
-                      placeholder="Clients"
+                      placeholder={comptesActifs.get(l.compte.trim()) ?? "Intitulé de la ligne"}
                     />
                   </TableCell>
                   <TableCell>
@@ -249,6 +268,13 @@ function NouvelleEcriturePage() {
               ))}
             </TableBody>
           </Table>
+          <datalist id="plan-comptes">
+            {[...comptesActifs].map(([numero, lib]) => (
+              <option key={numero} value={numero}>
+                {lib}
+              </option>
+            ))}
+          </datalist>
 
           <div className="mt-4 flex flex-wrap justify-end gap-6 text-sm">
             <div>
@@ -275,7 +301,7 @@ function NouvelleEcriturePage() {
           <X className="mr-2 h-4 w-4" /> Annuler
         </Button>
         <Button
-          disabled={save.isPending || !totals.balanced || !libelle.trim()}
+          disabled={save.isPending || !totals.balanced || !libelle.trim() || comptesInconnus > 0}
           onClick={() => save.mutate()}
         >
           {save.isPending ? (

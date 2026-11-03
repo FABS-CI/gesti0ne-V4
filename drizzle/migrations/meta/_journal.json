@@ -778,6 +778,13 @@
       "when": 1793469794007,
       "tag": "0112_compta_cloture_exercice",
       "breakpoints": true
+    },
+    {
+      "idx": 113,
+      "version": "7",
+      "when": 1793556194007,
+      "tag": "0113_plan_comptable",
+      "breakpoints": true
     }
   ]
 }
