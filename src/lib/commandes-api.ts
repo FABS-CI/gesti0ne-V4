@@ -268,6 +268,23 @@ export async function annulerCommandeDirecte(commandeId: string, motif: string) 
   if (error) throw new Error(error.message);
 }
 
+/**
+ * Droit sur une commande, même règle que le serveur (migration 0115) : en brouillon,
+ * créer des commandes suffit ; ensuite il faut le droit demandé.
+ */
+export function aDroitSurCommande(
+  statut: string,
+  droit: "commandes.modifier" | "commandes.supprimer",
+  has: (p: string) => boolean,
+) {
+  return has(droit) || (statut === "brouillon" && has("commandes.creer"));
+}
+
+/** Modifiable tant qu'elle n'est pas annulée ; le serveur refuse si la marchandise est partie ou la facture déclarée à la DGI. */
+export function peutModifierCommande(statut: string, has: (p: string) => boolean) {
+  return statut !== "annulee" && aDroitSurCommande(statut, "commandes.modifier", has);
+}
+
 export async function getCommande(id: string) {
   const { data, error } = await supabase
     .from("commandes")

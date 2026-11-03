@@ -12,8 +12,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DocActionsMenu } from "@/components/commandes/DocActionsMenu";
-import { Can } from "@/components/rbac/Can";
-import type { Commande } from "@/lib/commandes-api";
+import { usePermissions } from "@/hooks/use-permissions";
+import { aDroitSurCommande, peutModifierCommande, type Commande } from "@/lib/commandes-api";
 import {
   viewBonCommande,
   downloadBonCommande,
@@ -56,6 +56,7 @@ export function CommandeActions({
   validerPending,
   onDelete,
 }: CommandeActionsProps) {
+  const { has } = usePermissions();
   const hasFactureBL =
     c.statut === "validee" || c.statut === "facturee" || c.statut === "livree";
 
@@ -125,11 +126,7 @@ export function CommandeActions({
         </>
       )}
 
-      {!readOnly &&
-        canModifier &&
-        (isSuperAdmin ||
-          c.statut === "brouillon" ||
-          c.statut === "en_attente_validation") && (
+      {!readOnly && peutModifierCommande(c.statut, has) && (
           <Button
             aria-label="Modifier / voir le détail"
             asChild
@@ -143,18 +140,16 @@ export function CommandeActions({
           </Button>
         )}
 
-      {isSuperAdmin && (
-        <Can permission="commandes.supprimer">
-          <Button
-            aria-label="Supprimer définitivement (Super Admin)"
-            variant="ghost"
-            size="icon"
-            title="Supprimer définitivement (Super Admin)"
-            onClick={() => onDelete(c)}
-          >
-            <Trash2 className="h-4 w-4 text-destructive" />
-          </Button>
-        </Can>
+      {aDroitSurCommande(c.statut, "commandes.supprimer", has) && (
+        <Button
+          aria-label="Supprimer définitivement"
+          variant="ghost"
+          size="icon"
+          title="Supprimer définitivement"
+          onClick={() => onDelete(c)}
+        >
+          <Trash2 className="h-4 w-4 text-destructive" />
+        </Button>
       )}
     </div>
   );

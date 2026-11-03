@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { usePermissions } from "@/hooks/use-permissions";
 import type { CommandeActionsProps } from "@/components/commandes/CommandeActions";
+import { aDroitSurCommande, peutModifierCommande } from "@/lib/commandes-api";
 import {
   downloadBonCommande,
   downloadProforma,
@@ -73,14 +74,11 @@ export function CommandeRowMenu({
   onDelete,
 }: CommandeActionsProps) {
   const { has, isLoading: permsLoading } = usePermissions();
-  const canDelete = !permsLoading && has("commandes.supprimer");
+  const canDelete = !permsLoading && aDroitSurCommande(c.statut, "commandes.supprimer", has);
   const canPayer = !permsLoading && has("paiements.creer");
   const hasFactureBL =
     c.statut === "validee" || c.statut === "facturee" || c.statut === "livree";
-  const canEdit =
-    !readOnly &&
-    canModifier &&
-    (isSuperAdmin || c.statut === "brouillon" || c.statut === "en_attente_validation");
+  const canEdit = !readOnly && !permsLoading && peutModifierCommande(c.statut, has);
   const [solderOpen, setSolderOpen] = useState(false);
   const { data: solde } = useQuery({
     queryKey: ["facture-solde", c.commande_id],
@@ -148,7 +146,7 @@ export function CommandeRowMenu({
           </Link>
         </Button>
       )}
-      {isSuperAdmin && canDelete && (
+      {canDelete && (
         <Button
           variant="ghost"
           size="icon"
