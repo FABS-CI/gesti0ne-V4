@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatFCFA, formatNumber, formatPercent, formatDate, formatDateLong, formatRelative } from "./format";
+import { formatFCFA, formatNumber, formatPercent, formatDate, formatDateLong, formatRelative, formatTelephone } from "./format";
 
 describe("formatFCFA", () => {
   it("null → tiret", () => expect(formatFCFA(null)).toBe("—"));
@@ -27,4 +27,12 @@ describe("dates", () => {
   it("formatRelative en jours", () =>
     expect(formatRelative(new Date(2026, 9, 5), new Date(2026, 9, 8))).toBe("il y a 3 jours"));
   it("null → tiret", () => expect(formatDate(null)).toBe("—"));
+});
+
+describe("formatTelephone", () => {
+  it("10 chiffres", () => expect(formatTelephone("0759699811")).toBe("+225 07 59 69 98 11"));
+  it("indicatif déjà saisi", () => expect(formatTelephone("+2250759699811")).toBe("+225 07 59 69 98 11"));
+  it("espaces", () => expect(formatTelephone("07 59 69 98 11")).toBe("+225 07 59 69 98 11"));
+  it("autre format conservé", () => expect(formatTelephone("+33 6 12 34 56 78")).toBe("+33 6 12 34 56 78"));
+  it("vide → tiret", () => expect(formatTelephone(null)).toBe("—"));
 });

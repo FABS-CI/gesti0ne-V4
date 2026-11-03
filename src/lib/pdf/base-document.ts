@@ -657,7 +657,7 @@ export class BaseDocument {
     return y - boxH - 20;
   }
 
-  drawTable(y: number, colonnes: { label: string, key: string, width: number }[], lignes: DocLigne[], options?: { showClientReception?: boolean }): number {
+  drawTable(y: number, colonnes: { label: string, key: string, width: number }[], lignes: DocLigne[], options?: { showClientReception?: boolean; boldKeys?: string[] }): number {
     const drawColLines = (top: number, bottom: number, w = 0.5) => {
       let vx = MARGINS.x;
       [0, ...colonnes.map((c) => c.width)].forEach((cw, idx) => {
@@ -686,8 +686,10 @@ export class BaseDocument {
     let curY = y - 20;
     const fontSize = 10;
     const colHPadding = 5;
-    // Toutes les données des lignes en noir gras (règle commune documents de vente).
-    const cellFont = (_key: string) => this.fonts.bold;
+    // Données des lignes en noir gras (règle commune documents de vente), sauf si
+    // boldKeys limite le gras à certaines colonnes (relevé : solde seul).
+    const cellFont = (key: string) =>
+      !options?.boldKeys || options.boldKeys.includes(key) ? this.fonts.bold : this.fonts.regular;
 
     lignes.forEach((l, i) => {
       let maxRowH = 22;
