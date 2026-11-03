@@ -20,6 +20,7 @@ import {
   annulerCommandeDirecte,
   getCommande,
   getCommandeLignes,
+  peutModifierCommande,
   STATUT_LABEL,
 } from "@/lib/commandes-api";
 import { friendlyError } from "@/lib/friendly-error";
@@ -65,7 +66,6 @@ function frDate(d: string | null | undefined) {
 function CommandeDetailPage() {
   const { commandeId } = Route.useParams();
   const { has: hasPermission, isSuperAdmin } = usePermissions();
-  const canModifier = hasPermission("commandes.modifier");
   const canDemanderAnnulation = hasPermission("commandes.supprimer") || isSuperAdmin;
   const pdf = usePdfDownload();
   const queryClient = useQueryClient();
@@ -176,10 +176,7 @@ function CommandeDetailPage() {
               </Button>
             );
           })()}
-          {canModifier &&
-            (isSuperAdmin ||
-              commande.statut === "brouillon" ||
-              commande.statut === "en_attente_validation") && (
+          {peutModifierCommande(commande.statut, hasPermission) && (
               <Button asChild variant="default" size="sm">
                 <Link to="/commandes/$commandeId/modifier" params={{ commandeId }}>
                   <Pencil className="mr-2 h-4 w-4" />

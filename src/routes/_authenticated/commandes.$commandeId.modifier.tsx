@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { FloatingCalculator } from "@/components/commandes/FloatingCalculator";
 import { CommandeForm, type CommandeFormValues } from "@/components/commandes/CommandeForm";
 import { usePermissions } from "@/hooks/use-permissions";
-import { getCommande, getCommandeLignes } from "@/lib/commandes-api";
+import { getCommande, getCommandeLignes, peutModifierCommande } from "@/lib/commandes-api";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
 export const Route = createFileRoute("/_authenticated/commandes/$commandeId/modifier")({
@@ -20,13 +20,10 @@ export const Route = createFileRoute("/_authenticated/commandes/$commandeId/modi
   notFoundComponent: RouteNotFound,
 });
 
-const STATUTS_MODIFIABLES = ["brouillon", "en_attente_validation"] as const;
-
 function CommandeModifierPage() {
   const { commandeId } = Route.useParams();
   const navigate = useNavigate();
-  const { has: hasPermission, isSuperAdmin, isLoading: permissionsLoading } = usePermissions();
-  const canEdit = hasPermission("commandes.modifier");
+  const { has: hasPermission, isLoading: permissionsLoading } = usePermissions();
 
   const { data: commande, isLoading } = useQuery({
     queryKey: ["commande", commandeId],
@@ -37,15 +34,18 @@ function CommandeModifierPage() {
     queryFn: () => getCommandeLignes(commandeId),
   });
 
+  const canEdit = commande
+    ? peutModifierCommande(commande.statut, hasPermission)
+    : hasPermission("commandes.modifier") || hasPermission("commandes.creer");
+
   useEffect(() => {
     if (permissionsLoading) return;
     if (!commande) return;
-    if (isSuperAdmin) return;
-    if (!STATUTS_MODIFIABLES.includes(commande.statut as (typeof STATUTS_MODIFIABLES)[number])) {
-      toast.error("Cette commande ne peut plus être modifiée");
+    if (commande.statut === "annulee") {
+      toast.error("Cette commande est annulée : elle ne peut plus être modifiée");
       navigate({ to: "/commandes/$commandeId", params: { commandeId } });
     }
-  }, [commande, commandeId, navigate, isSuperAdmin, permissionsLoading]);
+  }, [commande, commandeId, navigate, permissionsLoading]);
 
   if (!permissionsLoading && !canEdit) {
     return (
