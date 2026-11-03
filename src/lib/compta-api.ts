@@ -135,6 +135,45 @@ export async function getBalanceExercice(exerciceId: string): Promise<BalanceExe
   }));
 }
 
+export type CompteRow = {
+  compte_id: string | null;
+  numero: string;
+  libelle: string;
+  classe: number | null;
+  parent_numero: string | null;
+  actif: boolean;
+  /** false : compte utilisé par des écritures mais absent du plan. */
+  dans_plan: boolean;
+  nb_lignes: number;
+  debit: number;
+  credit: number;
+  dernier_mouvement: string | null;
+};
+
+/** Plan comptable avec mouvements, et comptes utilisés absents du plan (RPC 0113). */
+export async function getPlanComptable(): Promise<CompteRow[]> {
+  const { data, error } = await callRpc("compta_plan_comptable", {});
+  if (error) throw error;
+  type Row = Omit<CompteRow, "debit" | "credit" | "nb_lignes"> & {
+    nb_lignes: number;
+    total_debit: number;
+    total_credit: number;
+  };
+  return ((data ?? []) as Row[]).map((r) => ({
+    compte_id: r.compte_id,
+    numero: r.numero,
+    libelle: r.libelle ?? "",
+    classe: r.classe,
+    parent_numero: r.parent_numero,
+    actif: r.actif,
+    dans_plan: r.dans_plan,
+    nb_lignes: Number(r.nb_lignes ?? 0),
+    debit: Number(r.total_debit ?? 0),
+    credit: Number(r.total_credit ?? 0),
+    dernier_mouvement: r.dernier_mouvement,
+  }));
+}
+
 export type DashboardCompta = {
   produits: number; // classe 7
   charges: number; // classe 6
