@@ -58,7 +58,11 @@ function GrandLivrePage() {
       .slice()
       .sort((a, b) => {
         if (a.compte !== b.compte) return a.compte.localeCompare(b.compte);
-        return a.date_ecriture.localeCompare(b.date_ecriture);
+        return (
+          a.date_ecriture.localeCompare(b.date_ecriture) ||
+          a.ecriture_id.localeCompare(b.ecriture_id) ||
+          a.ligne_id.localeCompare(b.ligne_id)
+        );
       });
     // calcul solde progressif par compte
     let lastCompte = "";
