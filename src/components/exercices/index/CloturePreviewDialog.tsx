@@ -1,4 +1,4 @@
-import { AlertTriangle, Building2, CheckCircle2, Loader2, Users } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Loader2, Scale } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -34,13 +34,21 @@ export function CloturePreviewDialog({
   onValidate,
   submitting,
 }: Props) {
+  // Bloquants d'abord, puis points à vérifier.
+  const blocages = [...(preview?.blocages ?? [])].sort((a, b) =>
+    a.severite === b.severite ? 0 : a.severite === "error" ? -1 : 1,
+  );
+  const equilibre =
+    !!preview && Math.abs(preview.comptes.total_debit - preview.comptes.total_credit) < 0.01;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Aperçu de clôture</DialogTitle>
           <DialogDescription>
-            Vérifiez les données à reporter avant de valider la clôture définitive.
+            Contrôles comptables de l&apos;exercice. La clôture n&apos;est possible que sans
+            anomalie bloquante.
           </DialogDescription>
         </DialogHeader>
 
@@ -54,71 +62,75 @@ export function CloturePreviewDialog({
             <div className="rounded-lg border p-3">
               <p className="text-xs text-muted-foreground">Exercice à clôturer</p>
               <p className="font-semibold">
-                {preview.exercice.code} ({formatDate(preview.exercice.date_debut)} → {formatDate(preview.exercice.date_fin)}
-                )
+                {preview.exercice.code} ({formatDate(preview.exercice.date_debut)} →{" "}
+                {formatDate(preview.exercice.date_fin)})
               </p>
               {preview.exercice_suivant && (
                 <p className="mt-1 text-sm text-muted-foreground">
                   Suivant : <strong>{preview.exercice_suivant.code}</strong>
+                  {preview.exercice_suivant.a_creer && " (sera créé)"}
                 </p>
               )}
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-lg border p-3">
-                <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase text-muted-foreground">
-                  <Users className="h-3.5 w-3.5" /> Clients
-                </p>
-                <div className="space-y-1 text-sm">
-                  <div className="flex justify-between">
-                    <span>Débiteurs</span>
-                    <span className="font-medium">
-                      {preview.clients.debiteurs_count} — {formatFCFA(preview.clients.total_debit)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Créditeurs (avances)</span>
-                    <span className="font-medium">
-                      {preview.clients.crediteurs_count} —{" "}
-                      {formatFCFA(preview.clients.total_credit)}
-                    </span>
-                  </div>
+            <div className="rounded-lg border p-3">
+              <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase text-muted-foreground">
+                <Scale className="h-3.5 w-3.5" /> Écritures de l&apos;exercice
+              </p>
+              <div className="grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
+                <div className="flex justify-between">
+                  <span>Écritures</span>
+                  <span className="font-medium">{preview.comptes.nb_ecritures}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Débit = crédit</span>
+                  <span
+                    className={
+                      equilibre ? "font-medium text-success" : "font-medium text-destructive"
+                    }
+                  >
+                    {formatFCFA(preview.comptes.total_debit)}
+                    {equilibre ? "" : ` ≠ ${formatFCFA(preview.comptes.total_credit)}`}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Produits (classe 7)</span>
+                  <span className="font-medium">{formatFCFA(preview.comptes.produits)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Charges (classe 6)</span>
+                  <span className="font-medium">{formatFCFA(preview.comptes.charges)}</span>
+                </div>
+                <div className="flex justify-between sm:col-span-2">
+                  <span>Résultat (classes 6 à 8)</span>
+                  <span
+                    className={
+                      preview.comptes.resultat < 0
+                        ? "font-semibold text-destructive"
+                        : "font-semibold text-success"
+                    }
+                  >
+                    {preview.comptes.resultat < 0 ? "Perte " : "Bénéfice "}
+                    {formatFCFA(Math.abs(preview.comptes.resultat))}
+                  </span>
                 </div>
               </div>
-              <div className="rounded-lg border p-3">
-                <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase text-muted-foreground">
-                  <Building2 className="h-3.5 w-3.5" /> Fournisseurs
-                </p>
-                <div className="space-y-1 text-sm">
-                  <div className="flex justify-between">
-                    <span>Débiteurs</span>
-                    <span className="font-medium">
-                      {preview.fournisseurs.debiteurs_count} —{" "}
-                      {formatFCFA(preview.fournisseurs.total_debit)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Créditeurs</span>
-                    <span className="font-medium">
-                      {preview.fournisseurs.crediteurs_count} —{" "}
-                      {formatFCFA(preview.fournisseurs.total_credit)}
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Les soldes des comptes de bilan passent d&apos;eux-mêmes à l&apos;exercice suivant
+                (balance cumulée) ; le résultat va au report à nouveau tant qu&apos;il n&apos;est
+                pas affecté.
+              </p>
             </div>
 
-            {preview.blocages.length > 0 && (
-              <div className="space-y-2">
-                {preview.blocages.map((b) => (
-                  <Alert key={b.code} variant={b.severite === "error" ? "destructive" : "default"}>
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertTitle className="text-xs uppercase">{b.severite}</AlertTitle>
-                    <AlertDescription>{b.message}</AlertDescription>
-                  </Alert>
-                ))}
-              </div>
-            )}
+            {blocages.map((b) => (
+              <Alert key={b.code} variant={b.severite === "error" ? "destructive" : "default"}>
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle className="text-xs uppercase">
+                  {b.severite === "error" ? "Bloquant" : "À vérifier"}
+                </AlertTitle>
+                <AlertDescription>{b.message}</AlertDescription>
+              </Alert>
+            ))}
 
             <label className="flex items-start gap-2 rounded-lg border p-3 text-sm">
               <Checkbox
@@ -126,7 +138,7 @@ export function CloturePreviewDialog({
                 onCheckedChange={(v) => setActiverSuivant(v === true)}
               />
               <span>
-                Activer immédiatement l'exercice suivant (
+                Activer immédiatement l&apos;exercice suivant (
                 <strong>{preview.exercice_suivant?.code ?? "—"}</strong>) après la clôture.
               </span>
             </label>

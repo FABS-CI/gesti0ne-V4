@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/table";
 import { ResponsiveTable } from "@/components/layout/ResponsiveTable";
 import { getBalance } from "@/lib/compta-api";
+import { BalanceExerciceTable } from "@/components/comptabilite/BalanceExerciceTable";
+import { useExercice } from "@/contexts/ExerciceContext";
 import { formatFCFA } from "@/lib/format";
 import { exportCsv } from "@/lib/export-csv";
 import { generateBalancePDF } from "@/lib/pdf/pdfGenerator";
@@ -29,11 +31,16 @@ export const Route = createFileRoute("/_authenticated/balance")({
 });
 
 function BalancePage() {
+  const { exerciceConsulte } = useExercice();
+  // Exercice : balance à six colonnes avec à-nouveaux ; période : cumul des dates choisies.
+  const [mode, setMode] = useState<"exercice" | "periode">("exercice");
+  const parExercice = mode === "exercice" && !!exerciceConsulte;
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ["balance", from, to],
     queryFn: () => getBalance(from || undefined, to || undefined),
+    enabled: !parExercice,
   });
 
   const totals = rows.reduce(
@@ -52,9 +59,30 @@ function BalancePage() {
           <h1 className="ds-page-title flex items-center gap-2">
             <Scale className="h-6 w-6" /> Balance générale
           </h1>
-          <p className="text-sm text-muted-foreground">Cumul débit/crédit par compte</p>
+          <p className="text-sm text-muted-foreground">
+            {parExercice
+              ? `Exercice ${exerciceConsulte.code} : à-nouveaux, mouvements et soldes de clôture`
+              : "Cumul débit/crédit par compte sur la période"}
+          </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            variant={parExercice ? "default" : "outline"}
+            disabled={!exerciceConsulte}
+            onClick={() => setMode("exercice")}
+          >
+            Exercice
+          </Button>
+          <Button
+            size="sm"
+            variant={parExercice ? "outline" : "default"}
+            onClick={() => setMode("periode")}
+          >
+            Période libre
+          </Button>
+        </div>
+        <div className={parExercice ? "hidden" : "flex gap-2"}>
           <Button
             variant="outline"
             size="sm"
@@ -74,7 +102,7 @@ function BalancePage() {
                     },
                     {
                       label: "Solde net",
-                      value: formatFCFA((totals.debit - totals.credit)),
+                      value: formatFCFA(totals.debit - totals.credit),
                     },
                   ],
                 },
@@ -95,76 +123,82 @@ function BalancePage() {
         </div>
       </div>
 
-      <Card>
-        <CardContent className="flex flex-wrap gap-3 p-4">
-          <div>
-            <Label>Du</Label>
-            <Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
-          </div>
-          <div>
-            <Label>Au</Label>
-            <Input type="date" value={to} onChange={(e) => setTo(e.target.value)} />
-          </div>
-        </CardContent>
-      </Card>
+      {parExercice ? (
+        <BalanceExerciceTable exerciceId={exerciceConsulte.exercice_id} />
+      ) : (
+        <>
+          <Card>
+            <CardContent className="flex flex-wrap gap-3 p-4">
+              <div>
+                <Label>Du</Label>
+                <Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
+              </div>
+              <div>
+                <Label>Au</Label>
+                <Input type="date" value={to} onChange={(e) => setTo(e.target.value)} />
+              </div>
+            </CardContent>
+          </Card>
 
-      <Card>
-        <CardContent className="p-0">
-          <ResponsiveTable stickyFirstCol>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Compte</TableHead>
-                  <TableHead>Libellé</TableHead>
-                  <TableHead className="text-right">Débit</TableHead>
-                  <TableHead className="text-right">Crédit</TableHead>
-                  <TableHead className="text-right">Solde</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {isLoading ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center text-muted-foreground">
-                      Chargement…
-                    </TableCell>
-                  </TableRow>
-                ) : rows.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center text-muted-foreground">
-                      Aucune écriture sur la période
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  <>
-                    {rows.map((r) => (
-                      <TableRow key={r.compte}>
-                        <TableCell className="font-mono">{r.compte}</TableCell>
-                        <TableCell>{r.compte_libelle}</TableCell>
-                        <TableCell className="text-right">{formatFCFA(r.debit)}</TableCell>
-                        <TableCell className="text-right">{formatFCFA(r.credit)}</TableCell>
-                        <TableCell
-                          className="text-right font-medium"
-                          style={{ color: r.solde >= 0 ? "#10B981" : "#EF4444" }}
-                        >
-                          {formatFCFA(r.solde)}
+          <Card>
+            <CardContent className="p-0">
+              <ResponsiveTable stickyFirstCol>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Compte</TableHead>
+                      <TableHead>Libellé</TableHead>
+                      <TableHead className="text-right">Débit</TableHead>
+                      <TableHead className="text-right">Crédit</TableHead>
+                      <TableHead className="text-right">Solde</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {isLoading ? (
+                      <TableRow>
+                        <TableCell colSpan={5} className="text-center text-muted-foreground">
+                          Chargement…
                         </TableCell>
                       </TableRow>
-                    ))}
-                    <TableRow className="bg-muted/50 font-semibold">
-                      <TableCell colSpan={2}>TOTAL</TableCell>
-                      <TableCell className="text-right">{formatFCFA(totals.debit)}</TableCell>
-                      <TableCell className="text-right">{formatFCFA(totals.credit)}</TableCell>
-                      <TableCell className="text-right">
-                        {formatFCFA(totals.debit - totals.credit)}
-                      </TableCell>
-                    </TableRow>
-                  </>
-                )}
-              </TableBody>
-            </Table>
-          </ResponsiveTable>
-        </CardContent>
-      </Card>
+                    ) : rows.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={5} className="text-center text-muted-foreground">
+                          Aucune écriture sur la période
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      <>
+                        {rows.map((r) => (
+                          <TableRow key={r.compte}>
+                            <TableCell className="font-mono">{r.compte}</TableCell>
+                            <TableCell>{r.compte_libelle}</TableCell>
+                            <TableCell className="text-right">{formatFCFA(r.debit)}</TableCell>
+                            <TableCell className="text-right">{formatFCFA(r.credit)}</TableCell>
+                            <TableCell
+                              className="text-right font-medium"
+                              style={{ color: r.solde >= 0 ? "#10B981" : "#EF4444" }}
+                            >
+                              {formatFCFA(r.solde)}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        <TableRow className="bg-muted/50 font-semibold">
+                          <TableCell colSpan={2}>TOTAL</TableCell>
+                          <TableCell className="text-right">{formatFCFA(totals.debit)}</TableCell>
+                          <TableCell className="text-right">{formatFCFA(totals.credit)}</TableCell>
+                          <TableCell className="text-right">
+                            {formatFCFA(totals.debit - totals.credit)}
+                          </TableCell>
+                        </TableRow>
+                      </>
+                    )}
+                  </TableBody>
+                </Table>
+              </ResponsiveTable>
+            </CardContent>
+          </Card>
+        </>
+      )}
     </div>
   );
 }

@@ -771,6 +771,13 @@
       "when": 1793383394007,
       "tag": "0111_controle_integrite_global",
       "breakpoints": true
+    },
+    {
+      "idx": 112,
+      "version": "7",
+      "when": 1793469794007,
+      "tag": "0112_compta_cloture_exercice",
+      "breakpoints": true
     }
   ]
 }

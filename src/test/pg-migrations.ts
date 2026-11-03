@@ -29,7 +29,10 @@ export function fonctionMigration(signature: string, avant?: string): string {
     if (avant && f.replace(/\\/g, "/").includes(avant)) break;
     const s = readFileSync(f, "utf8");
     for (let i = s.indexOf(motif); i >= 0; i = s.indexOf(motif, i + 1)) {
-      const fin = s.indexOf("$$", s.indexOf("$$", i) + 2);
+      // Corps entre deux délimiteurs identiques : « $$ » ou « $function$ ».
+      const tag = /\$[A-Za-z_]*\$/.exec(s.slice(i));
+      if (!tag) continue;
+      const fin = s.indexOf(tag[0], i + tag.index + tag[0].length);
       dernier = s.slice(i, s.indexOf(";", fin) + 1);
     }
   }
