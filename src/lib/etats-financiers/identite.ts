@@ -57,7 +57,20 @@ export const CHAMPS_IDENTITE: ChampIdentite[] = [
 export const CLE_PARAMETRE = (cle: string) => `liasse.${cle}`;
 export const CATEGORIE_PARAMETRES = "etats_financiers";
 
-export type ValeurIdentite = { valeur: string; origine: "liasse" | "fne" | "absent" };
+export type ValeurIdentite = {
+  valeur: string;
+  origine: "liasse" | "fne" | "pied" | "absent";
+};
+
+/** Informations du pied de page des documents FABS-CI (pdfChrome), dernier recours. */
+export const IDENTITE_PIED_DE_PAGE: Record<string, string> = {
+  denomination: "EDITIONS FABS-CI",
+  adresse: "BP 693 Bingerville",
+  adresse_geographique:
+    "Bingerville, Qt N'GOTTO, Immeuble cité Angan A. fils et petits-fils, Rez de chaussée",
+  telephone: "2122800995 / +225 0759737123",
+  email: "edition693fabs@gmail.com",
+};
 
 export function resoudreIdentite(
   liasse: Record<string, string | null | undefined>,
@@ -67,11 +80,14 @@ export function resoudreIdentite(
   for (const c of CHAMPS_IDENTITE) {
     const propre = liasse[CLE_PARAMETRE(c.cle)]?.trim();
     const repris = c.fne ? fne[c.fne]?.trim() : undefined;
+    const pied = IDENTITE_PIED_DE_PAGE[c.cle];
     out[c.cle] = propre
       ? { valeur: propre, origine: "liasse" }
       : repris
         ? { valeur: repris, origine: "fne" }
-        : { valeur: "", origine: "absent" };
+        : pied
+          ? { valeur: pied, origine: "pied" }
+          : { valeur: "", origine: "absent" };
   }
   return out;
 }

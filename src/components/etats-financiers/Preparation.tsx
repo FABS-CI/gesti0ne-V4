@@ -283,9 +283,9 @@ export function Identification({ identite }: { identite: Record<string, ValeurId
                 <Label htmlFor={`id-${c.cle}`} className="flex items-center gap-2">
                   {c.libelle}
                   {c.requis && <span className="text-destructive">*</span>}
-                  {v?.origine === "fne" && !saisie && (
+                  {(v?.origine === "fne" || v?.origine === "pied") && !saisie && (
                     <span className="text-xs font-normal text-muted-foreground">
-                      (paramètres FNE)
+                      {v.origine === "fne" ? "(paramètres FNE)" : "(pied de page)"}
                     </span>
                   )}
                 </Label>
