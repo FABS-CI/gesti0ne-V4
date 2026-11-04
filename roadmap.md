@@ -1,7 +1,8 @@
 # Audit ERP — module par module
 
 ## Audit intégral GESTI0NE V4 — 4 novembre 2026
-- [ ] Phase 1 : diagnostic en lecture seule (code, sécurité, données, métiers, interface, tests) et rapport avec limites explicites
+- [x] Phase 1 : diagnostic initial livré dans audit-gesti0ne-v4-2026-11-04.md (Files) ; 598 tests sûrs réussis, 221 écritures contrôlées, 4 pages connectées ; limites et tentatives SQL rejetées documentées
+- [ ] Couverture exhaustive : parcours sensibles, concurrence, vues publiques et tous les PDF — nécessite un environnement de test jetable avant les opérations d’écriture
 - [ ] Phase 2 : plan priorisé — attend la revue du diagnostic
 - [ ] Phases 3 à 5 : corrections, tests et validation — attend l’autorisation après audit
 
