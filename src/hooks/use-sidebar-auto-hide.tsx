@@ -3,7 +3,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState, ty
 /**
  * Sidebar rétractable au survol (desktop, pointeur fin uniquement).
  * - pinned : sidebar ouvert en permanence (persisté en localStorage), contenu décalé.
- * - hoverOpen : sidebar superposé au contenu, ouvert quand la souris approche du bord gauche.
+ * - hoverOpen : sidebar superposé au contenu, ouvert quand la souris survole le rail d'icônes.
  * Aucun calque n'est posé sur le contenu : la détection passe par mousemove sur document.
  */
 const PIN_KEY = "fabs.sidebar.pinned";
@@ -95,7 +95,8 @@ export function SidebarAutoHideProvider({ children }: { children: ReactNode }) {
       !!t.closest(".app-sidebar-panel, [data-radix-popper-content-wrapper]");
 
     const onMove = (e: MouseEvent) => {
-      const limit = hoverRef.current ? panelWidth() + TOLERANCE_PX : EDGE_PX;
+      // Fermé, le panneau est le rail d'icônes : son survol ouvre le menu complet.
+      const limit = hoverRef.current ? panelWidth() + TOLERANCE_PX : Math.max(EDGE_PX, panelWidth());
       if (e.clientX <= limit || (hoverRef.current && inFloating(e.target))) requestOpen();
       else requestClose();
     };

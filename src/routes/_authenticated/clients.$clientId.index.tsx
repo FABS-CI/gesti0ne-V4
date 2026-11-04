@@ -168,7 +168,7 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
           </Button>
           <Button
             variant="secondary"
-            className="bg-purple-600 hover:bg-purple-700 text-white"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground"
             onClick={() =>
               navigate({ to: "/retours/nouveau", search: { clientId: client.client_id, type_retour: "avoir" } })
             }

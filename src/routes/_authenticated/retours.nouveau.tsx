@@ -194,7 +194,7 @@ function RetourNouveauPage() {
             </Link>
           </Button>
           {form.watch("type_retour") === "avoir" ? (
-            <ReceiptText className="h-6 w-6 text-purple-600" />
+            <ReceiptText className="h-6 w-6 text-primary" />
           ) : (
             <RotateCcw className="h-6 w-6 text-primary" />
           )}

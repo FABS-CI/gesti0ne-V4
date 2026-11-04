@@ -35,7 +35,7 @@ type Tile = {
 const TILES: Tile[] = [
   { key: "today", label: "Aujourd'hui", icon: Calendar, color: "text-warning" },
   { key: "week", label: "Cette semaine", icon: CalendarDays, color: "text-info" },
-  { key: "month", label: "Ce mois", icon: CalendarRange, color: "text-indigo-500" },
+  { key: "month", label: "Ce mois", icon: CalendarRange, color: "text-primary" },
   { key: "active_users_today", label: "Utilisateurs actifs", icon: Users, color: "text-success" },
   { key: "connected_now", label: "Connectés (15 min)", icon: Circle, color: "text-success" },
   { key: "logins", label: "Connexions", icon: LogIn, color: "text-success" },

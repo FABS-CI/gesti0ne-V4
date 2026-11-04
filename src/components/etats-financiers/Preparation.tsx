@@ -25,13 +25,13 @@ import { friendlyError } from "@/lib/friendly-error";
 
 const STATUT: Record<StatutPreparation, { libelle: string; classe: string }> = {
   incomplet: { libelle: "Incomplet", classe: "bg-destructive text-destructive-foreground" },
-  a_verifier: { libelle: "À vérifier", classe: "bg-amber-500 text-white" },
-  pret: { libelle: "Prêt", classe: "bg-emerald-600 text-white" },
+  a_verifier: { libelle: "À vérifier", classe: "bg-warning text-warning-foreground" },
+  pret: { libelle: "Prêt", classe: "bg-success text-success-foreground" },
 };
 
 const NIVEAU: Record<Niveau, { libelle: string; icone: typeof Info; classe: string }> = {
   bloquant: { libelle: "Bloquant", icone: XCircle, classe: "text-destructive" },
-  avertissement: { libelle: "À vérifier", icone: AlertTriangle, classe: "text-amber-600" },
+  avertissement: { libelle: "À vérifier", icone: AlertTriangle, classe: "text-warning" },
   info: { libelle: "Info", icone: Info, classe: "text-muted-foreground" },
 };
 
@@ -55,7 +55,7 @@ export function ListeControles({ controles }: { controles: Controle[] }) {
       <CardContent>
         {controles.length === 0 ? (
           <p className="flex items-center gap-2 text-sm">
-            <CheckCircle2 className="h-4 w-4 text-emerald-600" /> Aucun point relevé.
+            <CheckCircle2 className="h-4 w-4 text-success" /> Aucun point relevé.
           </p>
         ) : (
           <ul className="space-y-2">

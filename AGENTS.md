@@ -16,7 +16,8 @@
 - Un bon de retour dérivé d'une facture reprend les prix et remises effectifs de cette facture; le prix catalogue n'est qu'un secours pour les anciens retours sans facture.
 - `sec_replace_user_scope` accepte un dépôt principal nullable; l'appeler uniquement via `replaceUserScope` (`src/lib/sec-replace-user-scope.ts`, seul cast étroit) et ne jamais remplacer `null` par un dépôt arbitraire pour satisfaire le type généré.
 - Le Centre de pilotage lit uniquement la RPC agrégée `cockpit_overview`, qui filtre chaque bloc par `has_permission_v2` côté serveur; un bloc absent du JSON signifie « non autorisé », pour éviter de dupliquer les contrôles d'accès dans l'interface.
-- The app sidebar becomes an overlay drawer below 1024 px (`useIsMobile(1024)` in sidebar.tsx) so tablets in portrait get full content width.
+- UI palette is navy / petrol / light blue with one shared `--primary` for every module (tokens in `src/styles.css`, rules in `docs/ui-refonte/DESIGN-RULES.md`); never reintroduce per-module colors or hard-coded hex in the UI, so all screens stay one visual identity.
+- The app sidebar becomes an overlay drawer below 1024 px (`useIsMobile(1024)` in sidebar.tsx) so tablets in portrait get full content width; on desktop it collapses to an icon rail (`collapsible="icon"`) that expands over the content on hover.
 - Sales document references are stored unchanged (e.g. FAC-2026-00051) and only displayed via `formatDocumentReference` in `src/lib/document-reference.ts` (|FC|26|51); QR, certification, links and filenames keep the stored value so nothing technical breaks.
 - Client codes (clients.reference) follow CL-[PREFIX]-[N], generated only by DB trigger via client_code_counters (never reused); old codes kept in clients.ancien_code. Why: unique, race-safe, auditable.
 - Typecheck runs via `bun run typecheck` (tsgo from @typescript/native-preview); CI and scripts must call it, never `bunx tsgo`, because the bare "tsgo" npm package does not exist.

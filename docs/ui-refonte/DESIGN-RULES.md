@@ -1,11 +1,16 @@
 # GESTI-one — Règles de direction visuelle
 
-**Style :** Minimalism & Swiss Style, dense, mouvement discret. Interface de type ERP commercial.
+**Style :** Admin Dashboard V2 sur une ergonomie de type Odoo : sobre, dense, mouvement discret. Interface de type ERP commercial.
 
 ## Palette
-- Thème retenu : **cuivre sur ardoise** (tokens de `src/styles.css`). Neutres ardoise + un seul accent cuivre/orange (`--primary`).
+- Thème retenu : **bleu nuit, bleu pétrole, bleu clair** (« Admin Dashboard V2 », tokens de `src/styles.css`). Un seul accent d'action bleu (`--primary`), bleu pétrole pour l'information et la 2e série des graphiques (`--info`, `--chart-2`), bleu clair pour les fonds d'accent (`--accent`), barre latérale bleu nuit (`--sidebar`).
+- Tous les modules partagent le même accent : plus de couleur propre par module (l'ancien `module-theme.ts` est supprimé), ni de palette propre au tableau de bord.
 - Le bleu de marque `--fabsci-blue-electric` reste réservé aux QR, étiquettes et au logo.
-- Interdit : violet, dégradés de couleur, halos flous, couleurs hors tokens.
+- Interdit : violet, dégradés de couleur, halos flous, couleurs hors tokens (pas de `#hex` en dur dans l'interface ; les PDF ont leurs propres règles).
+
+## Barre latérale
+- Ordinateur : réductible en rail d'icônes (bouton de l'en-tête ou Ctrl+B) ; le survol du rail déploie le menu par-dessus le contenu, l'épingle le garde ouvert.
+- Sous 1024 px : tiroir superposé (inchangé).
 
 ## Couleurs sémantiques (mapping des couleurs brutes)
 | Couleur brute | Token |
@@ -14,7 +19,7 @@
 | green-* / emerald-* | `success` |
 | amber-* / yellow-* / orange-* (alerte) | `warning` |
 | blue-* (information) | `info` |
-| orange-* (action principale) | `primary` |
+| blue-* / orange-* (action principale) | `primary` |
 | slate-* / gray-* / zinc-* | `muted`, `muted-foreground`, `border`, `foreground` |
 
 ## Typographie

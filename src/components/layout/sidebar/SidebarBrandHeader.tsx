@@ -4,9 +4,29 @@ import { useSidebarAutoHide } from "@/hooks/use-sidebar-auto-hide";
 import fabsLogo from "@/assets/fabs-logo.png";
 import { SidebarHeader, useSidebar } from "@/components/ui/sidebar";
 
-export function SidebarBrandHeader(_props: { accentGrad?: string | null }) {
+export function SidebarBrandHeader({
+  compact = false,
+}: {
+  accentGrad?: string | null;
+  /** Barre latérale réduite : logo seul. */
+  compact?: boolean;
+}) {
   const { isMobile, setOpenMobile } = useSidebar();
   const auto = useSidebarAutoHide();
+  if (compact) {
+    return (
+      <SidebarHeader className="flex items-center border-b border-sidebar-border bg-sidebar px-2 py-4">
+        <img
+          src={fabsLogo}
+          alt="Logo Éditions FABS-CI"
+          width={36}
+          height={36}
+          decoding="async"
+          className="h-9 w-9 shrink-0 rounded-md bg-white object-contain p-1"
+        />
+      </SidebarHeader>
+    );
+  }
   return (
     <SidebarHeader className="relative border-b border-sidebar-border bg-sidebar px-4 py-4">
       <div className="flex items-center gap-3 pr-10">

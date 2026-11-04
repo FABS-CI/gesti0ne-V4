@@ -10,7 +10,6 @@ export function ModulePlaceholder({
   subtitle,
   description,
   icon: Icon,
-  color = "#3B82F6",
   shortcuts = [],
   bullets = [],
 }: {
@@ -18,6 +17,7 @@ export function ModulePlaceholder({
   subtitle?: string;
   description?: string;
   icon: LucideIcon;
+  /** Ignoré : tous les modules partagent l'accent de la palette globale. */
   color?: string;
   shortcuts?: ModuleShortcut[];
   bullets?: string[];
@@ -26,10 +26,7 @@ export function ModulePlaceholder({
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <span
-            className="flex h-12 w-12 items-center justify-center rounded-md"
-            style={{ background: `${color}22`, color }}
-          >
+          <span className="flex h-12 w-12 items-center justify-center rounded-md bg-accent text-accent-foreground">
             <Icon className="h-6 w-6" />
           </span>
           <div>

@@ -177,7 +177,7 @@ function RHDashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <Building2 className="h-5 w-5 text-violet-500" /> Effectif par département
+              <Building2 className="h-5 w-5 text-muted-foreground" /> Effectif par département
             </CardTitle>
           </CardHeader>
           <CardContent>

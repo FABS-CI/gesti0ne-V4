@@ -10,7 +10,7 @@ export function FacturesKpis({ total, paye, du }: Props) {
       label: "Total facturé",
       value: total,
       icon: Wallet,
-      color: "#0EA5E9",
+      color: "var(--primary)",
       valueClass: "",
       tone: "",
     },
@@ -18,7 +18,7 @@ export function FacturesKpis({ total, paye, du }: Props) {
       label: "Encaissé",
       value: paye,
       icon: CheckCircle2,
-      color: "#10B981",
+      color: "var(--success)",
       valueClass: "text-success",
       tone: "border-success/30",
     },
@@ -26,7 +26,7 @@ export function FacturesKpis({ total, paye, du }: Props) {
       label: "Reste dû",
       value: du,
       icon: AlertCircle,
-      color: "#EF4444",
+      color: "var(--destructive)",
       valueClass: "text-destructive",
       tone:
         du > 0

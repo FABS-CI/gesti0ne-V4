@@ -42,8 +42,8 @@ import { friendlyError } from "@/lib/friendly-error";
 const STATUT: Record<StatutDossier, { libelle: string; classe: string }> = {
   brouillon: { libelle: "Brouillon", classe: "bg-secondary text-secondary-foreground" },
   remplace: { libelle: "Remplacé", classe: "bg-muted text-muted-foreground" },
-  valide: { libelle: "Validé", classe: "bg-emerald-600 text-white" },
-  devalide: { libelle: "Réouvert", classe: "bg-amber-500 text-white" },
+  valide: { libelle: "Validé", classe: "bg-success text-success-foreground" },
+  devalide: { libelle: "Réouvert", classe: "bg-warning text-warning-foreground" },
 };
 
 export function BadgeDossier({ statut }: { statut: StatutDossier }) {
@@ -167,7 +167,7 @@ export function PanneauDossier({
             {v.valide_le && (
               <>
                 <br />
-                <CheckCircle2 className="mr-1 inline h-4 w-4 text-emerald-600" />
+                <CheckCircle2 className="mr-1 inline h-4 w-4 text-success" />
                 Validé le {formatDateTime(v.valide_le)}
                 {v.valide_par_nom ? ` par ${v.valide_par_nom}` : ""}
                 {v.commentaire_validation ? ` : « ${v.commentaire_validation} »` : "."}

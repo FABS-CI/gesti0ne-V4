@@ -27,14 +27,14 @@ export function KpiCards({ stockValorise, stats }: Props) {
     {
       label: "Stock valorisé",
       icon: Wallet,
-      color: "#0EA5E9",
+      color: "var(--primary)",
       value: canSeeCouts ? formatFCFA(stockValorise) : "—",
       sub: null as string | null,
     },
     {
       label: "CA 30j",
       icon: TrendingUp,
-      color: "#14B8A6",
+      color: "var(--chart-2)",
       value: canSeeCA ? formatFCFA(stats?.ca30 ?? 0) : "—",
       sub: `${stats?.qte30 ?? 0} u. vendues`,
       highlight: true,
@@ -42,14 +42,14 @@ export function KpiCards({ stockValorise, stats }: Props) {
     {
       label: "Marge 30j",
       icon: Percent,
-      color: "#10B981",
+      color: "var(--success)",
       value: canSeeMarges ? formatFCFA(stats?.marge30 ?? 0) : "—",
       sub: canSeeMarges ? `${(stats?.margePct30 ?? 0).toFixed(1)} %` : null,
     },
     {
       label: "Rotation 90j",
       icon: RotateCw,
-      color: "#8B5CF6",
+      color: "var(--chart-4)",
       value: `${(stats?.rotation90 ?? 0).toFixed(2)}×`,
       sub: `${stats?.qte90 ?? 0} u. vendues`,
     },
