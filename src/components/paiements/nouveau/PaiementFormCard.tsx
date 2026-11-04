@@ -135,33 +135,51 @@ export function PaiementFormCard({
             disabled={disabled}
           />
         </div>
-        <div className="sm:col-span-2 flex justify-end gap-2 pt-2">
-          <Button asChild variant="outline">
-            <Link to="/paiements">Annuler</Link>
-          </Button>
-          {mode === "draft" ? (
-            <>
-              <Button variant="outline" onClick={onPreview}>
-                <FileText className="mr-2 h-4 w-4" />
-                Prévisualiser
-              </Button>
-              <Button onClick={onSubmit} disabled={submitting}>
-                 Enregistrer le paiement
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button variant="outline" onClick={onEdit}>
-                Modifier
-              </Button>
-              <Button onClick={onSubmit} disabled={submitting}>
-                <FileText className="mr-2 h-4 w-4" />
-                 Confirmer et enregistrer
-              </Button>
-            </>
-          )}
-        </div>
       </CardContent>
     </Card>
+  );
+}
+
+/** Boutons d'action du paiement, affichés tout en bas de la page (après le récapitulatif). */
+export function PaiementFormActions({
+  mode,
+  onPreview,
+  onSubmit,
+  onEdit,
+  submitting,
+}: {
+  mode: "draft" | "confirm";
+  onPreview: () => void;
+  onSubmit: () => void;
+  onEdit: () => void;
+  submitting: boolean;
+}) {
+  return (
+    <div className="flex flex-wrap justify-end gap-2 border-t pt-4">
+      <Button asChild variant="outline">
+        <Link to="/paiements">Annuler</Link>
+      </Button>
+      {mode === "draft" ? (
+        <>
+          <Button variant="outline" onClick={onPreview}>
+            <FileText className="mr-2 h-4 w-4" />
+            Prévisualiser
+          </Button>
+          <Button onClick={onSubmit} disabled={submitting}>
+             Enregistrer le paiement
+          </Button>
+        </>
+      ) : (
+        <>
+          <Button variant="outline" onClick={onEdit}>
+            Modifier
+          </Button>
+          <Button onClick={onSubmit} disabled={submitting}>
+            <FileText className="mr-2 h-4 w-4" />
+             Confirmer et enregistrer
+          </Button>
+        </>
+      )}
+    </div>
   );
 }

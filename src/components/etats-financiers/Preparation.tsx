@@ -307,12 +307,12 @@ export function Identification({ identite }: { identite: Record<string, ValeurId
           })}
         </div>
         {saisie && (
-          <div className="mt-4 flex gap-2">
-            <Button size="sm" onClick={enregistrer} disabled={envoi}>
-              Enregistrer
-            </Button>
+          <div className="mt-4 flex justify-end gap-2">
             <Button size="sm" variant="ghost" onClick={() => setSaisie(null)}>
               Annuler
+            </Button>
+            <Button size="sm" onClick={enregistrer} disabled={envoi}>
+              Enregistrer
             </Button>
           </div>
         )}

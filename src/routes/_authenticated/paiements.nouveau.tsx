@@ -26,7 +26,7 @@ import {
   FacturesImpayeesCard,
   type FactureImpayeeRow,
 } from "@/components/paiements/nouveau/FacturesImpayeesCard";
-import { PaiementFormCard, type FormState } from "@/components/paiements/nouveau/PaiementFormCard";
+import { PaiementFormCard, PaiementFormActions, type FormState } from "@/components/paiements/nouveau/PaiementFormCard";
 import { RecapCard } from "@/components/paiements/nouveau/RecapCard";
 import { formatFCFA, formatDate } from "@/lib/format";
 import { computeRecap, repartirMontantRecu, type RecapLine } from "@/lib/paiement-recap";
@@ -307,6 +307,16 @@ function NouveauPaiementPage() {
       )}
 
       {hasSelection && recapLignes.length > 0 && <RecapCard lignes={recapLignes} mode={mode} />}
+
+      {hasSelection && (
+        <PaiementFormActions
+          mode={mode}
+          onPreview={preview}
+          onSubmit={submit}
+          onEdit={() => setMode("draft")}
+          submitting={mutation.isPending}
+        />
+      )}
 
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <AlertDialogContent>
