@@ -308,6 +308,16 @@ function NouveauPaiementPage() {
 
       {hasSelection && recapLignes.length > 0 && <RecapCard lignes={recapLignes} mode={mode} />}
 
+      {hasSelection && (
+        <PaiementFormActions
+          mode={mode}
+          onPreview={preview}
+          onSubmit={submit}
+          onEdit={() => setMode("draft")}
+          submitting={mutation.isPending}
+        />
+      )}
+
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
