@@ -8,6 +8,7 @@ import { createHash, createPrivateKey, createPublicKey, randomBytes, sign, verif
 import { canonicalString, toCanonical, type CanonicalDocument } from "./canonical";
 
 import { calculateInvoicePaymentStatus } from "@/lib/factures/payment-status";
+import { ilikeExact } from "@/lib/postgrest-filter";
 
 export type DocType = "FACTURE" | "PROFORMA" | "COMMANDE" | "BL" | "PAIEMENT" | "RELEVE";
 
@@ -133,8 +134,8 @@ export async function loadDocumentData(
   for (const t of tables) {
     let query = supabaseAdmin.from(t.table as any).select("*");
     query = isUuid
-      ? (query as any).or(`${t.idCol}.eq.${reference},reference.ilike.${reference}`)
-      : (query as any).ilike("reference", reference);
+      ? (query as any).eq(t.idCol, reference)
+      : (query as any).ilike("reference", ilikeExact(reference));
 
     const { data } = await (query as any).maybeSingle();
     if (!data) continue;
@@ -216,7 +217,7 @@ async function loadReleveDocument(
   const { data: cli } = await db
     .from("clients")
     .select("client_id, reference, nom, telephone, representant")
-    .ilike("reference", clientCode)
+    .ilike("reference", ilikeExact(clientCode))
     .maybeSingle();
   if (!cli) return null;
   const { loadReleveClient } = await import("@/lib/pdf/releve-data");
@@ -474,18 +475,26 @@ export async function logVerification(params: {
 
 /** Limitation de débit simple : 30 vérifications / 10 min par adresse. */
 export async function isRateLimited(ip: string | null): Promise<boolean> {
-  if (!ip) return false;
+  // Sans IP (en-tête Cloudflare absent), on laisse passer pour ne pas casser
+  // la lecture des QR, mais on le signale : ce cas ne devrait pas arriver.
+  if (!ip) {
+    console.warn("[rate-limit] IP absente : limitation non appliquée");
+    return false;
+  }
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const since = new Date(Date.now() - 10 * 60 * 1000).toISOString();
-    const { count } = await supabaseAdmin
+    const { count, error } = await supabaseAdmin
       .from("document_verification_logs" as any)
       .select("log_id", { count: "exact", head: true })
       .eq("ip_hash", sha256Hex(ip))
       .gte("created_at", since);
+    if (error) throw new Error(error.message);
     return (count ?? 0) > 30;
-  } catch {
-    return false;
+  } catch (e) {
+    // Compteur illisible : on limite plutôt que d'ouvrir l'accès sans contrôle.
+    console.error("[rate-limit] compteur indisponible, requête limitée", e);
+    return true;
   }
 }
 

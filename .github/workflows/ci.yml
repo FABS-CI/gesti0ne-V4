@@ -29,8 +29,11 @@ jobs:
     name: RLS + RPC audit (psql)
     runs-on: ubuntu-latest
     # Requiert le secret SUPABASE_DB_URL (URL postgres d'une base de TEST, jamais la production :
-    # l'audit y écrit des données). Sans le secret, le job est sauté avec un avertissement
-    # au lieu de laisser la CI toujours rouge ; typecheck et tests unitaires restent bloquants.
+    # l'audit y écrit des données). Sur une pull request, l'absence du secret ne donne qu'un
+    # avertissement ; sur main, le job échoue : un test de sécurité sauté ne doit jamais
+    # passer pour un test réussi.
+    outputs:
+      ran: ${{ steps.secret.outputs.present }}
     steps:
       - uses: actions/checkout@v4
       - name: Vérifier présence du secret DB
@@ -39,8 +42,12 @@ jobs:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
           if [ -z "$SUPABASE_DB_URL" ]; then
-            echo "::warning::SUPABASE_DB_URL absent — tests RLS/RPC NON exécutés. Ajoutez le secret (base de test) pour les activer."
             echo "present=false" >> "$GITHUB_OUTPUT"
+            if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+              echo "::error::SUPABASE_DB_URL absent — tests RLS/RPC NON exécutés sur main. Ajoutez le secret (base de test)."
+              exit 1
+            fi
+            echo "::warning::SUPABASE_DB_URL absent — tests RLS/RPC NON exécutés. Ajoutez le secret (base de test) pour les activer."
           else
             echo "present=true" >> "$GITHUB_OUTPUT"
           fi
@@ -75,7 +82,9 @@ jobs:
       matrix:
         project: [desktop, mobile]
     # Requiert le secret E2E_BASE_URL (application de TEST). Sans lui, le job est sauté
-    # avec un avertissement, comme le job rls.
+    # avec un avertissement ; le garde de publication le signale comme non exécuté.
+    outputs:
+      ran: ${{ steps.secret.outputs.present }}
     steps:
       - name: Vérifier présence du secret E2E
         id: secret
@@ -133,5 +142,14 @@ jobs:
              [ "${{ needs.e2e.result }}" != "success" ]; then
             echo "::error::Au moins un job de test n'a pas réussi — publication bloquée."
             exit 1
+          fi
+          if [ "${{ needs.rls.outputs.ran }}" != "true" ]; then
+            echo "::error::Tests RLS/RPC non exécutés — publication bloquée."
+            exit 1
+          fi
+          if [ "${{ needs.e2e.outputs.ran }}" != "true" ]; then
+            echo "::warning::Tests e2e NON exécutés (secret E2E_BASE_URL absent)."
+            echo "Typecheck, unitaires et RLS/RPC passés ; e2e non exécutés — publication autorisée."
+            exit 0
           fi
           echo "Tous les tests (typecheck, unitaires, RLS/RPC, e2e) sont passés — publication autorisée."

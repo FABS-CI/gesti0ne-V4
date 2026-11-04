@@ -6,3 +6,12 @@
 export function pgSafe(value: string): string {
   return value.replace(/[,()"\\*:]/g, " ").replace(/\s+/g, " ").trim();
 }
+
+/**
+ * Motif `ilike` qui ne correspond qu'à la valeur exacte (casse ignorée).
+ * `_` et `%` sont des jokers SQL : sans échappement, « FAC-2026-0005_ »
+ * correspondrait à dix factures. À utiliser pour toute recherche par référence.
+ */
+export function ilikeExact(value: string): string {
+  return value.replace(/[\\%_]/g, (c) => `\\${c}`);
+}
