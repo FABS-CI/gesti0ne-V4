@@ -9,7 +9,7 @@
 -- `user_roles` (v0/v1) n'est plus référencée nulle part dans `src/` et ne doit
 -- PAS être utilisée ici : elle donnerait un test toujours vert sur une table morte.
 
-\set ON_ERROR_STOP off
+\set ON_ERROR_STOP on
 
 BEGIN;
 
@@ -186,6 +186,16 @@ BEGIN
          OR has_function_privilege('anon', p.oid, 'execute'))
     AND pg_get_functiondef(p.oid) ~* '\m(insert\s+into|update\s+[a-z_."]+\s+set|delete\s+from)\M'
     AND pg_get_functiondef(p.oid) !~* '(assert_permission|rbac3_can|has_permission|is_admin|is_finance|is_hr|is_stock|is_sales|has_role|is_super_admin|can_write_module|rbac3_admin_guard)'
+    -- Une garde déléguée n'est reconnue que si son propre corps appelle assert_permission.
+    AND NOT (
+      pg_get_functiondef(p.oid) ~* 'PERFORM\s+public\._commande_assert_droit\s*\('
+      AND EXISTS (
+        SELECT 1 FROM pg_proc helper JOIN pg_namespace hn ON hn.oid = helper.pronamespace
+        WHERE hn.nspname = 'public' AND helper.proname = '_commande_assert_droit'
+          AND pg_get_function_identity_arguments(helper.oid) = '_statut text, _droit text'
+          AND pg_get_functiondef(helper.oid) ~* 'PERFORM\s+public\.assert_permission\s*\(\s*_droit\s*\)'
+      )
+    )
     AND NOT (regexp_replace(p.oid::regprocedure::text, '^public\.', '') = ANY (v_whitelist));
   IF v_list IS NOT NULL THEN
     RAISE EXCEPTION E'FAIL: fonctions SECURITY DEFINER sans contrôle de droit :\n  %', v_list;
