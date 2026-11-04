@@ -718,9 +718,9 @@ export const REPORTS: ReportDef[] = [
       }));
     },
     summary: (rows): SummaryRow[] => [
-      { label: "Total salaire brut (FCFA)", value: formatFCFA(sum(rows, "salaire_brut")) },
-      { label: "Total retenues (FCFA)", value: formatFCFA(sum(rows, "cotisations")) },
-      { label: "Total net à payer (FCFA)", value: formatFCFA(sum(rows, "salaire_net")) },
+      { label: "Total salaire brut", value: formatFCFA(sum(rows, "salaire_brut")) },
+      { label: "Total retenues", value: formatFCFA(sum(rows, "cotisations")) },
+      { label: "Total net à payer", value: formatFCFA(sum(rows, "salaire_net")) },
     ],
   },
 ];
