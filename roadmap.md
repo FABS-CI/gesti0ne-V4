@@ -3,8 +3,8 @@
 ## Audit intégral GESTI0NE V4 — 4 novembre 2026
 - [x] Phase 1 : diagnostic initial livré dans audit-gesti0ne-v4-2026-11-04.md (Files) ; 598 tests sûrs réussis, 221 écritures contrôlées, 4 pages connectées ; limites et tentatives SQL rejetées documentées
 - [ ] Couverture exhaustive : parcours sensibles, concurrence, vues publiques et tous les PDF — nécessite un environnement de test jetable avant les opérations d’écriture
-- [ ] Phase 2 : plan priorisé — attend la revue du diagnostic
-- [ ] Phases 3 à 5 : corrections, tests et validation — attend l’autorisation après audit
+- [x] Phase 2 : plan priorisé préparé après le « go » du 4 novembre
+- [ ] Phases 3 à 5 : corrections par lots, tests isolés et validation — attend l’approbation du plan
 
 ## Paramètres Paie CI — demande du 22 octobre 2026
 - [ ] Source unique régime, paramètres éditables et audit, suppression du chemin legacy
