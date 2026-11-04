@@ -880,7 +880,7 @@ export class BaseDocument {
     const bandY = curY - (TOTAL_H + BAND_H) / 2;
     roundedRect(this.page, x + 6, bandY, boxW - 12, BAND_H, 4, { color: BODY.blanc, borderColor: theme.total, borderWidth: 1.2 });
     // Zones gauche (libellé) / droite (montant) indépendantes : tailles adaptées pour ne jamais se chevaucher.
-    const totalLabel = "TOTAL À PAYER (FCFA)";
+    const totalLabel = "TOTAL À PAYER";
     const totalVal = `${formatFCFA(this.totals.totalAPayer, false)} FCFA`;
     const avail = boxW - 24, GAP = 28;
     let lblSize = 9, valSize = 13;
