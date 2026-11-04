@@ -379,7 +379,7 @@ export function ColisageForm({
       />
       <CardContent className="pl-5 sm:pl-6">
         <fieldset disabled={!modifiable} className="contents">
-          <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-3">
+          <form id="colisage-form" onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-3">
             <div>
               <Label>
                 Responsable du colisage <span className="text-destructive">*</span>
@@ -512,24 +512,6 @@ export function ColisageForm({
               />
             )}
 
-            <div className="md:col-span-3 flex justify-end">
-              <Button
-                type="submit"
-                className="w-full sm:w-auto min-w-[200px]"
-                disabled={mutation.isPending || !modifiable || !compositionValide}
-              >
-                {mutation.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Enregistrement...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="mr-2 h-4 w-4" />
-                    {hasColis ? "Mettre à jour le colisage" : "Valider le colisage"}
-                  </>
-                )}
-              </Button>
-            </div>
           </form>
         </fieldset>
 
@@ -548,6 +530,25 @@ export function ColisageForm({
           updateCarton={updateCarton}
           blStatut={bl.statut}
         />
+            <div className="mt-6 flex justify-end border-t pt-4">
+              <Button
+                type="submit"
+                form="colisage-form"
+                className="w-full sm:w-auto min-w-[200px]"
+                disabled={mutation.isPending || !modifiable || !compositionValide}
+              >
+                {mutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Enregistrement...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                    {hasColis ? "Mettre à jour le colisage" : "Valider le colisage"}
+                  </>
+                )}
+              </Button>
+            </div>
       </CardContent>
     </Card>
   );
