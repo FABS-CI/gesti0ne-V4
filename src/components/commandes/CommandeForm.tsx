@@ -486,7 +486,7 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
           }}
         />
       ) : null}
-      <div className="grid gap-6 2xl:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="space-y-6">
 
         <div className="space-y-6 min-w-0">
           {/* 1. Client */}
@@ -679,7 +679,7 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
         </div>
         {/* Résumé : colonne sur desktop, barre fixe en bas sur mobile */}
         <aside className="hidden 2xl:block">
-          <div className="sticky top-6 space-y-4">
+          <div className="ml-auto max-w-md space-y-4">
             <SummaryCard
               totaux={totaux}
               tauxTva={tauxTva}
