@@ -8499,6 +8499,7 @@ export type Database = {
         Returns: undefined
       }
       _statut_libelle: { Args: { v: string }; Returns: string }
+      account_is_active: { Args: { _user_id: string }; Returns: boolean }
       affecter_colis_tournee: {
         Args: { _colis_ids: string[]; _tournee_id: string }
         Returns: Json
