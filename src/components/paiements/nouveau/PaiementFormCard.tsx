@@ -148,7 +148,7 @@ export function PaiementFormActions({
   onEdit,
   submitting,
 }: {
-  mode: "draft" | "preview";
+  mode: "draft" | "confirm";
   onPreview: () => void;
   onSubmit: () => void;
   onEdit: () => void;
