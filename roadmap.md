@@ -1,5 +1,10 @@
 # Audit ERP — module par module
 
+## Audit intégral GESTI0NE V4 — 4 novembre 2026
+- [ ] Phase 1 : diagnostic en lecture seule (code, sécurité, données, métiers, interface, tests) et rapport avec limites explicites
+- [ ] Phase 2 : plan priorisé — attend la revue du diagnostic
+- [ ] Phases 3 à 5 : corrections, tests et validation — attend l’autorisation après audit
+
 ## Paramètres Paie CI — demande du 22 octobre 2026
 - [ ] Source unique régime, paramètres éditables et audit, suppression du chemin legacy
 - [ ] Calcul serveur et aperçu : CMU 500 chacun, ITS 2024 nul, ancienneté, transport et arrondi supérieur à 5
