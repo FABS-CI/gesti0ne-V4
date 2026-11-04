@@ -259,10 +259,12 @@ export const secSetUserStatut = createServerFn({ method: "POST" })
       .eq("id", data.user_id);
     if (error) throw new Error(error.message);
 
-    // Un compte verrouillé perd sa session côté Auth.
-    if (data.statut !== "actif") {
-      await db.auth.admin.signOut(data.user_id, "global").catch(() => undefined);
-    }
+    // Auth expects a session JWT for signOut, not a user UUID. Ban/unban by ID instead.
+    // Existing access tokens are rejected by the app-owned account-status middleware.
+    const { error: authError } = await db.auth.admin.updateUserById(data.user_id, {
+      ban_duration: data.statut === "actif" ? "none" : "876000h",
+    });
+    if (authError) throw new Error("Statut enregistré ; synchronisation de l’accès à réessayer");
 
     await audit(context.userId, `user.statut.${data.statut}`, data.user_id, before, {
       statut: data.statut,
