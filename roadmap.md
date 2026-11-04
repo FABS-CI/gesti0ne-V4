@@ -4,7 +4,11 @@
 - [x] Phase 1 : diagnostic initial livré dans audit-gesti0ne-v4-2026-11-04.md (Files) ; 598 tests sûrs réussis, 221 écritures contrôlées, 4 pages connectées ; limites et tentatives SQL rejetées documentées
 - [ ] Couverture exhaustive : parcours sensibles, concurrence, vues publiques et tous les PDF — nécessite un environnement de test jetable avant les opérations d’écriture
 - [x] Phase 2 : plan priorisé préparé après le « go » du 4 novembre
-- [ ] Phases 3 à 5 : corrections par lots, tests isolés et validation — attend l’approbation du plan
+- [ ] Phases 3 à 5 : plan approuvé ; lot 1 commencé, lots 2 et 3 attendent sa validation
+- [x] Lot 1 : tests de retours protégés par URL locale jetable explicite et rollback ; scanner SQL corrige garde déléguée et code de sortie ; 15 tests ciblés passent, test SQL passe
+- [x] Lot 1 : contrôle de statut dans les fonctions serveur, suspension Auth par identifiant avec erreurs contrôlées ; compilation validée
+- [ ] Lot 1 : droits SQL, rôles actifs et champs de profil — bloque sur simulation de restauration authentifiée : session expirée, renouvellement personnel indisponible ; aucune migration appliquée
+- [ ] Lot 1 : validation connectée du contrôle de statut et des sauvegardes — nécessite une reconnexion dans l’aperçu
 
 ## Paramètres Paie CI — demande du 22 octobre 2026
 - [ ] Source unique régime, paramètres éditables et audit, suppression du chemin legacy

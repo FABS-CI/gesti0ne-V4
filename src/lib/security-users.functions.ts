@@ -260,7 +260,7 @@ export const secSetUserStatut = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
 
     // Auth expects a session JWT for signOut, not a user UUID. Ban/unban by ID instead.
-    // Existing access tokens are also rejected by account-status middleware and SQL guards.
+    // Existing access tokens are rejected by the app-owned account-status middleware.
     const { error: authError } = await db.auth.admin.updateUserById(data.user_id, {
       ban_duration: data.statut === "actif" ? "none" : "876000h",
     });
