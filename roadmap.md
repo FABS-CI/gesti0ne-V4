@@ -8,7 +8,8 @@
 - [x] Lot 1 : tests de retours protégés par URL locale jetable explicite et rollback ; scanner SQL corrige garde déléguée et code de sortie ; 15 tests ciblés passent, test SQL passe
 - [x] Lot 1 : contrôle de statut dans les fonctions serveur, suspension Auth par identifiant avec erreurs contrôlées ; compilation validée
 - [ ] Lot 1 : droits SQL, rôles actifs et champs de profil — bloque sur simulation de restauration authentifiée : session expirée, renouvellement personnel indisponible ; aucune migration appliquée
-- [ ] Lot 1 : validation connectée du contrôle de statut et des sauvegardes — nécessite une reconnexion dans l’aperçu
+- [x] Lot 1 : validation connectée du contrôle de statut (compte actif : tableau de bord, clients, paie, comptabilité OK)
+- [ ] Lot 1 : session perdue au rechargement quand « Se souvenir de moi » est décoché — à analyser
 
 ## Paramètres Paie CI — demande du 22 octobre 2026
 - [ ] Source unique régime, paramètres éditables et audit, suppression du chemin legacy
