@@ -1,4 +1,4 @@
-import { formatDateTime } from "@/lib/format";
+import { formatDateTime, formatFCFA } from "@/lib/format";
 import { Printer } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { generateRecapCoutsTourneePDF } from "@/lib/pdf/tourneePdf";
 import { viewCached } from "@/lib/pdf/actions";
-import { CATEGORIES, fmtFCFA, statutMeta, type TourneeCout } from "./types";
+import { CATEGORIES, statutMeta, type TourneeCout } from "./types";
 
 export function DetailDialog({
   row,
@@ -99,14 +99,14 @@ export function DetailDialog({
                 return (
                   <tr key={String(c.key)}>
                     <td className="border p-2">{c.label}</td>
-                    <td className="border p-2 text-right tabular-nums">{fmtFCFA(v)}</td>
+                    <td className="border p-2 text-right tabular-nums">{formatFCFA(v)}</td>
                     <td className="border p-2 text-right">{pct}%</td>
                   </tr>
                 );
               })}
               <tr className="font-semibold bg-muted/20">
                 <td className="border p-2">TOTAL</td>
-                <td className="border p-2 text-right tabular-nums">{fmtFCFA(row.cout_total)}</td>
+                <td className="border p-2 text-right tabular-nums">{formatFCFA(row.cout_total ?? 0)}</td>
                 <td className="border p-2 text-right">100%</td>
               </tr>
             </tbody>

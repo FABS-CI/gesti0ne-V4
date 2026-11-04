@@ -197,22 +197,22 @@ export function LignesSection({ form, fa, onProduitChange }: Props) {
         <div className="flex justify-end">
           <div className="w-full max-w-xs space-y-1 text-sm">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Total brut (FCFA)</span>
-              <span className="tabular-nums">{formatFCFA(totaux.brut, false)}</span>
+              <span className="text-muted-foreground">Total brut</span>
+              <span className="tabular-nums">{formatFCFA(totaux.brut)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Remises (FCFA)</span>
-              <span className="tabular-nums">- {formatFCFA(totaux.remise, false)}</span>
+              <span className="text-muted-foreground">Remises</span>
+              <span className="tabular-nums">- {formatFCFA(totaux.remise)}</span>
             </div>
             {remiseGlobalePct > 0 && (
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Remise globale facture ({remiseGlobalePct} %)</span>
-                <span className="tabular-nums">- {formatFCFA(totaux.remiseGlobale, false)}</span>
+                <span className="tabular-nums">- {formatFCFA(totaux.remiseGlobale)}</span>
               </div>
             )}
             <div className="flex justify-between border-t pt-1 font-semibold">
-              <span>Total du retour (FCFA)</span>
-              <span className="tabular-nums">{formatFCFA(totaux.net, false)}</span>
+              <span>Total du retour</span>
+              <span className="tabular-nums">{formatFCFA(totaux.net)}</span>
             </div>
           </div>
         </div>

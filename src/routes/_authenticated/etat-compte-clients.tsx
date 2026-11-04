@@ -101,7 +101,7 @@ function EtatComptePage() {
           { label: "Nombre total de lignes", value: String(clients.length) },
           { label: "Nombre de clients", value: String(clients.length) },
           { label: "Clients débiteurs", value: String(nbDebiteurs) },
-          { label: "Total impayé (FCFA)", value: formatFCFA(totalImpaye) },
+          { label: "Total impayé", value: formatFCFA(totalImpaye) },
           { label: "Date d'export", value: formatDateTime(new Date()) },
         ],
       },
@@ -123,7 +123,7 @@ function EtatComptePage() {
     const nbSoldes = clients.filter((c) => Number(c.solde) === 0).length;
     await exportListePDF({
       titre: "États de compte clients",
-      colonnes: ["Référence", "Client", "Représentant", "Tél. représentant", "Solde dû (FCFA)"],
+      colonnes: ["Référence", "Client", "Représentant", "Tél. représentant", "Solde dû"],
       lignes: clients.map((c) => [
         c.reference,
         c.nom,

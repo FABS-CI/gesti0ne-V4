@@ -1,12 +1,27 @@
 import { format as dateFnsFormat } from "date-fns";
 
+/** Devise de l'entreprise, ajoutée uniquement par `formatFCFA`. */
+export const DEVISE = "FCFA";
+
+/**
+ * Seul formatage monétaire de l'ERP (écrans, tableaux, exports, PDF).
+ *
+ * La devise apparaît une seule fois par montant :
+ * - montant isolé ou couple libellé / valeur : `formatFCFA(x)` et un libellé sans devise
+ *   (« Total à payer : 232 012 FCFA », jamais « Total à payer (FCFA) : 232 012 FCFA ») ;
+ * - colonne de tableau : soit en-tête « Montant (FCFA) » et `formatFCFA(x, false)`,
+ *   soit en-tête « Montant » et `formatFCFA(x)`, jamais les deux ;
+ * - champ de saisie : libellé « Montant (FCFA) », la valeur saisie est un nombre nu.
+ * Ne jamais concaténer « FCFA » à la main : `no-duplicate-currency.test.ts` le vérifie.
+ */
 export function formatFCFA(amount: number | null | undefined, withSuffix = true): string {
-  if (amount == null || isNaN(Number(amount))) return "—";
-  const n = Math.round(Number(amount));
+  if (amount == null || !Number.isFinite(Number(amount))) return "—";
+  // `|| 0` évite d'afficher « -0 » pour un petit montant négatif arrondi.
+  const n = Math.round(Number(amount)) || 0;
   // Formatage manuel pour garantir l'espace comme séparateur des milliers
   // et éviter les comportements imprévisibles de toLocaleString selon l'env.
   const formatted = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-  return withSuffix ? `${formatted} FCFA` : formatted;
+  return withSuffix ? `${formatted} ${DEVISE}` : formatted;
 }
 
 export function formatFCFACompact(amount: number | null | undefined): string {

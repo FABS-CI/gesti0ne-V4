@@ -857,7 +857,7 @@ export class BaseDocument {
         labelX += lblFont.widthOfTextAtSize(row.label, 8) + 4;
         this.page.drawText(`(${pct} %)`, { x: labelX, y: ty, size: 8, font: this.fonts.bold, color: BODY.donnee });
       }
-      const val = `${formatFCFA(row.value, false)} FCFA`;
+      const val = formatFCFA(row.value);
       const labelEnd = labelX + lblFont.widthOfTextAtSize(row.label === "REMISE GLOBALE" ? "" : row.label, 8)
         + (row.label === "REMISE GLOBALE" ? lblFont.widthOfTextAtSize(`(${this.totals.remiseGlobalePct ?? ""} %)`, 8) : 0);
       let vSize = 9;
@@ -880,8 +880,8 @@ export class BaseDocument {
     const bandY = curY - (TOTAL_H + BAND_H) / 2;
     roundedRect(this.page, x + 6, bandY, boxW - 12, BAND_H, 4, { color: BODY.blanc, borderColor: theme.total, borderWidth: 1.2 });
     // Zones gauche (libellé) / droite (montant) indépendantes : tailles adaptées pour ne jamais se chevaucher.
-    const totalLabel = "TOTAL À PAYER (FCFA)";
-    const totalVal = `${formatFCFA(this.totals.totalAPayer, false)} FCFA`;
+    const totalLabel = "TOTAL À PAYER";
+    const totalVal = formatFCFA(this.totals.totalAPayer);
     const avail = boxW - 24, GAP = 28;
     let lblSize = 9, valSize = 13;
     const fits = () => this.fonts.bold.widthOfTextAtSize(totalLabel, lblSize) + this.fonts.bold.widthOfTextAtSize(totalVal, valSize) + GAP <= avail;

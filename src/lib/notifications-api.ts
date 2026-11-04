@@ -105,9 +105,7 @@ async function computeAlertes(): Promise<AlerteCandidate[]> {
     if (reste <= 0) continue;
     alertes.push({
       titre: `Facture en retard — ${f.reference}`,
-      message: `${f.client_nom ?? "Client"} • échéance ${formatDate(f.date_echeance)} • reste ${formatFCFA(Math.round(
-        reste,
-      ), false)} FCFA`,
+      message: `${f.client_nom ?? "Client"} • échéance ${formatDate(f.date_echeance)} • reste ${formatFCFA(reste)}`,
       type_notification: "erreur",
     });
   }
@@ -204,7 +202,7 @@ async function computeAlertes(): Promise<AlerteCandidate[]> {
   for (const t of tournees ?? []) {
     alertes.push({
       titre: `Tournée coût élevé — ${t.reference}`,
-      message: `${t.date_tournee ?? ""} • ${formatFCFA(Math.round(Number(t.cout_total ?? 0)), false)} FCFA`,
+      message: `${t.date_tournee ?? ""} • ${formatFCFA(Number(t.cout_total ?? 0))}`,
       type_notification: "alerte",
     });
   }

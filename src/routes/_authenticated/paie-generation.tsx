@@ -5,7 +5,7 @@ import { Loader2, PlayCircle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { listEmployes } from "@/lib/rh-api";
-import { formatNumber } from "@/lib/format";
+import { formatFCFA } from "@/lib/format";
 import { friendlyError } from "@/lib/friendly-error";
 import { RhPageHeader } from "@/components/rh/RhPageHeader";
 import { Card, CardContent } from "@/components/ui/card";
@@ -183,7 +183,7 @@ function GenerationPage() {
                       </td>
                       <td>{e.nom_complet}</td>
                       <td className="text-muted-foreground">{e.matricule ?? "—"}</td>
-                      <td className="text-right tabular-nums">{formatNumber(Number(e.salaire) || 0)} FCFA</td>
+                      <td className="text-right tabular-nums">{formatFCFA(Number(e.salaire) || 0)}</td>
                       <td className="text-right">{Number(e.parts) || 1}</td>
                       <td className="pl-4">
                         {res?.ok && res.bulletinId ? (

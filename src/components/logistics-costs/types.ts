@@ -1,4 +1,3 @@
-import { formatFCFA } from "@/lib/format";
 export type TourneeCout = {
   tournee_id: string;
   reference: string;
@@ -55,10 +54,6 @@ export const CATEGORIES: Array<{ key: keyof TourneeCout; label: string }> = [
 
 export function statutMeta(v: string) {
   return VALIDATION_STATUTS.find((s) => s.value === v) ?? VALIDATION_STATUTS[0];
-}
-
-export function fmtFCFA(n: number | null | undefined): string {
-  return formatFCFA(Math.round(Number(n ?? 0)));
 }
 
 export function startOf(period: "day" | "week" | "month" | "year"): Date {

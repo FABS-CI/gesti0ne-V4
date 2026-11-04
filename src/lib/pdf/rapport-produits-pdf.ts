@@ -199,10 +199,10 @@ export async function exportRapportProduitsPdf(
   const summary: Array<[string, string]> = [
     ["Nombre de produits", String(totals.produits)],
     ["Quantité vendue", num(totals.qte)],
-    ["Chiffre d'affaires", `${money(totals.ca)} FCFA`],
-    ["Prix d'achat", `${money(totals.achat)} FCFA`],
+    ["Chiffre d'affaires", formatFCFA(totals.ca ?? 0)],
+    ["Prix d'achat", formatFCFA(totals.achat ?? 0)],
     ["Quantité restante en stock", num(totals.stock)],
-    ["Valeur du stock restant", `${money(totals.valeurStock)} FCFA`],
+    ["Valeur du stock restant", formatFCFA(totals.valeurStock ?? 0)],
   ];
   const boxW = 90;
   const boxH = 8 + summary.length * 6;

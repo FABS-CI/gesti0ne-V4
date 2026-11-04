@@ -201,9 +201,9 @@ function AchatDetailPage() {
                   <TableHead>Désignation</TableHead>
                   <TableHead>Référence</TableHead>
                   <TableHead className="text-right">Qté</TableHead>
-                  <TableHead className="text-right">Prix unit. (FCFA)</TableHead>
+                  <TableHead className="text-right">Prix unit.</TableHead>
                   <TableHead className="text-right">Remise (%)</TableHead>
-                  <TableHead className="text-right">Total (FCFA)</TableHead>
+                  <TableHead className="text-right">Total</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

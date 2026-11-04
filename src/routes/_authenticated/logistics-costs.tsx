@@ -32,7 +32,6 @@ import {
   CATEGORIES,
   TYPES,
   VALIDATION_STATUTS,
-  fmtFCFA,
   startOf,
   statutMeta,
   type TourneeCout,
@@ -179,7 +178,7 @@ function LogisticsCostsPage() {
         "Type",
         "Colis",
         "Cartons",
-        "Total FCFA",
+        "Total (FCFA)",
         "Statut",
       ],
       lignes: rows.map((r) => [
@@ -195,9 +194,9 @@ function LogisticsCostsPage() {
       ]),
       recap: [
         { label: "Nombre de tournées", valeur: String(rows.length) },
-        { label: "Total période", valeur: fmtFCFA(kpis.sumTotal) },
-        { label: "Total mois", valeur: fmtFCFA(kpis.tMonth) },
-        { label: "Moyenne / tournée", valeur: fmtFCFA(kpis.moyTournee) },
+        { label: "Total période", valeur: formatFCFA(kpis.sumTotal) },
+        { label: "Total mois", valeur: formatFCFA(kpis.tMonth) },
+        { label: "Moyenne / tournée", valeur: formatFCFA(kpis.moyTournee) },
       ],
       filename: "couts-logistiques",
     });
@@ -220,14 +219,14 @@ function LogisticsCostsPage() {
       </div>
 
       <div className="grid gap-3 grid-cols-2 md:grid-cols-4">
-        <Kpi label="Aujourd'hui" value={fmtFCFA(kpis.tDay)} />
-        <Kpi label="Semaine" value={fmtFCFA(kpis.tWeek)} />
-        <Kpi label="Mois" value={fmtFCFA(kpis.tMonth)} />
-        <Kpi label="Année" value={fmtFCFA(kpis.tYear)} />
-        <Kpi label="Moyenne / tournée" value={fmtFCFA(kpis.moyTournee)} />
-        <Kpi label="Moyenne / client" value={fmtFCFA(kpis.moyClient)} />
-        <Kpi label="Moyenne / colis" value={fmtFCFA(kpis.moyColis)} />
-        <Kpi label="Moyenne / carton" value={fmtFCFA(kpis.moyCarton)} />
+        <Kpi label="Aujourd'hui" value={formatFCFA(kpis.tDay)} />
+        <Kpi label="Semaine" value={formatFCFA(kpis.tWeek)} />
+        <Kpi label="Mois" value={formatFCFA(kpis.tMonth)} />
+        <Kpi label="Année" value={formatFCFA(kpis.tYear)} />
+        <Kpi label="Moyenne / tournée" value={formatFCFA(kpis.moyTournee)} />
+        <Kpi label="Moyenne / client" value={formatFCFA(kpis.moyClient)} />
+        <Kpi label="Moyenne / colis" value={formatFCFA(kpis.moyColis)} />
+        <Kpi label="Moyenne / carton" value={formatFCFA(kpis.moyCarton)} />
       </div>
 
       <Card>
@@ -242,7 +241,7 @@ function LogisticsCostsPage() {
               return (
                 <div key={String(c.key)} className="rounded border p-2 text-xs">
                   <div className="text-muted-foreground">{c.label}</div>
-                  <div className="font-semibold tabular-nums">{fmtFCFA(v)}</div>
+                  <div className="font-semibold tabular-nums">{formatFCFA(v)}</div>
                   <div className="text-muted-foreground">{pct}%</div>
                 </div>
               );

@@ -110,7 +110,7 @@ export const REPORTS: ReportDef[] = [
       return out;
     },
     summary: (rows) => [
-      { label: "Total solde dû (FCFA)", value: formatFCFA(sum(rows, "solde")) },
+      { label: "Total solde dû", value: formatFCFA(sum(rows, "solde")) },
       { label: "Clients débiteurs", value: String(rows.filter((r) => Number(r.solde ?? 0) > 0).length) },
     ],
   },
@@ -144,7 +144,7 @@ export const REPORTS: ReportDef[] = [
       return (data ?? []) as Record<string, unknown>[];
     },
     summary: (rows) => [
-      { label: "Total montant TTC (FCFA)", value: formatFCFA(sum(rows, "montant_total")) },
+      { label: "Total montant TTC", value: formatFCFA(sum(rows, "montant_total")) },
       { label: "Commandes validées", value: String(countStatut(rows, ["validee", "validée", "valide"])) },
       { label: "Commandes annulées", value: String(countStatut(rows, ["annulee", "annulée"])) },
     ],
@@ -163,7 +163,7 @@ export const REPORTS: ReportDef[] = [
       { key: "categorie", label: "Catégorie" },
       { key: "niveau", label: "Niveau" },
       { key: "matiere", label: "Matière" },
-      { key: "prix_vente", label: "Prix vente (FCFA)", money: true },
+      { key: "prix_vente", label: "Prix vente", money: true },
       { key: "stock", label: "Stock" },
       { key: "seuil_alerte", label: "Seuil" },
     ],
@@ -190,7 +190,7 @@ export const REPORTS: ReportDef[] = [
       ).length;
       return [
         { label: "Stock total (unités)", value: String(stockTotal) },
-        { label: "Valorisation stock (FCFA)", value: formatFCFA(valorisation) },
+        { label: "Valorisation stock", value: formatFCFA(valorisation) },
         { label: "Produits sous seuil", value: String(alertes) },
       ];
     },
@@ -234,9 +234,9 @@ export const REPORTS: ReportDef[] = [
         .filter((r) => String(r.type ?? "").toLowerCase() === "depense")
         .reduce((a, r) => a + Number(r.montant ?? 0), 0);
       return [
-        { label: "Total recettes (FCFA)", value: formatFCFA(recettes) },
-        { label: "Total dépenses (FCFA)", value: formatFCFA(depenses) },
-        { label: "Solde net (FCFA)", value: formatFCFA(recettes - depenses) },
+        { label: "Total recettes", value: formatFCFA(recettes) },
+        { label: "Total dépenses", value: formatFCFA(depenses) },
+        { label: "Solde net", value: formatFCFA(recettes - depenses) },
       ];
     },
   },
@@ -277,9 +277,9 @@ export const REPORTS: ReportDef[] = [
       const tot = sum(rows, "montant_total");
       const paye = sum(rows, "montant_paye");
       return [
-        { label: "Total facturé (FCFA)", value: formatFCFA(tot) },
-        { label: "Total encaissé (FCFA)", value: formatFCFA(paye) },
-        { label: "Reste à recouvrer (FCFA)", value: formatFCFA(tot - paye) },
+        { label: "Total facturé", value: formatFCFA(tot) },
+        { label: "Total encaissé", value: formatFCFA(paye) },
+        { label: "Reste à recouvrer", value: formatFCFA(tot - paye) },
       ];
     },
   },
@@ -329,8 +329,8 @@ export const REPORTS: ReportDef[] = [
         .filter((r) => String(r.statut ?? "").toLowerCase() === "annule")
         .reduce((a, r) => a + Number(r.montant ?? 0), 0);
       return [
-        { label: "Total encaissé (FCFA)", value: formatFCFA(encaisse) },
-        { label: "Total annulé (FCFA)", value: formatFCFA(annule) },
+        { label: "Total encaissé", value: formatFCFA(encaisse) },
+        { label: "Total annulé", value: formatFCFA(annule) },
       ];
     },
   },
@@ -362,7 +362,7 @@ export const REPORTS: ReportDef[] = [
       return (data ?? []) as Record<string, unknown>[];
     },
     summary: (rows) => [
-      { label: "Total achats (FCFA)", value: formatFCFA(sum(rows, "montant")) },
+      { label: "Total achats", value: formatFCFA(sum(rows, "montant")) },
       { label: "Quantité totale", value: String(sum(rows, "total_quantite")) },
     ],
   },
@@ -492,7 +492,7 @@ export const REPORTS: ReportDef[] = [
       return (data ?? []) as Record<string, unknown>[];
     },
     summary: (rows) => [
-      { label: "Total livré (FCFA)", value: formatFCFA(sum(rows, "montant")) },
+      { label: "Total livré", value: formatFCFA(sum(rows, "montant")) },
       { label: "BL livrés", value: String(countStatut(rows, ["livre", "livré", "livree", "livrée"])) },
     ],
   },
@@ -546,7 +546,7 @@ export const REPORTS: ReportDef[] = [
     },
     summary: (rows) => [
       { label: "Quantité totale (unités)", value: String(sum(rows, "quantite")) },
-      { label: "Valorisation totale (FCFA)", value: formatFCFA(sum(rows, "valorisation")) },
+      { label: "Valorisation totale", value: formatFCFA(sum(rows, "valorisation")) },
       {
         label: "Lignes en alerte",
         value: String(rows.filter((r) => String(r.alerte ?? "").length > 0).length),
@@ -638,9 +638,9 @@ export const REPORTS: ReportDef[] = [
       const paye = sum(rows, "total_paye");
       const solde = sum(rows, "solde");
       return [
-        { label: "Total facturé (FCFA)", value: formatFCFA(tot) },
-        { label: "Total encaissé (FCFA)", value: formatFCFA(paye) },
-        { label: "Solde total dû (FCFA)", value: formatFCFA(solde) },
+        { label: "Total facturé", value: formatFCFA(tot) },
+        { label: "Total encaissé", value: formatFCFA(paye) },
+        { label: "Solde total dû", value: formatFCFA(solde) },
         {
           label: "Clients débiteurs",
           value: String(rows.filter((r) => Number(r.solde ?? 0) > 0).length),
@@ -677,7 +677,7 @@ export const REPORTS: ReportDef[] = [
       return (data ?? []) as Record<string, unknown>[];
     },
     summary: (rows) => [
-      { label: "Total montant (FCFA)", value: formatFCFA(sum(rows, "montant")) },
+      { label: "Total montant", value: formatFCFA(sum(rows, "montant")) },
       { label: "Écritures lettrées", value: String(rows.filter((r) => r.lettrage).length) },
     ],
   },
@@ -718,9 +718,9 @@ export const REPORTS: ReportDef[] = [
       }));
     },
     summary: (rows): SummaryRow[] => [
-      { label: "Total salaire brut (FCFA)", value: formatFCFA(sum(rows, "salaire_brut")) },
-      { label: "Total retenues (FCFA)", value: formatFCFA(sum(rows, "cotisations")) },
-      { label: "Total net à payer (FCFA)", value: formatFCFA(sum(rows, "salaire_net")) },
+      { label: "Total salaire brut", value: formatFCFA(sum(rows, "salaire_brut")) },
+      { label: "Total retenues", value: formatFCFA(sum(rows, "cotisations")) },
+      { label: "Total net à payer", value: formatFCFA(sum(rows, "salaire_net")) },
     ],
   },
 ];

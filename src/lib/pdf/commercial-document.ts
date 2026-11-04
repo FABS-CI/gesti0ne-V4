@@ -125,7 +125,7 @@ export class CommercialDocument extends BaseDocument {
       borderWidth: 1,
     });
     
-    this.page.drawText("TOTAL IMPAYÉ (FCFA)", {
+    this.page.drawText("TOTAL IMPAYÉ", {
       x: x + 5,
       y: y - 18,
       size: 9,

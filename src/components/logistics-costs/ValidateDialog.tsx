@@ -17,7 +17,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { fmtFCFA, type TourneeCout } from "./types";
+import { formatFCFA } from "@/lib/format";
+import { type TourneeCout } from "./types";
 import { friendlyError } from "@/lib/friendly-error";
 
 export function ValidateDialog({
@@ -63,7 +64,7 @@ export function ValidateDialog({
         </DialogHeader>
         <div className="space-y-3">
           <div className="rounded bg-muted/40 p-3 text-sm">
-            Montant à décaisser : <b>{fmtFCFA(row.cout_total)}</b>
+            Montant à décaisser : <b>{formatFCFA(row.cout_total ?? 0)}</b>
           </div>
           <div>
             <label className="text-xs text-muted-foreground">Mode de règlement</label>

@@ -624,9 +624,9 @@ function FeuilleTourneePage() {
               label="Distance"
               value={t.distance_km ? `${t.distance_km} km` : undefined}
             />
-            <Field label="Montant transporté" value={`${fmt(montantTransporte)} FCFA`} />
-            <Field label="Déjà encaissé" value={`${fmt(montantEncaisse)} FCFA`} />
-            <Field label="À encaisser" value={`${fmt(montantRestant)} FCFA`} />
+            <Field label="Montant transporté" value={formatFCFA(montantTransporte)} />
+            <Field label="Déjà encaissé" value={formatFCFA(montantEncaisse)} />
+            <Field label="À encaisser" value={formatFCFA(montantRestant)} />
             <Field label="Livraisons réussies" value={String(nbReussies)} />
             <Field label="Anomalies" value={nbAnomalies ? String(nbAnomalies) : undefined} />
             <Field label="Retours" value={nbRetours ? String(nbRetours) : undefined} />

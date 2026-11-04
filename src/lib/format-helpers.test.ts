@@ -7,6 +7,13 @@ describe("formatFCFA", () => {
   it("grand nombre", () => expect(formatFCFA(1234567)).toBe("1 234 567 FCFA"));
   it("négatif", () => expect(formatFCFA(-1500)).toBe("-1 500 FCFA"));
   it("arrondi", () => expect(formatFCFA(999.6)).toBe("1 000 FCFA"));
+  it("sans suffixe", () => expect(formatFCFA(232012, false)).toBe("232 012"));
+  it("NaN et infini → tiret", () => {
+    expect(formatFCFA(Number.NaN)).toBe("—");
+    expect(formatFCFA(Number.POSITIVE_INFINITY)).toBe("—");
+  });
+  it("petit négatif arrondi → 0, jamais -0", () => expect(formatFCFA(-0.4)).toBe("0 FCFA"));
+  it("devise une seule fois", () => expect(formatFCFA(232012).match(/FCFA/g)).toHaveLength(1));
 });
 
 describe("formatNumber", () => {

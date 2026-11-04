@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { listEmployes, type Employe } from "@/lib/rh-api";
 import { Badge } from "@/components/ui/badge";
 import type { CalculBulletin, LigneServeur } from "@/lib/paie/calcul-serveur";
-import { formatNumber } from "@/lib/format";
+import { formatFCFA, formatNumber } from "@/lib/format";
 import { RhPageHeader } from "@/components/rh/RhPageHeader";
 import { useSaveHotkey } from "@/hooks/use-save-hotkey";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -239,7 +239,7 @@ function NouveauBulletinPage() {
             </div>
             <div className="mt-3 flex items-baseline justify-between border-t border-border pt-3">
               <span className="font-serif text-lg font-bold">NET À PAYER</span>
-              <span className="font-serif text-2xl font-bold tabular-nums">{formatNumber(calc?.net ?? 0)} FCFA{isFetching ? " …" : ""}</span>
+              <span className="font-serif text-2xl font-bold tabular-nums">{formatFCFA(calc?.net ?? 0)}{isFetching ? " …" : ""}</span>
             </div>
           </CardContent>
         </Card>

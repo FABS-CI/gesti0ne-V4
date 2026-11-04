@@ -109,7 +109,7 @@ export function DocumentSection({ form, fa }: Props) {
                 )}
               >
                 {selected
-                  ? `${selected.reference} — ${formatDate(selected.date_facture)} — ${formatFCFA(selected.montant_total, false)} FCFA`
+                  ? `${selected.reference} — ${formatDate(selected.date_facture)} — ${formatFCFA(selected.montant_total)}`
                   : clientId
                     ? "Rechercher une facture…"
                     : "Sélectionnez d'abord un client"}
