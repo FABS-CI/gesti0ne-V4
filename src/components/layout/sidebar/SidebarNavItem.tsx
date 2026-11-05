@@ -21,7 +21,7 @@ export function SidebarNavItem({
           "sidebar-nav-item relative flex min-h-10 items-center gap-3 rounded-md px-3 text-sm lg:min-h-9",
           "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
           active
-            ? "bg-sidebar-accent font-medium text-sidebar-accent-foreground"
+            ? "bg-sidebar-primary/15 font-medium text-sidebar-accent-foreground ring-1 ring-inset ring-sidebar-primary/25"
             : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
         )}
       >
