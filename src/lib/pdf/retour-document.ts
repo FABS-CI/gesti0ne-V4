@@ -87,10 +87,10 @@ export class RetourDocument extends BaseDocument {
 
   drawEnrichedTable(y: number): number {
     const colonnes = [
-      { label: "Code", key: "code", width: 55 },
-      { label: "Désignation", key: "designation", width: 172 },
-      { label: "Qté fact.", key: "qte_fact", width: 52 },
-      { label: "Qté retour", key: "qte_ret", width: 58 },
+      { label: "Code", key: "code", width: 65 },
+      { label: "Désignation", key: "designation", width: 152 },
+      { label: "Qté fact.", key: "qte_fact", width: 58 },
+      { label: "Qté retour", key: "qte_ret", width: 62 },
       { label: "P.U. HT", key: "pu", width: 65 },
       { label: "Remise", key: "remisePct", width: 50 },
       { label: "Net HT", key: "net", width: 75 },

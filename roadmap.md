@@ -1,9 +1,9 @@
 # Audit ERP — module par module
 
 ## Bon de retour — demande du 5 novembre 2026
-- [ ] Vérifier RET-261104-001 et ses données d’origine en lecture seule
-- [ ] Corriger références affichées, représentant et remises sans modifier l’historique
-- [ ] Vérifier données écran/PDF, tests ciblés et rendu du bon réel
+- [x] Vérifier RET-261104-001 et ses données d’origine en lecture seule : 500 facturés, 100 retournés, remise globale 25 %, montant enregistré 225 000
+- [x] Corriger références affichées, représentant et remises sans modifier l’historique ; origine reprise lors de la sélection de facture
+- [x] Vérifier données écran/PDF du vrai bon connecté, mobile sans débordement, 31 tests réussis ; aucune création ni modification de données
 
 ## Audit intégral GESTI0NE V4 — 4 novembre 2026
 - [x] Phase 1 : diagnostic initial livré dans audit-gesti0ne-v4-2026-11-04.md (Files) ; 598 tests sûrs réussis, 221 écritures contrôlées, 4 pages connectées ; limites et tentatives SQL rejetées documentées
