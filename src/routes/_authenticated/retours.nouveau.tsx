@@ -30,6 +30,14 @@ export const Route = createFileRoute("/_authenticated/retours/nouveau")({
     type_retour: (search.type_retour as "physique" | "avoir") || undefined,
   }),
   component: RetourNouveauPage,
+  head: () => ({ meta: [
+    { title: "Nouveau retour — GESTI0NE" },
+    { name: "description", content: "Créer un retour à partir de la facture d’origine et de ses conditions commerciales." },
+    { property: "og:title", content: "Nouveau retour — GESTI0NE" },
+    { property: "og:description", content: "Créer un retour à partir de la facture d’origine et de ses conditions commerciales." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   errorComponent: RouteError,
   notFoundComponent: RouteNotFound,
 });
