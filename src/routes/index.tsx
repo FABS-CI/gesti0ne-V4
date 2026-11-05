@@ -55,6 +55,14 @@ import { createFileRoute, Navigate } from "@tanstack/react-router";
  */
 
 export const Route = createFileRoute("/")({
+  head: () => ({ meta: [
+    { title: "GESTI0NE — Gestion EDITIONS FABS-CI" },
+    { name: "description", content: "Gestion commerciale, retours, comptabilité et paie des EDITIONS FABS-CI." },
+    { property: "og:title", content: "GESTI0NE — Gestion EDITIONS FABS-CI" },
+    { property: "og:description", content: "Gestion commerciale, retours, comptabilité et paie des EDITIONS FABS-CI." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: () => {
     // Redirection automatique vers le tableau de bord en production
     return <Navigate to="/dashboard" />;

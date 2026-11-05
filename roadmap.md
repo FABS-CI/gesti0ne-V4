@@ -1,5 +1,21 @@
 # Audit ERP — module par module
 
+## Bon de retour — demande du 5 novembre 2026
+- [x] Vérifier RET-261104-001 et ses données d’origine en lecture seule : 500 facturés, 100 retournés, remise globale 25 %, montant enregistré 225 000
+- [x] Corriger références affichées, représentant et remises sans modifier l’historique ; origine reprise lors de la sélection de facture
+- [x] Vérifier données écran/PDF du vrai bon connecté, mobile sans débordement, 31 tests réussis ; aucune création ni modification de données
+
+## Audit intégral GESTI0NE V4 — 4 novembre 2026
+- [x] Phase 1 : diagnostic initial livré dans audit-gesti0ne-v4-2026-11-04.md (Files) ; 598 tests sûrs réussis, 221 écritures contrôlées, 4 pages connectées ; limites et tentatives SQL rejetées documentées
+- [ ] Couverture exhaustive : parcours sensibles, concurrence, vues publiques et tous les PDF — nécessite un environnement de test jetable avant les opérations d’écriture
+- [x] Phase 2 : plan priorisé préparé après le « go » du 4 novembre
+- [ ] Phases 3 à 5 : plan approuvé ; lot 1 commencé, lots 2 et 3 attendent sa validation
+- [x] Lot 1 : tests de retours protégés par URL locale jetable explicite et rollback ; scanner SQL corrige garde déléguée et code de sortie ; 15 tests ciblés passent, test SQL passe
+- [x] Lot 1 : contrôle de statut dans les fonctions serveur, suspension Auth par identifiant avec erreurs contrôlées ; compilation validée
+- [ ] Lot 1 : droits SQL, rôles actifs et champs de profil — bloque sur simulation de restauration authentifiée : session expirée, renouvellement personnel indisponible ; aucune migration appliquée
+- [x] Lot 1 : validation connectée du contrôle de statut (compte actif : tableau de bord, clients, paie, comptabilité OK)
+- [ ] Lot 1 : session perdue au rechargement quand « Se souvenir de moi » est décoché — à analyser
+
 ## Paramètres Paie CI — demande du 22 octobre 2026
 - [ ] Source unique régime, paramètres éditables et audit, suppression du chemin legacy
 - [ ] Calcul serveur et aperçu : CMU 500 chacun, ITS 2024 nul, ancienneté, transport et arrondi supérieur à 5

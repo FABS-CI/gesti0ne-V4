@@ -40,7 +40,7 @@ export function DocumentSection({ form, fa }: Props) {
 
   const factQ = useQuery({
     queryKey: ["retours-factures", clientId, q],
-    queryFn: () => searchFacturesClient(clientId!, q),
+    queryFn: () => searchFacturesClient(clientId, q),
     enabled: !!clientId,
   });
 
@@ -49,11 +49,17 @@ export function DocumentSection({ form, fa }: Props) {
     setOpen(false);
     form.setValue("facture_id", f.facture_id, { shouldValidate: true });
     try {
-      const [lignes, remiseGlobale] = await Promise.all([
+      const [lignes, origine] = await Promise.all([
         getLignesRetournables(f.facture_id),
-        loadRemiseGlobaleFacture(f.facture_id),
+        loadOrigineFacture(f.facture_id),
       ]);
-      form.setValue("remise_globale_pct", remiseGlobale);
+      form.setValue("remise_globale_pct", Number(origine?.remise_globale_pct ?? 0));
+      if (origine) {
+        form.setValue("representant_nom", origine.commercial_nom || origine.representant_nom || form.getValues("representant_nom"));
+        form.setValue("telephone", origine.telephone || form.getValues("telephone"));
+        form.setValue("ville", origine.ville || form.getValues("ville"));
+        form.setValue("adresse", origine.adresse || form.getValues("adresse"));
+      }
       const usable = lignes.filter((l) => l.qte_disponible > 0);
       if (usable.length === 0) {
         toast.warning("Tous les produits de cette facture ont déjà été retournés");
@@ -162,17 +168,19 @@ export function DocumentSection({ form, fa }: Props) {
 }
 
 /** Remise globale enregistrée sur la commande de la facture (affichage ; le serveur la reprend lui-même). */
-async function loadRemiseGlobaleFacture(factureId: string): Promise<number> {
-  const { data: fac } = await supabase
+async function loadOrigineFacture(factureId: string) {
+  const { data: fac, error: factureError } = await supabase
     .from("factures")
     .select("commande_id")
     .eq("facture_id", factureId)
     .maybeSingle();
-  if (!fac?.commande_id) return 0;
-  const { data: cmd } = await supabase
+  if (factureError) throw factureError;
+  if (!fac?.commande_id) return null;
+  const { data: cmd, error: commandeError } = await supabase
     .from("commandes")
-    .select("remise_globale_pct")
+    .select("remise_globale_pct, commercial_nom, representant_nom, telephone, ville, adresse")
     .eq("commande_id", fac.commande_id)
     .maybeSingle();
-  return Number(cmd?.remise_globale_pct ?? 0);
+  if (commandeError) throw commandeError;
+  return cmd;
 }

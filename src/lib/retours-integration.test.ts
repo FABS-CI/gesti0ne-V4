@@ -1,20 +1,14 @@
 /**
- * Tests d'intégration Retours ↔ Facture ↔ Solde Client
- *
- * Nécessite les variables PG* (PGHOST, PGUSER, PGPASSWORD, PGDATABASE, PGPORT)
- * pointant sur la base Supabase du projet. Si PGHOST est absent, la suite est
- * ignorée pour ne pas casser la CI. Lancer localement avec :
- *
- *   PGHOST=... PGUSER=... PGPASSWORD=... PGDATABASE=... PGPORT=... \
- *     bunx vitest run src/lib/retours-integration.test.ts
- *
- * Chaque test seede ses propres fixtures dans une transaction rollback pour
- * garantir l'isolation.
+ * Tests Retours sur une base locale jetable uniquement.
+ * GESTI0NE_RUN_DB_TESTS=disposable et GESTI0NE_TEST_DATABASE_URL sont obligatoires.
+ * Les variables PG* héritées ne sont jamais utilisées ; aucune fixture n'est commitée.
  */
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Client } from "pg";
+import { disposableDatabaseUrl } from "@/test/disposable-database";
 
-const hasDb = Boolean(process.env.PGHOST);
+const testUrl = disposableDatabaseUrl(process.env);
+const hasDb = testUrl !== null;
 const d = hasDb ? describe : describe.skip;
 
 let db: Client;
@@ -95,15 +89,10 @@ async function solde(clientId: string): Promise<number> {
 
 d("Retours — intégration RPC", () => {
   beforeAll(async () => {
-    db = new Client({
-      host: process.env.PGHOST,
-      port: Number(process.env.PGPORT ?? 5432),
-      user: process.env.PGUSER,
-      password: process.env.PGPASSWORD,
-      database: process.env.PGDATABASE,
-      ssl: process.env.PGSSLMODE === "disable" ? false : { rejectUnauthorized: false },
-    });
+    if (!testUrl) throw new Error("Base jetable absente");
+    db = new Client({ connectionString: testUrl, ssl: false });
     await db.connect();
+    await db.query("BEGIN");
     // Charge un super_admin dans les claims JWT pour toute la session : les RPC
     // (creer_retour, annuler_retour, …) exigent une auth.uid() valide via
     // assert_permission — sans quoi elles échouent avec SQLSTATE 28000 avant
@@ -130,33 +119,7 @@ d("Retours — intégration RPC", () => {
 
   afterAll(async () => {
     if (!db) return;
-    const safe = async (sql: string, params: unknown[]) => {
-      try {
-        await db.query(sql, params);
-      } catch {
-        /* rôle sans DELETE — fixtures conservées */
-      }
-    };
-    if (createdRetourIds.length)
-      await safe("DELETE FROM public.retours WHERE retour_id = ANY($1::uuid[])", [
-        createdRetourIds,
-      ]);
-    if (createdFactureIds.length)
-      await safe("DELETE FROM public.factures WHERE facture_id = ANY($1::uuid[])", [
-        createdFactureIds,
-      ]);
-    if (createdCommandeIds.length)
-      await safe("DELETE FROM public.commandes WHERE commande_id = ANY($1::uuid[])", [
-        createdCommandeIds,
-      ]);
-    if (createdProduitIds.length)
-      await safe("DELETE FROM public.produits WHERE produit_id = ANY($1::uuid[])", [
-        createdProduitIds,
-      ]);
-    if (createdClientIds.length)
-      await safe("DELETE FROM public.clients WHERE client_id = ANY($1::uuid[])", [
-        createdClientIds,
-      ]);
+    await db.query("ROLLBACK");
     await db.end();
   });
 
@@ -348,18 +311,16 @@ d("Retours — intégration RPC", () => {
 d("createLivraison — intégration FK", () => {
   let db2: Client;
   beforeAll(async () => {
-    db2 = new Client({
-      host: process.env.PGHOST,
-      port: Number(process.env.PGPORT ?? 5432),
-      user: process.env.PGUSER,
-      password: process.env.PGPASSWORD,
-      database: process.env.PGDATABASE,
-      ssl: process.env.PGSSLMODE === "disable" ? false : { rejectUnauthorized: false },
-    });
+    if (!testUrl) throw new Error("Base jetable absente");
+    db2 = new Client({ connectionString: testUrl, ssl: false });
     await db2.connect();
+    await db2.query("BEGIN");
   });
   afterAll(async () => {
-    if (db2) await db2.end();
+    if (db2) {
+      await db2.query("ROLLBACK");
+      await db2.end();
+    }
   });
 
   const missing = "00000000-0000-4000-8000-000000000000";
@@ -371,12 +332,17 @@ d("createLivraison — intégration FK", () => {
   ];
   cases.forEach(([col, name]) => {
     it(name, async () => {
-      await expect(
-        db2.query(
-          `INSERT INTO public.livraisons(${col}, date_livraison) VALUES($1, current_date)`,
-          [missing],
-        ),
-      ).rejects.toMatchObject({ code: "23503" });
+      await db2.query("SAVEPOINT fk_attempt");
+      try {
+        await expect(
+          db2.query(
+            `INSERT INTO public.livraisons(${col}, date_livraison) VALUES($1, current_date)`,
+            [missing],
+          ),
+        ).rejects.toMatchObject({ code: "23503" });
+      } finally {
+        await db2.query("ROLLBACK TO SAVEPOINT fk_attempt");
+      }
     });
   });
 });
