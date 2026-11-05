@@ -26,6 +26,7 @@ const formatDocDate = (d: string) => {
 import { buildQrUrl, QR_COLOR_OPTS } from "./qr-logic";
 import { getRecapTheme, recapDocTypeFromLabel, type RecapTheme, type RecapThemeId } from "./recap-themes";
 import { buildPaymentRows } from "./payment-rows";
+import { CHARTE } from "./charte-documents";
 
 // --- Configuration & Couleurs ---
 
@@ -248,8 +249,34 @@ export class BaseDocument {
       y: 10,
       width: PAGE.w - 20,
       height: PAGE.h - 20,
-      borderColor: COLORS.bleuElectrique,
+      borderColor: CHARTE.bordureExterieure,
       borderWidth: 0.8,
+    });
+  }
+
+  /** Bandeau de section : fond bleu électrique, titre blanc gras (charte FABS-CI). */
+  drawBandeau(x: number, yTop: number, w: number, label: string) {
+    const h = CHARTE.hauteurBandeau;
+    this.page.drawRectangle({ x, y: yTop - h, width: w, height: h, color: CHARTE.bleu });
+    this.page.drawText(label, { x: x + 10, y: yTop - h + 4.2, size: 7.5, font: this.fonts.bold, color: CHARTE.blanc });
+  }
+
+  /** Cadre de bloc (client, certification, règlement) : coins nets, bordure bleu foncé. */
+  drawBloc(x: number, yBottom: number, w: number, h: number) {
+    this.page.drawRectangle({
+      x, y: yBottom, width: w, height: h,
+      color: CHARTE.blanc,
+      borderColor: CHARTE.bordureExterieure,
+      borderWidth: CHARTE.epaisseurExterieure,
+    });
+  }
+
+  /** Contour seul (sans fond), posé après le contenu pour rester au-dessus des aplats. */
+  drawContour(x: number, yBottom: number, w: number, h: number) {
+    this.page.drawRectangle({
+      x, y: yBottom, width: w, height: h,
+      borderColor: CHARTE.bordureExterieure,
+      borderWidth: CHARTE.epaisseurExterieure,
     });
   }
 
@@ -319,7 +346,7 @@ export class BaseDocument {
       y: yTop - 28,
       size: titleSize,
       font: this.fonts.bold,
-      color: COLORS.noir,
+      color: CHARTE.orange,
     });
 
     // Le statut de paiement n'est plus affiché sous le titre (mention retirée
@@ -346,7 +373,7 @@ export class BaseDocument {
         y: cartY - 18,
         width: 110,
         height: 18,
-        borderColor: COLORS.bleuElectrique,
+        borderColor: CHARTE.bordureExterieure,
         borderWidth: 0.8,
       });
       const refW = this.fonts.bold.widthOfTextAtSize(refText, 9);
@@ -380,7 +407,7 @@ export class BaseDocument {
     this.page.drawLine({
       start: { x: MARGINS.x, y: yTop - 70 },
       end: { x: PAGE.w - MARGINS.x, y: yTop - 70 },
-      color: COLORS.bleuElectrique,
+      color: CHARTE.bleu,
       thickness: 0.8,
     });
   }
@@ -392,22 +419,22 @@ export class BaseDocument {
       start: { x: MARGINS.x, y: 70 },
       end: { x: PAGE.w - MARGINS.x, y: 70 },
       thickness: 0.8,
-      color: COLORS.bleuElectrique,
+      color: CHARTE.bleu,
     });
-    
+
     const colW = CONTENT_W / 3;
     const footerTextSize = 8;
     
     const isListeProduits = this.data.type === "LISTE DES PRODUITS";
     if (!isListeProduits) {
-      this.page.drawText("EDITIONS FABS-CI", { x: MARGINS.x, y: yBot, size: footerTextSize + 1, font: this.fonts.bold });
+      this.page.drawText("EDITIONS FABS-CI", { x: MARGINS.x, y: yBot, size: footerTextSize + 1, font: this.fonts.bold, color: CHARTE.bleu });
       this.page.drawText("BP 693 Bingerville - Côte d'Ivoire", { x: MARGINS.x, y: yBot - 10, size: footerTextSize, font: this.fonts.regular });
       this.page.drawText(`RCCM : ${COMPANY.rccm}`, { x: MARGINS.x, y: yBot - 19, size: footerTextSize, font: this.fonts.regular });
       this.page.drawText(`NCC : ${COMPANY.ncc}`, { x: MARGINS.x, y: yBot - 28, size: footerTextSize, font: this.fonts.regular });
     }
 
     const cx = MARGINS.x + colW;
-    this.page.drawText("CONTACT", { x: cx, y: yBot, size: footerTextSize + 1, font: this.fonts.bold });
+    this.page.drawText("CONTACT", { x: cx, y: yBot, size: footerTextSize + 1, font: this.fonts.bold, color: CHARTE.bleu });
     this.page.drawText("Tél : +225 07 59 73 71 23 / 01 50 48 51 88", { x: cx, y: yBot - 10, size: footerTextSize, font: this.fonts.regular });
     const emailLabel = "Email : ";
     const labelW = this.fonts.regular.widthOfTextAtSize(emailLabel, footerTextSize);
@@ -419,7 +446,7 @@ export class BaseDocument {
     this.addMailtoLink("edition693fabs@gmail.com", cx + labelW, yBot - 19, footerTextSize);
     this.addMailtoLink(mail2, cx + labelW, yBot - 28, footerTextSize);
 
-    this.page.drawText("BANQUES", { x: MARGINS.x + colW * 2, y: yBot, size: footerTextSize + 1, font: this.fonts.bold });
+    this.page.drawText("BANQUES", { x: MARGINS.x + colW * 2, y: yBot, size: footerTextSize + 1, font: this.fonts.bold, color: CHARTE.bleu });
     this.page.drawText("CORIS BANK: 01011 007630824101 34", { x: MARGINS.x + colW * 2, y: yBot - 10, size: footerTextSize, font: this.fonts.regular });
     this.page.drawText("SGBCI: 01123012343259990 95", { x: MARGINS.x + colW * 2, y: yBot - 19, size: footerTextSize, font: this.fonts.regular });
 
@@ -471,20 +498,24 @@ export class BaseDocument {
       this.data.type === "Proforma" ||
       this.data.type === "Commande";
     const avecQr = qrAutorise && shouldShowQr(prefix);
-    // Cadre unique (Modèle F) ; séparateur fin entre client et certification.
-    roundedRect(this.page, MARGINS.x, y - boxH, avecQr ? CONTENT_W : boxW, boxH, 6, {
-      color: BODY.grisClair, borderColor: BODY.bord, borderWidth: 0.6,
-    });
-    if (avecQr) {
-      const sx = MARGINS.x + boxW + 7.5;
-      this.page.drawLine({ start: { x: sx, y: y - 8 }, end: { x: sx, y: y - boxH + 8 }, color: BODY.bord, thickness: 0.6 });
-    }
+    // Cadre unique (charte FABS-CI) : bandeau bleu « client » à gauche,
+    // bandeau bleu « certification » à droite, séparés par un trait bleu foncé.
+    const blocW = avecQr ? CONTENT_W : boxW;
+    this.drawBloc(MARGINS.x, y - boxH, blocW, boxH);
+    const sx = MARGINS.x + boxW + 7.5;
     const isBL = this.data.type === "Bon de Livraison";
     const isCommande = this.data.type === "Commande";
-    // Bon de commande : pas d'entête "FACTURÉ À", le bloc démarre par le client
-    if (!isCommande) {
-      this.page.drawText(isBR ? "FOURNISSEUR" : isBL ? "CLIENT" : "FACTURÉ À", { x: MARGINS.x + 10, y: y - 18, size: grandBloc ? 9 : 7, font: this.fonts.bold, color: BODY.ardoise });
+    this.drawBandeau(
+      MARGINS.x,
+      y,
+      avecQr ? sx - MARGINS.x : blocW,
+      isBR ? "FOURNISSEUR" : isBL || isCommande ? "CLIENT" : "FACTURÉ À",
+    );
+    if (avecQr) {
+      this.drawBandeau(sx, y, MARGINS.x + CONTENT_W - sx, "CERTIFICATION");
+      this.page.drawLine({ start: { x: sx, y }, end: { x: sx, y: y - boxH }, color: CHARTE.bordureExterieure, thickness: CHARTE.epaisseurExterieure });
     }
+    this.drawContour(MARGINS.x, y - boxH, blocW, boxH);
     // Nom du client : retour à la ligne propre + réduction automatique si très long,
     // toujours contenu dans la moitié gauche (jamais de chevauchement avec le QR).
     const nomMaxW = boxW - 20;
@@ -496,7 +527,7 @@ export class BaseDocument {
       nomLignes = this.wrapText(nomTexte, nomMaxW, nomSize, this.fonts.bold);
     }
     nomLignes = nomLignes.slice(0, 2);
-    const nomY = y - (isCommande ? 28 : 38);
+    const nomY = y - 38;
     nomLignes.forEach((ligne, i) => {
       this.page.drawText(ligne, {
         x: MARGINS.x + 10,
@@ -566,7 +597,7 @@ export class BaseDocument {
         const qrSize = 80;
         // Zone blanche autour du QR pour garantir la lecture au scan
         roundedRect(this.page, qrX + 8, y - boxH + 14, qrSize + 8, qrSize + 8, 4, {
-          color: BODY.blanc, borderColor: BODY.bord, borderWidth: 0.6,
+          color: BODY.blanc, borderColor: CHARTE.traitInterne, borderWidth: 0.6,
         });
         this.page.drawImage(qrImage, { x: qrX + 12, y: y - boxH + 18, width: qrSize, height: qrSize });
 
@@ -574,13 +605,7 @@ export class BaseDocument {
         const textX = qrX + qrSize + 24;
         const textMaxW = qrX + boxW - 10 - textX;
 
-        this.page.drawText("CERTIFICATION", {
-          x: textX,
-          y: y - 22,
-          size: 7.5,
-          font: this.fonts.bold,
-          color: BODY.ardoise,
-        });
+        // Titre « CERTIFICATION » : porté par le bandeau bleu du bloc.
 
         // Factures, Proformas et Bons de commande : QR + mention seulement
         // (pas de lignes techniques Statut / Version / Date / Empreinte).
@@ -658,20 +683,25 @@ export class BaseDocument {
   }
 
   drawTable(y: number, colonnes: { label: string, key: string, width: number }[], lignes: DocLigne[], options?: { showClientReception?: boolean; boldKeys?: string[] }): number {
-    const drawColLines = (top: number, bottom: number, w = 0.5) => {
+    // Traits verticaux internes entre toutes les colonnes (le contour est posé à part).
+    const drawColLines = (top: number, bottom: number) => {
       let vx = MARGINS.x;
-      [0, ...colonnes.map((c) => c.width)].forEach((cw, idx) => {
-        vx += cw;
-        const edge = idx === 0 || idx === colonnes.length;
-        this.page.drawLine({ start: { x: vx, y: top }, end: { x: vx, y: bottom }, color: BODY.bord, thickness: edge ? 0.6 : w });
+      colonnes.slice(0, -1).forEach((col) => {
+        vx += col.width;
+        this.page.drawLine({ start: { x: vx, y: top }, end: { x: vx, y: bottom }, color: CHARTE.traitInterne, thickness: CHARTE.epaisseurInterne });
       });
     };
-    // En-tête : unique aplat bleu électrique du document, titres blancs gras.
+    // Contour bleu foncé du tableau, posé pour chaque page (tableaux sur plusieurs pages).
+    let segTop = y;
+    const drawContourSegment = (bottom: number) => this.drawContour(MARGINS.x, bottom, CONTENT_W, segTop - bottom);
+    // En-tête : bandeau bleu électrique, titres blancs gras, séparateurs et bas bleu foncé.
     const drawTableHeader = (hy: number) => {
-      this.page.drawRectangle({ x: MARGINS.x, y: hy - 20, width: CONTENT_W, height: 20, color: BODY.ardoise });
+      segTop = hy;
+      this.page.drawRectangle({ x: MARGINS.x, y: hy - 20, width: CONTENT_W, height: 20, color: CHARTE.bleu });
+      this.page.drawLine({ start: { x: MARGINS.x, y: hy - 20 }, end: { x: MARGINS.x + CONTENT_W, y: hy - 20 }, color: CHARTE.bordureExterieure, thickness: CHARTE.epaisseurExterieure });
       let hx = MARGINS.x;
       colonnes.forEach((col, idx) => {
-        if (idx > 0) this.page.drawLine({ start: { x: hx, y: hy }, end: { x: hx, y: hy - 20 }, color: COLORS.blanc, thickness: 0.5, opacity: 0.5 });
+        if (idx > 0) this.page.drawLine({ start: { x: hx, y: hy }, end: { x: hx, y: hy - 20 }, color: CHARTE.bordureExterieure, thickness: CHARTE.epaisseurInterne });
         const txt = col.label.toUpperCase();
         const txtW = this.fonts.bold.widthOfTextAtSize(txt, 8.5);
         const headerX = CENTERED_KEYS.includes(col.key)
@@ -715,6 +745,7 @@ export class BaseDocument {
       });
 
       if (curY - maxRowH < MARGINS.bottom + 20) {
+        drawContourSegment(curY);
         this.addNewPage();
         curY = PAGE.h - 120;
         drawTableHeader(curY);
@@ -723,9 +754,9 @@ export class BaseDocument {
       
       const rowH = maxRowH;
 
-      // Zébrage bleu électrique très léger (~5 %), continu d'une page à l'autre.
+      // Zébrage blanc / bleu très clair, continu d'une page à l'autre.
       if (i % 2 === 1) {
-        this.page.drawRectangle({ x: MARGINS.x, y: curY - rowH, width: CONTENT_W, height: rowH, color: BODY.grisClair });
+        this.page.drawRectangle({ x: MARGINS.x, y: curY - rowH, width: CONTENT_W, height: rowH, color: CHARTE.zebre });
       }
       drawColLines(curY, curY - rowH);
 
@@ -759,13 +790,14 @@ export class BaseDocument {
       this.page.drawLine({
         start: { x: MARGINS.x, y: curY - rowH },
         end: { x: MARGINS.x + CONTENT_W, y: curY - rowH },
-        color: BODY.bord,
-        thickness: i === lignes.length - 1 ? 0.6 : 0.5,
+        color: CHARTE.traitInterne,
+        thickness: CHARTE.epaisseurInterne,
       });
 
       curY -= rowH;
     });
 
+    drawContourSegment(curY);
     return curY;
   }
 
@@ -826,13 +858,14 @@ export class BaseDocument {
     const payRows: typeof rows = buildPaymentRows(this.data.type, paiement, this.totals.totalAPayer);
     const theme = this.recapTheme;
 
-    // Carte du récap aux couleurs du thème ; bandeau TOTAL blanc bordé.
-    const ROW_H = 18, TOTAL_H = 30, PAD = 4, BAND_H = 26;
+    // Récap (charte FABS-CI) : lignes blanches, remises sur fond clair du thème,
+    // TOTAL À PAYER en bandeau plein, MONTANT PAYÉ gris très clair, RESTE À PAYER orange.
+    const ROW_H = 18, TOTAL_H = 26;
 
     // Hauteur réelle : cadre des totaux + mention « Arrêté… » (aucun saut au milieu)
     const mentionText = `Arrêté le présent document à la somme de : ${this.totals.montantLettres}`;
     const mentionLines = this.wrapText(mentionText, CONTENT_W - 4, 9.5, this.fonts.bold);
-    const boxH = PAD + rows.length * ROW_H + PAD + TOTAL_H + payRows.length * ROW_H;
+    const boxH = rows.length * ROW_H + TOTAL_H + payRows.length * ROW_H;
     const blockH = boxH + 16 + mentionLines.length * 9.5 * 1.3 + 4 + this.reserveAfterTotals;
     if (curY - blockH < CONTENT_BOTTOM) {
       this.addNewPage();
@@ -840,12 +873,14 @@ export class BaseDocument {
     }
 
     const boxTop = curY;
-    roundedRect(this.page, x, boxTop - boxH, boxW, boxH, 6, { color: theme.fond });
-    curY = boxTop - PAD;
+    this.page.drawRectangle({ x, y: boxTop - boxH, width: boxW, height: boxH, color: CHARTE.blanc });
 
-    const drawRow = (row: (typeof rows)[number], idx = 0, style?: { labelColor: RGB; valueColor: RGB; bold?: boolean }) => {
+    const drawRow = (row: (typeof rows)[number], idx = 0, style?: { labelColor: RGB; valueColor: RGB; fill?: RGB }) => {
+      if (style?.fill) {
+        this.page.drawRectangle({ x, y: curY - ROW_H, width: boxW, height: ROW_H, color: style.fill });
+      }
       if (idx > 0) {
-        this.page.drawLine({ start: { x: x + 8, y: curY }, end: { x: x + boxW - 8, y: curY }, color: theme.filet, thickness: 0.4 });
+        this.page.drawLine({ start: { x, y: curY }, end: { x: x + boxW, y: curY }, color: theme.filet, thickness: CHARTE.epaisseurInterne });
       }
       const ty = curY - 12;
       let labelX = x + 8;
@@ -855,7 +890,7 @@ export class BaseDocument {
         const rawPct = this.totals.remiseGlobalePct ?? (this.totals.remiseGlobale / this.totals.sousTotal) * 100;
         const pct = parseFloat(rawPct.toFixed(10));
         labelX += lblFont.widthOfTextAtSize(row.label, 8) + 4;
-        this.page.drawText(`(${pct} %)`, { x: labelX, y: ty, size: 8, font: this.fonts.bold, color: BODY.donnee });
+        this.page.drawText(`(${pct} %)`, { x: labelX, y: ty, size: 8, font: this.fonts.bold, color: style?.labelColor ?? BODY.donnee });
       }
       const val = `${formatFCFA(row.value, false)} FCFA`;
       const labelEnd = labelX + lblFont.widthOfTextAtSize(row.label === "REMISE GLOBALE" ? "" : row.label, 8)
@@ -872,13 +907,12 @@ export class BaseDocument {
       });
       curY -= ROW_H;
     };
-    rows.forEach((r, i) => drawRow(r, i));
-    curY -= PAD;
-    this.page.drawLine({ start: { x: x + 8, y: curY }, end: { x: x + boxW - 8, y: curY }, color: theme.filet, thickness: 0.6 });
+    rows.forEach((r, i) =>
+      drawRow(r, i, r.label.startsWith("REMISE") ? { labelColor: BODY.donnee, valueColor: BODY.donnee, fill: theme.fond } : undefined),
+    );
 
-    // TOTAL À PAYER : bandeau blanc, bordure couleur du thème.
-    const bandY = curY - (TOTAL_H + BAND_H) / 2;
-    roundedRect(this.page, x + 6, bandY, boxW - 12, BAND_H, 4, { color: BODY.blanc, borderColor: theme.total, borderWidth: 1.2 });
+    // TOTAL À PAYER : bandeau plein couleur du thème (bleu électrique), texte blanc gras.
+    this.page.drawRectangle({ x, y: curY - TOTAL_H, width: boxW, height: TOTAL_H, color: theme.total });
     // Zones gauche (libellé) / droite (montant) indépendantes : tailles adaptées pour ne jamais se chevaucher.
     const totalLabel = "TOTAL À PAYER";
     const totalVal = `${formatFCFA(this.totals.totalAPayer, false)} FCFA`;
@@ -887,21 +921,24 @@ export class BaseDocument {
     const fits = () => this.fonts.bold.widthOfTextAtSize(totalLabel, lblSize) + this.fonts.bold.widthOfTextAtSize(totalVal, valSize) + GAP <= avail;
     while (!fits() && valSize > 9) valSize -= 0.5;
     while (!fits() && lblSize > 7) lblSize -= 0.5;
-    this.page.drawText(totalLabel, { x: x + 12, y: bandY + (BAND_H - lblSize * 0.7) / 2, size: lblSize, font: this.fonts.bold, color: BODY.donnee });
+    const bandY = curY - TOTAL_H;
+    this.page.drawText(totalLabel, { x: x + 8, y: bandY + (TOTAL_H - lblSize * 0.7) / 2, size: lblSize, font: this.fonts.bold, color: CHARTE.blanc });
     const totalW = this.fonts.bold.widthOfTextAtSize(totalVal, valSize);
-    this.page.drawText(totalVal, { x: x + boxW - totalW - 12, y: bandY + (BAND_H - valSize * 0.7) / 2, size: valSize, font: this.fonts.bold, color: BODY.donnee });
+    this.page.drawText(totalVal, { x: x + boxW - totalW - 8, y: bandY + (TOTAL_H - valSize * 0.7) / 2, size: valSize, font: this.fonts.bold, color: CHARTE.blanc });
     curY -= TOTAL_H;
 
-    payRows.forEach((r, i) => {
+    payRows.forEach((r) => {
       const isReste = r.label === "RESTE À PAYER";
-      if (isReste) {
-        const last = i === payRows.length - 1;
-        roundedRect(this.page, x, curY - ROW_H, boxW, ROW_H, last ? { bl: 6, br: 6 } : 0, { color: BODY.blanc });
-      }
-      drawRow(r, 1, { labelColor: BODY.donnee, valueColor: BODY.donnee, bold: isReste });
+      drawRow(
+        r,
+        0,
+        isReste
+          ? { labelColor: CHARTE.blanc, valueColor: CHARTE.blanc, fill: CHARTE.orange }
+          : { labelColor: BODY.donnee, valueColor: BODY.donnee, fill: CHARTE.grisPaye },
+      );
     });
 
-    roundedRect(this.page, x, curY, boxW, boxTop - curY, 6, { borderColor: theme.bordure, borderWidth: 0.6 });
+    this.page.drawRectangle({ x, y: curY, width: boxW, height: boxTop - curY, borderColor: theme.bordure, borderWidth: CHARTE.epaisseurExterieure });
     this.drawPaidStamp({ x: MARGINS.x, yBottom: curY, w: x - MARGINS.x - 16, h: boxTop - curY });
     curY -= 16;
 

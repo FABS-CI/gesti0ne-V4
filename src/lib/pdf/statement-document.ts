@@ -1,5 +1,6 @@
 import { formatDocumentReference } from "@/lib/document-reference";
 
+import { CHARTE } from "./charte-documents";
 import { BaseDocument, BODY, roundedRect, COLORS, MARGINS, PAGE, CONTENT_W, CONTENT_BOTTOM } from "./base-document";
 import { formatFCFA, formatTelephone } from "@/lib/format";
 import tamponUrl from "@/assets/tampon-comptabilite.png";
@@ -67,13 +68,12 @@ export class StatementDocument extends BaseDocument {
     const boxH = Math.max(110, 40 + nomH + 3 * 18 + 10);
 
     // Bloc Client
-    roundedRect(this.page, MARGINS.x, y - boxH, CONTENT_W, boxH, 6, {
-      color: BODY.grisClair, borderColor: BODY.bord, borderWidth: 0.6,
-    });
+    this.drawBloc(MARGINS.x, y - boxH, CONTENT_W, boxH);
     const sepX = MARGINS.x + boxW + 7.5;
-    this.page.drawLine({ start: { x: sepX, y: y - 8 }, end: { x: sepX, y: y - boxH + 8 }, color: BODY.bord, thickness: 0.6 });
-
-    this.page.drawText("RELEVÉ POUR", { x: MARGINS.x + 10, y: y - 15, size: 7, font: this.fonts.bold, color: BODY.donnee });
+    this.drawBandeau(MARGINS.x, y, sepX - MARGINS.x, "RELEVÉ POUR");
+    this.drawBandeau(sepX, y, MARGINS.x + CONTENT_W - sepX, "PÉRIODE");
+    this.page.drawLine({ start: { x: sepX, y }, end: { x: sepX, y: y - boxH }, color: CHARTE.bordureExterieure, thickness: CHARTE.epaisseurExterieure });
+    this.drawContour(MARGINS.x, y - boxH, CONTENT_W, boxH);
     nomLignes.forEach((ligne, i) => {
       this.page.drawText(ligne, { x: MARGINS.x + 10, y: y - 32 - i * (nomSize + 3), size: nomSize, font: this.fonts.bold, color: BODY.donnee });
     });
@@ -95,8 +95,7 @@ export class StatementDocument extends BaseDocument {
 
     // Bloc Période (sans cadre) + QR code à droite
     const perX = MARGINS.x + boxW + 15;
-    await this.drawStatementQr(PAGE.w - MARGINS.x - boxH + 8, y - boxH + 8, boxH - 16, data);
-    this.page.drawText("PÉRIODE", { x: perX + 10, y: y - 15, size: 7, font: this.fonts.bold, color: BODY.donnee });
+    await this.drawStatementQr(PAGE.w - MARGINS.x - boxH + 20, y - boxH + 8, boxH - 28, data);
     const periode = data.periodeDebut && data.periodeFin 
       ? `Du ${data.periodeDebut} au ${data.periodeFin}`
       : "Relevé complet";
@@ -121,7 +120,7 @@ export class StatementDocument extends BaseDocument {
       if (!target) return;
       const url = await QRCode.toDataURL(target, { margin: 1, width: 400, errorCorrectionLevel: "M", color: QR_COLOR_OPTS });
       const img = await this.doc.embedPng(url);
-      roundedRect(this.page, x - 3, yBottom - 3, size + 6, size + 6, 4, { color: BODY.blanc, borderColor: BODY.bord, borderWidth: 0.6 });
+      roundedRect(this.page, x - 3, yBottom - 3, size + 6, size + 6, 4, { color: BODY.blanc, borderColor: CHARTE.traitInterne, borderWidth: 0.6 });
       this.page.drawImage(img, { x, y: yBottom, width: size, height: size });
     } catch (e) {
       console.error("QR relevé", e);
@@ -158,15 +157,15 @@ export class StatementDocument extends BaseDocument {
   drawSummary(y: number, rows: Array<{ label: string; value: number; total?: boolean }>): number {
     const boxW = 260;
     const x = PAGE.w - MARGINS.x - boxW;
-    // Modèle F : carte crème, ligne de solde en bandeau orange plein (même hauteur totale).
-    const PAD = 4;
+    // Charte FABS-CI : carte blanche à contour bleu foncé, ligne de solde en bandeau plein (couleur du thème).
+    const PAD = 0;
     const top = y - 6;
     const boxH = rows.length * ROW_H + PAD * 2;
-    roundedRect(this.page, x, top - boxH, boxW, boxH, 6, { color: this.recapTheme.fond, borderColor: this.recapTheme.bordure, borderWidth: 0.6 });
+    this.page.drawRectangle({ x, y: top - boxH, width: boxW, height: boxH, color: CHARTE.blanc });
     let curY = top - PAD;
     rows.forEach((r, i) => {
       if (r.total) {
-        roundedRect(this.page, x + 6, curY - ROW_H + 1, boxW - 12, ROW_H - 2, 4, { color: this.recapTheme.total });
+        this.page.drawRectangle({ x, y: curY - ROW_H, width: boxW, height: ROW_H, color: this.recapTheme.total });
         this.page.drawText(r.label, { x: x + 12, y: curY - 13, size: 8, font: this.fonts.bold, color: BODY.blanc });
         const valText = formatFCFA(r.value);
         const valW = this.fonts.bold.widthOfTextAtSize(valText, 10);
@@ -177,10 +176,11 @@ export class StatementDocument extends BaseDocument {
         const valW = this.fonts.bold.widthOfTextAtSize(valText, 9);
         this.page.drawText(valText, { x: x + boxW - valW - 8, y: curY - 13, size: 9, font: this.fonts.bold, color: BODY.donnee });
         const next = rows[i + 1];
-        this.page.drawLine({ start: { x: x + 8, y: curY - ROW_H }, end: { x: x + boxW - 8, y: curY - ROW_H }, color: this.recapTheme.filet, thickness: next?.total ? 0.6 : 0.4 });
+        this.page.drawLine({ start: { x, y: curY - ROW_H }, end: { x: x + boxW, y: curY - ROW_H }, color: this.recapTheme.filet, thickness: next?.total ? CHARTE.epaisseurExterieure : CHARTE.epaisseurInterne });
       }
       curY -= ROW_H;
     });
+    this.page.drawRectangle({ x, y: top - boxH, width: boxW, height: boxH, borderColor: this.recapTheme.bordure, borderWidth: CHARTE.epaisseurExterieure });
     return curY - PAD - 14;
   }
 

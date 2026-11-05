@@ -1,5 +1,6 @@
 import { formatDocumentReference } from "@/lib/document-reference";
 
+import { CHARTE } from "./charte-documents";
 import { BaseDocument, BODY, roundedRect, COLORS, MARGINS, PAGE, CONTENT_W, CONTENT_BOTTOM } from "./base-document";
 import tamponUrl from "@/assets/tampon-comptabilite.png";
 import { formatFCFA } from "@/lib/format";
@@ -71,19 +72,11 @@ export class ReceiptDocument extends BaseDocument {
     const gap = 10;
     const boxW = CONTENT_W - qrBoxW - gap;
     
-    roundedRect(this.page, MARGINS.x, y - boxH, CONTENT_W, boxH, 6, {
-      color: BODY.grisClair, borderColor: BODY.bord, borderWidth: 0.6,
-    });
+    this.drawBloc(MARGINS.x, y - boxH, CONTENT_W, boxH);
     const sepX = MARGINS.x + boxW + gap / 2;
-    this.page.drawLine({ start: { x: sepX, y: y - 8 }, end: { x: sepX, y: y - boxH + 8 }, color: BODY.bord, thickness: 0.6 });
-
-    this.page.drawText("CLIENT / REÇU DE", { 
-      x: MARGINS.x + 10, 
-      y: y - 15, 
-      size: 7, 
-      font: this.fonts.bold, 
-      color: BODY.donnee 
-    });
+    this.drawBandeau(MARGINS.x, y, sepX - MARGINS.x, "CLIENT / REÇU DE");
+    this.page.drawLine({ start: { x: sepX, y }, end: { x: sepX, y: y - boxH }, color: CHARTE.bordureExterieure, thickness: CHARTE.epaisseurExterieure });
+    this.drawContour(MARGINS.x, y - boxH, CONTENT_W, boxH);
 
     this.page.drawText(this.receiptData.customerName.toUpperCase(), { 
       x: MARGINS.x + 10, 
@@ -130,7 +123,7 @@ export class ReceiptDocument extends BaseDocument {
       const img = await this.doc.embedPng(url);
       const size = Math.min(w, h) - 20;
       const qx = x + (w - size) / 2, qy = yBottom + (h - size) / 2;
-      roundedRect(this.page, qx - 3, qy - 3, size + 6, size + 6, 4, { color: BODY.blanc, borderColor: BODY.bord, borderWidth: 0.6 });
+      roundedRect(this.page, qx - 3, qy - 3, size + 6, size + 6, 4, { color: BODY.blanc, borderColor: CHARTE.traitInterne, borderWidth: 0.6 });
       this.page.drawImage(img, { x: qx, y: qy, width: size, height: size });
     } catch (e) {
       console.error("QR reçu", e);
@@ -150,17 +143,12 @@ export class ReceiptDocument extends BaseDocument {
     const boxW = CONTENT_W;
 
 
-    this.page.drawText("DÉTAIL DU RÈGLEMENT", { 
-      x: MARGINS.x, 
-      y: y, 
-      size: 10, 
-      font: this.fonts.bold, 
-      color: BODY.donnee 
-    });
+    this.drawBandeau(MARGINS.x, y - 6, boxW, "DÉTAIL DU RÈGLEMENT");
     y -= 20;
 
-    roundedRect(this.page, MARGINS.x, y - boxH, boxW, boxH, 6, {
-      color: this.recapTheme.fond, borderColor: this.recapTheme.bordure, borderWidth: 0.6,
+    this.page.drawRectangle({
+      x: MARGINS.x, y: y - boxH, width: boxW, height: boxH,
+      color: CHARTE.blanc, borderColor: this.recapTheme.bordure, borderWidth: CHARTE.epaisseurExterieure,
     });
 
     let curY = y - 25;
@@ -242,7 +230,7 @@ export class ReceiptDocument extends BaseDocument {
     curY -= 10;
 
     // Montant reçu : bandeau plein, couleur du thème
-    roundedRect(this.page, MARGINS.x + 6, curY - 8, boxW - 12, 26, 4, { color: this.recapTheme.total });
+    this.page.drawRectangle({ x: MARGINS.x + 6, y: curY - 8, width: boxW - 12, height: 26, color: this.recapTheme.total });
     this.page.drawText("MONTANT REÇU", { 
       x: MARGINS.x + 15, 
       y: curY, 
@@ -372,7 +360,7 @@ export class ReceiptDocument extends BaseDocument {
       start: { x: MARGINS.x, y: sepY },
       end: { x: PAGE.w - MARGINS.x, y: sepY },
       thickness: 1.5,
-      color: COLORS.bleuElectrique,
+      color: CHARTE.bleu,
     });
   }
 }

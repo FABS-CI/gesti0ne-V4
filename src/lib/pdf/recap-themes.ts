@@ -1,6 +1,7 @@
 // Thèmes de couleur du récapitulatif des montants (documents de vente).
 // Purement visuel : aucun montant n'en dépend.
 import { rgb, type RGB } from "pdf-lib";
+import { CHARTE_HEX } from "./charte-documents";
 
 export type RecapThemeId = "bleu" | "ardoise" | "vert" | "indigo" | "noir" | "marine";
 
@@ -54,11 +55,13 @@ function make(id: RecapThemeId, nom: string, hex: RecapTheme["hex"]): RecapTheme
 }
 
 export const RECAP_THEMES: Record<RecapThemeId, RecapTheme> = {
-  bleu: make("bleu", "Bleu clair", {
-    fond: "#EFF6FF",
-    filet: "#BFDBFE",
-    bordure: "#BFDBFE",
-    total: "#2563EB",
+  // Thème par défaut = charte FABS-CI (charte-documents.ts) : remises sur bleu très
+  // clair, traits #A8BFE3, contour bleu foncé, TOTAL À PAYER bleu électrique.
+  bleu: make("bleu", "Bleu FABS-CI", {
+    fond: CHARTE_HEX.zebre,
+    filet: CHARTE_HEX.traitInterne,
+    bordure: CHARTE_HEX.bordureExterieure,
+    total: CHARTE_HEX.bleu,
     texte: "#1E3A8A",
   }),
   ardoise: make("ardoise", "Gris ardoise", {

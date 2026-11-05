@@ -1,6 +1,7 @@
 
 import { BaseDocument, BODY, roundedRect, COLORS, MARGINS, PAGE, CONTENT_W, CONTENT_BOTTOM, type DocLigne } from "./base-document";
 import { formatFCFA } from "@/lib/format";
+import { CHARTE } from "./charte-documents";
 import { rgb, degrees } from "pdf-lib";
 import tamponUrl from "@/assets/tampon-comptabilite.png";
 
@@ -26,7 +27,7 @@ export class CommercialDocument extends BaseDocument {
       start: { x: MARGINS.x, y: sepY },
       end: { x: PAGE.w - MARGINS.x, y: sepY },
       thickness: 0.8,
-      color: COLORS.bleuElectrique,
+      color: CHARTE.bleu,
     });
   }
 
