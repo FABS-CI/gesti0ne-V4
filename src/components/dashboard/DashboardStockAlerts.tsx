@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { DashboardOverview } from "@/hooks/use-dashboard-overview";
@@ -8,10 +7,7 @@ export function DashboardStockAlerts({ data }: { data: DashboardOverview | undef
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <AlertTriangle className="h-4 w-4 text-muted-foreground" aria-hidden />
-          Alertes de stock
-        </CardTitle>
+        <CardTitle className="flex items-center gap-2 text-base">Alertes de stock</CardTitle>
         <Link to="/stock" className="text-sm text-primary hover:underline">
           Voir le stock
         </Link>
@@ -24,7 +20,9 @@ export function DashboardStockAlerts({ data }: { data: DashboardOverview | undef
             {data?.stockBas.slice(0, 10).map((p, i) => (
               <li key={i} className="flex items-center justify-between py-2">
                 <span className="truncate text-sm">{p.titre}</span>
-                <Badge variant="destructive">{p.stock} / seuil {p.seuil_alerte}</Badge>
+                <Badge variant="destructive">
+                  {p.stock} / seuil {p.seuil_alerte}
+                </Badge>
               </li>
             ))}
           </ul>

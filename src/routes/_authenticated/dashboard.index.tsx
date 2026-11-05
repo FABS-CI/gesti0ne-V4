@@ -1,7 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { lazy, Suspense, useRef, useState } from "react";
 import { zodValidator } from "@tanstack/zod-adapter";
-import { AlertTriangle, ArrowRight, Gauge, Inbox } from "lucide-react";
 
 import { useExerciceConsulteId } from "@/contexts/ExerciceContext";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -78,7 +77,6 @@ function Dashboard() {
   if (isError) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-24 text-center">
-        <AlertTriangle className="h-10 w-10 text-destructive" />
         <div>
           <p className="font-semibold">Impossible de charger le tableau de bord</p>
           <p className="text-sm text-muted-foreground">
@@ -104,13 +102,11 @@ function Dashboard() {
         className="flex items-center justify-between gap-3 rounded-md border bg-card px-4 py-2.5 text-sm transition-colors hover:bg-muted/60"
       >
         <span className="flex items-center gap-2">
-          <Gauge className="h-4 w-4 text-muted-foreground" />
           <span>
             <span className="font-medium">Centre de pilotage</span>
             <span className="text-muted-foreground"> — ce qu'il faut traiter aujourd'hui</span>
           </span>
         </span>
-        <ArrowRight className="h-4 w-4 text-primary" />
       </Link>
       <MesRaccourcisCard />
     </div>
@@ -126,11 +122,8 @@ function Dashboard() {
         onExportPng={onExportPng}
         onExportPdf={onExportPdf}
       />
-
       <WelcomeGreeting nbRetards={data?.nbRetards} nbStockBas={data?.nbStockBas} />
-
       <DashboardQuickActions />
-
       <div className="min-h-[400px]">
         {isLoading ? (
           <div className="space-y-6">
@@ -144,7 +137,6 @@ function Dashboard() {
         ) : !hasData ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center gap-4 py-20 text-center">
-              <Inbox className="h-10 w-10 text-muted-foreground" />
               <div>
                 <p className="font-semibold">Aucune donnée à afficher</p>
                 <p className="text-sm text-muted-foreground">

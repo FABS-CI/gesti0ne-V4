@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFavoriteModules } from "@/hooks/use-smart-shortcuts";
@@ -10,10 +9,7 @@ export function ModulesFavorisCard() {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Star className="h-4 w-4 text-primary" />
-          Modules favoris
-        </CardTitle>
+        <CardTitle className="flex items-center gap-2 text-base">Modules favoris</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -29,7 +25,6 @@ export function ModulesFavorisCard() {
         ) : (
           <div className="space-y-2">
             {modules.map(({ module, count, meta }) => {
-              const Icon = meta.icon;
               return (
                 <Link
                   key={module}
@@ -37,7 +32,6 @@ export function ModulesFavorisCard() {
                   className="flex items-center justify-between rounded-md border bg-card p-3 transition-colors hover:bg-accent"
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className="h-5 w-5 text-primary" />
                     <span className="text-sm font-medium">{meta.label}</span>
                   </div>
                   <span className="text-xs text-muted-foreground">{count} action(s)</span>

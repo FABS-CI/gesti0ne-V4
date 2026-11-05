@@ -1,4 +1,3 @@
-import { Pin, PinOff, Eye, EyeOff } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -44,7 +43,6 @@ export function PersonnaliserRaccourcisDialog({ open, onOpenChange }: Props) {
         <ScrollArea className="max-h-[60vh] pr-3">
           <div className="space-y-2">
             {visible.map((def) => {
-              const Icon = def.icon;
               const stat = byKey.get(def.key);
               const pinned = !!stat?.pinned;
               const hidden = !!stat?.hidden;
@@ -54,7 +52,6 @@ export function PersonnaliserRaccourcisDialog({ open, onOpenChange }: Props) {
                   className="flex items-center justify-between gap-3 rounded-md border p-3"
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className="h-5 w-5 text-primary" />
                     <div>
                       <p className="text-sm font-medium">{def.label}</p>
                       <p className="text-xs text-muted-foreground">
@@ -69,14 +66,14 @@ export function PersonnaliserRaccourcisDialog({ open, onOpenChange }: Props) {
                       variant={pinned ? "default" : "outline"}
                       onClick={() => (pinned ? unpin.mutate(def.key) : pin.mutate(def.key))}
                     >
-                      {pinned ? <PinOff className="h-4 w-4" /> : <Pin className="h-4 w-4" />}
+                      {pinned ? "Désépingler" : "Épingler"}
                     </Button>
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => (hidden ? unhide.mutate(def.key) : hide.mutate(def.key))}
                     >
-                      {hidden ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                      {hidden ? "Afficher" : "Masquer"}
                     </Button>
                   </div>
                 </div>
