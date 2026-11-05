@@ -130,3 +130,9 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [ ] Sécurité : ajouter un contrôle de droit aux 12 fonctions signalées par le test RLS n°11 (dont paie_enregistrer_bulletin)
 - [ ] Sécurité : tables hors migrations (backup_cron_config, signature_keys…) — attend validation après lecture des politiques
 - [ ] Test retours-integration : « permission denied for has_permission_v2 »
+
+## Refonte visuelle Admin Dashboard V2 (5 nov.)
+- [x] Lot 1 : palette bleu nuit / pétrole / bleu clair, cartes ombrées, mode sombre
+- [ ] Lot 2 : barre latérale et barre du haut
+- [ ] Lot 3 : tableau de bord
+- [ ] Lot 4 : vérification module par module (connexion de l'aperçu nécessaire)
