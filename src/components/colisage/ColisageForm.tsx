@@ -2,7 +2,7 @@ import { formatDateTime } from "@/lib/format";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { CheckCircle2, Loader2, PackageCheck, Plus, RefreshCw } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -29,9 +29,7 @@ import {
 import { invalidateColisage } from "@/lib/cache-invalidation";
 import { keyForLigne, detectMode, type ZonesDirectes } from "@/lib/colisage-helpers";
 import { ColisageModeSection } from "./form/ColisageModeSection";
-import {
-  ColisageExpeditionFields,
-} from "./form/ColisageAcheminementFields";
+import { ColisageExpeditionFields } from "./form/ColisageAcheminementFields";
 import { ColisageCartonsSection } from "./form/ColisageCartonsSection";
 import type { CartonState, Responsable, ClientInfo } from "./form/colisage-form-types";
 import { friendlyError } from "@/lib/friendly-error";
@@ -120,19 +118,18 @@ export function ColisageForm({
   // — Initialisation depuis colisExistants —
   useEffect(() => {
     if (colisExistants && colisExistants.length > 0) {
-      
       const firstColis = colisExistants[0];
-      
-      // On n'écrase pas si l'utilisateur a déjà commencé à saisir, 
+
+      // On n'écrase pas si l'utilisateur a déjà commencé à saisir,
       // sauf si c'est le premier chargement
       setResponsable(firstColis.responsable_nom || "");
       setObservations(firstColis.observations || "");
-      
+
       if (firstColis.mode_acheminement) {
         setMode(firstColis.mode_acheminement as ModeAcheminement);
         setModeManuel(true);
       }
-      
+
       if (firstColis.quartier) setQuartier(firstColis.quartier);
       if (firstColis.commune) setCommune(firstColis.commune);
       if (firstColis.ville_livraison) setVilleLivraison(firstColis.ville_livraison);
@@ -254,7 +251,7 @@ export function ColisageForm({
     onSuccess: async (createdColis) => {
       toast.success("Colisage généré");
       invalidateColisage(qc, { blId, clientId: bl.client_id ?? undefined });
-      
+
       if (onSuccess) {
         onSuccess(createdColis);
       }
@@ -350,14 +347,11 @@ export function ColisageForm({
     return (
       <Card className="border-primary/20 bg-primary/5 print:hidden">
         <CardContent className="flex flex-col items-center justify-center py-10 gap-4">
-          <div className="rounded-full bg-primary/10 p-4">
-            <PackageCheck className="h-10 w-10 text-primary" />
-          </div>
           <div className="text-center">
             <h3 className="text-lg font-bold">Colisage enregistré</h3>
             <p className="text-muted-foreground max-w-md mx-auto">
-              Ce bon de livraison a déjà été colisé ({colisExistants?.length} cartons). 
-              Vous pouvez consulter les étiquettes ci-dessous ou modifier le colisage si nécessaire.
+              Ce bon de livraison a déjà été colisé ({colisExistants?.length} cartons). Vous pouvez
+              consulter les étiquettes ci-dessous ou modifier le colisage si nécessaire.
             </p>
           </div>
           {modifiable && (
@@ -373,7 +367,6 @@ export function ColisageForm({
   return (
     <Card className="print:hidden">
       <SectionHeader
-        icon={PackageCheck}
         title={hasColis ? "Modifier le colisage" : "Créer le colisage"}
         color="#3B82F6"
       />
@@ -424,29 +417,31 @@ export function ColisageForm({
                   </Select>
                 </div>
                 <div className="flex gap-1">
-                  <Button aria-label="Ajouter"
+                  <Button
+                    aria-label="Ajouter"
                     type="button"
                     variant="outline"
-                    size="icon"
+                    size="sm"
                     onClick={(e) => {
                       e.preventDefault();
                       window.open("/colisage/responsables?new=true", "_blank");
                     }}
                     title="Créer un nouveau responsable"
                   >
-                    <Plus className="h-4 w-4" />
+                    Ajouter
                   </Button>
-                  <Button aria-label="Actualiser"
+                  <Button
+                    aria-label="Actualiser"
                     type="button"
                     variant="ghost"
-                    size="icon"
+                    size="sm"
                     onClick={(e) => {
                       e.preventDefault();
                       qc.invalidateQueries({ queryKey: ["preparateurs-colisage-actifs"] });
                     }}
                     title="Rafraîchir la liste"
                   >
-                    <RefreshCw className="h-4 w-4" />
+                    Actualiser
                   </Button>
                 </div>
               </div>
@@ -470,12 +465,10 @@ export function ColisageForm({
               <Label>Nombre total de cartons</Label>
               <Input value={`${nbCartons} carton${nbCartons > 1 ? "s" : ""}`} disabled />
             </div>
-
             <div className="md:col-span-3">
               <Label>Observations</Label>
               <Textarea value={observations} onChange={(e) => setObservations(e.target.value)} />
             </div>
-
             <ColisageModeSection
               mode={mode}
               onModeChange={(v) => {
@@ -511,10 +504,8 @@ export function ColisageForm({
                 errors={fieldErrors}
               />
             )}
-
           </form>
         </fieldset>
-
         <ColisageCartonsSection
           cartons={cartons}
           ecarts={ecarts}
@@ -530,25 +521,22 @@ export function ColisageForm({
           updateCarton={updateCarton}
           blStatut={bl.statut}
         />
-            <div className="mt-6 flex justify-end border-t pt-4">
-              <Button
-                type="submit"
-                form="colisage-form"
-                className="w-full sm:w-auto min-w-[200px]"
-                disabled={mutation.isPending || !modifiable || !compositionValide}
-              >
-                {mutation.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Enregistrement...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="mr-2 h-4 w-4" />
-                    {hasColis ? "Mettre à jour le colisage" : "Valider le colisage"}
-                  </>
-                )}
-              </Button>
-            </div>
+        <div className="mt-6 flex justify-end border-t pt-4">
+          <Button
+            type="submit"
+            form="colisage-form"
+            className="w-full sm:w-auto min-w-[200px]"
+            disabled={mutation.isPending || !modifiable || !compositionValide}
+          >
+            {mutation.isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Enregistrement...
+              </>
+            ) : (
+              <>{hasColis ? "Mettre à jour le colisage" : "Valider le colisage"}</>
+            )}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

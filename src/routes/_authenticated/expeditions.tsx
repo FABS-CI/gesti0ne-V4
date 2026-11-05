@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Send } from "lucide-react";
 import { ResourceManager } from "@/components/crud/ResourceManager";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
@@ -18,7 +17,6 @@ export const Route = createFileRoute("/_authenticated/expeditions")({
         idField: "expedition_id",
         title: "Expéditions",
         subtitle: "Suivi logistique des envois",
-        icon: Send,
         newLabel: "Nouvelle expédition",
         entityLabel: "expédition",
         searchFields: ["reference", "transporteur", "tracking"],

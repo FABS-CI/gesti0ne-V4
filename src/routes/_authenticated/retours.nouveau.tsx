@@ -4,7 +4,7 @@ import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2, RotateCcw, Save, ReceiptText } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 import { Button } from "@/components/ui/button";
@@ -30,14 +30,24 @@ export const Route = createFileRoute("/_authenticated/retours/nouveau")({
     type_retour: (search.type_retour as "physique" | "avoir") || undefined,
   }),
   component: RetourNouveauPage,
-  head: () => ({ meta: [
-    { title: "Nouveau retour — GESTI0NE" },
-    { name: "description", content: "Créer un retour à partir de la facture d’origine et de ses conditions commerciales." },
-    { property: "og:title", content: "Nouveau retour — GESTI0NE" },
-    { property: "og:description", content: "Créer un retour à partir de la facture d’origine et de ses conditions commerciales." },
-    { property: "og:type", content: "website" },
-    { name: "twitter:card", content: "summary" },
-  ] }),
+  head: () => ({
+    meta: [
+      { title: "Nouveau retour — GESTI0NE" },
+      {
+        name: "description",
+        content:
+          "Créer un retour à partir de la facture d’origine et de ses conditions commerciales.",
+      },
+      { property: "og:title", content: "Nouveau retour — GESTI0NE" },
+      {
+        property: "og:description",
+        content:
+          "Créer un retour à partir de la facture d’origine et de ses conditions commerciales.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   errorComponent: RouteError,
   notFoundComponent: RouteNotFound,
 });
@@ -102,7 +112,6 @@ function RetourNouveauPage() {
   });
 
   const { data: depots = [] } = useQuery({ queryKey: ["depots"], queryFn: listDepots });
-
 
   const applyClient = (c: Client | null) => {
     if (!c) return;
@@ -196,16 +205,9 @@ function RetourNouveauPage() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Button aria-label="Retour" asChild variant="ghost" size="icon">
-            <Link to="/retours">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
+          <Button aria-label="Retour" asChild variant="ghost" size="sm">
+            <Link to="/retours">Retour</Link>
           </Button>
-          {form.watch("type_retour") === "avoir" ? (
-            <ReceiptText className="h-6 w-6 text-purple-600" />
-          ) : (
-            <RotateCcw className="h-6 w-6 text-primary" />
-          )}
           <div>
             <h1 className="ds-page-title">
               {form.watch("type_retour") === "avoir" ? "Nouvel Avoir" : "Nouveau Retour"}
@@ -218,7 +220,6 @@ function RetourNouveauPage() {
           </div>
         </div>
       </div>
-
       <form onSubmit={onSubmit} className="space-y-6">
         {draft.pendingDraft ? (
           <DraftRestoreBanner
@@ -236,17 +237,12 @@ function RetourNouveauPage() {
         <DocumentSection form={form} fa={fa} />
         <InfosSection form={form} depots={depots} />
         <LignesSection form={form} fa={fa} onProduitChange={onProduitChange} />
-
         <div className="flex justify-end gap-3">
           <Button type="button" variant="outline" asChild>
             <Link to="/retours">Annuler</Link>
           </Button>
           <Button type="submit" disabled={mutation.isPending}>
-            {mutation.isPending ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            ) : (
-              <Save className="h-4 w-4 mr-2" />
-            )}
+            {mutation.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
             {mutation.isPending ? "Traitement du retour…" : "Enregistrer le retour"}
           </Button>
         </div>

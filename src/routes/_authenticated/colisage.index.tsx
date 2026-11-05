@@ -4,7 +4,6 @@ import { ClientLink } from "@/components/common/ClientLink";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Navigation, Package, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -125,9 +124,6 @@ function ColisageListPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="rounded-lg bg-primary/10 p-2">
-          <Package className="h-6 w-6 text-primary" />
-        </div>
         <div className="flex-1">
           <h1 className="ds-page-title">Colisage</h1>
           <p className="text-sm text-muted-foreground">
@@ -136,20 +132,17 @@ function ColisageListPage() {
         </div>
         <Button asChild variant="outline" size="sm">
           <Link to="/tournees/nouvelle" search={{ preselect: "all" }}>
-            <Navigation className="h-4 w-4 mr-1.5" /> Créer une tournée
+            Créer une tournée
           </Link>
         </Button>
       </div>
-
       <Card className="p-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[240px]">
-            <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Rechercher (n°, établissement, représentant, ville)"
-              className="pl-8"
             />
           </div>
           <Select value={statut} onValueChange={setStatut}>
@@ -168,19 +161,23 @@ function ColisageListPage() {
           </Select>
         </div>
       </Card>
-
       <FilterBadges
         badges={[
           ...(q.trim()
             ? [{ key: "q", label: `Recherche : ${q}`, onClear: () => setQ("") } as FilterBadge]
             : []),
           ...(statut !== "a_traiter"
-            ? [{ key: "statut", label: `Statut : ${statutLabel}`, onClear: () => setStatut("a_traiter") } as FilterBadge]
+            ? [
+                {
+                  key: "statut",
+                  label: `Statut : ${statutLabel}`,
+                  onClear: () => setStatut("a_traiter"),
+                } as FilterBadge,
+              ]
             : []),
         ]}
         onResetAll={resetAllFilters}
       />
-
       <Card>
         {isLoading ? (
           <div className="p-4 space-y-2">
@@ -208,7 +205,6 @@ function ColisageListPage() {
                   <TableRow>
                     <TableCell colSpan={9} className="py-6">
                       <EmptyState
-                        icon={Package}
                         title={
                           hasActiveFilters
                             ? "Aucun bon de livraison ne correspond aux filtres appliqués."
@@ -224,9 +220,13 @@ function ColisageListPage() {
                     const st = STATUT_BL_LABEL[r.statut];
                     return (
                       <TableRow key={r.bl_id}>
-                        <TableCell className="font-mono text-xs">{formatDocumentReference(r.reference)}</TableCell>
+                        <TableCell className="font-mono text-xs">
+                          {formatDocumentReference(r.reference)}
+                        </TableCell>
                         <TableCell>{frDate(r.date_emission)}</TableCell>
-                        <TableCell><ClientLink clientId={r.client_id} nom={r.client_nom} /></TableCell>
+                        <TableCell>
+                          <ClientLink clientId={r.client_id} nom={r.client_nom} />
+                        </TableCell>
                         <TableCell>{r.etablissement ?? "—"}</TableCell>
                         <TableCell>{r.ville ?? "—"}</TableCell>
                         <TableCell className="text-right">{r.nb_articles}</TableCell>

@@ -98,6 +98,68 @@ const ECRANS_NETTOYES = [
   "src/routes/_authenticated/paiements.nouveau.tsx",
   "src/routes/_authenticated/proformas.$proformaId.tsx",
   "src/routes/_authenticated/proformas.index.tsx",
+  // Lot 3 (05/11/2026) : stock, produits, inventaires, logistique, colisage, retours.
+  "src/components/achats/nouveau/LignesProduitsSection.tsx",
+  "src/components/colisage/ColisageActionButtons.tsx",
+  "src/components/colisage/ColisageForm.tsx",
+  "src/components/colisage/EtiquettesSection.tsx",
+  "src/components/colisage/form/ColisageAcheminementFields.tsx",
+  "src/components/colisage/form/ColisageCartonsSection.tsx",
+  "src/components/data-quality/ReconciliationStockCard.tsx",
+  "src/components/inventaires/detail/InventaireHeaderActions.tsx",
+  "src/components/livraison-suivi/ConfirmerReceptionDialog.tsx",
+  "src/components/livraison-suivi/LivraisonsTable.tsx",
+  "src/components/logistics-costs/DetailDialog.tsx",
+  "src/components/produits/ProductCoverActions.tsx",
+  "src/components/produits/ProductCoverHero.tsx",
+  "src/components/produits/ProductCoverSection.tsx",
+  "src/components/produits/ProductCoverThumb.tsx",
+  "src/components/produits/detail/DepotsStockTab.tsx",
+  "src/components/produits/detail/InfoCards.tsx",
+  "src/components/produits/detail/KpiCards.tsx",
+  "src/components/produits/list/ProduitFormDialog.tsx",
+  "src/components/produits/list/ProduitsFilters.tsx",
+  "src/components/produits/list/ProduitsTable.tsx",
+  "src/components/rapports/analyse/ProduitsTab.tsx",
+  "src/components/retours/nouveau/DocumentSection.tsx",
+  "src/components/retours/nouveau/LignesSection.tsx",
+  "src/components/specimens/nouveau/LignesProduitsSection.tsx",
+  "src/components/stock/DepotSortieField.tsx",
+  "src/components/tournees/DateColisPicker.tsx",
+  "src/components/tournees/create/ColisPickerTable.tsx",
+  "src/routes/_authenticated/alertes-stock.tsx",
+  "src/routes/_authenticated/bon-de-sortie.$tourneeId.tsx",
+  "src/routes/_authenticated/bon-de-tournee.$tourneeId.tsx",
+  "src/routes/_authenticated/bons-livraison.tsx",
+  "src/routes/_authenticated/colisage.$blId.tsx",
+  "src/routes/_authenticated/colisage.index.tsx",
+  "src/routes/_authenticated/colisage.responsables.tsx",
+  "src/routes/_authenticated/expeditions.tsx",
+  "src/routes/_authenticated/fleet.tsx",
+  "src/routes/_authenticated/inventaires.$inventaireId.tsx",
+  "src/routes/_authenticated/inventaires.index.tsx",
+  "src/routes/_authenticated/inventaires.nouveau-physique.tsx",
+  "src/routes/_authenticated/livraison-suivi.index.tsx",
+  "src/routes/_authenticated/livreurs.tsx",
+  "src/routes/_authenticated/logistics-costs.tsx",
+  "src/routes/_authenticated/missions.tsx",
+  "src/routes/_authenticated/parametres.zones-livraison.tsx",
+  "src/routes/_authenticated/pilotage.tsx",
+  "src/routes/_authenticated/produits.$produitId.tsx",
+  "src/routes/_authenticated/produits.index.tsx",
+  "src/routes/_authenticated/rapports-logistique.tsx",
+  "src/routes/_authenticated/rapports.transport.tsx",
+  "src/routes/_authenticated/retours.$retourId.tsx",
+  "src/routes/_authenticated/retours.index.tsx",
+  "src/routes/_authenticated/retours.nouveau.tsx",
+  "src/routes/_authenticated/stock.audit.tsx",
+  "src/routes/_authenticated/stock.index.tsx",
+  "src/routes/_authenticated/stock_.$produitId.mouvements.tsx",
+  "src/routes/_authenticated/tournees-bl.$tourneeId.tsx",
+  "src/routes/_authenticated/tournees.$tourneeId.tsx",
+  "src/routes/_authenticated/tournees.index.tsx",
+  "src/routes/_authenticated/tournees.nouvelle.tsx",
+  "src/routes/carton.$colisId.tsx",
 ];
 
 const EMOJI = /\p{Extended_Pictographic}/u;
@@ -124,7 +186,8 @@ describe("écrans sans icônes décoratives", () => {
       expect(iconesImportees(src).filter((n) => !ICONES_FONCTIONNELLES.has(n))).toEqual([]);
     });
     it(`${f} : aucun emoji`, () => {
-      expect(EMOJI.test(src)).toBe(false);
+      // ©, ® et ™ sont des mentions légales, pas des emojis.
+      expect(EMOJI.test(src.replace(/[©®™]/g, ""))).toBe(false);
     });
     it(`${f} : aucune icône affichée depuis les données (item.icon, Icon)`, () => {
       expect(src).not.toMatch(/<(?:Icon|GroupIcon|\w+\.icon)\b/);

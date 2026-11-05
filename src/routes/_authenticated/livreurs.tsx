@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { User } from "lucide-react";
 import { ResourceManager, type ResourceConfig } from "@/components/crud/ResourceManager";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
@@ -8,7 +7,6 @@ const config: ResourceConfig = {
   idField: "livreur_id",
   title: "Livreurs",
   subtitle: "Fiche des livreurs (données logistiques — aucun accès à l'application)",
-  icon: User,
   newLabel: "Nouveau livreur",
   entityLabel: "le livreur",
   csvName: "livreurs",

@@ -1,17 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import type { ReactNode } from "react";
-import {
-  AlertTriangle,
-  ArrowRight,
-  Boxes,
-  ClipboardList,
-  PackageOpen,
-  RefreshCw,
-  RotateCcw,
-  Truck,
-  Wallet,
-} from "lucide-react";
 
 import { useExerciceConsulteId } from "@/contexts/ExerciceContext";
 import { cockpitQueryOptions, type CockpitData } from "@/lib/cockpit-api";
@@ -28,7 +17,8 @@ export const Route = createFileRoute("/_authenticated/pilotage")({
       { title: "Centre de pilotage — Gesti-One FABS-CI" },
       {
         name: "description",
-        content: "Activité du jour et actions recommandées : impayés, préparations, livraisons, stock.",
+        content:
+          "Activité du jour et actions recommandées : impayés, préparations, livraisons, stock.",
       },
       { property: "og:title", content: "Centre de pilotage — Gesti-One FABS-CI" },
       {
@@ -55,10 +45,10 @@ type Dest =
 
 type Tone = "danger" | "warning" | "info" | "success";
 const TONE: Record<Tone, string> = {
-  danger: "text-destructive bg-destructive/10",
-  warning: "text-warning bg-warning/10",
-  info: "text-primary bg-primary/10",
-  success: "text-success bg-success/10",
+  danger: "bg-destructive",
+  warning: "bg-warning",
+  info: "bg-primary",
+  success: "bg-success",
 };
 
 const fmtDate = (d: string | null | undefined) => {
@@ -77,15 +67,12 @@ function Pilotage() {
     <div className="theme-dashboard space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            Centre de pilotage
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Centre de pilotage</h1>
           <p className="text-sm text-muted-foreground">
             Que se passe-t-il aujourd'hui ? {data ? `— situation au ${fmtDate(data.today)}` : ""}
           </p>
         </div>
         <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
-          <RefreshCw className={`mr-2 h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
           Actualiser
         </Button>
       </header>
@@ -93,7 +80,6 @@ function Pilotage() {
       {isError ? (
         <Card>
           <CardContent className="flex flex-col items-center gap-3 py-12 text-center">
-            <AlertTriangle data-status-icon className="h-8 w-8 text-destructive" />
             <p className="font-medium">Impossible de charger le centre de pilotage</p>
             <p className="text-sm text-muted-foreground">{error?.message}</p>
             <Button onClick={() => refetch()}>Réessayer</Button>
@@ -128,9 +114,7 @@ function CockpitContent({ data }: { data: CockpitData }) {
   return (
     <>
       <section aria-label="Activité du jour">
-        <h2 className="mb-3 text-sm font-semibold text-muted-foreground">
-          Activité du jour
-        </h2>
+        <h2 className="mb-3 text-sm font-semibold text-muted-foreground">Activité du jour</h2>
         {!hasAny ? (
           <Card>
             <CardContent className="py-10 text-center text-sm text-muted-foreground">
@@ -142,7 +126,6 @@ function CockpitContent({ data }: { data: CockpitData }) {
             {data.impayes30 && (
               <Kpi
                 tone="danger"
-                icon={<Wallet className="h-5 w-5" />}
                 label="Factures impayées depuis plus de 30 jours"
                 value={data.impayes30.count}
                 sub={formatFCFA(data.impayes30.montant)}
@@ -152,7 +135,6 @@ function CockpitContent({ data }: { data: CockpitData }) {
             {data.aPreparer && (
               <Kpi
                 tone="warning"
-                icon={<ClipboardList className="h-5 w-5" />}
                 label="Commandes à préparer"
                 value={data.aPreparer.count}
                 sub="bons de livraison à préparer"
@@ -162,7 +144,6 @@ function CockpitContent({ data }: { data: CockpitData }) {
             {data.livraisonsRetard && (
               <Kpi
                 tone="warning"
-                icon={<Truck className="h-5 w-5" />}
                 label="Livraisons en retard"
                 value={data.livraisonsRetard.count}
                 sub="date prévue dépassée"
@@ -172,7 +153,6 @@ function CockpitContent({ data }: { data: CockpitData }) {
             {data.paiementsJour && (
               <Kpi
                 tone="success"
-                icon={<Wallet className="h-5 w-5" />}
                 label="Paiements reçus aujourd'hui"
                 value={data.paiementsJour.count}
                 sub={formatFCFA(data.paiementsJour.montant)}
@@ -182,7 +162,6 @@ function CockpitContent({ data }: { data: CockpitData }) {
             {data.stockBas && (
               <Kpi
                 tone="danger"
-                icon={<Boxes className="h-5 w-5" />}
                 label="Produits sous le seuil d'alerte"
                 value={data.stockBas.count}
                 sub="stock réel des dépôts"
@@ -192,7 +171,6 @@ function CockpitContent({ data }: { data: CockpitData }) {
             {data.retoursAttente && (
               <Kpi
                 tone="info"
-                icon={<RotateCcw className="h-5 w-5" />}
                 label="Retours en attente"
                 value={data.retoursAttente.count}
                 sub="à traiter"
@@ -202,12 +180,9 @@ function CockpitContent({ data }: { data: CockpitData }) {
           </div>
         )}
       </section>
-
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            Actions recommandées
-          </CardTitle>
+          <CardTitle className="flex items-center gap-2 text-base">Actions recommandées</CardTitle>
         </CardHeader>
         <CardContent>
           {actions.length === 0 ? (
@@ -220,12 +195,12 @@ function CockpitContent({ data }: { data: CockpitData }) {
                 <li key={a.key} className="flex flex-wrap items-center justify-between gap-2 py-3">
                   <div className="min-w-0">
                     <p className="text-sm font-medium">{a.title}</p>
-                    {a.detail && <div className="mt-1 text-xs text-muted-foreground">{a.detail}</div>}
+                    {a.detail && (
+                      <div className="mt-1 text-xs text-muted-foreground">{a.detail}</div>
+                    )}
                   </div>
                   <Button asChild size="sm" variant="outline">
-                    <Link to={a.to}>
-                      {a.cta} <ArrowRight className="ml-1 h-4 w-4" />
-                    </Link>
+                    <Link to={a.to}>{a.cta}</Link>
                   </Button>
                 </li>
               ))}
@@ -233,7 +208,6 @@ function CockpitContent({ data }: { data: CockpitData }) {
           )}
         </CardContent>
       </Card>
-
       <div className="grid gap-4 lg:grid-cols-2">
         {data.direction && <DirectionCard d={data.direction} />}
         {data.anciennete && <AncienneteCard a={data.anciennete} />}
@@ -250,7 +224,11 @@ function CockpitContent({ data }: { data: CockpitData }) {
           <ListCard title="Préparations les plus anciennes" to="/colisage">
             {data.aPreparer.items.map((b) => (
               <Row key={b.id} right={fmtDate(b.date_bon)}>
-                <Link to="/colisage/$blId" params={{ blId: b.id }} className="font-medium hover:underline">
+                <Link
+                  to="/colisage/$blId"
+                  params={{ blId: b.id }}
+                  className="font-medium hover:underline"
+                >
                   {b.reference}
                 </Link>{" "}
                 {b.client_nom && <span className="text-muted-foreground">— {b.client_nom}</span>}
@@ -263,7 +241,11 @@ function CockpitContent({ data }: { data: CockpitData }) {
             {data.livraisonsRetard.items.map((l) => (
               <Row key={l.id} right={fmtDate(l.date_livraison)}>
                 {l.bl_id ? (
-                  <Link to="/colisage/$blId" params={{ blId: l.bl_id }} className="font-medium hover:underline">
+                  <Link
+                    to="/colisage/$blId"
+                    params={{ blId: l.bl_id }}
+                    className="font-medium hover:underline"
+                  >
                     {l.reference ?? "Livraison sans référence"}
                   </Link>
                 ) : (
@@ -278,7 +260,11 @@ function CockpitContent({ data }: { data: CockpitData }) {
           <ListCard title="Produits à réapprovisionner" to="/alertes-stock">
             {data.stockBas.items.map((p) => (
               <Row key={p.id} right={`${Number(p.stock)} / seuil ${Number(p.seuil)}`}>
-                <Link to="/produits/$produitId" params={{ produitId: p.id }} className="font-medium hover:underline">
+                <Link
+                  to="/produits/$produitId"
+                  params={{ produitId: p.id }}
+                  className="font-medium hover:underline"
+                >
                   {p.titre}
                 </Link>
               </Row>
@@ -290,27 +276,19 @@ function CockpitContent({ data }: { data: CockpitData }) {
   );
 }
 
-function Kpi(props: {
-  tone: Tone;
-  icon: ReactNode;
-  label: string;
-  value: number;
-  sub?: string;
-  to: Dest;
-}) {
+function Kpi(props: { tone: Tone; label: string; value: number; sub?: string; to: Dest }) {
   return (
     <Link
       to={props.to}
       className="group rounded-xl border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-accent/40"
     >
       <div className="flex items-start gap-3">
-        <span className={`rounded-lg p-2 ${TONE[props.tone]}`}>{props.icon}</span>
+        <span aria-hidden className={`mt-0.5 h-10 w-1 shrink-0 rounded-full ${TONE[props.tone]}`} />
         <div className="min-w-0 flex-1">
           <p className="text-xs text-muted-foreground">{props.label}</p>
           <p className="text-2xl font-bold tabular-nums">{props.value}</p>
           {props.sub && <p className="truncate text-xs text-muted-foreground">{props.sub}</p>}
         </div>
-        <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
       </div>
     </Link>
   );
@@ -389,9 +367,7 @@ function AncienneteCard({ a }: { a: NonNullable<CockpitData["anciennete"]> }) {
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <PackageOpen className="h-4 w-4 text-muted-foreground" /> Impayés par ancienneté
-        </CardTitle>
+        <CardTitle className="flex items-center gap-2 text-base">Impayés par ancienneté</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         {buckets.map(([label, v, color]) => {

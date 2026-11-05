@@ -2,7 +2,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, ClipboardList, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -95,12 +94,9 @@ function NouveauPhysiquePage() {
   return (
     <div className="space-y-6 max-w-2xl">
       <div className="flex items-center gap-3">
-        <Button aria-label="Retour" asChild variant="ghost" size="icon">
-          <Link to="/inventaires">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
+        <Button aria-label="Retour" asChild variant="ghost" size="sm">
+          <Link to="/inventaires">Retour</Link>
         </Button>
-        <ClipboardList className="h-6 w-6 text-primary" />
         <div>
           <h1 className="ds-page-title">Nouvel inventaire physique</h1>
           <p className="text-sm text-muted-foreground">
@@ -108,7 +104,6 @@ function NouveauPhysiquePage() {
           </p>
         </div>
       </div>
-
       <section className="rounded-md border bg-card p-5 space-y-4">
         <div>
           <Label>Date de l'inventaire *</Label>
@@ -157,7 +152,6 @@ function NouveauPhysiquePage() {
           />
         </div>
       </section>
-
       <div className="flex justify-end gap-3">
         <Button asChild variant="outline">
           <Link to="/inventaires">Annuler</Link>
@@ -172,7 +166,6 @@ function NouveauPhysiquePage() {
           }}
           disabled={mutation.isPending}
         >
-          <Save className="h-4 w-4 mr-2" />
           {mutation.isPending ? "Création…" : "Créer & saisir le comptage"}
         </Button>
       </div>

@@ -4,7 +4,7 @@ import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Truck, Search, Package, Ban, Trash2, RotateCcw, X, Printer } from "lucide-react";
+import { X } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -103,23 +103,18 @@ function BonsLivraisonListPage() {
         actions={
           <Can permission="colisage.voir">
             <Button asChild variant="outline">
-              <Link to="/colisage">
-                <Package className="mr-2 h-4 w-4" /> Aller au colisage
-              </Link>
+              <Link to="/colisage">Aller au colisage</Link>
             </Button>
           </Can>
         }
       />
-
       <Card className="p-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[240px]">
-            <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Rechercher (n°, client, établissement, ville…)"
-              className="pl-8"
             />
           </div>
           <Select value={statut} onValueChange={setStatut}>
@@ -143,7 +138,12 @@ function BonsLivraisonListPage() {
           {q && (
             <Badge variant="secondary" className="gap-1">
               Recherche : {q}
-              <button type="button" onClick={() => setQ("")} className="ml-1 rounded-full hover:bg-muted" aria-label="Retirer la recherche">
+              <button
+                type="button"
+                onClick={() => setQ("")}
+                className="ml-1 rounded-full hover:bg-muted"
+                aria-label="Retirer la recherche"
+              >
                 <X className="h-3 w-3" />
               </button>
             </Badge>
@@ -151,13 +151,18 @@ function BonsLivraisonListPage() {
           {statut !== "all" && (
             <Badge variant="secondary" className="gap-1">
               Statut : {STATUT_BL_LABEL[statut]?.label ?? statut}
-              <button type="button" onClick={() => setStatut("all")} className="ml-1 rounded-full hover:bg-muted" aria-label="Retirer le statut">
+              <button
+                type="button"
+                onClick={() => setStatut("all")}
+                className="ml-1 rounded-full hover:bg-muted"
+                aria-label="Retirer le statut"
+              >
                 <X className="h-3 w-3" />
               </button>
             </Badge>
           )}
           <Button variant="ghost" size="sm" onClick={resetFilters}>
-            <RotateCcw className="mr-1 h-3 w-3" /> Réinitialiser
+            Réinitialiser
           </Button>
         </div>
       )}
@@ -191,7 +196,6 @@ function BonsLivraisonListPage() {
                     <TableCell colSpan={9} className="py-6">
                       <EmptyState
                         variant={hasActiveFilters ? "compact" : "rich"}
-                        icon={Truck}
                         title={
                           hasActiveFilters
                             ? "Aucun bon de livraison ne correspond aux filtres."
@@ -211,7 +215,9 @@ function BonsLivraisonListPage() {
                     const st = STATUT_BL_LABEL[r.statut];
                     return (
                       <TableRow key={r.bl_id}>
-                        <TableCell className="font-mono text-xs">{formatDocumentReference(r.reference)}</TableCell>
+                        <TableCell className="font-mono text-xs">
+                          {formatDocumentReference(r.reference)}
+                        </TableCell>
                         <TableCell>{frDate(r.date_emission)}</TableCell>
                         <TableCell>{r.client_nom ?? "—"}</TableCell>
                         <TableCell>{r.etablissement ?? "—"}</TableCell>
@@ -276,7 +282,9 @@ function RowActions({ row, blId }: { row: BLAColiser; blId: string }) {
       const parts = summary
         ? [
             `${summary.colis_supprimes} colis`,
-            summary.tournees_recalculees ? `${summary.tournees_recalculees} tournée(s) recalculée(s)` : null,
+            summary.tournees_recalculees
+              ? `${summary.tournees_recalculees} tournée(s) recalculée(s)`
+              : null,
             summary.notifications_supprimees ? `${summary.notifications_supprimees} notif.` : null,
           ].filter(Boolean)
         : [];
@@ -329,19 +337,21 @@ function RowActions({ row, blId }: { row: BLAColiser; blId: string }) {
           URL.revokeObjectURL(url);
         }}
       >
-        <Printer className="mr-1 h-4 w-4" /> PDF
+        PDF
       </Button>
       {annulable && (
         <Can permission="colisage.annuler">
           <AlertDialog open={openAnnul} onOpenChange={setOpenAnnul}>
             <AlertDialogTrigger asChild>
               <Button size="sm" variant="outline">
-                <Ban className="mr-1 h-4 w-4" /> Annuler
+                Annuler
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Annuler le colisage {formatDocumentReference(row.reference)} ?</AlertDialogTitle>
+                <AlertDialogTitle>
+                  Annuler le colisage {formatDocumentReference(row.reference)} ?
+                </AlertDialogTitle>
                 <AlertDialogDescription>
                   Cette action passe le BL au statut « Annulé » et supprime les cartons générés.
                 </AlertDialogDescription>
@@ -370,7 +380,6 @@ function RowActions({ row, blId }: { row: BLAColiser; blId: string }) {
           <AlertDialog open={openSuppr} onOpenChange={setOpenSuppr}>
             <AlertDialogTrigger asChild>
               <Button size="sm" variant="destructive">
-                <Trash2 className="mr-1 h-4 w-4" />
                 {isSuperAdmin ? "Supprimer définitivement" : "Supprimer"}
               </Button>
             </AlertDialogTrigger>

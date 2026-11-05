@@ -2,7 +2,6 @@ import { ClientLink } from "@/components/common/ClientLink";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Truck, Download } from "lucide-react";
 import {
   Bar,
   BarChart,
@@ -68,8 +67,7 @@ export const Route = createFileRoute("/_authenticated/rapports/transport")({
   }),
 });
 
-const frDate = (v?: string | null) =>
-  v ? formatDate(v) : "—";
+const frDate = (v?: string | null) => (v ? formatDate(v) : "—");
 
 const LABEL_TYPE: Record<string, string> = {
   livraison: "Livraison",
@@ -140,14 +138,11 @@ function RapportTransportPage() {
   return (
     <div className="theme-dashboard space-y-6 p-4 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="ds-page-title flex items-center gap-2">
-          <Truck className="h-6 w-6 text-primary" /> Frais de transport
-        </h1>
+        <h1 className="ds-page-title flex items-center gap-2">Frais de transport</h1>
         <Button variant="outline" onClick={exporter} disabled={!d}>
-          <Download className="mr-2 h-4 w-4" /> Exporter
+          Exporter
         </Button>
       </div>
-
       <Card>
         <CardContent className="grid gap-3 pt-6 sm:grid-cols-2 lg:grid-cols-5">
           <div className="space-y-1.5">
@@ -217,9 +212,7 @@ function RapportTransportPage() {
 
       {q.isLoading && <p className="text-muted-foreground">Chargement…</p>}
       {q.isError && (
-        <p className="text-destructive">
-          Impossible de charger le rapport des frais de transport.
-        </p>
+        <p className="text-destructive">Impossible de charger le rapport des frais de transport.</p>
       )}
 
       {d && (
@@ -239,7 +232,6 @@ function RapportTransportPage() {
               </Card>
             ))}
           </div>
-
           <Card>
             <CardHeader>
               <CardTitle>Évolution</CardTitle>
@@ -262,7 +254,6 @@ function RapportTransportPage() {
               )}
             </CardContent>
           </Card>
-
           <Card>
             <CardHeader>
               <CardTitle>Par client</CardTitle>
@@ -286,7 +277,9 @@ function RapportTransportPage() {
                   ) : (
                     d.clients.map((c) => (
                       <TableRow key={`${c.client_id}-${c.client_nom}`}>
-                        <TableCell><ClientLink clientId={c.client_id} nom={c.client_nom} /></TableCell>
+                        <TableCell>
+                          <ClientLink clientId={c.client_id} nom={c.client_nom} />
+                        </TableCell>
                         <TableCell className="text-right">{c.nb}</TableCell>
                         <TableCell className="text-right font-medium">
                           {formatFCFA(c.total)}
@@ -298,7 +291,6 @@ function RapportTransportPage() {
               </Table>
             </CardContent>
           </Card>
-
           <Card>
             <CardHeader>
               <CardTitle>Détail des factures ({d.lignes.length})</CardTitle>
@@ -325,9 +317,15 @@ function RapportTransportPage() {
                   ) : (
                     d.lignes.map((l, i) => (
                       <TableRow key={`${l.facture_id ?? i}`}>
-                        <TableCell className="font-medium">{l.reference ?? NON_RENSEIGNE}</TableCell>
-                        <TableCell>{l.date_facture ? frDate(l.date_facture) : NON_RENSEIGNE}</TableCell>
-                        <TableCell><ClientLink clientId={l.client_id} nom={l.client_nom ?? NON_RENSEIGNE} /></TableCell>
+                        <TableCell className="font-medium">
+                          {l.reference ?? NON_RENSEIGNE}
+                        </TableCell>
+                        <TableCell>
+                          {l.date_facture ? frDate(l.date_facture) : NON_RENSEIGNE}
+                        </TableCell>
+                        <TableCell>
+                          <ClientLink clientId={l.client_id} nom={l.client_nom ?? NON_RENSEIGNE} />
+                        </TableCell>
                         <TableCell>
                           {TYPE_MAJ[l.type_frais_transport ?? ""] ?? NON_RENSEIGNE}
                         </TableCell>

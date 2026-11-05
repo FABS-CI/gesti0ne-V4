@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { BarChart3, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -68,9 +67,7 @@ function RapportsLogistique() {
       if (to) q = q.lte("date_tournee", to);
       if (statut) q = q.eq("statut", statut);
       if (chauffeur) q = q.ilike("chauffeur_nom", `%${chauffeur}%`);
-      const { data, error } = await q
-        .order("date_tournee", { ascending: false })
-        .limit(5000);
+      const { data, error } = await q.order("date_tournee", { ascending: false }).limit(5000);
       if (error) throw error;
       return (data ?? []) as Row[];
     },
@@ -138,21 +135,16 @@ function RapportsLogistique() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <BarChart3 className="h-6 w-6" /> Rapports logistique
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Rapports logistique</h1>
           <p className="text-sm text-muted-foreground">Analyse des tournées et coûts par période</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => window.print()}>
             Imprimer
           </Button>
-          <Button onClick={handleExport}>
-            <Download className="mr-2 h-4 w-4" /> Exporter PDF
-          </Button>
+          <Button onClick={handleExport}>Exporter PDF</Button>
         </div>
       </div>
-
       <Card>
         <CardContent className="grid grid-cols-1 gap-3 p-4 md:grid-cols-4">
           <div>
@@ -189,14 +181,12 @@ function RapportsLogistique() {
           </div>
         </CardContent>
       </Card>
-
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Kpi label="Tournées" value={String(rows.length)} />
         <Kpi label="Coût total" value={formatFCFA(totaux.cout)} />
         <Kpi label="Colis" value={String(totaux.colis)} />
         <Kpi label="Cartons" value={String(totaux.cartons)} />
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Détail</CardTitle>

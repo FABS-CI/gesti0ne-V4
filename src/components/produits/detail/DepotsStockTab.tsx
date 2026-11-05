@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -87,7 +86,6 @@ export function DepotsStockTab({
         <CardTitle>Stock par dépôt</CardTitle>
         {canAjuster && (
           <Button size="sm" variant="outline" onClick={() => openFor(null)}>
-            <Pencil className="h-4 w-4 mr-2" />
             Ajuster un stock
           </Button>
         )}
@@ -113,13 +111,14 @@ export function DepotsStockTab({
                   <TableCell className="text-right font-medium">{s.quantite}</TableCell>
                   <TableCell className="text-right">
                     {canAjuster && (
-                      <Button aria-label="Ajuster"
-                        size="icon"
+                      <Button
+                        aria-label="Ajuster"
+                        size="sm"
                         variant="ghost"
                         onClick={() => openFor(s)}
                         title="Ajuster"
                       >
-                        <Pencil className="h-4 w-4" />
+                        Ajuster
                       </Button>
                     )}
                   </TableCell>
@@ -129,7 +128,6 @@ export function DepotsStockTab({
           </Table>
         )}
       </CardContent>
-
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>

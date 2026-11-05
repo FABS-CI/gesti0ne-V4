@@ -2,7 +2,7 @@ import { displayColisReference } from "@/lib/colis-reference";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Loader2, Package, Truck, FileDown, Globe, ShieldCheck } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import fabsLogoUrl from "@/assets/fabs-logo.png";
 
@@ -95,7 +95,6 @@ function CartonPublicPage() {
   if (error || !data) {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-muted p-6 text-center">
-        <Package className="h-12 w-12 text-muted-foreground" />
         <h1 className="ds-page-title text-foreground">Carton introuvable</h1>
         <p className="max-w-sm text-sm text-muted-foreground">
           Ce QR code ne correspond à aucun carton actif. Vérifiez que vous scannez bien un sticker
@@ -113,7 +112,13 @@ function CartonPublicPage() {
       {/* En-tête premium */}
       <header className="bg-card px-4 pb-6 pt-7 shadow-sm">
         <div className="mx-auto flex max-w-2xl flex-col items-center gap-3 text-center">
-          <img src={fabsLogoUrl} alt="Éditions FABS-CI" height={48} decoding="async" className="h-12 w-auto" />
+          <img
+            src={fabsLogoUrl}
+            alt="Éditions FABS-CI"
+            height={48}
+            decoding="async"
+            className="h-12 w-auto"
+          />
           <div>
             <h1 className="ds-page-title text-foreground">SUIVI DU CARTON</h1>
             <p className="text-sm text-muted-foreground">Consultation logistique</p>
@@ -127,16 +132,22 @@ function CartonPublicPage() {
           </span>
         </div>
       </header>
-
       <main className="mx-auto max-w-2xl space-y-4 px-4 pt-4">
         {/* Références */}
         <Card>
-          <Row label="Carton" value={`${data.numero_carton ?? "?"} / ${data.nb_cartons ?? "?"}`} accent />
+          <Row
+            label="Carton"
+            value={`${data.numero_carton ?? "?"} / ${data.nb_cartons ?? "?"}`}
+            accent
+          />
           <Row label="Bon de livraison" value={data.bl_reference} mono accent />
           <Row label="Commande" value={data.commande_reference} mono />
           <Row
             label="Colisage"
-            value={displayColisReference(data.bl_reference, data.numero_carton, data.reference_colis) ?? null}
+            value={
+              displayColisReference(data.bl_reference, data.numero_carton, data.reference_colis) ??
+              null
+            }
             mono
           />
         </Card>
@@ -145,13 +156,8 @@ function CartonPublicPage() {
         <Card>
           <div className="space-y-4 px-4 py-4">
             <div>
-              <div className="text-xs font-semibold text-muted-foreground">
-                Client
-              </div>
-              <div
-                className="break-words text-lg font-bold leading-snug"
-                style={{ color: BLUE }}
-              >
+              <div className="text-xs font-semibold text-muted-foreground">Client</div>
+              <div className="break-words text-lg font-bold leading-snug" style={{ color: BLUE }}>
                 {client}
               </div>
             </div>
@@ -169,10 +175,16 @@ function CartonPublicPage() {
                   Responsable / Contact
                 </div>
                 {data.destinataire && (
-                  <div className="break-words font-semibold text-foreground">{data.destinataire}</div>
+                  <div className="break-words font-semibold text-foreground">
+                    {data.destinataire}
+                  </div>
                 )}
                 {data.telephone && (
-                  <a href={`tel:${data.telephone}`} className="font-semibold underline" style={{ color: BLUE }}>
+                  <a
+                    href={`tel:${data.telephone}`}
+                    className="font-semibold underline"
+                    style={{ color: BLUE }}
+                  >
                     {data.telephone}
                   </a>
                 )}
@@ -180,20 +192,20 @@ function CartonPublicPage() {
             )}
 
             <div>
-              <div className="text-xs font-semibold text-muted-foreground">
-                Destination
-              </div>
+              <div className="text-xs font-semibold text-muted-foreground">Destination</div>
               <div className="break-words text-lg font-bold uppercase" style={{ color: BLUE }}>
                 {destination}
               </div>
-              {data.adresse && <div className="break-words text-sm text-muted-foreground">{data.adresse}</div>}
+              {data.adresse && (
+                <div className="break-words text-sm text-muted-foreground">{data.adresse}</div>
+              )}
               {data.ville && data.ville !== destination && (
-                <div className="break-words text-sm text-muted-foreground">Ville du client : {data.ville}</div>
+                <div className="break-words text-sm text-muted-foreground">
+                  Ville du client : {data.ville}
+                </div>
               )}
             </div>
-
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Truck className="h-4 w-4 shrink-0" />
               {data.mode_acheminement === "expedition" ? "Expédition" : "Livraison"}
               {data.date_colisage && <span>· {formatDateFr(data.date_colisage)}</span>}
             </div>
@@ -208,7 +220,9 @@ function CartonPublicPage() {
             {data.observations && (
               <div>
                 <div className="text-xs font-semibold text-muted-foreground">Observations</div>
-                <div className="whitespace-pre-line break-words text-sm text-foreground">{data.observations}</div>
+                <div className="whitespace-pre-line break-words text-sm text-foreground">
+                  {data.observations}
+                </div>
               </div>
             )}
           </div>
@@ -220,35 +234,33 @@ function CartonPublicPage() {
             <p className="p-4 text-sm text-muted-foreground">Aucun détail produit disponible.</p>
           ) : (
             <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="border-b bg-muted text-left text-xs uppercase text-muted-foreground">
-                <tr>
-                  <th className="whitespace-nowrap p-3 font-semibold">Réf.</th>
-                  <th className="p-3 font-semibold">Désignation</th>
-                  <th className="p-3 text-right font-semibold">Quantité</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.produits.map((p, i) => (
-                  <tr key={i} className="border-b last:border-0">
-                    <td className="whitespace-nowrap p-3 font-mono text-xs text-muted-foreground">{p.reference ?? "—"}</td>
-                    <td className="break-words p-3 text-foreground">{p.designation ?? "—"}</td>
-                    <td className="p-3 text-right font-semibold">{p.quantite}</td>
+              <table className="w-full text-sm">
+                <thead className="border-b bg-muted text-left text-xs uppercase text-muted-foreground">
+                  <tr>
+                    <th className="whitespace-nowrap p-3 font-semibold">Réf.</th>
+                    <th className="p-3 font-semibold">Désignation</th>
+                    <th className="p-3 text-right font-semibold">Quantité</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {data.produits.map((p, i) => (
+                    <tr key={i} className="border-b last:border-0">
+                      <td className="whitespace-nowrap p-3 font-mono text-xs text-muted-foreground">
+                        {p.reference ?? "—"}
+                      </td>
+                      <td className="break-words p-3 text-foreground">{p.designation ?? "—"}</td>
+                      <td className="p-3 text-right font-semibold">{p.quantite}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </Card>
-
         <BlDownload colisId={colisId} blReference={data.bl_reference} clientNom={client} />
-
         <div className="flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
-          <ShieldCheck className="h-4 w-4 text-success" />
           Référence du carton vérifiée — document identifié par QR code
         </div>
-
         <footer className="pt-4 text-center text-xs leading-relaxed text-muted-foreground">
           <div className="font-semibold text-muted-foreground">EDITIONS FABS-CI</div>
           <div>Consultation logistique — Lecture seule</div>
@@ -278,7 +290,9 @@ function BlDownload({
     setUnavailable(false);
     setState("generating");
     try {
-      const res = await fetch(`/api/public/carton/${colisId}/bl`, { headers: { Accept: "application/json" } });
+      const res = await fetch(`/api/public/carton/${colisId}/bl`, {
+        headers: { Accept: "application/json" },
+      });
       if (!res.ok) {
         setUnavailable(true);
         setState("idle");
@@ -291,10 +305,11 @@ function BlDownload({
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${payload.reference || blReference || "bon-de-livraison"} - ${clientNom}.pdf`.replace(
-        /[\\/:*?"<>|]/g,
-        "-",
-      );
+      a.download =
+        `${payload.reference || blReference || "bon-de-livraison"} - ${clientNom}.pdf`.replace(
+          /[\\/:*?"<>|]/g,
+          "-",
+        );
       a.click();
       URL.revokeObjectURL(url);
     } catch {
@@ -313,7 +328,7 @@ function BlDownload({
         className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-4 text-center text-sm font-bold text-white shadow-sm transition disabled:opacity-70"
         style={{ backgroundColor: BLUE }}
       >
-        {busy ? <Loader2 className="h-5 w-5 animate-spin" /> : <FileDown className="h-5 w-5" />}
+        {busy ? <Loader2 className="h-5 w-5 animate-spin" /> : null}
         {state === "generating"
           ? "Génération du bon de livraison…"
           : state === "downloading"
@@ -337,7 +352,6 @@ function BlDownload({
         rel="noopener noreferrer"
         className="flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-muted"
       >
-        <Globe className="h-4 w-4" />
         Aller sur le site officiel
       </a>
     </div>

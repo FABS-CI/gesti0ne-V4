@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Car } from "lucide-react";
 import { ResourceManager, type ResourceConfig } from "@/components/crud/ResourceManager";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
@@ -28,7 +27,6 @@ const config: ResourceConfig = {
   idField: "vehicule_id",
   title: "Flotte",
   subtitle: "Parc automobile de l'entreprise",
-  icon: Car,
   newLabel: "Nouveau véhicule",
   entityLabel: "le véhicule",
   csvName: "vehicules",

@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Package, Search, Truck } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -40,9 +39,9 @@ function LivraisonSuiviIndex() {
   const [statutFilter, setStatutFilter] = useState<LivStatut | "all">("all");
   const [tourneeFilter, setTourneeFilter] = useState<string>("");
   const [pageSize, setPageSize] = useState<number>(25);
-  const [target, setTarget] = useState<
-    (LivSuiviCommande & { colis?: ColisInfo | null }) | null
-  >(null);
+  const [target, setTarget] = useState<(LivSuiviCommande & { colis?: ColisInfo | null }) | null>(
+    null,
+  );
 
   const { data = [], isLoading } = useQuery({
     queryKey: ["livsuivi", "list"],
@@ -88,10 +87,7 @@ function LivraisonSuiviIndex() {
     });
   }, [data, typeFilter, statutFilter, tourneeFilter, q]);
 
-  const paginated = useMemo(
-    () => filtered.slice(0, pageSize),
-    [filtered, pageSize],
-  );
+  const paginated = useMemo(() => filtered.slice(0, pageSize), [filtered, pageSize]);
 
   const stats = useMemo(() => {
     const total = data.length;
@@ -103,7 +99,6 @@ function LivraisonSuiviIndex() {
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center gap-3">
-        <Truck className="h-7 w-7 text-primary" />
         <div>
           <h1 className="ds-page-title">Suivi des livraisons</h1>
           <p className="text-sm text-muted-foreground">
@@ -112,22 +107,18 @@ function LivraisonSuiviIndex() {
         </div>
         <div className="ml-auto" />
       </div>
-
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard label="Total commandes" value={stats.total} icon={<Package />} />
-        <StatCard label="En cours" value={stats.enCours} icon={<Truck />} />
-        <StatCard label="Terminées" value={stats.livrees} icon={<Truck />} />
+        <StatCard label="Total commandes" value={stats.total} />
+        <StatCard label="En cours" value={stats.enCours} />
+        <StatCard label="Terminées" value={stats.livrees} />
       </div>
-
       <div className="rounded-md border bg-card p-4 space-y-4">
         <div className="grid gap-3 md:grid-cols-4">
           <div className="relative md:col-span-2">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Réf, client, ville…"
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              className="pl-9"
             />
           </div>
           <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v as LivType | "all")}>
@@ -165,14 +156,10 @@ function LivraisonSuiviIndex() {
             className="font-mono"
           />
         </div>
-
         <LivraisonsTable rows={paginated} isLoading={isLoading} onAdvance={setTarget} />
         <div className="flex items-center justify-end gap-2 pt-2 text-xs text-muted-foreground">
           <span>Lignes par page</span>
-          <Select
-            value={String(pageSize)}
-            onValueChange={(v) => setPageSize(Number(v))}
-          >
+          <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
             <SelectTrigger
               className="h-8 w-20"
               aria-label="Lignes par page"
@@ -191,7 +178,6 @@ function LivraisonSuiviIndex() {
           </span>
         </div>
       </div>
-
       <AvancerEtapeDialog
         target={target}
         defaults={target ? computeSuiviDefaults(target) : undefined}
@@ -201,10 +187,9 @@ function LivraisonSuiviIndex() {
   );
 }
 
-function StatCard({ label, value, icon }: { label: string; value: number; icon: React.ReactNode }) {
+function StatCard({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-md border bg-card p-4 flex items-center gap-4">
-      <div className="p-2 rounded-md bg-primary/10 text-primary">{icon}</div>
       <div>
         <div className="text-xs text-muted-foreground">{label}</div>
         <div className="text-2xl font-bold">{value}</div>

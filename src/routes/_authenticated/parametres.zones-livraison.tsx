@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { MapPin, Save } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -121,16 +120,13 @@ function ZonesLivraisonPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <div>
-        <h1 className="ds-page-title flex items-center gap-2">
-          <MapPin className="h-6 w-6 text-primary" /> Zones de livraison directe
-        </h1>
+        <h1 className="ds-page-title flex items-center gap-2">Zones de livraison directe</h1>
         <p className="text-sm text-muted-foreground">
           Villes et communes qui déclenchent automatiquement le mode «&nbsp;Livraison directe&nbsp;»
           dans le colisage. Tout ce qui n'est pas listé bascule automatiquement en
           «&nbsp;Expédition&nbsp;».
         </p>
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Configuration (une entrée par ligne)</CardTitle>
@@ -158,13 +154,11 @@ function ZonesLivraisonPage() {
           </div>
           <div className="md:col-span-2 flex justify-end">
             <Button onClick={save} disabled={!canEdit || saving}>
-              <Save className="mr-2 h-4 w-4" />
               {saving ? "Enregistrement…" : "Enregistrer"}
             </Button>
           </div>
         </CardContent>
       </Card>
-
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Simulateur de détection</CardTitle>

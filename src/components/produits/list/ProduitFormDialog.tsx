@@ -1,5 +1,4 @@
 import type { ComponentType } from "react";
-import { BookOpen, Boxes, Coins, Tags } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,15 +20,7 @@ import { CATEGORIES_PRODUIT } from "@/lib/company";
 import type { Produit, ProduitInput } from "@/lib/produits-api";
 import { ProductCoverSection } from "@/components/produits/ProductCoverSection";
 
-function SubHeader({
-  icon: Icon,
-  title,
-  color,
-}: {
-  icon: ComponentType<{ className?: string }>;
-  title: string;
-  color: string;
-}) {
+function SubHeader({ title, color }: { title: string; color: string }) {
   return (
     <div className="relative sm:col-span-2 rounded-md bg-muted/30 pl-5 pr-3 py-2 mt-2">
       <span
@@ -37,19 +28,10 @@ function SubHeader({
         className="absolute inset-y-0 left-0 w-1 rounded-l-md"
         style={{ backgroundColor: color }}
       />
-      <div className="flex items-center gap-2 text-sm font-semibold">
-        <span
-          className="grid h-6 w-6 shrink-0 place-items-center rounded text-white shadow-sm"
-          style={{ backgroundColor: color }}
-        >
-          <Icon className="h-3.5 w-3.5" />
-        </span>
-        {title}
-      </div>
+      <div className="flex items-center gap-2 text-sm font-semibold">{title}</div>
     </div>
   );
 }
-
 
 interface Props {
   open: boolean;
@@ -85,13 +67,10 @@ export function ProduitFormDialog({
         <DialogHeader>
           <DialogTitle>{editing ? "Modifier le produit" : "Nouveau produit"}</DialogTitle>
         </DialogHeader>
-        {editing && produit && (
-          <ProductCoverSection produit={produit} onChanged={onCoverChanged} />
-        )}
+        {editing && produit && <ProductCoverSection produit={produit} onChanged={onCoverChanged} />}
         <div className="grid gap-4 py-2 sm:grid-cols-2">
-          <SubHeader icon={BookOpen} title="Général" color="#3B82F6" />
+          <SubHeader title="Général" color="#3B82F6" />
           <div className="space-y-1.5 sm:col-span-2">
-
             <Label>Titre *</Label>
             <Input value={form.titre} onChange={(e) => setField("titre", e.target.value)} />
           </div>
@@ -110,11 +89,10 @@ export function ProduitFormDialog({
               </SelectContent>
             </Select>
           </div>
-          <SubHeader icon={Tags} title="Classification" color="#8B5CF6" />
+          <SubHeader title="Classification" color="#8B5CF6" />
           <div className="space-y-1.5">
             <Label>ISBN</Label>
             <Input value={form.isbn ?? ""} onChange={(e) => setField("isbn", e.target.value)} />
-
           </div>
           <div className="space-y-1.5">
             <Label>Niveau</Label>
@@ -138,7 +116,7 @@ export function ProduitFormDialog({
               onChange={(e) => setField("editeur", e.target.value)}
             />
           </div>
-          <SubHeader icon={Coins} title="Prix" color="#10B981" />
+          <SubHeader title="Prix" color="#10B981" />
           <div className="space-y-1.5">
             <Label>Prix de vente</Label>
             <Input
@@ -155,13 +133,13 @@ export function ProduitFormDialog({
               onChange={(e) => setField("prix_achat", Number(e.target.value))}
             />
           </div>
-          <SubHeader icon={Boxes} title="Stock" color="#F97316" />
+          <SubHeader title="Stock" color="#F97316" />
           <div className="space-y-1.5 opacity-70">
             <Label>Stock</Label>
             <p className="text-xs text-muted-foreground">
-              Le stock est désormais calculé automatiquement comme la somme des
-              quantités de chaque dépôt. Pour l'alimenter ou l'ajuster, passez
-              par <code>/stock/mouvements</code> ou un inventaire.
+              Le stock est désormais calculé automatiquement comme la somme des quantités de chaque
+              dépôt. Pour l'alimenter ou l'ajuster, passez par <code>/stock/mouvements</code> ou un
+              inventaire.
             </p>
           </div>
           <div className="space-y-1.5">

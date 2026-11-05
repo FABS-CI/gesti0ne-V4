@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Package, Wallet } from "lucide-react";
 import { formatFCFA } from "@/lib/format";
 import { usePermissions } from "@/hooks/use-permissions";
 
@@ -19,7 +18,7 @@ export function InfoCards({ isbn, prix_vente, prix_achat, seuil_alerte }: Props)
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-            <BookOpen className="h-4 w-4" /> ISBN
+            ISBN
           </CardTitle>
         </CardHeader>
         <CardContent className="font-medium">{isbn ?? "—"}</CardContent>
@@ -27,7 +26,7 @@ export function InfoCards({ isbn, prix_vente, prix_achat, seuil_alerte }: Props)
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Wallet className="h-4 w-4" /> Prix vente
+            Prix vente
           </CardTitle>
         </CardHeader>
         <CardContent className="font-medium text-primary">
@@ -37,7 +36,7 @@ export function InfoCards({ isbn, prix_vente, prix_achat, seuil_alerte }: Props)
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Wallet className="h-4 w-4" /> Prix achat
+            Prix achat
           </CardTitle>
         </CardHeader>
         <CardContent className="font-medium">
@@ -47,7 +46,7 @@ export function InfoCards({ isbn, prix_vente, prix_achat, seuil_alerte }: Props)
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Package className="h-4 w-4" /> Seuil alerte
+            Seuil alerte
           </CardTitle>
         </CardHeader>
         <CardContent className="font-medium">{seuil_alerte}</CardContent>

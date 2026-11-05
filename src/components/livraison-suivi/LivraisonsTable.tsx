@@ -3,7 +3,6 @@ import { COMMANDE_REF_SEARCH_DEFAULTS } from "@/lib/route-schemas";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Trash2, Truck, Package } from "lucide-react";
 import { ProductCoverThumb } from "@/components/produits/ProductCoverThumb";
 import { EmptyState } from "@/components/common/EmptyState";
 import { toast } from "sonner";
@@ -70,7 +69,6 @@ export function LivraisonsTable({ rows, isLoading, onAdvance }: Props) {
                 <TableCell colSpan={10} className="py-6">
                   <EmptyState
                     variant="rich"
-                    icon={Truck}
                     title="Aucune livraison en cours"
                     description="Les commandes passant au statut « en livraison » s'afficheront ici pour suivre chaque étape jusqu'à la remise au client."
                     className="border-none"
@@ -84,30 +82,22 @@ export function LivraisonsTable({ rows, isLoading, onAdvance }: Props) {
                 const pct = ((idx + 1) / steps.length) * 100;
                 const next = nextEtape(r.type_livraison, r.statut);
                 const colis = r.colis ?? null;
-                const gare =
-                  r.gare_destination ?? colis?.gare_depart ?? null;
+                const gare = r.gare_destination ?? colis?.gare_depart ?? null;
                 const ville =
-                  r.ville_destination ??
-                  colis?.ville_destination ??
-                  colis?.ville_livraison ??
-                  null;
+                  r.ville_destination ?? colis?.ville_destination ?? colis?.ville_livraison ?? null;
                 const livreur =
                   r.livreur_nom ??
                   r.tournee?.livreur_nom ??
                   colis?.livreur_nom ??
                   colis?.transporteur ??
                   null;
-                const vehicule =
-                  r.vehicule ?? r.tournee?.vehicule ?? colis?.vehicule ?? null;
+                const vehicule = r.vehicule ?? r.tournee?.vehicule ?? colis?.vehicule ?? null;
                 return (
                   <TableRow key={r.id}>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {/* On tente de récupérer le 1er produit pour l'image (si dispo dans l'objet enrichi) */}
-                        <ProductCoverThumb 
-                          produit={null} 
-                          size="xs" 
-                        />
+                        <ProductCoverThumb produit={null} size="xs" />
                         <div className="min-w-0">
                           <Link
                             to="/livraison-suivi/$commandeRef"
@@ -126,7 +116,9 @@ export function LivraisonsTable({ rows, isLoading, onAdvance }: Props) {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="text-sm"><ClientLink clientId={r.commande?.client_id} nom={r.commande?.client_nom} /></div>
+                      <div className="text-sm">
+                        <ClientLink clientId={r.commande?.client_id} nom={r.commande?.client_nom} />
+                      </div>
                       <div className="text-xs text-muted-foreground">{r.commande?.ville ?? ""}</div>
                     </TableCell>
                     <TableCell>
@@ -155,9 +147,7 @@ export function LivraisonsTable({ rows, isLoading, onAdvance }: Props) {
                     </TableCell>
                     <TableCell className="text-xs">
                       <div>{livreur ?? "—"}</div>
-                      {vehicule && (
-                        <div className="text-xs text-muted-foreground">{vehicule}</div>
-                      )}
+                      {vehicule && <div className="text-xs text-muted-foreground">{vehicule}</div>}
                     </TableCell>
                     <TableCell className="text-xs">
                       <div>1 colis</div>
@@ -193,7 +183,10 @@ export function LivraisonsTable({ rows, isLoading, onAdvance }: Props) {
                           <Badge variant="outline">Terminé</Badge>
                         )}
                         <Can permission="livraisons.changer_statut">
-                          <DeleteLivraisonButton id={r.id} reference={r.commande?.reference ?? ""} />
+                          <DeleteLivraisonButton
+                            id={r.id}
+                            reference={r.commande?.reference ?? ""}
+                          />
                         </Can>
                       </div>
                     </TableCell>
@@ -222,13 +215,10 @@ function DeleteLivraisonButton({ id, reference }: { id: string; reference: strin
             summary.colis_reinitialises
               ? `${summary.colis_reinitialises} colis remis à « prêt »`
               : null,
-            (summary.livraisons_detachees ?? 0) +
-            (summary.livraisons_commande_detachees ?? 0)
+            (summary.livraisons_detachees ?? 0) + (summary.livraisons_commande_detachees ?? 0)
               ? `${(summary.livraisons_detachees ?? 0) + (summary.livraisons_commande_detachees ?? 0)} livraison(s) détachée(s)`
               : null,
-            summary.notifications_supprimees
-              ? `${summary.notifications_supprimees} notif.`
-              : null,
+            summary.notifications_supprimees ? `${summary.notifications_supprimees} notif.` : null,
           ].filter(Boolean)
         : [];
       toast.success("Suivi de livraison supprimé", {
@@ -245,14 +235,15 @@ function DeleteLivraisonButton({ id, reference }: { id: string; reference: strin
   });
   return (
     <>
-      <Button aria-label="Supprimer ce suivi"
-        size="icon"
+      <Button
+        aria-label="Supprimer ce suivi"
+        size="sm"
         variant="ghost"
         className="text-destructive"
         title="Supprimer ce suivi"
         onClick={() => setOpen(true)}
       >
-        <Trash2 className="h-4 w-4" />
+        Supprimer
       </Button>
       <ConfirmDeleteDialog
         open={open}

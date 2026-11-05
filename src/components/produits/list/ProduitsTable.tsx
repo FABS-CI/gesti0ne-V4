@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Eye, Pencil, PowerOff, Package, Plus } from "lucide-react";
+import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -42,7 +42,7 @@ export function ProduitsTable({
 }: Props) {
   const navigate = useNavigate();
   const colSpan = canSeeSensitive ? 13 : 6;
-  const totalValeurVente = items.reduce((s, p) => s + (Number(p.stock) * Number(p.prix_vente)), 0);
+  const totalValeurVente = items.reduce((s, p) => s + Number(p.stock) * Number(p.prix_vente), 0);
   return (
     <div className="rounded-lg border bg-card">
       <Table>
@@ -74,7 +74,6 @@ export function ProduitsTable({
               <TableCell colSpan={colSpan} className="py-6">
                 <EmptyState
                   variant={hasActiveFilters ? "compact" : "rich"}
-                  icon={Package}
                   title={
                     hasActiveFilters
                       ? "Aucun produit ne correspond aux filtres appliqués."
@@ -89,7 +88,7 @@ export function ProduitsTable({
                   action={
                     !hasActiveFilters && canMutate && onCreate ? (
                       <Button size="sm" onClick={onCreate}>
-                        <Plus className="mr-2 h-4 w-4" /> Nouveau produit
+                        Nouveau produit
                       </Button>
                     ) : undefined
                   }
@@ -117,7 +116,12 @@ export function ProduitsTable({
                   <TableCell className="py-1.5">
                     <ProductCoverThumb produit={p} size="sm" className="shadow-sm" />
                   </TableCell>
-                  <TableCell className="font-mono text-xs select-all" title="Cliquer pour sélectionner la référence">{p.reference}</TableCell>
+                  <TableCell
+                    className="font-mono text-xs select-all"
+                    title="Cliquer pour sélectionner la référence"
+                  >
+                    {p.reference}
+                  </TableCell>
                   <TableCell className="font-medium min-w-[300px]">
                     <div className="flex flex-col gap-0.5">
                       {canMutate ? (
@@ -147,7 +151,13 @@ export function ProduitsTable({
                       {p.dernier_prix_achat && p.dernier_prix_achat.length > 0 ? (
                         <div className="flex flex-col items-end">
                           <span className="font-medium text-info">
-                            {formatFCFA(p.dernier_prix_achat.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0].prix_unitaire)}
+                            {formatFCFA(
+                              p.dernier_prix_achat.sort(
+                                (a, b) =>
+                                  new Date(b.created_at).getTime() -
+                                  new Date(a.created_at).getTime(),
+                              )[0].prix_unitaire,
+                            )}
                           </span>
                           <span className="text-xs text-muted-foreground">
                             {p.dernier_prix_achat.length} achat(s)
@@ -185,24 +195,31 @@ export function ProduitsTable({
                   {canMutate && (
                     <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex justify-end gap-1 opacity-60 transition-opacity group-hover:opacity-100">
-                        <Button aria-label="Voir" variant="ghost" size="icon" asChild title="Voir">
+                        <Button aria-label="Voir" variant="ghost" size="sm" asChild title="Voir">
                           <Link to="/produits/$produitId" params={{ produitId: p.produit_id }}>
-                            <Eye className="h-4 w-4" />
+                            Voir
                           </Link>
                         </Button>
-                        <Button aria-label="Modifier" variant="ghost" size="icon" onClick={() => onEdit(p)} title="Modifier">
-                          <Pencil className="h-4 w-4" />
+                        <Button
+                          aria-label="Modifier"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onEdit(p)}
+                          title="Modifier"
+                        >
+                          Modifier
                         </Button>
                         {p.actif && (
                           <Can permission="produits.supprimer">
-                            <Button aria-label="Désactiver"
+                            <Button
+                              aria-label="Désactiver"
                               variant="ghost"
-                              size="icon"
+                              size="sm"
                               onClick={() => onDisable(p)}
                               title="Désactiver"
                               className="hover:bg-destructive/10"
                             >
-                              <PowerOff className="h-4 w-4 text-destructive" />
+                              Désactiver
                             </Button>
                           </Can>
                         )}
@@ -224,7 +241,10 @@ export function ProduitsTable({
               <TableCell colSpan={4} />
             </TableRow>
             <TableRow className="hover:bg-transparent">
-              <TableCell colSpan={colSpan} className="text-center py-2 text-xs text-muted-foreground font-bold">
+              <TableCell
+                colSpan={colSpan}
+                className="text-center py-2 text-xs text-muted-foreground font-bold"
+              >
                 Valeur totale du stock au prix de vente
               </TableCell>
             </TableRow>
