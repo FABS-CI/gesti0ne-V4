@@ -158,7 +158,6 @@ export function DashboardKpis({ data, canSeeCA }: Props) {
             </Cell>
           )}
         </Zone>
-
         <Zone title="Activité" cols="sm:grid-cols-3 sm:divide-x">
           <Cell to="/clients" label="Clients" icon={Users} sub={`${actifs} actifs · ${pctActifs} %`}>
             <AnimatedNumber value={clients} />

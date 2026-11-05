@@ -11,7 +11,6 @@ export function SidebarNavItem({
   active: boolean;
   activeText?: string;
 }) {
-  const Icon = item.icon;
   return (
     <li>
       <Link
@@ -31,11 +30,6 @@ export function SidebarNavItem({
             className="absolute inset-y-1.5 -left-2 w-0.5 rounded-full bg-sidebar-primary"
           />
         )}
-        <Icon
-          strokeWidth={1.75}
-          aria-hidden
-          className={cn("h-4 w-4 shrink-0", active ? "text-sidebar-primary" : "text-sidebar-foreground/50")}
-        />
         <span className="truncate">{item.title}</span>
       </Link>
     </li>
