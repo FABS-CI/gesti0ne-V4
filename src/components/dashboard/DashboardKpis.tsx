@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Check } from "lucide-react";
+import { Check, Wallet, FileText, Hourglass, Percent, AlertTriangle, Package, Landmark, Users, ShoppingCart, Truck, TrendingUp, TrendingDown, Scale, type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { formatFCFA, formatFCFACompact } from "@/lib/format";
 import { AnimatedNumber } from "@/components/dashboard/AnimatedNumber";
@@ -28,7 +28,9 @@ function Cell({
   children,
   sub,
   big = false,
+  icon: Icon,
 }: {
+  icon?: LucideIcon;
   to: To;
   label: string;
   children: ReactNode;
@@ -38,9 +40,16 @@ function Cell({
   return (
     <Link
       to={to}
-      className="block min-w-0 px-4 py-3 transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+      className="block min-w-0 px-4 py-4 transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
     >
-      <p className="truncate text-xs text-muted-foreground">{label}</p>
+      <div className="flex items-center gap-2">
+        {Icon ? (
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+            <Icon className="h-4 w-4" strokeWidth={1.75} aria-hidden />
+          </span>
+        ) : null}
+        <p className="truncate text-xs font-medium text-muted-foreground">{label}</p>
+      </div>
       <div className={`mt-1 font-semibold tabular-nums ${big ? "text-2xl" : "text-lg"}`}>
         {children}
       </div>
@@ -51,8 +60,8 @@ function Cell({
 
 function Zone({ title, children, cols }: { title: string; children: ReactNode; cols: string }) {
   return (
-    <section className="dash-lift min-w-0 rounded-md border bg-card">
-      <h2 className="border-b px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+    <section className="dash-lift min-w-0 overflow-hidden rounded-lg border bg-card shadow-sm">
+      <h2 className="border-b bg-muted/40 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         {title}
       </h2>
       <div className={`grid divide-y sm:divide-y-0 ${cols}`}>{children}</div>
@@ -89,15 +98,15 @@ export function DashboardKpis({ data, canSeeCA }: Props) {
     <div className="dash-stagger space-y-4">
       {canSeeCA && (
         <Zone title="Performance" cols="sm:grid-cols-2 lg:grid-cols-4 sm:divide-x">
-          <Cell to="/paiements" label="Chiffre d'affaires encaissé" big>
+          <Cell to="/paiements" label="Chiffre d'affaires encaissé" icon={Wallet} big>
             <Money value={data?.caTotal ?? 0} />
           </Cell>
-          <Cell to="/factures" label="Montant facturé">
+          <Cell to="/factures" label="Montant facturé" icon={FileText}>
             <Money value={facture} />
           </Cell>
           <Cell
             to="/factures"
-            label="Reste à encaisser"
+            label="Reste à encaisser" icon={Hourglass}
             sub={
               facture > 0
                 ? `${((reste / facture) * 100).toFixed(1).replace(".", ",")} % du facturé`
@@ -108,7 +117,7 @@ export function DashboardKpis({ data, canSeeCA }: Props) {
           </Cell>
           <Cell
             to="/paiements"
-            label="Taux d'encaissement"
+            label="Taux d'encaissement" icon={Percent}
             sub={
               <span className="block h-1 w-full overflow-hidden rounded-full bg-muted">
                 <span className="dash-bar block h-full bg-primary" style={{ width: `${taux}%` }} />
@@ -131,7 +140,7 @@ export function DashboardKpis({ data, canSeeCA }: Props) {
         >
           <Cell
             to="/factures"
-            label="Factures en retard"
+            label="Factures en retard" icon={AlertTriangle}
             sub={
               canSeeCA && retards > 0 ? (
                 <Money value={data?.montantRetard ?? 0} className="text-destructive" />
@@ -140,24 +149,24 @@ export function DashboardKpis({ data, canSeeCA }: Props) {
           >
             <CountOrCheck n={retards} tone="destructive" />
           </Cell>
-          <Cell to="/stock" label="Stock bas">
+          <Cell to="/stock" label="Stock bas" icon={Package}>
             <CountOrCheck n={data?.nbStockBas ?? 0} tone="warning" />
           </Cell>
           {canSeeCA && (
-            <Cell to="/clients" label="Encours clients">
+            <Cell to="/clients" label="Encours clients" icon={Landmark}>
               <Money value={data?.soldeTotal ?? 0} />
             </Cell>
           )}
         </Zone>
 
         <Zone title="Activité" cols="sm:grid-cols-3 sm:divide-x">
-          <Cell to="/clients" label="Clients" sub={`${actifs} actifs · ${pctActifs} %`}>
+          <Cell to="/clients" label="Clients" icon={Users} sub={`${actifs} actifs · ${pctActifs} %`}>
             <AnimatedNumber value={clients} />
           </Cell>
-          <Cell to="/commandes" label="Commandes">
+          <Cell to="/commandes" label="Commandes" icon={ShoppingCart}>
             <AnimatedNumber value={data?.nbCommandes ?? 0} />
           </Cell>
-          <Cell to="/tournees" label="Frais de tournée">
+          <Cell to="/tournees" label="Frais de tournée" icon={Truck}>
             <Money value={data?.fraisTournees ?? 0} />
           </Cell>
         </Zone>
@@ -165,13 +174,13 @@ export function DashboardKpis({ data, canSeeCA }: Props) {
 
       {canSeeCA && (
         <Zone title="Trésorerie" cols="sm:grid-cols-3 sm:divide-x">
-          <Cell to="/comptabilite" label="Recettes">
+          <Cell to="/comptabilite" label="Recettes" icon={TrendingUp}>
             <Money value={data?.recettes ?? 0} />
           </Cell>
-          <Cell to="/comptabilite" label="Dépenses">
+          <Cell to="/comptabilite" label="Dépenses" icon={TrendingDown}>
             <Money value={data?.depenses ?? 0} />
           </Cell>
-          <Cell to="/comptabilite" label="Solde">
+          <Cell to="/comptabilite" label="Solde" icon={Scale}>
             <Money
               value={solde}
               className={solde > 0 ? "text-success" : solde < 0 ? "text-destructive" : ""}
