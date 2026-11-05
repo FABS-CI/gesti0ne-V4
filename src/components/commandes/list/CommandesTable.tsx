@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { Plus, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -46,7 +45,6 @@ export function CommandesTable({
   const hasFilters = Boolean(q) || statut !== "all";
   const emptyState = hasFilters ? (
     <EmptyState
-      icon={ShoppingCart}
       title="Aucune commande ne correspond aux filtres"
       description="Modifie ta recherche ou réinitialise les filtres pour retrouver tes commandes."
       onReset={onResetFilters}
@@ -54,15 +52,12 @@ export function CommandesTable({
   ) : (
     <EmptyState
       variant="rich"
-      icon={ShoppingCart}
       title="Aucune commande pour le moment"
       description="Commence par créer une commande à partir d'un client. Elle générera automatiquement bon de livraison, facture et paiements."
       action={
         !readOnly ? (
           <Button asChild>
-            <Link to="/commandes/nouvelle">
-              <Plus className="mr-2 h-4 w-4" /> Créer la première commande
-            </Link>
+            <Link to="/commandes/nouvelle">Créer la première commande</Link>
           </Button>
         ) : undefined
       }
@@ -70,7 +65,8 @@ export function CommandesTable({
         !readOnly ? (
           <>
             <span className="rounded-full border bg-card px-2.5 py-1 text-xs text-muted-foreground">
-              Astuce · <kbd className="font-mono">Ctrl</kbd>+<kbd className="font-mono">K</kbd> pour la recherche rapide
+              Astuce · <kbd className="font-mono">Ctrl</kbd>+<kbd className="font-mono">K</kbd> pour
+              la recherche rapide
             </span>
             <Link
               to="/clients"
@@ -83,7 +79,6 @@ export function CommandesTable({
       }
     />
   );
-
 
   const mobileCards = (
     <div className="space-y-2 p-2">

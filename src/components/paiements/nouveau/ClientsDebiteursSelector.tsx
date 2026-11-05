@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { AlertCircle, ChevronLeft, ChevronRight, Search, UserCheck } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -25,10 +25,7 @@ import { formatFCFA } from "@/lib/format";
 const PAGE_SIZE = 20;
 
 function normalize(s: string): string {
-  return s
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "");
+  return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 }
 
 type Props = {
@@ -79,9 +76,7 @@ export function ClientsDebiteursSelector({ value, onSelect }: Props) {
       <CardContent className="space-y-4">
         <div className="flex flex-col gap-2 sm:flex-row">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              className="pl-9"
               placeholder="Rechercher nom, référence, représentant, ville, tél…"
               value={q}
               onChange={(e) => {
@@ -120,7 +115,6 @@ export function ClientsDebiteursSelector({ value, onSelect }: Props) {
           </div>
         ) : isError ? (
           <div className="flex flex-col items-center gap-3 rounded-md border border-destructive/40 bg-destructive/5 p-6 text-center">
-            <AlertCircle className="h-6 w-6 text-destructive" />
             <div>
               <p className="font-medium">Impossible de charger les clients débiteurs.</p>
               <p className="text-sm text-muted-foreground">Veuillez réessayer.</p>
@@ -131,7 +125,6 @@ export function ClientsDebiteursSelector({ value, onSelect }: Props) {
           </div>
         ) : filtered.length === 0 ? (
           <div className="rounded-md border border-dashed p-8 text-center">
-            <UserCheck className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
             <p className="font-medium">Aucun client débiteur</p>
             <p className="text-sm text-muted-foreground">
               {clients.length === 0
@@ -147,7 +140,8 @@ export function ClientsDebiteursSelector({ value, onSelect }: Props) {
                 {filtered.length > 1 ? "s" : ""}
               </span>
               <span className="text-muted-foreground">
-                Créances : <span className="font-semibold text-foreground">{formatFCFA(totalCreances)}</span>
+                Créances :{" "}
+                <span className="font-semibold text-foreground">{formatFCFA(totalCreances)}</span>
               </span>
             </div>
 

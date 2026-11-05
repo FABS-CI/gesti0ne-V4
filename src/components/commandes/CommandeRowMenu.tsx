@@ -2,17 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { SolderFactureDialog, loadFactureSolde } from "@/components/commandes/SolderFactureDialog";
-import {
-  Pencil,
-  Trash2,
-  ShoppingCart,
-  FileText,
-  Truck,
-  CircleDollarSign,
-  CheckCircle,
-  Receipt,
-  type LucideIcon,
-} from "lucide-react";
+import { type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePermissions } from "@/hooks/use-permissions";
 import type { CommandeActionsProps } from "@/components/commandes/CommandeActions";
@@ -31,13 +21,11 @@ import {
 function DocButton({
   label,
   short,
-  icon: Icon,
   onDownload,
   disabled,
 }: {
   label: string;
   short: string;
-  icon: LucideIcon;
   onDownload: () => void;
   disabled?: boolean;
 }) {
@@ -54,7 +42,7 @@ function DocButton({
       aria-label={title}
       onClick={onDownload}
     >
-      <Icon className="mr-1 h-4 w-4" /> {short}
+      {short}
     </Button>
   );
 }
@@ -76,8 +64,7 @@ export function CommandeRowMenu({
   const { has, isLoading: permsLoading } = usePermissions();
   const canDelete = !permsLoading && aDroitSurCommande(c.statut, "commandes.supprimer", has);
   const canPayer = !permsLoading && has("paiements.creer");
-  const hasFactureBL =
-    c.statut === "validee" || c.statut === "facturee" || c.statut === "livree";
+  const hasFactureBL = c.statut === "validee" || c.statut === "facturee" || c.statut === "livree";
   const canEdit = !readOnly && !permsLoading && peutModifierCommande(c.statut, has);
   const [solderOpen, setSolderOpen] = useState(false);
   const { data: solde } = useQuery({
@@ -94,67 +81,55 @@ export function CommandeRowMenu({
         <Button
           aria-label="Valider la commande (génère facture + BL)"
           variant="ghost"
-          size="icon"
+          size="sm"
           title="Valider la commande (génère facture + BL)"
           onClick={() => onValider(c.commande_id)}
           disabled={validerPending}
         >
-          <CheckCircle className="h-4 w-4 text-success" />
+          Valider
         </Button>
       )}
-      <DocButton
-        label="Proforma"
-        short="PF"
-        icon={FileText}
-        onDownload={() => downloadProforma(c)}
-      />
-      <DocButton
-        label="Bon de commande"
-        short="BC"
-        icon={ShoppingCart}
-        onDownload={() => downloadBonCommande(c)}
-      />
+      <DocButton label="Proforma" short="PF" onDownload={() => downloadProforma(c)} />
+      <DocButton label="Bon de commande" short="BC" onDownload={() => downloadBonCommande(c)} />
       <DocButton
         label="Facture"
         short="FAC"
-        icon={Receipt}
         disabled={!hasFactureBL}
         onDownload={() => downloadFactureFor(c)}
       />
       <DocButton
         label="Bon de livraison"
         short="BL"
-        icon={Truck}
         disabled={!hasFactureBL}
         onDownload={() => downloadBLFor(c)}
       />
       {showSolder && (
         <Button
           variant="ghost"
-          size="icon"
+          size="sm"
           title="Solder la facture"
           aria-label="Solder la facture"
           onClick={() => setSolderOpen(true)}
         >
-          <CircleDollarSign className="h-5 w-5 text-accent-foreground" />
+          Solder
         </Button>
       )}
       {canEdit && (
-        <Button asChild variant="ghost" size="icon" title="Modifier" aria-label="Modifier">
+        <Button asChild variant="ghost" size="sm" title="Modifier" aria-label="Modifier">
           <Link to="/commandes/$commandeId/modifier" params={{ commandeId: c.commande_id }}>
-            <Pencil className="h-4 w-4" />
+            Modifier
           </Link>
         </Button>
       )}
       {canDelete && (
         <Button
           variant="ghost"
-          size="icon"
+          size="sm"
           title="Supprimer définitivement"
           aria-label="Supprimer définitivement"
           onClick={() => onDelete(c)}
         >
-          <Trash2 className="h-4 w-4 text-destructive" />
+          Supprimer
         </Button>
       )}
       {solderOpen && (

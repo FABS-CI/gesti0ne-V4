@@ -56,7 +56,8 @@ export type ColumnDef = {
 
 export type RowAction = {
   label: string;
-  icon: LucideIcon;
+  /** Ignorée : interface sans icônes décoratives. */
+  icon?: LucideIcon;
   onClick?: (row: Row) => void | Promise<void>;
   to?: (row: Row) => string;
   confirm?: (row: Row) => string;
@@ -87,7 +88,8 @@ export type ResourceConfig = {
   idField: string;
   title: string;
   subtitle?: string;
-  icon: LucideIcon;
+  /** Ignorée : interface sans icônes décoratives. */
+  icon?: LucideIcon;
   newLabel: string;
   entityLabel: string;
   searchFields: string[];

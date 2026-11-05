@@ -100,7 +100,6 @@ export function ClientPaiementsTab({ paiements }: { paiements: ClientRelations["
           </SelectContent>
         </Select>
       </div>
-
       <div className="rounded-lg border bg-card">
         <Table>
           <TableHeader>

@@ -3,18 +3,9 @@ import { ProduitLink } from "@/components/common/ProduitLink";
 import { PageHeader } from "@/components/common/PageHeader";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { friendlyError } from '@/lib/friendly-error';
+import { friendlyError } from "@/lib/friendly-error";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  ArrowLeft,
-  Calendar,
-  CreditCard,
-  FileDown,
-  Loader2,
-  Receipt,
-  ShieldCheck,
-  User,
-} from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 import { submitFactureToFNE, getFneFactureForFacture, getBalanceSticker } from "@/lib/fne-api";
@@ -178,25 +169,26 @@ function FactureDetailPage() {
                         loadClientInfoForFacture(facture.facture_id),
                         loadFactureTotals(facture.facture_id),
                       ]);
-                      return generateUnifiedCommercialPDF("Facture", { ...docData, ...clientInfo, ...totals, lignes });
+                      return generateUnifiedCommercialPDF("Facture", {
+                        ...docData,
+                        ...clientInfo,
+                        ...totals,
+                        lignes,
+                      });
                     },
                     fileNameFor(facture.reference, facture.client_nom),
                     { type: "FC", data: { ...docData, date: docData.date } },
                   )
                 }
               >
-                {st.loading ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <FileDown className="mr-2 h-4 w-4" />
-                )}
+                {st.loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 {st.loading ? "Génération…" : "Télécharger PDF"}
               </Button>
             );
           })()}
           {fne ? (
             <Badge variant="outline" className="gap-1">
-              <ShieldCheck className="h-3 w-3" /> FNE {fne.code_dgi}
+              FNE {fne.code_dgi}
             </Badge>
           ) : (
             <Button
@@ -205,7 +197,6 @@ function FactureDetailPage() {
               onClick={() => setConfirmOpen(true)}
               disabled={submitFne.isPending}
             >
-              <ShieldCheck className="mr-2 h-4 w-4" />
               {submitFne.isPending ? "Normalisation…" : "Normaliser la facture"}
             </Button>
           )}
@@ -216,7 +207,6 @@ function FactureDetailPage() {
           )}
         </div>
       </div>
-
       <AlertDialog
         open={confirmOpen}
         onOpenChange={(o) => !submitFne.isPending && setConfirmOpen(o)}
@@ -281,20 +271,21 @@ function FactureDetailPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <User className="h-4 w-4" /> Client
+              Client
             </CardTitle>
           </CardHeader>
-          <CardContent className="font-medium"><ClientLink clientId={facture.client_id} nom={facture.client_nom} /></CardContent>
+          <CardContent className="font-medium">
+            <ClientLink clientId={facture.client_id} nom={facture.client_nom} />
+          </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4" /> Échéance
+              Échéance
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">{frDate(facture.date_echeance)}</CardContent>
@@ -302,7 +293,7 @@ function FactureDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Receipt className="h-4 w-4" /> Total
+              Total
             </CardTitle>
           </CardHeader>
           <CardContent className="text-lg font-bold text-primary">
@@ -312,13 +303,12 @@ function FactureDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <CreditCard className="h-4 w-4" /> Reste à payer
+              Reste à payer
             </CardTitle>
           </CardHeader>
           <CardContent className="text-lg font-bold">{formatFCFA(reste)}</CardContent>
         </Card>
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle>Règlement ({pct}%)</CardTitle>
@@ -330,7 +320,6 @@ function FactureDetailPage() {
           </p>
         </CardContent>
       </Card>
-      
       <Card>
         <CardHeader>
           <CardTitle>Détail des articles</CardTitle>
@@ -356,7 +345,9 @@ function FactureDetailPage() {
               ) : (
                 lignes.map((l: any) => (
                   <TableRow key={l.ligne_id}>
-                    <TableCell><ProduitLink produitId={l.produit_id} nom={l.designation} /></TableCell>
+                    <TableCell>
+                      <ProduitLink produitId={l.produit_id} nom={l.designation} />
+                    </TableCell>
                     <TableCell className="text-right text-destructive">
                       {l.remise_pct ? `${l.remise_pct} %` : "—"}
                     </TableCell>
@@ -373,9 +364,7 @@ function FactureDetailPage() {
 
           {(() => {
             const typeTransport = (facture as any).type_frais_transport as
-              | "livraison"
-              | "expedition"
-              | null;
+              "livraison" | "expedition" | null;
             const fraisTransport = Number((facture as any).montant_frais_transport ?? 0);
             const total = Number(facture.montant_total ?? 0);
             const sousTotal = total - (typeTransport ? fraisTransport : 0);
@@ -388,9 +377,7 @@ function FactureDetailPage() {
                 {typeTransport && (
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">
-                      {typeTransport === "livraison"
-                        ? "Frais de livraison"
-                        : "Frais d'expédition"}
+                      {typeTransport === "livraison" ? "Frais de livraison" : "Frais d'expédition"}
                     </span>
                     <span>{formatFCFA(fraisTransport)}</span>
                   </div>
@@ -404,7 +391,6 @@ function FactureDetailPage() {
           })()}
         </CardContent>
       </Card>
-
       <Card>
         <CardHeader>
           <CardTitle>Paiements</CardTitle>
@@ -452,10 +438,7 @@ function FactureDetailPage() {
             <CardHeader>
               <CardTitle className="flex items-center justify-between gap-2">
                 <span>Retours enregistrés</span>
-                <Badge
-                  variant="outline"
-                  style={{ color: meta.color, borderColor: meta.color }}
-                >
+                <Badge variant="outline" style={{ color: meta.color, borderColor: meta.color }}>
                   {meta.label}
                 </Badge>
               </CardTitle>
@@ -498,7 +481,9 @@ function FactureDetailPage() {
                     <TableBody>
                       {retours.map((r) => (
                         <TableRow key={r.retour_id}>
-                          <TableCell className="font-mono text-xs">{formatDocumentReference(r.reference)}</TableCell>
+                          <TableCell className="font-mono text-xs">
+                            {formatDocumentReference(r.reference)}
+                          </TableCell>
                           <TableCell>{frDate(r.date_retour)}</TableCell>
                           <TableCell className="text-right">{r.quantite}</TableCell>
                           <TableCell className="text-right font-medium">
@@ -519,7 +504,6 @@ function FactureDetailPage() {
       })()}
 
       <CertificationCard reference={facture.reference} />
-
       <DocumentTimeline factureId={factureId} />
     </div>
   );

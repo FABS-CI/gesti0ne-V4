@@ -3,7 +3,7 @@ import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CreditCard, Search, Plus, Download, FileDown, Ban, Trash2, RotateCcw, X } from "lucide-react";
+import { X } from "lucide-react";
 import { generateRecuPaiementPDF, downloadBlob, fileNameFor } from "@/lib/pdf/fabsTemplates";
 import { toast } from "sonner";
 
@@ -62,11 +62,7 @@ import { authRouteHead } from "@/lib/route-head";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 import { friendlyError } from "@/lib/friendly-error";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  PERIODES_PAIEMENT,
-  computePeriode,
-  type PeriodeKey,
-} from "@/lib/paiements-periode";
+import { PERIODES_PAIEMENT, computePeriode, type PeriodeKey } from "@/lib/paiements-periode";
 export const Route = createFileRoute("/_authenticated/paiements/")({
   head: () => authRouteHead("Paiements"),
   component: PaiementsPage,
@@ -225,23 +221,18 @@ function PaiementsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <CreditCard className="h-6 w-6 text-primary" /> Paiements
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Paiements</h1>
           <p className="text-sm text-muted-foreground">Encaissements et règlements clients</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleExport} disabled={!paiements.length}>
-            <Download className="mr-2 h-4 w-4" /> Exporter
+            Exporter
           </Button>
           <Button asChild>
-            <Link to="/paiements/nouveau">
-              <Plus className="mr-2 h-4 w-4" /> Nouveau paiement
-            </Link>
+            <Link to="/paiements/nouveau">Nouveau paiement</Link>
           </Button>
         </div>
       </div>
-
       <div className="flex flex-wrap items-end gap-2 rounded-lg border bg-card p-3">
         <div className="space-y-1">
           <Label className="text-xs text-muted-foreground">Période</Label>
@@ -261,26 +252,41 @@ function PaiementsPage() {
         {periode === "custom" && (
           <>
             <div className="space-y-1">
-              <Label htmlFor="pf-from" className="text-xs text-muted-foreground">Date de début</Label>
-              <Input id="pf-from" type="date" className="w-40" value={customFrom} onChange={(e) => setCustomFrom(e.target.value)} />
+              <Label htmlFor="pf-from" className="text-xs text-muted-foreground">
+                Date de début
+              </Label>
+              <Input
+                id="pf-from"
+                type="date"
+                className="w-40"
+                value={customFrom}
+                onChange={(e) => setCustomFrom(e.target.value)}
+              />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="pf-to" className="text-xs text-muted-foreground">Date de fin</Label>
-              <Input id="pf-to" type="date" className="w-40" value={customTo} onChange={(e) => setCustomTo(e.target.value)} />
+              <Label htmlFor="pf-to" className="text-xs text-muted-foreground">
+                Date de fin
+              </Label>
+              <Input
+                id="pf-to"
+                type="date"
+                className="w-40"
+                value={customTo}
+                onChange={(e) => setCustomTo(e.target.value)}
+              />
             </div>
             <Button onClick={applyCustom}>Appliquer</Button>
           </>
         )}
         {(periode !== "all" || hasPeriode) && (
           <Button variant="ghost" onClick={resetPeriode}>
-            <RotateCcw className="mr-1 h-3 w-3" /> Réinitialiser
+            Réinitialiser
           </Button>
         )}
         <p className="ml-auto text-sm text-muted-foreground">
           {hasPeriode ? `Période : ${periodeLabel}` : "Toutes les dates"}
         </p>
       </div>
-
       <div className="grid gap-3 sm:grid-cols-2">
         <Card>
           <CardContent className="p-4">
@@ -291,21 +297,20 @@ function PaiementsPage() {
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground">Paiements en attente de validation</p>
-            <p className={`text-xl font-bold tabular-nums ${nbEnAttente > 0 ? "text-warning" : "text-muted-foreground"}`}>
+            <p
+              className={`text-xl font-bold tabular-nums ${nbEnAttente > 0 ? "text-warning" : "text-muted-foreground"}`}
+            >
               {nbEnAttente}
             </p>
           </CardContent>
         </Card>
       </div>
-
       <PaiementsEnAttenteCard exerciceId={exerciceId} from={applied.from} to={applied.to} />
-
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative max-w-sm flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Rechercher..."
-            className="pl-9"
+
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -367,7 +372,7 @@ function PaiementsPage() {
             </Badge>
           )}
           <Button variant="ghost" size="sm" onClick={resetAllFilters}>
-            <RotateCcw className="mr-1 h-3 w-3" /> Réinitialiser
+            Réinitialiser
           </Button>
         </div>
       )}
@@ -398,7 +403,6 @@ function PaiementsPage() {
                   <TableCell colSpan={7} className="py-6">
                     <EmptyState
                       variant={hasActiveFilters ? "compact" : "rich"}
-                      icon={CreditCard}
                       title={
                         hasActiveFilters
                           ? "Aucun paiement ne correspond aux filtres appliqués."
@@ -413,9 +417,7 @@ function PaiementsPage() {
                       action={
                         !hasActiveFilters ? (
                           <Button asChild size="sm">
-                            <Link to="/paiements/nouveau">
-                              <Plus className="mr-2 h-4 w-4" /> Nouveau paiement
-                            </Link>
+                            <Link to="/paiements/nouveau">Nouveau paiement</Link>
                           </Button>
                         ) : undefined
                       }
@@ -428,9 +430,18 @@ function PaiementsPage() {
                   const statutMeta = STATUT_PAIEMENT_LABEL[p.statut];
                   return (
                     <TableRow key={p.paiement_id}>
-                      <TableCell className="font-mono text-xs">{formatDocumentReference(p.reference)}</TableCell>
-                      <TableCell className="whitespace-nowrap">{formatDate(p.date_paiement)}</TableCell>
-                      <TableCell className="font-medium"><ClientLink clientId={(p as { client_id?: string | null }).client_id} nom={p.client_nom} /></TableCell>
+                      <TableCell className="font-mono text-xs">
+                        {formatDocumentReference(p.reference)}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {formatDate(p.date_paiement)}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        <ClientLink
+                          clientId={(p as { client_id?: string | null }).client_id}
+                          nom={p.client_nom}
+                        />
+                      </TableCell>
                       <TableCell>
                         {MODE_PAIEMENT_LABEL[p.mode_paiement] ?? p.mode_paiement}
                       </TableCell>
@@ -445,8 +456,7 @@ function PaiementsPage() {
                           >
                             {statutMeta?.label ?? p.statut}
                           </Badge>
-                          {(p.statut === "en_attente" ||
-                            p.statut === "en_attente_validation") && (
+                          {(p.statut === "en_attente" || p.statut === "en_attente_validation") && (
                             <span className="inline-flex items-center rounded-full border border-warning px-2 py-0.5 text-xs font-medium text-warning">
                               À valider
                             </span>
@@ -455,21 +465,23 @@ function PaiementsPage() {
                       </TableCell>
                       <TableCell className="text-right">
                         {p.statut !== "annule" && (
-                          <Button aria-label="Annuler ce paiement"
+                          <Button
+                            aria-label="Annuler ce paiement"
                             asChild
                             variant="ghost"
-                            size="icon"
+                            size="sm"
                             title="Annuler ce paiement"
                           >
                             <Link
                               to="/paiements/$paiementId"
                               params={{ paiementId: p.paiement_id }}
                             >
-                              <Ban className="h-4 w-4 text-destructive" />
+                              Annuler
                             </Link>
                           </Button>
                         )}
-                        <Button aria-label="Télécharger le reçu PDF"
+                        <Button
+                          aria-label="Télécharger le reçu PDF"
                           variant="ghost"
                           size="icon"
                           title="Télécharger le reçu PDF"
@@ -478,9 +490,17 @@ function PaiementsPage() {
                               const ctx = await getRecuContext(p.paiement_id);
                               const montant = Number(ctx.paiement.montant);
                               const totalFacture = ctx.facture?.montant_total ?? null;
-                              
-                              const balanceBefore = ctx.balanceBefore ?? (ctx.facture != null ? Number(ctx.facture.montant_total) - (Number(ctx.facture.montant_paye) - montant) : null);
-                              const dejaPayeAvant = totalFacture !== null && balanceBefore !== null ? totalFacture - balanceBefore : null;
+
+                              const balanceBefore =
+                                ctx.balanceBefore ??
+                                (ctx.facture != null
+                                  ? Number(ctx.facture.montant_total) -
+                                    (Number(ctx.facture.montant_paye) - montant)
+                                  : null);
+                              const dejaPayeAvant =
+                                totalFacture !== null && balanceBefore !== null
+                                  ? totalFacture - balanceBefore
+                                  : null;
 
                               const blob = await generateRecuPaiementPDF({
                                 id: ctx.paiement.paiement_id,
@@ -508,20 +528,19 @@ function PaiementsPage() {
                               toast.error(friendlyError(e, "Erreur PDF"));
                             }
                           }}
-                        >
-                          <FileDown className="h-4 w-4" />
-                        </Button>
+                        ></Button>
                         {canHardDelete && (
-                          <Button aria-label="Supprimer définitivement"
+                          <Button
+                            aria-label="Supprimer définitivement"
                             variant="ghost"
-                            size="icon"
+                            size="sm"
                             title="Supprimer définitivement"
                             onClick={() => {
                               setDeleteMotif("");
                               setDeleteTarget({ id: p.paiement_id, ref: p.reference });
                             }}
                           >
-                            <Trash2 className="h-4 w-4 text-destructive" />
+                            Supprimer
                           </Button>
                         )}
                       </TableCell>
@@ -533,7 +552,6 @@ function PaiementsPage() {
           </Table>
         </ResponsiveTable>
       </div>
-
       <AlertDialog
         open={deleteTarget !== null}
         onOpenChange={(o) => {

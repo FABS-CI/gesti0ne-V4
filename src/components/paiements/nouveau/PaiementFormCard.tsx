@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { AlertCircle, FileText, Wallet } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -45,12 +44,11 @@ export function PaiementFormCard({
   const disabled = mode === "confirm";
   return (
     <Card>
-      <SectionHeader icon={Wallet} title="3. Informations du paiement" color="#10B981" />
+      <SectionHeader title="3. Informations du paiement" color="#10B981" />
       <CardContent className="grid gap-4 sm:grid-cols-2 pl-5 sm:pl-6">
         {mode === "confirm" && (
           <div className="sm:col-span-2">
             <Alert>
-              <AlertCircle className="h-4 w-4" />
               <AlertTitle>Mode confirmation</AlertTitle>
               <AlertDescription>
                 Vérifiez le récapitulatif ci-dessous puis validez, ou cliquez sur « Modifier » pour
@@ -162,11 +160,10 @@ export function PaiementFormActions({
       {mode === "draft" ? (
         <>
           <Button variant="outline" onClick={onPreview}>
-            <FileText className="mr-2 h-4 w-4" />
             Prévisualiser
           </Button>
           <Button onClick={onSubmit} disabled={submitting}>
-             Enregistrer le paiement
+            Enregistrer le paiement
           </Button>
         </>
       ) : (
@@ -175,8 +172,7 @@ export function PaiementFormActions({
             Modifier
           </Button>
           <Button onClick={onSubmit} disabled={submitting}>
-            <FileText className="mr-2 h-4 w-4" />
-             Confirmer et enregistrer
+            Confirmer et enregistrer
           </Button>
         </>
       )}

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Pencil } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -82,9 +81,7 @@ export function PaiementVentilationCard({ paiementId }: { paiementId: string }) 
       <Card>
         <CardHeader>
           <CardTitle>
-            {allocations.length > 1
-              ? `Factures réglées (${allocations.length})`
-              : "Facture réglée"}
+            {allocations.length > 1 ? `Factures réglées (${allocations.length})` : "Facture réglée"}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -108,7 +105,7 @@ export function PaiementVentilationCard({ paiementId }: { paiementId: string }) 
                   </Button>
                   {canEdit && a.lignes.length > 0 && (
                     <Button variant="ghost" size="sm" onClick={() => openEdit(a)}>
-                      <Pencil className="mr-2 h-4 w-4" /> Corriger la ventilation
+                      Corriger la ventilation
                     </Button>
                   )}
                 </div>
@@ -140,7 +137,6 @@ export function PaiementVentilationCard({ paiementId }: { paiementId: string }) 
           ))}
         </CardContent>
       </Card>
-
       <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
         <DialogContent className="max-h-[85vh] overflow-y-auto">
           <DialogHeader>
@@ -168,7 +164,11 @@ export function PaiementVentilationCard({ paiementId }: { paiementId: string }) 
             ))}
             <div className="flex justify-between border-t pt-2 text-sm">
               <span>Total réparti</span>
-              <span className={Math.abs(ecart) > 0.01 ? "font-semibold text-destructive" : "font-semibold"}>
+              <span
+                className={
+                  Math.abs(ecart) > 0.01 ? "font-semibold text-destructive" : "font-semibold"
+                }
+              >
                 {formatFCFA(totalSaisi)}
               </span>
             </div>
