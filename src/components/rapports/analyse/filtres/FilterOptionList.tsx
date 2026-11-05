@@ -1,6 +1,5 @@
 import { useMemo, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -12,8 +11,7 @@ export type FilterOption = { value: string; label: string };
 export type FilterSection = { title?: string; options: FilterOption[] };
 
 type Row =
-  | { kind: "section"; title: string; values: string[] }
-  | { kind: "option"; option: FilterOption };
+  { kind: "section"; title: string; values: string[] } | { kind: "option"; option: FilterOption };
 
 const VIRTUAL_THRESHOLD = 100;
 const ROW_H = 40;
@@ -104,7 +102,6 @@ export function FilterOptionList({
       }}
     >
       <div className="relative border-b p-2">
-        <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           ref={inputRef}
           autoFocus
@@ -112,7 +109,7 @@ export function FilterOptionList({
           onChange={(e) => setQuery(e.target.value)}
           placeholder={`Rechercher (${label.toLowerCase()})`}
           aria-label={`Rechercher dans ${label}`}
-          className="h-9 pl-8"
+          className="h-9"
         />
       </div>
       <div
@@ -142,7 +139,12 @@ export function FilterOptionList({
         )}
       </div>
       <div className="flex items-center gap-1 border-t p-2 text-xs">
-        <Button variant="ghost" size="sm" onClick={() => setMany(visible, true)} disabled={!visible.length}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setMany(visible, true)}
+          disabled={!visible.length}
+        >
           Tout sélectionner
         </Button>
         <Button variant="ghost" size="sm" onClick={() => onChange([])} disabled={!selected.length}>

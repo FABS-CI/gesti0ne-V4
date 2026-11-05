@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { GitBranch } from "lucide-react";
 import { ResourceManager } from "@/components/crud/ResourceManager";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
@@ -11,7 +10,6 @@ export const Route = createFileRoute("/_authenticated/workflows-definitions")({
         idField: "id",
         title: "Définitions de workflows",
         subtitle: "Modèles d'approbation (workflow simple : approuvé / rejeté)",
-        icon: GitBranch,
         newLabel: "Nouveau workflow",
         entityLabel: "workflow",
         searchFields: ["code", "libelle", "description"],

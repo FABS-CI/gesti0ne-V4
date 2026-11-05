@@ -1,7 +1,6 @@
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
-import { ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
@@ -21,9 +20,6 @@ function AccesRefusePage() {
   const { perm, from } = useSearch({ from: "/_authenticated/acces-refuse" });
   return (
     <div className="mx-auto flex max-w-xl flex-col items-center gap-4 py-16 text-center">
-      <div className="rounded-full bg-destructive/10 p-4 text-destructive">
-        <ShieldAlert className="h-10 w-10" />
-      </div>
       <h1 className="ds-page-title">Accès refusé (403)</h1>
       <p className="text-muted-foreground">
         Vous n'avez pas les droits nécessaires pour accéder à cette page.

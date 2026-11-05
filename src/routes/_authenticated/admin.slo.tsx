@@ -1,7 +1,6 @@
 import { formatDateTime } from "@/lib/format";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { AlertTriangle, Database, Activity, Zap, RefreshCw, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -85,7 +84,6 @@ function SloPage() {
         <div className="flex gap-2">
           <Button variant="outline" size="sm" asChild>
             <a href="/docs/runbook-incidents.md" target="_blank" rel="noreferrer">
-              <ExternalLink className="w-4 h-4 mr-2" />
               Runbook
             </a>
           </Button>
@@ -97,7 +95,6 @@ function SloPage() {
               alertsQ.refetch();
             }}
           >
-            <RefreshCw className="w-4 h-4 mr-2" />
             Rafraîchir
           </Button>
         </div>
@@ -113,36 +110,25 @@ function SloPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <MetricCard
-          icon={<AlertTriangle className="w-4 h-4" />}
           label="Erreurs 24 h"
           value={m?.errors_24h ?? "—"}
           tone={m && m.errors_24h > 5 ? "danger" : "ok"}
         />
         <MetricCard
-          icon={<AlertTriangle className="w-4 h-4" />}
           label="Alertes ouvertes"
           value={m?.alerts_open ?? "—"}
           tone={m && m.alerts_open > 0 ? "warn" : "ok"}
         />
+        <MetricCard label="Taille DB" value={m?.db_size ?? "—"} tone="ok" />
         <MetricCard
-          icon={<Database className="w-4 h-4" />}
-          label="Taille DB"
-          value={m?.db_size ?? "—"}
-          tone="ok"
-        />
-        <MetricCard
-          icon={<Activity className="w-4 h-4" />}
           label="Connexions actives"
           value={m?.active_connections ?? "—"}
           tone={m && m.active_connections > 40 ? "warn" : "ok"}
         />
       </div>
-
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Zap className="w-5 h-5" /> Top 10 requêtes lentes
-          </CardTitle>
+          <CardTitle className="flex items-center gap-2">Top 10 requêtes lentes</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -178,7 +164,6 @@ function SloPage() {
           </Table>
         </CardContent>
       </Card>
-
       <Card>
         <CardHeader>
           <CardTitle>Alertes d'incident récentes (20)</CardTitle>
@@ -197,9 +182,7 @@ function SloPage() {
             <TableBody>
               {(alertsQ.data ?? []).map((a) => (
                 <TableRow key={a.id}>
-                  <TableCell className="text-xs">
-                    {formatDateTime(a.created_at)}
-                  </TableCell>
+                  <TableCell className="text-xs">{formatDateTime(a.created_at)}</TableCell>
                   <TableCell>
                     <Badge
                       variant={
@@ -246,12 +229,10 @@ function SloPage() {
 }
 
 function MetricCard({
-  icon,
   label,
   value,
   tone,
 }: {
-  icon: React.ReactNode;
   label: string;
   value: React.ReactNode;
   tone: "ok" | "warn" | "danger";
@@ -262,7 +243,7 @@ function MetricCard({
     <Card className={toneClass}>
       <CardHeader className="pb-2">
         <CardTitle className="text-sm flex items-center gap-2 text-muted-foreground">
-          {icon} {label}
+          {label}
         </CardTitle>
       </CardHeader>
       <CardContent>

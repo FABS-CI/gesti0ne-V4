@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowRightLeft, Plus, Eye, Send, PackageCheck, Ban } from "lucide-react";
+import { Eye } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -99,18 +99,13 @@ function TransfertsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <ArrowRightLeft className="h-6 w-6 text-primary" /> Transferts inter-dépôts
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Transferts inter-dépôts</h1>
           <p className="text-sm text-muted-foreground">Mouvements de stock entre dépôts</p>
         </div>
         <Button asChild>
-          <Link to="/transferts/nouveau">
-            <Plus className="mr-2 h-4 w-4" /> Nouveau transfert
-          </Link>
+          <Link to="/transferts/nouveau">Nouveau transfert</Link>
         </Button>
       </div>
-
       <div className="flex gap-3">
         <Select value={statut} onValueChange={setStatut}>
           <SelectTrigger className="w-48">
@@ -125,7 +120,6 @@ function TransfertsPage() {
           </SelectContent>
         </Select>
       </div>
-
       <div className="rounded-lg border">
         <ResponsiveTable stickyFirstCol>
           <Table>
@@ -152,7 +146,6 @@ function TransfertsPage() {
                   <TableCell colSpan={7} className="py-6">
                     <EmptyState
                       variant="rich"
-                      icon={ArrowRightLeft}
                       title="Aucun transfert enregistré"
                       description="Déplacez du stock entre vos dépôts en créant un transfert : sortie automatique côté source, entrée à la réception."
                       className="border-none"
@@ -172,23 +165,25 @@ function TransfertsPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       {t.statut === "brouillon" && canExecuter && (
-                        <Button aria-label="Exécuter le transfert (sortie + entrée stock)"
+                        <Button
+                          aria-label="Exécuter le transfert (sortie + entrée stock)"
                           disabled={workflowMutation.isPending}
                           variant="ghost"
-                          size="icon"
+                          size="sm"
                           title="Exécuter le transfert (sortie + entrée stock)"
                           onClick={() =>
                             workflowMutation.mutate({ id: t.transfert_id, action: "executer" })
                           }
                         >
-                          <Send className="h-4 w-4 text-info" />
+                          Exécuter
                         </Button>
                       )}
                       {t.statut === "brouillon" && canAnnuler && (
-                        <Button aria-label="Annuler le transfert"
+                        <Button
+                          aria-label="Annuler le transfert"
                           disabled={workflowMutation.isPending}
                           variant="ghost"
-                          size="icon"
+                          size="sm"
                           title="Annuler le transfert"
                           onClick={async () => {
                             const r = await confirm({
@@ -201,28 +196,29 @@ function TransfertsPage() {
                             workflowMutation.mutate({ id: t.transfert_id, action: "annuler" });
                           }}
                         >
-                          <Ban className="h-4 w-4 text-destructive" />
+                          Annuler
                         </Button>
                       )}
                       {t.statut === "expedie" && canReceptionner && (
-                        <Button aria-label="Réceptionner le transfert"
+                        <Button
+                          aria-label="Réceptionner le transfert"
                           disabled={workflowMutation.isPending}
                           variant="ghost"
-                          size="icon"
+                          size="sm"
                           title="Réceptionner le transfert"
                           onClick={() =>
                             workflowMutation.mutate({ id: t.transfert_id, action: "receptionner" })
                           }
                         >
-                          <PackageCheck className="h-4 w-4 text-success" />
+                          Réceptionner
                         </Button>
                       )}
-                      <Button aria-label="Voir" variant="ghost" size="icon" asChild>
+                      <Button aria-label="Voir" variant="ghost" size="sm" asChild>
                         <Link
                           to="/transferts/$transfertId"
                           params={{ transfertId: t.transfert_id }}
                         >
-                          <Eye className="h-4 w-4" />
+                          Voir
                         </Link>
                       </Button>
                     </TableCell>

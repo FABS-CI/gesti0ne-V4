@@ -3,7 +3,6 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Gift, Save } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -134,12 +133,9 @@ function SpecimenNouveauPage() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Button aria-label="Retour" asChild variant="ghost" size="icon">
-            <Link to="/specimens">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
+          <Button aria-label="Retour" asChild variant="ghost" size="sm">
+            <Link to="/specimens">Retour</Link>
           </Button>
-          <Gift className="h-6 w-6 text-primary" />
           <div>
             <h1 className="ds-page-title">Nouveau Spécimen</h1>
             <p className="text-sm text-muted-foreground">
@@ -148,18 +144,15 @@ function SpecimenNouveauPage() {
           </div>
         </div>
       </div>
-
       <form onSubmit={onSubmit} className="space-y-6">
         <InfosGeneralesSection form={form} depots={depots} />
         <BeneficiaireSection form={form} applyClient={applyClient} />
         <LignesProduitsSection form={form} fa={fa} onProduitChange={onProduitChange} />
-
         <div className="flex justify-end gap-3">
           <Button type="button" variant="outline" asChild>
             <Link to="/specimens">Annuler</Link>
           </Button>
           <Button type="submit" disabled={mutation.isPending}>
-            <Save className="h-4 w-4 mr-2" />
             {mutation.isPending ? "Enregistrement…" : "Enregistrer"}
           </Button>
         </div>

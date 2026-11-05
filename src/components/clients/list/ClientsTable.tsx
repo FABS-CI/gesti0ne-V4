@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Eye, Pencil, PowerOff, UserPlus, Users } from "lucide-react";
+import { Eye } from "lucide-react";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -69,7 +69,6 @@ export function ClientsTable({
                 <TableCell colSpan={colSpan} className="py-6">
                   <EmptyState
                     variant={hasActiveFilters ? "compact" : "rich"}
-                    icon={Users}
                     title={
                       hasActiveFilters
                         ? "Aucun client ne correspond aux filtres appliqués."
@@ -84,7 +83,7 @@ export function ClientsTable({
                     action={
                       !hasActiveFilters && !readOnly ? (
                         <Button size="sm" onClick={() => navigate({ to: "/clients/nouveau" })}>
-                          <UserPlus className="mr-2 h-4 w-4" /> Créer un client
+                          Créer un client
                         </Button>
                       ) : undefined
                     }
@@ -140,31 +139,38 @@ export function ClientsTable({
                     </TableCell>
                     <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex justify-end gap-1 opacity-60 transition-opacity group-hover:opacity-100">
-                        <Button aria-label="Voir" variant="ghost" size="icon" asChild title="Voir">
+                        <Button aria-label="Voir" variant="ghost" size="sm" asChild title="Voir">
                           <Link to="/clients/$clientId" params={{ clientId: c.client_id }}>
-                            <Eye className="h-4 w-4" />
+                            Voir
                           </Link>
                         </Button>
                         {!readOnly && (
                           <>
-                            <Button aria-label="Modifier" variant="ghost" size="icon" asChild title="Modifier">
+                            <Button
+                              aria-label="Modifier"
+                              variant="ghost"
+                              size="sm"
+                              asChild
+                              title="Modifier"
+                            >
                               <Link
                                 to="/clients/$clientId/modifier"
                                 params={{ clientId: c.client_id }}
                               >
-                                <Pencil className="h-4 w-4" />
+                                Modifier
                               </Link>
                             </Button>
                             {c.actif && (
                               <Can permission="clients.supprimer">
-                                <Button aria-label="Désactiver"
+                                <Button
+                                  aria-label="Désactiver"
                                   variant="ghost"
-                                  size="icon"
+                                  size="sm"
                                   onClick={() => onDisable(c)}
                                   title="Désactiver"
                                   className="hover:bg-destructive/10"
                                 >
-                                  <PowerOff className="h-4 w-4 text-destructive" />
+                                  Désactiver
                                 </Button>
                               </Can>
                             )}

@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { ArrowRightLeft, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { listDepots, createTransfert, getStockProduitDepot } from "@/lib/depots-api";
@@ -105,12 +104,9 @@ function NouveauTransfertPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="ds-page-title flex items-center gap-2">
-          <ArrowRightLeft className="h-6 w-6 text-primary" /> Nouveau transfert
-        </h1>
+        <h1 className="ds-page-title flex items-center gap-2">Nouveau transfert</h1>
         <p className="text-sm text-muted-foreground">Créer un transfert inter-dépôts</p>
       </div>
-
       <div className="grid gap-4 rounded-lg border p-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label>Dépôt source</Label>
@@ -159,12 +155,11 @@ function NouveauTransfertPage() {
           <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} />
         </div>
       </div>
-
       <div className="rounded-lg border">
         <div className="flex items-center justify-between p-4">
           <h2 className="font-semibold">Produits à transférer</h2>
           <Button size="sm" variant="outline" onClick={addLigne} disabled={!sourceId}>
-            <Plus className="mr-2 h-4 w-4" /> Ajouter
+            Ajouter
           </Button>
         </div>
         <Table>
@@ -202,8 +197,13 @@ function NouveauTransfertPage() {
                     />
                   </TableCell>
                   <TableCell>
-                    <Button aria-label="Supprimer" variant="ghost" size="icon" onClick={() => removeLigne(idx)}>
-                      <Trash2 className="h-4 w-4 text-destructive" />
+                    <Button
+                      aria-label="Supprimer"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeLigne(idx)}
+                    >
+                      Supprimer
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -212,7 +212,6 @@ function NouveauTransfertPage() {
           </TableBody>
         </Table>
       </div>
-
       <div className="flex justify-end gap-2">
         <Button variant="outline" onClick={() => navigate({ to: "/transferts" })}>
           Annuler

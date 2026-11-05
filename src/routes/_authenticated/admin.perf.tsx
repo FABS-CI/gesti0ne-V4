@@ -13,7 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Activity, RefreshCw, AlertTriangle } from "lucide-react";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
 export const Route = createFileRoute("/_authenticated/admin/perf")({
@@ -86,19 +85,15 @@ function PerfPage() {
     <div className="container mx-auto space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <Activity className="h-8 w-8" /> Suivi performance requêtes
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Suivi performance requêtes</h1>
           <p className="text-muted-foreground">
             200 dernières requêtes critiques instrumentées via <code>trackQuery()</code>
           </p>
         </div>
         <Button onClick={() => refetch()} disabled={isFetching} variant="outline">
-          <RefreshCw className={`mr-2 h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
           Rafraîchir
         </Button>
       </div>
-
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <StatCard label="Requêtes tracées" value={rows.length} />
         <StatCard
@@ -112,7 +107,6 @@ function PerfPage() {
           tone={errors.length > 0 ? "error" : undefined}
         />
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle>Agrégat par requête</CardTitle>
@@ -165,7 +159,7 @@ function PerfPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-destructive">
-              <AlertTriangle className="h-5 w-5" /> Erreurs récentes
+              Erreurs récentes
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">

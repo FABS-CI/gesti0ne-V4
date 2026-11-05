@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 type Profile = { id: string; email: string | null; nom: string | null; prenom: string | null };
 type Depot = { depot_id: string; nom: string | null; code: string | null; actif: boolean | null };
@@ -42,7 +42,9 @@ export function ScopesTabV3({ profiles }: { profiles: Profile[] }) {
     }
   }, []);
 
-  useEffect(() => { void reload(); }, [reload]);
+  useEffect(() => {
+    void reload();
+  }, [reload]);
 
   const granted = useMemo(() => {
     const set = new Set<string>();
@@ -54,17 +56,25 @@ export function ScopesTabV3({ profiles }: { profiles: Profile[] }) {
     const q = search.trim().toLowerCase();
     if (!q) return profiles;
     return profiles.filter((p) =>
-      `${p.prenom ?? ""} ${p.nom ?? ""} ${p.email ?? ""}`.toLowerCase().includes(q));
+      `${p.prenom ?? ""} ${p.nom ?? ""} ${p.email ?? ""}`.toLowerCase().includes(q),
+    );
   }, [profiles, search]);
 
   const toggle = async (userId: string, depotId: string, next: boolean) => {
-    setScopes((cur) => next
-      ? [...cur, { user_id: userId, depot_id: depotId, principal: false }]
-      : cur.filter((s) => !(s.user_id === userId && s.depot_id === depotId)));
+    setScopes((cur) =>
+      next
+        ? [...cur, { user_id: userId, depot_id: depotId, principal: false }]
+        : cur.filter((s) => !(s.user_id === userId && s.depot_id === depotId)),
+    );
     const { error } = await supabase.rpc("rbac3_user_depot_set", {
-      _user_id: userId, _depot_id: depotId, _next: next,
+      _user_id: userId,
+      _depot_id: depotId,
+      _next: next,
     });
-    if (error) { toast.error(friendlyError(error)); void reload(); }
+    if (error) {
+      toast.error(friendlyError(error));
+      void reload();
+    }
   };
 
   const activeDepots = depots.filter((d) => d.actif !== false);
@@ -73,9 +83,7 @@ export function ScopesTabV3({ profiles }: { profiles: Profile[] }) {
     <Card className="p-4">
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <div className="relative min-w-[220px] flex-1">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            className="pl-8"
             placeholder="Rechercher un utilisateur…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -83,10 +91,9 @@ export function ScopesTabV3({ profiles }: { profiles: Profile[] }) {
         </div>
         <Badge variant="secondary">{activeDepots.length} dépôts</Badge>
       </div>
-
       <p className="mb-3 text-xs text-muted-foreground">
-        Un utilisateur sans dépôt coché n'accède qu'aux données non rattachées à un dépôt,
-        sauf si son rôle possède la portée globale.
+        Un utilisateur sans dépôt coché n'accède qu'aux données non rattachées à un dépôt, sauf si
+        son rôle possède la portée globale.
       </p>
 
       {loading ? (

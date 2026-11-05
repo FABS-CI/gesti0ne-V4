@@ -3,26 +3,7 @@ import { formatDateTime, formatTime } from "@/lib/format";
 
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import {
-  DatabaseBackup,
-  Download,
-  Loader2,
-  HardDrive,
-  Clock,
-  CheckCircle2,
-  XCircle,
-  History,
-  ShieldCheck,
-  Cloud,
-  Play,
-  RotateCcw,
-  ShieldAlert,
-  AlertTriangle,
-  ExternalLink,
-  Activity,
-  Filter,
-  Database
-} from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -41,14 +22,29 @@ import { useServerFn } from "@tanstack/react-start";
 import { runFullBackup, runFullRestore } from "@/lib/backup.functions";
 import { friendlyError } from "@/lib/friendly-error";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
 type RestoreSource = { backupId?: string; base64?: string; fileName?: string };
 type RestoreSimulation = {
   source: RestoreSource;
   label: string;
-  report: { sha256_ok: boolean | null; tables: Array<{ table: string; lignes_archive: number; lignes_base: number | null; difference: number | null }> };
+  report: {
+    sha256_ok: boolean | null;
+    tables: Array<{
+      table: string;
+      lignes_archive: number;
+      lignes_base: number | null;
+      difference: number | null;
+    }>;
+  };
 };
 
 export const Route = createFileRoute("/_authenticated/backup")({
@@ -96,16 +92,16 @@ function BackupPage() {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [history, setHistory] = useState<BackupRow[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
-  const [stats, setStats] = useState<{ next_run_at: string | null; count: number }>({ 
-    next_run_at: null, 
-    count: 0 
+  const [stats, setStats] = useState<{ next_run_at: string | null; count: number }>({
+    next_run_at: null,
+    count: 0,
   });
   const [filters, setFilters] = useState({
     project: "all",
     type: "all",
-    status: "all"
+    status: "all",
   });
-  
+
   const startBackup = useServerFn(runFullBackup);
   const startRestore = useServerFn(runFullRestore);
 
@@ -129,29 +125,29 @@ function BackupPage() {
     try {
       // 1. Charger l'historique avec filtres
       let query = supabase.from("backups").select("*");
-      
+
       if (filters.project !== "all") query = query.eq("project_name", filters.project);
       if (filters.type === "GLOBAL" || filters.type === "PROJECT") {
         query = query.eq("scope_type", filters.type);
       }
-      if (filters.status !== "all") query = query.eq("statut", filters.status === "Réussie" ? "succes" : "echec");
+      if (filters.status !== "all")
+        query = query.eq("statut", filters.status === "Réussie" ? "succes" : "echec");
 
       const { data: historyData, error: historyError } = await query
         .order("created_at", { ascending: false })
         .limit(50);
-      
+
       if (historyError) throw historyError;
       setHistory((historyData ?? []) as BackupRow[]);
 
       // 2. Charger les stats dynamiques
       const { data: nextRun } = await supabase.rpc("get_next_backup_run");
-      const { count } = await supabase.from("backups").select("*", { count: 'exact', head: true });
-      
+      const { count } = await supabase.from("backups").select("*", { count: "exact", head: true });
+
       setStats({
         next_run_at: nextRun as string,
-        count: count ?? 0
+        count: count ?? 0,
       });
-
     } catch (error) {
       toast.error(friendlyError(error));
     } finally {
@@ -163,18 +159,26 @@ function BackupPage() {
     if (isAdmin) loadData();
   }, [isAdmin, filters]);
 
-  async function handleBackup(scope: "GLOBAL" | "PROJECT" = "GLOBAL", projectName?: string, isTest = false) {
+  async function handleBackup(
+    scope: "GLOBAL" | "PROJECT" = "GLOBAL",
+    projectName?: string,
+    isTest = false,
+  ) {
     setRunning(true);
     try {
-      await startBackup({ 
-        data: { 
+      await startBackup({
+        data: {
           trigger: "manuel",
           isTest,
           scope,
-          projectName: projectName || (scope === "GLOBAL" ? "Tous les projets" : undefined)
-        } 
+          projectName: projectName || (scope === "GLOBAL" ? "Tous les projets" : undefined),
+        },
       });
-      toast.success(isTest ? "Test réussi : archive générée, contrôlée et stockée" : `Sauvegarde ${scope === "GLOBAL" ? "intégrale" : "projet"} réussie`);
+      toast.success(
+        isTest
+          ? "Test réussi : archive générée, contrôlée et stockée"
+          : `Sauvegarde ${scope === "GLOBAL" ? "intégrale" : "projet"} réussie`,
+      );
       loadData();
     } catch (e) {
       toast.error(friendlyError(e));
@@ -201,7 +205,10 @@ function BackupPage() {
   }
 
   async function handleRestore(backup: BackupRow) {
-    await simulateRestore({ backupId: backup.backup_id }, `l'état du ${formatDateTime(backup.created_at)}`);
+    await simulateRestore(
+      { backupId: backup.backup_id },
+      `l'état du ${formatDateTime(backup.created_at)}`,
+    );
   }
 
   /** Étape 2 : restauration réelle, après saisie de « RESTAURER ». */
@@ -211,9 +218,13 @@ function BackupPage() {
     setSimulation(null);
     setRestoring(source.backupId ?? "external");
     try {
-      const result = await startRestore({ data: { ...source, dryRun: false, confirmation: confirmText } });
+      const result = await startRestore({
+        data: { ...source, dryRun: false, confirmation: confirmText },
+      });
       const warn = result.errors.length ? ` — ${result.errors.length} avertissement(s)` : "";
-      toast.success(`Restauration terminée : ${result.restored_tables.length} tables, ${result.users.succes} comptes (${result.users.echecs} échecs), ${result.files} fichiers${warn}.`);
+      toast.success(
+        `Restauration terminée : ${result.restored_tables.length} tables, ${result.users.succes} comptes (${result.users.echecs} échecs), ${result.files} fichiers${warn}.`,
+      );
       loadData();
     } catch (e) {
       toast.error(friendlyError(e));
@@ -227,9 +238,10 @@ function BackupPage() {
   if (isAdmin === false) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-        <ShieldAlert className="h-12 w-12 text-destructive" />
         <h1 className="ds-page-title">Accès réservé aux administrateurs</h1>
-        <p className="text-muted-foreground">Vous n'avez pas les permissions nécessaires pour accéder aux sauvegardes.</p>
+        <p className="text-muted-foreground">
+          Vous n'avez pas les permissions nécessaires pour accéder aux sauvegardes.
+        </p>
       </div>
     );
   }
@@ -238,10 +250,7 @@ function BackupPage() {
     <div className="container mx-auto py-8 space-y-8 max-w-6xl">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="ds-page-title flex items-center gap-3">
-            <DatabaseBackup className="h-8 w-8 text-primary" />
-            Sauvegarde & Restauration
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-3">Sauvegarde & Restauration</h1>
           <p className="text-muted-foreground mt-1">
             Gestion intégrale de la sécurité de vos données (Données + Fichiers + Comptes).
           </p>
@@ -254,40 +263,34 @@ function BackupPage() {
             disabled={running}
             className="font-bold"
           >
-            {running ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Activity className="mr-2 h-4 w-4" />}
+            {running ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             TESTER MAINTENANT
           </Button>
-          <Button 
+          <Button
             variant="outline"
-            size="lg" 
-            onClick={() => handleBackup("PROJECT", "ERPSI")} 
+            size="lg"
+            onClick={() => handleBackup("PROJECT", "ERPSI")}
             disabled={running}
             className="font-bold"
           >
-            {running ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Database className="mr-2 h-4 w-4" />}
+            {running ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             BACKUP ERPSI
           </Button>
-          <Button 
-            size="lg" 
-            onClick={() => handleBackup("GLOBAL")} 
+          <Button
+            size="lg"
+            onClick={() => handleBackup("GLOBAL")}
             disabled={running}
             className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-sm"
           >
-            {running ? (
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            ) : (
-              <Play className="mr-2 h-5 w-5 fill-current" />
-            )}
+            {running ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
             SAUVEGARDE GLOBALE
           </Button>
         </div>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card className="border-primary/20 bg-primary/5">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Clock className="h-4 w-4 text-primary" />
               Sauvegarde Automatique
             </CardTitle>
           </CardHeader>
@@ -296,11 +299,9 @@ function BackupPage() {
             <p className="text-xs text-muted-foreground mt-1">Fréquence de planification</p>
           </CardContent>
         </Card>
-
         <Card className="border-warning/20 bg-warning/10">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Clock className="h-4 w-4 text-warning" />
               Prochaine Exécution
             </CardTitle>
           </CardHeader>
@@ -308,14 +309,14 @@ function BackupPage() {
             <div className="text-xl font-bold text-warning">
               {stats.next_run_at ? formatTime(stats.next_run_at) : "—"}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">{stats.next_run_at ? "Tâche planifiée active" : "Tâche planifiée inactive"}</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {stats.next_run_at ? "Tâche planifiée active" : "Tâche planifiée inactive"}
+            </p>
           </CardContent>
         </Card>
-
         <Card className="border-success/20 bg-success/10">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-success" />
               Dernière Sauvegarde
             </CardTitle>
           </CardHeader>
@@ -323,14 +324,16 @@ function BackupPage() {
             <div className="text-xl font-bold text-success">
               {lastSuccess ? formatDateTime(lastSuccess.created_at) : "—"}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">{lastSuccess ? `Réussie · ${lastSuccess.trigger_type === 'AUTOMATIC' ? 'automatique' : 'manuelle'}` : 'Aucune réussie'}</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {lastSuccess
+                ? `Réussie · ${lastSuccess.trigger_type === "AUTOMATIC" ? "automatique" : "manuelle"}`
+                : "Aucune réussie"}
+            </p>
           </CardContent>
         </Card>
-
         <Card className="border-info/20 bg-info/10">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <History className="h-4 w-4 text-info" />
               Sauvegardes
             </CardTitle>
           </CardHeader>
@@ -340,14 +343,13 @@ function BackupPage() {
           </CardContent>
         </Card>
       </div>
-
       <div className="flex flex-wrap items-center gap-4 bg-muted/30 p-4 rounded-lg border">
         <div className="flex flex-col gap-1.5 min-w-[150px]">
           <label className="text-xs font-medium px-1">Projet</label>
-          <select 
+          <select
             className="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors"
             value={filters.project}
-            onChange={(e) => setFilters(f => ({ ...f, project: e.target.value }))}
+            onChange={(e) => setFilters((f) => ({ ...f, project: e.target.value }))}
           >
             <option value="all">Tous les projets</option>
             <option value="ERPSI">ERPSI</option>
@@ -356,10 +358,10 @@ function BackupPage() {
         </div>
         <div className="flex flex-col gap-1.5 min-w-[150px]">
           <label className="text-xs font-medium px-1">Type</label>
-          <select 
+          <select
             className="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors"
             value={filters.type}
-            onChange={(e) => setFilters(f => ({ ...f, type: e.target.value }))}
+            onChange={(e) => setFilters((f) => ({ ...f, type: e.target.value }))}
           >
             <option value="all">Tous</option>
             <option value="PROJECT">Projet</option>
@@ -368,10 +370,10 @@ function BackupPage() {
         </div>
         <div className="flex flex-col gap-1.5 min-w-[150px]">
           <label className="text-xs font-medium px-1">Statut</label>
-          <select 
+          <select
             className="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors"
             value={filters.status}
-            onChange={(e) => setFilters(f => ({ ...f, status: e.target.value }))}
+            onChange={(e) => setFilters((f) => ({ ...f, status: e.target.value }))}
           >
             <option value="all">Tous</option>
             <option value="Réussie">Réussie</option>
@@ -379,16 +381,10 @@ function BackupPage() {
           </select>
         </div>
       </div>
-
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <History className="h-5 w-5" />
-            Historique des sauvegardes
-          </CardTitle>
-          <CardDescription>
-            Liste des dernières sauvegardes globales effectuées.
-          </CardDescription>
+          <CardTitle className="flex items-center gap-2">Historique des sauvegardes</CardTitle>
+          <CardDescription>Liste des dernières sauvegardes globales effectuées.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border overflow-hidden">
@@ -427,33 +423,49 @@ function BackupPage() {
                       <TableCell className="font-semibold text-primary">
                         {row.project_name || "Tous les projets"}
                       </TableCell>
-                      <TableCell className="max-w-[150px] truncate text-xs" title={row.fichier_nom || ""}>
+                      <TableCell
+                        className="max-w-[150px] truncate text-xs"
+                        title={row.fichier_nom || ""}
+                      >
                         {row.fichier_nom || "—"}
                       </TableCell>
                       <TableCell className="whitespace-nowrap text-xs">
                         {formatSize(row.taille_octets)}
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">
-                        {row.scope_type === 'GLOBAL' ? 'Sauvegarde complète' : 'Données projet'}
+                        {row.scope_type === "GLOBAL" ? "Sauvegarde complète" : "Données projet"}
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className="text-xs uppercase font-bold">
-                          {row.is_test ? 'Test' : row.trigger_type === 'AUTOMATIC' ? 'Auto' : 'Manuel'}
+                          {row.is_test
+                            ? "Test"
+                            : row.trigger_type === "AUTOMATIC"
+                              ? "Auto"
+                              : "Manuel"}
                         </Badge>
-                        {row.duree_ms != null && <div className="text-xs text-muted-foreground mt-1">{Math.round(row.duree_ms / 1000)} s</div>}
+                        {row.duree_ms != null && (
+                          <div className="text-xs text-muted-foreground mt-1">
+                            {Math.round(row.duree_ms / 1000)} s
+                          </div>
+                        )}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1.5">
                           {row.statut === "succes" ? (
                             <div className="flex items-center gap-1 text-success" title="Réussie">
-                              <CheckCircle2 className="h-4 w-4" />
                               <span className="text-xs font-bold uppercase">OK</span>
                             </div>
                           ) : row.statut === "echec" ? (
-                            <div className="flex items-center gap-1 text-destructive" title={row.error_message || "Erreur"}>
-                              <XCircle className="h-4 w-4" />
+                            <div
+                              className="flex items-center gap-1 text-destructive"
+                              title={row.error_message || "Erreur"}
+                            >
                               <span className="text-xs font-bold uppercase">Échec</span>
-                              {row.error_message && <span className="text-xs max-w-[160px] truncate">{row.error_message}</span>}
+                              {row.error_message && (
+                                <span className="text-xs max-w-[160px] truncate">
+                                  {row.error_message}
+                                </span>
+                              )}
                             </div>
                           ) : (
                             <div className="flex items-center gap-1 text-primary">
@@ -466,20 +478,22 @@ function BackupPage() {
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           {row.destination_url && (
-                            <Button aria-label="Ouvrir"
+                            <Button
+                              aria-label="Ouvrir"
                               variant="ghost"
-                              size="icon"
+                              size="sm"
                               className="h-8 w-8 text-primary"
                               onClick={() => window.open(row.destination_url!, "_blank")}
                               title="Voir sur Google Drive"
                             >
-                              <ExternalLink className="h-4 w-4" />
+                              Ouvrir
                             </Button>
                           )}
-                          <Button aria-label="Chargement" 
+                          <Button
+                            aria-label="Chargement"
                             variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-warning"
+                            size="sm"
+                            className="h-8 text-warning"
                             onClick={() => handleRestore(row)}
                             disabled={row.statut !== "succes" || !!restoring}
                             title="Restaurer"
@@ -487,7 +501,7 @@ function BackupPage() {
                             {restoring === row.backup_id ? (
                               <Loader2 className="h-4 w-4 animate-spin" />
                             ) : (
-                              <RotateCcw className="h-4 w-4" />
+                              "Restaurer"
                             )}
                           </Button>
                         </div>
@@ -500,33 +514,36 @@ function BackupPage() {
           </div>
         </CardContent>
       </Card>
-
       <Card className="border-warning/40 bg-warning/10">
         <CardHeader>
           <CardTitle className="text-warning flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5" />
             Zone de Danger : Restauration Manuelle
           </CardTitle>
           <CardDescription className="text-warning">
-            Utilisez cette section uniquement si vous avez un fichier de sauvegarde (.zip) externe à importer.
+            Utilisez cette section uniquement si vous avez un fichier de sauvegarde (.zip) externe à
+            importer.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
             <label className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-warning/40 rounded-lg p-6 bg-white cursor-pointer hover:bg-warning/10 transition-colors">
-              <Download className="h-8 w-8 text-warning mb-2" />
-              <span className="text-sm font-medium">Glissez ou cliquez pour importer une archive globale (.zip)</span>
-              <input 
-                type="file" 
-                accept=".zip" 
-                className="hidden" 
+              <span className="text-sm font-medium">
+                Glissez ou cliquez pour importer une archive globale (.zip)
+              </span>
+              <input
+                type="file"
+                accept=".zip"
+                className="hidden"
                 onChange={async (e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
                   const reader = new FileReader();
                   reader.onload = () => {
-                    const base64 = (reader.result as string).split(',')[1];
-                    void simulateRestore({ base64, fileName: file.name }, `le fichier ${file.name}`);
+                    const base64 = (reader.result as string).split(",")[1];
+                    void simulateRestore(
+                      { base64, fileName: file.name },
+                      `le fichier ${file.name}`,
+                    );
                   };
                   reader.readAsDataURL(file);
                 }}
@@ -541,7 +558,8 @@ function BackupPage() {
             <DialogTitle>Simulation de restauration</DialogTitle>
             <DialogDescription>
               Rien n'a encore été modifié. Restauration vers {simulation?.label}.
-              {simulation?.report.sha256_ok ? " Empreinte de l'archive vérifiée." : ""} Une sauvegarde de sécurité sera faite avant toute écriture.
+              {simulation?.report.sha256_ok ? " Empreinte de l'archive vérifiée." : ""} Une
+              sauvegarde de sécurité sera faite avant toute écriture.
             </DialogDescription>
           </DialogHeader>
           <div className="max-h-72 overflow-auto rounded border">
@@ -568,11 +586,24 @@ function BackupPage() {
           </div>
           <label className="text-sm">
             Pour lancer la restauration réelle, saisissez <strong>RESTAURER</strong> :
-            <Input className="mt-1" value={confirmText} onChange={(e) => setConfirmText(e.target.value)} aria-label="Confirmation de restauration" />
+            <Input
+              className="mt-1"
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              aria-label="Confirmation de restauration"
+            />
           </label>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setSimulation(null)}>Annuler</Button>
-            <Button variant="destructive" disabled={confirmText !== "RESTAURER"} onClick={confirmRestore}>Restaurer</Button>
+            <Button variant="outline" onClick={() => setSimulation(null)}>
+              Annuler
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={confirmText !== "RESTAURER"}
+              onClick={confirmRestore}
+            >
+              Restaurer
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

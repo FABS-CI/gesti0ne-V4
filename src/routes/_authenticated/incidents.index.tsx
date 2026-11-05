@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { AlertTriangle, Plus, Search, Eye, Printer, XCircle, FileText, RotateCcw, X } from "lucide-react";
+import { Eye, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -117,8 +117,7 @@ function IncidentsPage() {
   }, [incidents, page]);
   const totalPages = Math.max(1, Math.ceil(incidents.length / PAGE_SIZE));
 
-  const hasActiveFilters =
-    !!q || statut !== "all" || type !== "all" || depotId !== "all";
+  const hasActiveFilters = !!q || statut !== "all" || type !== "all" || depotId !== "all";
   const resetAllFilters = () => {
     setQ("");
     setStatut("all");
@@ -131,7 +130,6 @@ function IncidentsPage() {
     <div className="space-y-6 p-1">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <AlertTriangle className="h-7 w-7 text-warning" />
           <div>
             <h1 className="ds-page-title">Incidents de Stock</h1>
             <p className="text-sm text-muted-foreground">
@@ -146,7 +144,9 @@ function IncidentsPage() {
               onClick={() => {
                 const filtres = [
                   type !== "all" ? `Type=${TYPE_INCIDENT_LABEL[type] ?? type}` : null,
-                  statut !== "all" ? `Statut=${STATUT_INCIDENT_LABEL[statut]?.label ?? statut}` : null,
+                  statut !== "all"
+                    ? `Statut=${STATUT_INCIDENT_LABEL[statut]?.label ?? statut}`
+                    : null,
                   depotId !== "all"
                     ? `Magasin=${depots.find((d) => d.depot_id === depotId)?.nom ?? depotId}`
                     : null,
@@ -169,20 +169,14 @@ function IncidentsPage() {
                 );
               }}
             >
-              <FileText className="h-4 w-4 mr-2" />
               Rapport PDF
             </Button>
-            <Button onClick={() => navigate({ to: "/incidents/nouveau" })}>
-              <Plus className="h-4 w-4 mr-2" />
-              Nouvel Incident
-            </Button>
+            <Button onClick={() => navigate({ to: "/incidents/nouveau" })}>Nouvel Incident</Button>
           </div>
         )}
       </div>
-
       <div className="flex flex-wrap items-center gap-2 rounded-md border bg-card p-3">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             value={q}
             onChange={(e) => {
@@ -190,7 +184,6 @@ function IncidentsPage() {
               setPage(1);
             }}
             placeholder="Numéro, référence, motif…"
-            className="pl-8"
           />
         </div>
         <Select
@@ -253,23 +246,59 @@ function IncidentsPage() {
           </SelectContent>
         </Select>
       </div>
-
       <FilterBadges
         badges={[
-          ...(q ? [{ key: "q", label: `Recherche : ${q}`, onClear: () => { setQ(""); setPage(1); } } as FilterBadge] : []),
+          ...(q
+            ? [
+                {
+                  key: "q",
+                  label: `Recherche : ${q}`,
+                  onClear: () => {
+                    setQ("");
+                    setPage(1);
+                  },
+                } as FilterBadge,
+              ]
+            : []),
           ...(type !== "all"
-            ? [{ key: "type", label: `Type : ${TYPE_INCIDENT_LABEL[type] ?? type}`, onClear: () => { setType("all"); setPage(1); } } as FilterBadge]
+            ? [
+                {
+                  key: "type",
+                  label: `Type : ${TYPE_INCIDENT_LABEL[type] ?? type}`,
+                  onClear: () => {
+                    setType("all");
+                    setPage(1);
+                  },
+                } as FilterBadge,
+              ]
             : []),
           ...(statut !== "all"
-            ? [{ key: "statut", label: `Statut : ${STATUT_INCIDENT_LABEL[statut]?.label ?? statut}`, onClear: () => { setStatut("all"); setPage(1); } } as FilterBadge]
+            ? [
+                {
+                  key: "statut",
+                  label: `Statut : ${STATUT_INCIDENT_LABEL[statut]?.label ?? statut}`,
+                  onClear: () => {
+                    setStatut("all");
+                    setPage(1);
+                  },
+                } as FilterBadge,
+              ]
             : []),
           ...(depotId !== "all"
-            ? [{ key: "depot", label: `Magasin : ${depots.find((d) => d.depot_id === depotId)?.nom ?? depotId}`, onClear: () => { setDepotId("all"); setPage(1); } } as FilterBadge]
+            ? [
+                {
+                  key: "depot",
+                  label: `Magasin : ${depots.find((d) => d.depot_id === depotId)?.nom ?? depotId}`,
+                  onClear: () => {
+                    setDepotId("all");
+                    setPage(1);
+                  },
+                } as FilterBadge,
+              ]
             : []),
         ]}
         onResetAll={resetAllFilters}
       />
-
       <div className="rounded-md border bg-card">
         <ResponsiveTable stickyFirstCol>
           <Table>
@@ -298,7 +327,6 @@ function IncidentsPage() {
                   <TableCell colSpan={9} className="py-6">
                     <EmptyState
                       variant={hasActiveFilters ? "compact" : "rich"}
-                      icon={AlertTriangle}
                       title={
                         hasActiveFilters
                           ? "Aucun incident ne correspond aux filtres appliqués."
@@ -313,9 +341,7 @@ function IncidentsPage() {
                       action={
                         !hasActiveFilters && canManage ? (
                           <Button size="sm" asChild>
-                            <Link to="/incidents/nouveau">
-                              <Plus className="mr-2 h-4 w-4" /> Nouvel incident
-                            </Link>
+                            <Link to="/incidents/nouveau">Nouvel incident</Link>
                           </Button>
                         ) : undefined
                       }
@@ -350,31 +376,44 @@ function IncidentsPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
-                          <Button aria-label="Consulter" asChild variant="ghost" size="icon" title="Consulter">
+                          <Button
+                            aria-label="Consulter"
+                            asChild
+                            variant="ghost"
+                            size="sm"
+                            title="Consulter"
+                          >
                             <Link
                               to="/incidents/$incidentId"
                               params={{ incidentId: inc.incident_id }}
                             >
-                              <Eye className="h-4 w-4" />
+                              Voir
                             </Link>
                           </Button>
-                          <Button aria-label="Imprimer" asChild variant="ghost" size="icon" title="Imprimer">
+                          <Button
+                            aria-label="Imprimer"
+                            asChild
+                            variant="ghost"
+                            size="sm"
+                            title="Imprimer"
+                          >
                             <Link
                               to="/incidents/$incidentId"
                               params={{ incidentId: inc.incident_id }}
                               search={{ print: "1" } as never}
                             >
-                              <Printer className="h-4 w-4" />
+                              Imprimer
                             </Link>
                           </Button>
                           {canCancel && inc.statut !== "annule" && (
-                            <Button aria-label="Annuler l'incident"
+                            <Button
+                              aria-label="Annuler l'incident"
                               variant="ghost"
-                              size="icon"
+                              size="sm"
                               title="Annuler l'incident"
                               onClick={() => setCancelId(inc.incident_id)}
                             >
-                              <XCircle className="h-4 w-4 text-destructive" />
+                              Annuler
                             </Button>
                           )}
                         </div>

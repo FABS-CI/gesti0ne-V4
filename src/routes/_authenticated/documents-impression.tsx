@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Printer } from "lucide-react";
 import { ResourceManager, type ResourceConfig } from "@/components/crud/ResourceManager";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
@@ -27,7 +26,6 @@ const config: ResourceConfig = {
   idField: "document_id",
   title: "Documents & Impression",
   subtitle: "Registre documentaire",
-  icon: Printer,
   newLabel: "Nouveau document",
   entityLabel: "le document",
   csvName: "documents",

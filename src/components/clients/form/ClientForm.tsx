@@ -5,22 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useBlocker, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import {
-  AlertTriangle,
-  Building2,
-  FileText,
-  Handshake,
-  Loader2,
-  MapPin,
-  Phone,
-  Receipt,
-  RotateCcw,
-  Save,
-  StickyNote,
-  Truck,
-  UserCircle2,
-  X,
-} from "lucide-react";
+import { Loader2, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -126,7 +111,6 @@ export function ClientForm({ clientId }: ClientFormProps) {
         return await updateClient(clientId!, payload);
       }
       return await createClient(payload);
-
     },
     onSuccess: (client: Client) => {
       toast.success(editing ? "Client mis à jour" : "Client créé");
@@ -139,8 +123,8 @@ export function ClientForm({ clientId }: ClientFormProps) {
         form.reset(emptyClientFormValues);
         return;
       }
-      navigate({ to: "/clients/$clientId", params: { clientId: client.client_id } }).catch(
-        () => navigate({ to: "/clients" }),
+      navigate({ to: "/clients/$clientId", params: { clientId: client.client_id } }).catch(() =>
+        navigate({ to: "/clients" }),
       );
     },
     onError: (e) => toast.error(friendlyError(e, "Erreur")),
@@ -189,7 +173,6 @@ export function ClientForm({ clientId }: ClientFormProps) {
         {!editing && duplicates.length > 0 && (
           <div className="rounded-md border border-warning/50 bg-warning/10 p-3 text-sm text-warning">
             <p className="flex items-center gap-2 font-medium">
-              <AlertTriangle className="h-4 w-4" />
               {duplicates.length} client(s) au nom similaire
             </p>
             <ul className="mt-1 list-disc pl-5 text-xs">
@@ -205,9 +188,15 @@ export function ClientForm({ clientId }: ClientFormProps) {
         <div className="grid gap-6 lg:grid-cols-2">
           {/* 1. IDENTITÉ */}
           <Card className="overflow-hidden">
-            <SectionHeader icon={UserCircle2} title="Identité" color="#3B82F6" />
+            <SectionHeader title="Identité" color="#3B82F6" />
             <CardContent className="grid gap-4 sm:grid-cols-2">
-              <TextField control={form.control} name="nom" label="Nom" required className="sm:col-span-2" />
+              <TextField
+                control={form.control}
+                name="nom"
+                label="Nom"
+                required
+                className="sm:col-span-2"
+              />
               <SelectField
                 control={form.control}
                 name="type_client"
@@ -230,49 +219,76 @@ export function ClientForm({ clientId }: ClientFormProps) {
 
           {/* 2. COORDONNÉES */}
           <Card className="overflow-hidden">
-            <SectionHeader icon={Phone} title="Coordonnées" color="#0EA5E9" />
+            <SectionHeader title="Coordonnées" color="#0EA5E9" />
             <CardContent className="grid gap-4 sm:grid-cols-2">
               <TextField control={form.control} name="telephone" label="Téléphone" />
-
               <TextField control={form.control} name="whatsapp" label="WhatsApp" />
               <TextField control={form.control} name="email" label="Email" type="email" />
-              <TextField control={form.control} name="site_web" label="Site Web" className="sm:col-span-2" />
+              <TextField
+                control={form.control}
+                name="site_web"
+                label="Site Web"
+                className="sm:col-span-2"
+              />
             </CardContent>
           </Card>
 
           {/* 3. ADRESSE */}
           <Card className="overflow-hidden">
-            <SectionHeader icon={MapPin} title="Adresse" color="#F97316" />
+            <SectionHeader title="Adresse" color="#F97316" />
             <CardContent className="grid gap-4 sm:grid-cols-2">
               <TextField control={form.control} name="pays" label="Pays" />
               <TextField control={form.control} name="ville" label="Ville" />
               <TextField control={form.control} name="commune" label="Commune" />
               <TextField control={form.control} name="quartier" label="Quartier" />
-              <TextField control={form.control} name="adresse" label="Adresse complète" className="sm:col-span-2" />
+              <TextField
+                control={form.control}
+                name="adresse"
+                label="Adresse complète"
+                className="sm:col-span-2"
+              />
               <TextField control={form.control} name="bp" label="Boîte Postale" />
-              <TextField control={form.control} name="gps" label="Coordonnées GPS" placeholder="lat, lng" />
+              <TextField
+                control={form.control}
+                name="gps"
+                label="Coordonnées GPS"
+                placeholder="lat, lng"
+              />
             </CardContent>
           </Card>
 
           {/* 4. COMMERCIAL */}
           <Card className="overflow-hidden">
-            <SectionHeader icon={Building2} title="Informations commerciales" color="#8B5CF6" />
+            <SectionHeader title="Informations commerciales" color="#8B5CF6" />
             <CardContent className="grid gap-4 sm:grid-cols-2">
               <TextField control={form.control} name="zone_commerciale" label="Zone commerciale" />
-              <TextField control={form.control} name="secteur_activite" label="Secteur d'activité" />
+              <TextField
+                control={form.control}
+                name="secteur_activite"
+                label="Secteur d'activité"
+              />
               <TextField control={form.control} name="categorie" label="Catégorie client" />
               <TextField control={form.control} name="canal_vente" label="Canal de vente" />
-              <TextField control={form.control} name="circuit_distribution" label="Circuit de distribution" className="sm:col-span-2" />
+              <TextField
+                control={form.control}
+                name="circuit_distribution"
+                label="Circuit de distribution"
+                className="sm:col-span-2"
+              />
             </CardContent>
           </Card>
 
           {/* 5. FISCAL */}
           <Card className="overflow-hidden">
-            <SectionHeader icon={Receipt} title="Informations fiscales" color="#14B8A6" />
+            <SectionHeader title="Informations fiscales" color="#14B8A6" />
             <CardContent className="grid gap-4 sm:grid-cols-2">
               <TextField control={form.control} name="nif" label="NIF" />
               <TextField control={form.control} name="rccm" label="RCCM" />
-              <TextField control={form.control} name="compte_contribuable" label="Compte contribuable" />
+              <TextField
+                control={form.control}
+                name="compte_contribuable"
+                label="Compte contribuable"
+              />
               <TextField control={form.control} name="cnps" label="CNPS" />
               <SelectField
                 control={form.control}
@@ -287,7 +303,7 @@ export function ClientForm({ clientId }: ClientFormProps) {
 
           {/* 6. CONDITIONS COMMERCIALES */}
           <Card className="overflow-hidden">
-            <SectionHeader icon={Handshake} title="Conditions commerciales" color="#EAB308" />
+            <SectionHeader title="Conditions commerciales" color="#EAB308" />
             <CardContent className="grid gap-4 sm:grid-cols-2">
               <SelectField
                 control={form.control}
@@ -296,37 +312,63 @@ export function ClientForm({ clientId }: ClientFormProps) {
                 options={MODES_PAIEMENT}
                 allowEmpty
               />
-              <TextField control={form.control} name="delai_paiement" label="Délai (jours)" type="number" />
-              <TextField control={form.control} name="plafond_credit" label="Plafond de crédit" type="number" />
-              <TextField control={form.control} name="remise_habituelle" label="Remise habituelle (%)" type="number" />
+              <TextField
+                control={form.control}
+                name="delai_paiement"
+                label="Délai (jours)"
+                type="number"
+              />
+              <TextField
+                control={form.control}
+                name="plafond_credit"
+                label="Plafond de crédit"
+                type="number"
+              />
+              <TextField
+                control={form.control}
+                name="remise_habituelle"
+                label="Remise habituelle (%)"
+                type="number"
+              />
               <TextField control={form.control} name="devise" label="Devise" />
             </CardContent>
           </Card>
 
           {/* 7. LIVRAISON */}
           <Card className="overflow-hidden">
-            <SectionHeader icon={Truck} title="Livraison" color="#EF4444" />
+            <SectionHeader title="Livraison" color="#EF4444" />
             <CardContent className="grid gap-4 sm:grid-cols-2">
-              <TextField control={form.control} name="adresse_livraison" label="Adresse de livraison" className="sm:col-span-2" />
+              <TextField
+                control={form.control}
+                name="adresse_livraison"
+                label="Adresse de livraison"
+                className="sm:col-span-2"
+              />
               <TextField control={form.control} name="zone_livraison" label="Zone de livraison" />
               <TextField control={form.control} name="depot_defaut" label="Dépôt par défaut" />
-              <TextField control={form.control} name="moyen_livraison" label="Moyen préféré" className="sm:col-span-2" />
+              <TextField
+                control={form.control}
+                name="moyen_livraison"
+                label="Moyen préféré"
+                className="sm:col-span-2"
+              />
             </CardContent>
           </Card>
 
           {/* 8. DOCUMENTS (placeholder) */}
           <Card className="overflow-hidden">
-            <SectionHeader icon={FileText} title="Documents" color="#64748B" />
+            <SectionHeader title="Documents" color="#64748B" />
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                La gestion des pièces jointes (RCCM, NIF, contrat, logo…) sera disponible dans une prochaine mise à jour.
+                La gestion des pièces jointes (RCCM, NIF, contrat, logo…) sera disponible dans une
+                prochaine mise à jour.
               </p>
             </CardContent>
           </Card>
 
           {/* 9. NOTES */}
           <Card className="overflow-hidden lg:col-span-2">
-            <SectionHeader icon={StickyNote} title="Notes" color="#10B981" />
+            <SectionHeader title="Notes" color="#10B981" />
             <CardContent>
               <FormField
                 control={form.control}
@@ -334,7 +376,12 @@ export function ClientForm({ clientId }: ClientFormProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Textarea rows={5} placeholder="Observations, commentaires internes…" {...field} value={field.value ?? ""} />
+                      <Textarea
+                        rows={5}
+                        placeholder="Observations, commentaires internes…"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -346,11 +393,7 @@ export function ClientForm({ clientId }: ClientFormProps) {
 
         {/* Barre d'actions sticky */}
         <div className="sticky bottom-0 -mx-4 flex flex-wrap items-center justify-end gap-2 border-t bg-background px-4 py-3 sm:mx-0 sm:rounded-lg sm:border sm:px-4">
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => navigate({ to: "/clients" })}
-          >
+          <Button type="button" variant="ghost" onClick={() => navigate({ to: "/clients" })}>
             <X className="mr-2 h-4 w-4" /> Annuler
           </Button>
           <Button
@@ -359,7 +402,7 @@ export function ClientForm({ clientId }: ClientFormProps) {
             onClick={() => form.reset(defaultValues)}
             disabled={!isDirty || saveMutation.isPending}
           >
-            <RotateCcw className="mr-2 h-4 w-4" /> Réinitialiser
+            Réinitialiser
           </Button>
           {!editing && (
             <Button
@@ -372,11 +415,7 @@ export function ClientForm({ clientId }: ClientFormProps) {
             </Button>
           )}
           <Button type="submit" disabled={saveMutation.isPending}>
-            {saveMutation.isPending ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="mr-2 h-4 w-4" />
-            )}
+            {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             Enregistrer
           </Button>
         </div>
@@ -389,15 +428,7 @@ export function ClientForm({ clientId }: ClientFormProps) {
 
 type Ctrl = Control<FormInput>;
 
-function SectionHeader({
-  icon: Icon,
-  title,
-  color,
-}: {
-  icon: ComponentType<{ className?: string }>;
-  title: string;
-  color: string;
-}) {
+function SectionHeader({ title, color }: { title: string; color: string }) {
   return (
     <CardHeader className="relative pl-5">
       <span
@@ -405,15 +436,7 @@ function SectionHeader({
         className="absolute inset-y-0 left-0 w-1"
         style={{ backgroundColor: color }}
       />
-      <CardTitle className="flex items-center gap-2 text-base">
-        <span
-          className="grid h-7 w-7 shrink-0 place-items-center rounded-md text-white shadow-sm"
-          style={{ backgroundColor: color }}
-        >
-          <Icon className="h-4 w-4" />
-        </span>
-        {title}
-      </CardTitle>
+      <CardTitle className="flex items-center gap-2 text-base">{title}</CardTitle>
     </CardHeader>
   );
 }
@@ -452,7 +475,13 @@ function TextField({
               {...field}
               value={field.value == null ? "" : String(field.value)}
               onChange={(e) =>
-                field.onChange(type === "number" ? (e.target.value === "" ? null : Number(e.target.value)) : e.target.value)
+                field.onChange(
+                  type === "number"
+                    ? e.target.value === ""
+                      ? null
+                      : Number(e.target.value)
+                    : e.target.value,
+                )
               }
             />
           </FormControl>

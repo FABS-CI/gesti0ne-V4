@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, Save, UserPlus } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { ResponsiveDialog } from "@/components/ui/responsive-dialog";
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 
-import {
-  adminCreateUser,
-  adminUpdateUserProfile,
-} from "@/lib/users-admin.functions";
+import { adminCreateUser, adminUpdateUserProfile } from "@/lib/users-admin.functions";
 import { useRolesQuery } from "@/hooks/use-roles-permissions";
 import { friendlyError } from "@/lib/friendly-error";
 
@@ -152,7 +149,6 @@ export function UserFormDialog({ open, onOpenChange, editing }: Props) {
       className="sm:max-w-3xl"
       title={
         <span className="flex items-center gap-2">
-          {isEdit ? <Save className="h-5 w-5" /> : <UserPlus className="h-5 w-5" />}
           {isEdit ? "Modifier l'utilisateur" : "Nouvel utilisateur"}
         </span>
       }
@@ -162,11 +158,7 @@ export function UserFormDialog({ open, onOpenChange, editing }: Props) {
             Annuler
           </Button>
           <Button onClick={() => save.mutate()} disabled={save.isPending}>
-            {save.isPending ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="mr-2 h-4 w-4" />
-            )}
+            {save.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             {isEdit ? "Enregistrer" : "Créer l'utilisateur"}
           </Button>
         </>
@@ -225,15 +217,10 @@ export function UserFormDialog({ open, onOpenChange, editing }: Props) {
                 Un compte inactif ne peut plus se connecter.
               </p>
             </div>
-            <Switch
-              checked={form.actif}
-              onCheckedChange={(v) => setForm({ ...form, actif: v })}
-            />
+            <Switch checked={form.actif} onCheckedChange={(v) => setForm({ ...form, actif: v })} />
           </div>
         </section>
-
         <Separator />
-
         <section className="space-y-3">
           <div>
             <h3 className="text-sm font-semibold">
@@ -256,15 +243,13 @@ export function UserFormDialog({ open, onOpenChange, editing }: Props) {
             />
           </div>
         </section>
-
         <Separator />
-
         <section className="space-y-3">
           <div>
             <h3 className="text-sm font-semibold">Rôles attribués</h3>
             <p className="text-xs text-muted-foreground">
-              Les permissions sont héritées des rôles. La matrice de permissions
-              se gère dans l'onglet « Console » ou « Gérer les rôles ».
+              Les permissions sont héritées des rôles. La matrice de permissions se gère dans
+              l'onglet « Console » ou « Gérer les rôles ».
             </p>
           </div>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">

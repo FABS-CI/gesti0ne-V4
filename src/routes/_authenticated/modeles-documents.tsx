@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { friendlyError } from '@/lib/friendly-error';
+import { friendlyError } from "@/lib/friendly-error";
 import { useEffect, useState } from "react";
-import { FileText, Plus } from "lucide-react";
 import { toast } from "sonner";
 import {
   DEFAULT_TEMPLATE,
@@ -323,9 +322,6 @@ function ModelesDocuments() {
     <div className="space-y-6 p-1">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-primary/10 p-2 text-primary">
-            <FileText className="h-6 w-6" />
-          </div>
           <div>
             <h1 className="ds-page-title">Modèles de documents</h1>
             <p className="text-sm text-muted-foreground">
@@ -335,10 +331,9 @@ function ModelesDocuments() {
           </div>
         </div>
         <Button onClick={openCreate} className="shrink-0">
-          <Plus className="mr-1 h-4 w-4" /> Nouveau modèle
+          Nouveau modèle
         </Button>
       </div>
-
       <LogoAndPerTypeCard
         settings={settings}
         templates={templates}

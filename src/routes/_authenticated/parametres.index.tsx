@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Settings } from "lucide-react";
 import { ResourceManager, type ResourceConfig } from "@/components/crud/ResourceManager";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
@@ -13,7 +12,6 @@ const config: ResourceConfig = {
   table: "parametres",
   idField: "parametre_id",
   title: "Paramètres",
-  icon: Settings,
   newLabel: "Nouveau paramètre",
   entityLabel: "le paramètre",
   csvName: "parametres",

@@ -1,6 +1,6 @@
-import { friendlyError } from '@/lib/friendly-error';
+import { friendlyError } from "@/lib/friendly-error";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Stamp } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -76,11 +76,7 @@ export function FneRowActions({ facture, fneStatut }: Props) {
                 disabled={busy || alreadySubmitted}
                 onClick={() => !busy && submit.mutate()}
               >
-                {busy ? (
-                  <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <Stamp className="mr-1 h-3.5 w-3.5" />
-                )}
+                {busy ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" /> : null}
                 Normaliser
               </Button>
             </span>

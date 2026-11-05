@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useBlocker, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { AlertTriangle, Loader2, ShoppingCart, UserPlus } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -57,7 +57,10 @@ const TYPES_FREQUENTS = [
 const VIDE: FormInput = { nom: "", type_client: "", representant: "", telephone: "", ville: "" };
 
 /** Affichage du téléphone pendant la saisie : 07 59 69 98 11. */
-const formaterSaisie = (v: string) => telephoneChiffres(v).slice(0, 10).replace(/(\d{2})(?=\d)/g, "$1 ");
+const formaterSaisie = (v: string) =>
+  telephoneChiffres(v)
+    .slice(0, 10)
+    .replace(/(\d{2})(?=\d)/g, "$1 ");
 
 /**
  * Création d'un client en cinq informations (nom, type, représentant, téléphone, ville).
@@ -134,15 +137,11 @@ export function ClientRapideForm() {
         className="mx-auto max-w-2xl space-y-6 pb-24"
       >
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <UserPlus className="h-6 w-6 text-primary" aria-hidden="true" />
-            Nouveau client
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Nouveau client</h1>
           <p className="text-sm text-muted-foreground">
             Cinq informations suffisent. Le reste se complète plus tard depuis la fiche du client.
           </p>
         </div>
-
         <Card>
           <CardContent className="space-y-5 pt-6">
             <FormField
@@ -154,13 +153,17 @@ export function ClientRapideForm() {
                     Nom du client<span className="ml-0.5 text-destructive">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input autoFocus autoComplete="off" placeholder="Librairie Yao Kouakou Romeo" {...field} />
+                    <Input
+                      autoFocus
+                      autoComplete="off"
+                      placeholder="Librairie Yao Kouakou Romeo"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                   {doublons.length > 0 && (
                     <div className="rounded-md border border-warning/50 bg-warning/10 p-2 text-xs text-warning">
                       <p className="flex items-center gap-1.5 font-medium">
-                        <AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />
                         Client(s) au nom proche déjà enregistré(s)
                       </p>
                       <ul className="mt-1 list-disc pl-5">
@@ -177,7 +180,6 @@ export function ClientRapideForm() {
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="type_client"
@@ -186,7 +188,11 @@ export function ClientRapideForm() {
                   <FormLabel>
                     Type<span className="ml-0.5 text-destructive">*</span>
                   </FormLabel>
-                  <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Type de client">
+                  <div
+                    className="flex flex-wrap gap-2"
+                    role="radiogroup"
+                    aria-label="Type de client"
+                  >
                     {TYPES_FREQUENTS.map((v) => {
                       const t = TYPE_CLIENTS.find((x) => x.value === v);
                       const actif = field.value === v;
@@ -234,7 +240,6 @@ export function ClientRapideForm() {
                 </FormItem>
               )}
             />
-
             <div className="grid gap-5 sm:grid-cols-2">
               <FormField
                 control={form.control}
@@ -249,7 +254,6 @@ export function ClientRapideForm() {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="telephone"
@@ -277,7 +281,6 @@ export function ClientRapideForm() {
                 )}
               />
             </div>
-
             <FormField
               control={form.control}
               name="ville"
@@ -302,7 +305,6 @@ export function ClientRapideForm() {
             />
           </CardContent>
         </Card>
-
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between">
           <Button
             type="button"
@@ -324,12 +326,17 @@ export function ClientRapideForm() {
                 disabled={creer.isPending}
                 onClick={() => envoyer("commande")}
               >
-                <ShoppingCart className="mr-2 h-4 w-4" aria-hidden="true" />
                 Créer et faire une commande
               </Button>
             )}
-            <Button type="submit" disabled={creer.isPending} className={cn(creer.isPending && "opacity-80")}>
-              {creer.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />}
+            <Button
+              type="submit"
+              disabled={creer.isPending}
+              className={cn(creer.isPending && "opacity-80")}
+            >
+              {creer.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+              )}
               Créer le client
             </Button>
           </div>

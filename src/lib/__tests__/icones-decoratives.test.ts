@@ -1,11 +1,12 @@
-// Interface sans icônes décoratives : garde-fou des écrans déjà nettoyés.
+// Interface sans icônes décoratives (décision du 05/11/2026) : garde-fou sur tout l'ERP.
 //
 // Règle : une icône n'est gardée que si elle sert à utiliser l'écran (case cochée,
 // flèche de liste ou de tri, fermeture, chargement, menu d'options, mot de passe…).
-// Titres, cartes, menus, boutons qui ont déjà un libellé : texte seul, sans emoji.
-// Les écrans s'ajoutent à ECRANS_NETTOYES au fil des lots.
+// Titres, cartes, menus, alertes, boutons qui ont déjà un libellé : texte seul, sans emoji.
+// Tous les écrans de src/ sont vérifiés, sauf les composants de base src/components/ui
+// (flèches du calendrier et du carrousel, loupe de la palette de commandes, etc.).
 
-import { readFileSync, readdirSync } from "node:fs";
+import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -36,198 +37,23 @@ const ICONES_FONCTIONNELLES = new Set([
   "LucideIcon",
 ]);
 
-const dossier = (d: string) =>
-  readdirSync(d)
-    .filter((f) => f.endsWith(".tsx") && !f.includes(".test."))
-    .map((f) => join(d, f));
+const EXCLUS = [join("src", "components", "ui")];
 
-/** Lot 1 (05/11/2026) : tableaux de bord et navigation. */
-const ECRANS_NETTOYES = [
-  ...dossier("src/components/dashboard"),
-  "src/routes/_authenticated/dashboard.index.tsx",
-  "src/routes/_authenticated/compta-dashboard.tsx",
-  "src/routes/_authenticated/paie-dashboard.tsx",
-  "src/routes/_authenticated/rh-dashboard.tsx",
-  "src/routes/_authenticated/dashboard-logistique.tsx",
-  "src/routes/_authenticated/clients.dashboard.tsx",
-  "src/components/security/SecurityDashboard.tsx",
-  "src/components/layout/sidebar/SidebarNavItem.tsx",
-  "src/components/layout/sidebar/SidebarNavGroup.tsx",
-  "src/components/layout/MobileBottomNav.tsx",
-  // Lot 2 (05/11/2026) : ventes, proformas, factures, paiements, composants communs.
-  "src/components/clients/detail/ClientPaiementsTab.tsx",
-  "src/components/commandes/CommandeActions.tsx",
-  "src/components/commandes/CommandeForm.tsx",
-  "src/components/commandes/CommandeRowMenu.tsx",
-  "src/components/commandes/DocActionsMenu.tsx",
-  "src/components/commandes/FloatingCalculator.tsx",
-  "src/components/commandes/SolderFactureDialog.tsx",
-  "src/components/commandes/VenteRapideDialog.tsx",
-  "src/components/commandes/form/LignesSection.tsx",
-  "src/components/commandes/list/CommandesCycleSteps.tsx",
-  "src/components/commandes/list/CommandesKpis.tsx",
-  "src/components/commandes/list/CommandesTable.tsx",
-  "src/components/commandes/list/CommandesToolbar.tsx",
-  "src/components/commandes/list/DeleteCommandeDialog.tsx",
-  "src/components/common/EmptyState.tsx",
-  "src/components/crud/ResourceManager.tsx",
-  "src/components/crud/ResourceTable.tsx",
-  "src/components/factures/list/FacturePdfActions.tsx",
-  "src/components/factures/list/FacturesKpis.tsx",
-  "src/components/factures/list/FneStatusBadge.tsx",
-  "src/components/fne/FNEFacturesTab.tsx",
-  "src/components/paiements/PaiementVentilationCard.tsx",
-  "src/components/paiements/PaiementsEnAttenteCard.tsx",
-  "src/components/paiements/nouveau/ClientsDebiteursSelector.tsx",
-  "src/components/paiements/nouveau/PaiementFormCard.tsx",
-  "src/components/rapports/analyse/VentesEncart.tsx",
-  "src/components/ui/section-header.tsx",
-  "src/routes/_authenticated/admin.audit-paiements.$auditId.tsx",
-  "src/routes/_authenticated/admin.audit-paiements.index.tsx",
-  "src/routes/_authenticated/commandes.$commandeId.index.tsx",
-  "src/routes/_authenticated/commandes.$commandeId.modifier.tsx",
-  "src/routes/_authenticated/commandes.index.tsx",
-  "src/routes/_authenticated/commandes.nouvelle.tsx",
-  "src/routes/_authenticated/factures.$factureId.tsx",
-  "src/routes/_authenticated/factures.index.tsx",
-  "src/routes/_authenticated/fne-detail.$factureId.tsx",
-  "src/routes/_authenticated/livraison-suivi.$commandeRef.index.tsx",
-  "src/routes/_authenticated/livraison-suivi.$commandeRef.remise.tsx",
-  "src/routes/_authenticated/paiements.$paiementId.tsx",
-  "src/routes/_authenticated/paiements.index.tsx",
-  "src/routes/_authenticated/paiements.nouveau.tsx",
-  "src/routes/_authenticated/proformas.$proformaId.tsx",
-  "src/routes/_authenticated/proformas.index.tsx",
-  // Lot 3 (05/11/2026) : stock, produits, inventaires, logistique, colisage, retours.
-  "src/components/achats/nouveau/LignesProduitsSection.tsx",
-  "src/components/colisage/ColisageActionButtons.tsx",
-  "src/components/colisage/ColisageForm.tsx",
-  "src/components/colisage/EtiquettesSection.tsx",
-  "src/components/colisage/form/ColisageAcheminementFields.tsx",
-  "src/components/colisage/form/ColisageCartonsSection.tsx",
-  "src/components/data-quality/ReconciliationStockCard.tsx",
-  "src/components/inventaires/detail/InventaireHeaderActions.tsx",
-  "src/components/livraison-suivi/ConfirmerReceptionDialog.tsx",
-  "src/components/livraison-suivi/LivraisonsTable.tsx",
-  "src/components/logistics-costs/DetailDialog.tsx",
-  "src/components/produits/ProductCoverActions.tsx",
-  "src/components/produits/ProductCoverHero.tsx",
-  "src/components/produits/ProductCoverSection.tsx",
-  "src/components/produits/ProductCoverThumb.tsx",
-  "src/components/produits/detail/DepotsStockTab.tsx",
-  "src/components/produits/detail/InfoCards.tsx",
-  "src/components/produits/detail/KpiCards.tsx",
-  "src/components/produits/list/ProduitFormDialog.tsx",
-  "src/components/produits/list/ProduitsFilters.tsx",
-  "src/components/produits/list/ProduitsTable.tsx",
-  "src/components/rapports/analyse/ProduitsTab.tsx",
-  "src/components/retours/nouveau/DocumentSection.tsx",
-  "src/components/retours/nouveau/LignesSection.tsx",
-  "src/components/specimens/nouveau/LignesProduitsSection.tsx",
-  "src/components/stock/DepotSortieField.tsx",
-  "src/components/tournees/DateColisPicker.tsx",
-  "src/components/tournees/create/ColisPickerTable.tsx",
-  "src/routes/_authenticated/alertes-stock.tsx",
-  "src/routes/_authenticated/bon-de-sortie.$tourneeId.tsx",
-  "src/routes/_authenticated/bon-de-tournee.$tourneeId.tsx",
-  "src/routes/_authenticated/bons-livraison.tsx",
-  "src/routes/_authenticated/colisage.$blId.tsx",
-  "src/routes/_authenticated/colisage.index.tsx",
-  "src/routes/_authenticated/colisage.responsables.tsx",
-  "src/routes/_authenticated/expeditions.tsx",
-  "src/routes/_authenticated/fleet.tsx",
-  "src/routes/_authenticated/inventaires.$inventaireId.tsx",
-  "src/routes/_authenticated/inventaires.index.tsx",
-  "src/routes/_authenticated/inventaires.nouveau-physique.tsx",
-  "src/routes/_authenticated/livraison-suivi.index.tsx",
-  "src/routes/_authenticated/livreurs.tsx",
-  "src/routes/_authenticated/logistics-costs.tsx",
-  "src/routes/_authenticated/missions.tsx",
-  "src/routes/_authenticated/parametres.zones-livraison.tsx",
-  "src/routes/_authenticated/pilotage.tsx",
-  "src/routes/_authenticated/produits.$produitId.tsx",
-  "src/routes/_authenticated/produits.index.tsx",
-  "src/routes/_authenticated/rapports-logistique.tsx",
-  "src/routes/_authenticated/rapports.transport.tsx",
-  "src/routes/_authenticated/retours.$retourId.tsx",
-  "src/routes/_authenticated/retours.index.tsx",
-  "src/routes/_authenticated/retours.nouveau.tsx",
-  "src/routes/_authenticated/stock.audit.tsx",
-  "src/routes/_authenticated/stock.index.tsx",
-  "src/routes/_authenticated/stock_.$produitId.mouvements.tsx",
-  "src/routes/_authenticated/tournees-bl.$tourneeId.tsx",
-  "src/routes/_authenticated/tournees.$tourneeId.tsx",
-  "src/routes/_authenticated/tournees.index.tsx",
-  "src/routes/_authenticated/tournees.nouvelle.tsx",
-  "src/routes/carton.$colisId.tsx",
-  // Lot 4 (05/11/2026) : comptabilité, exercices, états financiers, finances, achats, fournisseurs, RH, paie.
-  "src/components/common/ModulePlaceholder.tsx",
-  "src/components/comptabilite/ControleIntegriteCard.tsx",
-  "src/components/comptabilite/JournalFilters.tsx",
-  "src/components/comptabilite/JournalPreviewDialog.tsx",
-  "src/components/comptabilite/JournalTable.tsx",
-  "src/components/comptabilite/fec/FecColonnesCard.tsx",
-  "src/components/comptabilite/fec/FecPreviewCard.tsx",
-  "src/components/comptabilite/fec/FecProgressCard.tsx",
-  "src/components/comptabilite/fec/FecValidationCards.tsx",
-  "src/components/data-quality/ReconciliationFinanceCard.tsx",
-  "src/components/etats-financiers/Dossier.tsx",
-  "src/components/etats-financiers/Exports.tsx",
-  "src/components/etats-financiers/NotesImmobilisations.tsx",
-  "src/components/etats-financiers/Preparation.tsx",
-  "src/components/exercices/comparatif/ComparatifTable.tsx",
-  "src/components/exercices/index/CloturePreviewDialog.tsx",
-  "src/components/exercices/index/EditExerciceDialog.tsx",
-  "src/components/exercices/index/ExercicesTable.tsx",
-  "src/components/finances/FinancesKpis.tsx",
-  "src/components/finances/TransactionsTable.tsx",
-  "src/components/fournisseurs/FournisseurFormPage.tsx",
-  "src/components/layout/ExerciceReadOnlyBanner.tsx",
-  "src/components/layout/ExerciceSelector.tsx",
-  "src/components/paie-declarations/DeclarationPreviewDialog.tsx",
-  "src/components/paie-declarations/DeclarationsTable.tsx",
-  "src/components/paie-declarations/DeclarationsToolbar.tsx",
-  "src/components/paie/BulletinActionButtons.tsx",
-  "src/components/paie/bulletins-config.tsx",
-  "src/components/rh/EmployeForm.tsx",
-  "src/components/rh/RhPageHeader.tsx",
-  "src/routes/_authenticated/achats.$achatId.tsx",
-  "src/routes/_authenticated/achats.index.tsx",
-  "src/routes/_authenticated/achats.nouveau.tsx",
-  "src/routes/_authenticated/balance.tsx",
-  "src/routes/_authenticated/comptabilite.audit.tsx",
-  "src/routes/_authenticated/comptabilite.fec.tsx",
-  "src/routes/_authenticated/comptabilite.index.tsx",
-  "src/routes/_authenticated/comptabilite.nouvelle.tsx",
-  "src/routes/_authenticated/conges-en-cours.tsx",
-  "src/routes/_authenticated/conges.index.tsx",
-  "src/routes/_authenticated/contrats.$contratId.index.tsx",
-  "src/routes/_authenticated/departements.tsx",
-  "src/routes/_authenticated/employes.$employeId.index.tsx",
-  "src/routes/_authenticated/employes.index.tsx",
-  "src/routes/_authenticated/etats-comptables.tsx",
-  "src/routes/_authenticated/exercices.comparatif.tsx",
-  "src/routes/_authenticated/exercices.index.tsx",
-  "src/routes/_authenticated/exercices.journal.tsx",
-  "src/routes/_authenticated/exercices.rapport.tsx",
-  "src/routes/_authenticated/finances.tsx",
-  "src/routes/_authenticated/fournisseurs.$fournisseurId.tsx",
-  "src/routes/_authenticated/fournisseurs.index.tsx",
-  "src/routes/_authenticated/grand-livre.tsx",
-  "src/routes/_authenticated/paie-declarations.tsx",
-  "src/routes/_authenticated/paie-exports.tsx",
-  "src/routes/_authenticated/paie-generation.tsx",
-  "src/routes/_authenticated/paie-historique.tsx",
-  "src/routes/_authenticated/paie-parametres.tsx",
-  "src/routes/_authenticated/paie-rapports.tsx",
-  "src/routes/_authenticated/paie-rubriques.tsx",
-  "src/routes/_authenticated/paie.$bulletinId.tsx",
-  "src/routes/_authenticated/plan-comptable.tsx",
-  "src/routes/_authenticated/rapports-comptables.tsx",
-];
+function ecrans(dossier: string): string[] {
+  const out: string[] = [];
+  for (const nom of readdirSync(dossier)) {
+    const chemin = join(dossier, nom);
+    if (EXCLUS.includes(chemin)) continue;
+    if (statSync(chemin).isDirectory()) out.push(...ecrans(chemin));
+    else if (nom.endsWith(".tsx") && !nom.includes(".test.")) out.push(chemin);
+  }
+  return out;
+}
 
 const EMOJI = /\p{Extended_Pictographic}/u;
-const IMPORT_LUCIDE = /import\s*(?:type\s*)?\{([^}]*)\}\s*from\s*"lucide-react"/g;
+// ©, ® et ™ (mentions légales) et les flèches ← → ↔ (typographie) ne sont pas des emojis.
+const TYPOGRAPHIE = /[©®™←-⇿]/g;
+const IMPORT_LUCIDE = /import\s*(?:type\s*)?\{([^}]*)\}\s*from\s*["']lucide-react["']/g;
 
 function iconesImportees(src: string): string[] {
   const noms: string[] = [];
@@ -243,18 +69,33 @@ function iconesImportees(src: string): string[] {
   return noms;
 }
 
-describe("écrans sans icônes décoratives", () => {
-  for (const f of ECRANS_NETTOYES) {
-    const src = readFileSync(f, "utf8");
-    it(`${f} : seulement des icônes fonctionnelles`, () => {
-      expect(iconesImportees(src).filter((n) => !ICONES_FONCTIONNELLES.has(n))).toEqual([]);
-    });
-    it(`${f} : aucun emoji`, () => {
-      // ©, ® et ™ (mentions légales) et les flèches ← → ↔ (typographie) ne sont pas des emojis.
-      expect(EMOJI.test(src.replace(/[©®™←-⇿]/g, ""))).toBe(false);
-    });
-    it(`${f} : aucune icône affichée depuis les données (item.icon, Icon)`, () => {
-      expect(src).not.toMatch(/<(?:Icon|GroupIcon|\w+\.icon)\b/);
-    });
-  }
+describe("interface sans icônes décoratives", () => {
+  const fichiers = ecrans("src").map((f) => ({ f, src: readFileSync(f, "utf8") }));
+
+  it("vérifie bien l'ensemble des écrans", () => {
+    expect(fichiers.length).toBeGreaterThan(300);
+  });
+
+  it("seulement des icônes fonctionnelles", () => {
+    const fautes = fichiers.flatMap(({ f, src }) =>
+      iconesImportees(src)
+        .filter((n) => !ICONES_FONCTIONNELLES.has(n))
+        .map((n) => `${f} : ${n}`),
+    );
+    expect(fautes).toEqual([]);
+  });
+
+  it("aucun emoji", () => {
+    const fautes = fichiers
+      .filter(({ src }) => EMOJI.test(src.replace(TYPOGRAPHIE, "")))
+      .map(({ f }) => f);
+    expect(fautes).toEqual([]);
+  });
+
+  it("aucune icône affichée depuis les données (item.icon, Icon)", () => {
+    const fautes = fichiers
+      .filter(({ src }) => /<(?:Icon|GroupIcon|\w+\.icon|\w+\.Icon)\b/.test(src))
+      .map(({ f }) => f);
+    expect(fautes).toEqual([]);
+  });
 });

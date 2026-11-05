@@ -1,5 +1,3 @@
-import { Moon, Sun } from "lucide-react";
-
 import { useTheme } from "@/hooks/use-theme";
 import { Button } from "@/components/ui/button";
 
@@ -10,13 +8,12 @@ export function ThemeToggle() {
   return (
     <Button
       variant="outline"
-      size="icon"
       onClick={toggle}
-      className="h-10 w-10 rounded-lg"
+      className="h-10 rounded-lg px-3"
       aria-label={isDark ? "Passer en mode clair" : "Passer en mode sombre"}
       title={isDark ? "Mode clair" : "Mode sombre"}
     >
-      {isDark ? <Sun className="h-[18px] w-[18px]" /> : <Moon className="h-[18px] w-[18px]" />}
+      {isDark ? "Clair" : "Sombre"}
     </Button>
   );
 }

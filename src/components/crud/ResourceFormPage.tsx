@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { Save } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -177,7 +176,6 @@ export function ResourceFormPage({ config, mode, recordId, listPath }: Props) {
           { label: editing ? "Modifier" : "Nouveau" },
         ]}
       />
-
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Informations générales</CardTitle>
@@ -194,7 +192,6 @@ export function ResourceFormPage({ config, mode, recordId, listPath }: Props) {
           />
         </CardContent>
       </Card>
-
       <div className="flex flex-wrap items-center justify-end gap-2 print:hidden">
         <Button variant="outline" onClick={() => navigate({ to: listPath })}>
           Annuler
@@ -213,7 +210,6 @@ export function ResourceFormPage({ config, mode, recordId, listPath }: Props) {
           </Button>
         )}
         <Button onClick={() => submit("list")} disabled={save.isPending}>
-          <Save className="mr-2 h-4 w-4" />
           {editing ? "Enregistrer" : "Créer"}
         </Button>
       </div>

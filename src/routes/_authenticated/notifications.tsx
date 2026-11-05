@@ -2,7 +2,7 @@ import { formatDateTime } from "@/lib/format";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Bell, Check, CheckCheck, RefreshCw, Trash2, ListChecks } from "lucide-react";
+import { Check } from "lucide-react";
 import { toast } from "sonner";
 
 import { NotificationPreferencesPanel } from "@/components/NotificationPreferencesPanel";
@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/select";
 import { EmptyState } from "@/components/common/EmptyState";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
-import { friendlyError } from '@/lib/friendly-error';
+import { friendlyError } from "@/lib/friendly-error";
 
 export const Route = createFileRoute("/_authenticated/notifications")({
   component: NotificationsCentre,
@@ -120,18 +120,14 @@ function NotificationsCentre() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <Bell className="h-6 w-6 text-primary" /> Notifications & alertes
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Notifications & alertes</h1>
           <p className="text-sm text-muted-foreground">Centre de notifications et alertes métier</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
-            <RefreshCw className={`mr-2 h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
             Actualiser
           </Button>
           <Button variant="outline" onClick={() => generer.mutate()} disabled={generer.isPending}>
-            <ListChecks className="mr-2 h-4 w-4" />
             {generer.isPending ? "Analyse…" : "Générer alertes"}
           </Button>
           <Button
@@ -139,7 +135,6 @@ function NotificationsCentre() {
             onClick={() => allerLue.mutate()}
             disabled={allerLue.isPending || stats.nonLus === 0}
           >
-            <CheckCheck className="mr-2 h-4 w-4" />
             Tout marquer lu
           </Button>
           <Button
@@ -148,20 +143,18 @@ function NotificationsCentre() {
               const r = await confirm({
                 title: "Purger les notifications lues ?",
                 entityLabel: "toutes les notifications lues",
-                description: "Toutes les notifications marquées comme lues seront supprimées définitivement.",
+                description:
+                  "Toutes les notifications marquées comme lues seront supprimées définitivement.",
               });
               if (r === false) return;
               purger.mutate();
             }}
           >
-            <Trash2 className="mr-2 h-4 w-4" />
             Purger les lues
           </Button>
         </div>
       </div>
-
       <NotificationPreferencesPanel />
-
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
           <CardContent className="p-4">
@@ -209,14 +202,12 @@ function NotificationsCentre() {
           </CardContent>
         </Card>
       </div>
-
       <div className="space-y-2">
         {isLoading ? (
           <p className="py-8 text-center text-muted-foreground">Chargement…</p>
         ) : notifs.length === 0 ? (
           <EmptyState
             variant="rich"
-            icon={Bell}
             title="Vous êtes à jour"
             description="Aucune notification à afficher. Les alertes stock, échéances et activités importantes s'afficheront ici."
           />
@@ -269,16 +260,23 @@ function NotificationRow({
           <p className="mt-1 text-xs text-muted-foreground">{frDateTime(n.date_notification)}</p>
         </div>
         <div className="flex items-center gap-1">
-          <Button aria-label={n.lu ? "Marquer non lu" : "Marquer lu"}
+          <Button
+            aria-label={n.lu ? "Marquer non lu" : "Marquer lu"}
             variant="ghost"
-            size="icon"
+            size="sm"
             title={n.lu ? "Marquer non lu" : "Marquer lu"}
             onClick={() => onToggleLu(!n.lu)}
           >
-            <Check className={`h-4 w-4 ${n.lu ? "text-muted-foreground" : "text-success"}`} />
+            {n.lu ? "Non lu" : "Lu"}
           </Button>
-          <Button variant="ghost" size="icon" title="Supprimer" onClick={onDelete} aria-label="Supprimer">
-            <Trash2 className="h-4 w-4 text-destructive" />
+          <Button
+            variant="ghost"
+            size="sm"
+            title="Supprimer"
+            onClick={onDelete}
+            aria-label="Supprimer"
+          >
+            Supprimer
           </Button>
         </div>
       </CardContent>

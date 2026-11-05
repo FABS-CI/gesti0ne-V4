@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Activity, Gauge } from "lucide-react";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
 export const Route = createFileRoute("/_authenticated/admin/web-vitals")({
@@ -103,7 +102,6 @@ function WebVitalsPage() {
   return (
     <div className="container mx-auto space-y-6 p-6">
       <div className="flex items-center gap-3">
-        <Gauge className="h-6 w-6 text-primary" />
         <h1 className="ds-page-title">Web Vitals — 7 derniers jours</h1>
       </div>
 
@@ -112,8 +110,7 @@ function WebVitalsPage() {
       ) : rows.length === 0 ? (
         <Card>
           <CardContent className="p-6 text-center text-muted-foreground">
-            Aucune métrique collectée pour l'instant. Naviguez dans l'app pour
-            générer des mesures.
+            Aucune métrique collectée pour l'instant. Naviguez dans l'app pour générer des mesures.
           </CardContent>
         </Card>
       ) : (
@@ -122,8 +119,7 @@ function WebVitalsPage() {
             {aggregates.map((a) => {
               const th = THRESHOLDS[a.metric];
               const p75 = a.metric === "CLS" ? a.p75.toFixed(3) : Math.round(a.p75);
-              const status =
-                a.p75 <= th.good ? "good" : a.p75 <= th.poor ? "needs" : "poor";
+              const status = a.p75 <= th.good ? "good" : a.p75 <= th.poor ? "needs" : "poor";
               const color =
                 status === "good"
                   ? "text-success"
@@ -142,9 +138,7 @@ function WebVitalsPage() {
                       {p75}
                       {th.unit && <span className="text-sm ml-1">{th.unit}</span>}
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      p75 · {a.count} mesures
-                    </div>
+                    <div className="text-xs text-muted-foreground">p75 · {a.count} mesures</div>
                     <div className="flex gap-1 pt-1">
                       <Badge variant="outline" className="text-success">
                         {a.good}
@@ -166,7 +160,6 @@ function WebVitalsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <Activity className="h-4 w-4" />
                   Pages les plus lentes (LCP p75)
                 </CardTitle>
               </CardHeader>
@@ -179,9 +172,7 @@ function WebVitalsPage() {
                     >
                       <code className="text-sm">{r.route}</code>
                       <div className="flex items-center gap-3">
-                        <span className="text-xs text-muted-foreground">
-                          {r.count} mesures
-                        </span>
+                        <span className="text-xs text-muted-foreground">{r.count} mesures</span>
                         <Badge
                           variant={r.p75 > 4000 ? "destructive" : "outline"}
                           className="tabular-nums"

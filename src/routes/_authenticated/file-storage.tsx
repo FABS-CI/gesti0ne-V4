@@ -2,7 +2,6 @@ import { formatDate } from "@/lib/format";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
-import { HardDrive, Upload, Download, Trash2, File as FileIcon } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -101,9 +100,7 @@ function FileStoragePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <HardDrive className="h-6 w-6 text-primary" /> Stockage de fichiers
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Stockage de fichiers</h1>
           <p className="text-sm text-muted-foreground">
             Documents et pièces jointes de l'entreprise
           </p>
@@ -111,12 +108,10 @@ function FileStoragePage() {
         <div>
           <input ref={inputRef} type="file" className="hidden" onChange={handleUpload} />
           <Button onClick={() => inputRef.current?.click()} disabled={uploading}>
-            <Upload className="mr-2 h-4 w-4" />
             {uploading ? "Téléversement..." : "Téléverser"}
           </Button>
         </div>
       </div>
-
       <Card>
         <CardContent className="p-0">
           <Table>
@@ -145,27 +140,30 @@ function FileStoragePage() {
                 files.map((f) => (
                   <TableRow key={f.name}>
                     <TableCell className="flex items-center gap-2 font-medium">
-                      <FileIcon className="h-4 w-4 text-muted-foreground" />
                       {f.name.replace(/^\d+_/, "")}
                     </TableCell>
                     <TableCell className="text-right">
                       {formatSize(f.metadata?.size ?? 0)}
                     </TableCell>
-                    <TableCell>
-                      {f.created_at ? formatDate(f.created_at) : "—"}
-                    </TableCell>
+                    <TableCell>{f.created_at ? formatDate(f.created_at) : "—"}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
-                        <Button aria-label="Télécharger" variant="ghost" size="icon" onClick={() => handleDownload(f.name)}>
-                          <Download className="h-4 w-4" />
+                        <Button
+                          aria-label="Télécharger"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDownload(f.name)}
+                        >
+                          Télécharger
                         </Button>
                         <Can permission="documents.supprimer">
-                          <Button aria-label="Supprimer"
+                          <Button
+                            aria-label="Supprimer"
                             variant="ghost"
-                            size="icon"
+                            size="sm"
                             onClick={() => deleteMutation.mutate(f.name)}
                           >
-                            <Trash2 className="h-4 w-4 text-destructive" />
+                            Supprimer
                           </Button>
                         </Can>
                       </div>

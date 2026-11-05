@@ -1,4 +1,3 @@
-import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -26,7 +25,6 @@ export function ExportMenu({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="h-9 gap-1.5" disabled={busy || count === 0}>
-          <Download className="h-4 w-4" strokeWidth={1.5} aria-hidden />
           {busy && progress ? progress : "Exporter"}
         </Button>
       </DropdownMenuTrigger>

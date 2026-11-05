@@ -1,7 +1,6 @@
 import { lazy, memo, Suspense } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { LogOut, RefreshCw, UserCircle } from "lucide-react";
 const GlobalSearch = lazy(() =>
   import("@/components/GlobalSearch").then((m) => ({ default: m.GlobalSearch })),
 );
@@ -74,7 +73,6 @@ function TopbarImpl() {
           <GlobalSearch />
         </Suspense>
       </div>
-
       <div className="ml-auto flex items-center gap-1.5 sm:gap-2 shrink-0">
         <div className="hidden md:block">
           <ExerciceSelector />
@@ -83,10 +81,12 @@ function TopbarImpl() {
         <Suspense fallback={<div className="h-9 w-9" />}>
           <NotificationsBell />
         </Suspense>
-
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="flex h-10 items-center gap-2 px-1 rounded-full sm:rounded-md sm:px-2">
+            <Button
+              variant="ghost"
+              className="flex h-10 items-center gap-2 px-1 rounded-full sm:rounded-md sm:px-2"
+            >
               <Avatar className="h-8 w-8">
                 {avatarUrl ? <AvatarImage src={avatarUrl} alt={label} /> : null}
                 <AvatarFallback className="bg-primary text-xs text-primary-foreground">
@@ -114,18 +114,16 @@ function TopbarImpl() {
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link to="/profil">
-                <UserCircle className="mr-2 h-4 w-4" />
-                Mon profil
-              </Link>
+              <Link to="/profil">Mon profil</Link>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleRefreshPermissions}>
-              <RefreshCw className="mr-2 h-4 w-4" />
               Recharger mes permissions
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
-              <LogOut className="mr-2 h-4 w-4" />
+            <DropdownMenuItem
+              onClick={handleSignOut}
+              className="text-destructive focus:text-destructive"
+            >
               Déconnexion
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -15,7 +15,6 @@ import { useNotificationsRealtime } from "@/hooks/use-notifications-realtime";
 import { usePresenceBroadcast } from "@/hooks/use-presence-broadcast";
 import { useRealtimeBus } from "@/hooks/use-realtime-bus";
 import { useIdlePrefetch, type PrefetchTarget } from "@/hooks/use-idle-prefetch";
-import { ShieldAlert } from "lucide-react";
 import { ExerciceProvider } from "@/contexts/ExerciceContext";
 import { ExerciceReadOnlyBanner } from "./ExerciceReadOnlyBanner";
 import { buildModuleThemeVars, getModuleColor } from "@/lib/module-theme";
@@ -97,50 +96,53 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <ExerciceProvider>
       <SidebarAutoHideProvider>
-      <AutoHideSidebarProvider>
-        <MobileSwipeGestures />
-        <AndroidBackButtonHandler />
-        <div className="flex min-h-dvh w-full">
-          <AutoHideSidebarSlot>
-            <AppSidebar />
-          </AutoHideSidebarSlot>
-          <div className="flex min-w-0 flex-1 flex-col">
-            <header className="app-shell-header sticky top-0 z-30 flex h-16 items-center gap-2 border-b bg-card px-3 pt-[var(--safe-area-top)] sm:px-4">
-              <SidebarTrigger className="hover:bg-accent h-9 w-9 shrink-0 rounded-full" />
-              <Topbar />
-            </header>
-            <div className="app-shell-banner">
-              <ExerciceReadOnlyBanner />
-              <SystemAlertsBanner />
+        <AutoHideSidebarProvider>
+          <MobileSwipeGestures />
+          <AndroidBackButtonHandler />
+          <div className="flex min-h-dvh w-full">
+            <AutoHideSidebarSlot>
+              <AppSidebar />
+            </AutoHideSidebarSlot>
+            <div className="flex min-w-0 flex-1 flex-col">
+              <header className="app-shell-header sticky top-0 z-30 flex h-16 items-center gap-2 border-b bg-card px-3 pt-[var(--safe-area-top)] sm:px-4">
+                <SidebarTrigger className="hover:bg-accent h-9 w-9 shrink-0 rounded-full" />
+                <Topbar />
+              </header>
+              <div className="app-shell-banner">
+                <ExerciceReadOnlyBanner />
+                <SystemAlertsBanner />
+              </div>
+              <main
+                className="app-shell-main min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-3 pb-[calc(6rem+var(--keyboard-height,0px)+var(--safe-area-bottom))] sm:p-5 md:pb-[calc(1rem+var(--keyboard-height,0px)+var(--safe-area-bottom))] lg:p-8"
+                style={moduleThemeVars}
+              >
+                {blocked ? (
+                  <AccessDenied />
+                ) : (
+                  <div
+                    key={pathname}
+                    className="animate-fade-in min-h-[500px] w-full bg-background"
+                  >
+                    {children}
+                  </div>
+                )}
+              </main>
+              <MobileBottomNav />
             </div>
-            <main
-              className="app-shell-main min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-3 pb-[calc(6rem+var(--keyboard-height,0px)+var(--safe-area-bottom))] sm:p-5 md:pb-[calc(1rem+var(--keyboard-height,0px)+var(--safe-area-bottom))] lg:p-8"
-              style={moduleThemeVars}
-            >
-              {blocked ? (
-                <AccessDenied />
-              ) : (
-                <div key={pathname} className="animate-fade-in min-h-[500px] w-full bg-background">
-                  {children}
-                </div>
-              )}
-            </main>
-            <MobileBottomNav />
           </div>
-        </div>
-        {showWarning && (
-          <IdleWarningModal
-            countdown={countdown}
-            onExtend={extendSession}
-            onLogout={handleLogout}
-          />
-        )}
-        {perfOverlayEnabled && (
-          <Suspense fallback={null}>
-            <PerfOverlay />
-          </Suspense>
-        )}
-      </AutoHideSidebarProvider>
+          {showWarning && (
+            <IdleWarningModal
+              countdown={countdown}
+              onExtend={extendSession}
+              onLogout={handleLogout}
+            />
+          )}
+          {perfOverlayEnabled && (
+            <Suspense fallback={null}>
+              <PerfOverlay />
+            </Suspense>
+          )}
+        </AutoHideSidebarProvider>
       </SidebarAutoHideProvider>
     </ExerciceProvider>
   );
@@ -149,7 +151,6 @@ export function AppShell({ children }: { children: ReactNode }) {
 function AccessDenied() {
   return (
     <div className="mx-auto flex max-w-md flex-col items-center justify-center gap-3 py-20 text-center">
-      <ShieldAlert className="h-12 w-12 text-destructive" />
       <h1 className="ds-page-title">403 — Accès interdit</h1>
       <p className="text-sm text-muted-foreground">
         Vous n'avez pas l'autorisation d'accéder à cette section.

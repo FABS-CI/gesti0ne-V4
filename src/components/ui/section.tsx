@@ -1,6 +1,5 @@
 import { Suspense, type ComponentType, type ReactNode } from "react";
 import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
-import { AlertTriangle, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { friendlyError } from "@/lib/friendly-error";
 
@@ -23,21 +22,10 @@ function DefaultErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
       className="flex flex-col items-start gap-3 rounded-md border border-destructive/40 bg-destructive/5 p-4"
     >
       <div className="flex items-center gap-2 text-destructive">
-        <AlertTriangle className="h-4 w-4" />
-        <span className="text-sm font-medium">
-          Impossible d'afficher cette section
-        </span>
+        <span className="text-sm font-medium">Impossible d'afficher cette section</span>
       </div>
-      {message ? (
-        <p className="text-xs text-muted-foreground">{message}</p>
-      ) : null}
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={resetErrorBoundary}
-        className="gap-1.5"
-      >
-        <RotateCw className="h-3.5 w-3.5" />
+      {message ? <p className="text-xs text-muted-foreground">{message}</p> : null}
+      <Button size="sm" variant="outline" onClick={resetErrorBoundary} className="gap-1.5">
         Réessayer
       </Button>
     </div>
@@ -54,17 +42,9 @@ export interface SectionProps {
   children: ReactNode;
 }
 
-export function Section({
-  fallback,
-  errorFallback,
-  onReset,
-  children,
-}: SectionProps) {
+export function Section({ fallback, errorFallback, onReset, children }: SectionProps) {
   return (
-    <ErrorBoundary
-      FallbackComponent={errorFallback ?? DefaultErrorFallback}
-      onReset={onReset}
-    >
+    <ErrorBoundary FallbackComponent={errorFallback ?? DefaultErrorFallback} onReset={onReset}>
       <Suspense fallback={fallback}>{children}</Suspense>
     </ErrorBoundary>
   );

@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Ban, Gift, Loader2, Printer } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -111,10 +111,14 @@ function SpecimenDetailPage() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Button aria-label="Retour" variant="ghost" size="icon" onClick={() => navigate({ to: "/specimens" })}>
-            <ArrowLeft className="h-4 w-4" />
+          <Button
+            aria-label="Retour"
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate({ to: "/specimens" })}
+          >
+            Retour
           </Button>
-          <Gift className="h-6 w-6 text-primary" />
           <div>
             <h1 className="ds-page-title">{data.numero}</h1>
             <p className="text-sm text-muted-foreground">
@@ -127,31 +131,23 @@ function SpecimenDetailPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handlePrint} disabled={printing}>
-            {printing ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            ) : (
-              <Printer className="h-4 w-4 mr-2" />
-            )}
+            {printing ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
             Imprimer
           </Button>
           {data.statut === "enregistre" && (
             <Can permission="specimens.annuler">
               <Button variant="destructive" onClick={() => setConfirmCancel(true)}>
-                <Ban className="h-4 w-4 mr-2" /> Annuler le spécimen
+                Annuler le spécimen
               </Button>
             </Can>
           )}
         </div>
       </div>
-
       <div className="grid gap-4 md:grid-cols-2">
         <section className="rounded-md border bg-card p-5 space-y-2">
           <h2 className="font-semibold">Informations générales</h2>
           <Info label="Numéro" value={data.numero} />
-          <Info
-            label="Date d'envoi"
-            value={formatDate(data.date_envoi)}
-          />
+          <Info label="Date d'envoi" value={formatDate(data.date_envoi)} />
           <Info label="Motif" value={data.motif} />
           <Info label="Donneur des spécimens" value={data.donneur_nom} />
           <Info label="Gestionnaire" value={data.gestionnaire_nom} />
@@ -166,7 +162,6 @@ function SpecimenDetailPage() {
           <Info label="Adresse" value={data.adresse} />
         </section>
       </div>
-
       <section className="rounded-md border bg-card">
         <div className="p-4 flex items-center justify-between">
           <h2 className="font-semibold">
@@ -204,7 +199,6 @@ function SpecimenDetailPage() {
           </Table>
         </ResponsiveTable>
       </section>
-
       <AlertDialog open={confirmCancel} onOpenChange={setConfirmCancel}>
         <AlertDialogContent>
           <AlertDialogHeader>

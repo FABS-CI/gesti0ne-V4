@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { History } from "lucide-react";
 import { ResourceManager } from "@/components/crud/ResourceManager";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
@@ -23,7 +22,6 @@ export const Route = createFileRoute("/_authenticated/historique-envois")({
         idField: "envoi_id",
         title: "Historique des envois",
         subtitle: "Journal multi-canal (email, WhatsApp, SMS)",
-        icon: History,
         newLabel: "Nouvel envoi",
         entityLabel: "envoi",
         searchFields: ["destinataire", "sujet", "document_type"],

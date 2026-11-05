@@ -1,4 +1,3 @@
-import { Star } from "lucide-react";
 import type { ResourceConfig } from "@/components/crud/ResourceManager";
 
 export const evaluationsConfig: ResourceConfig = {
@@ -6,7 +5,6 @@ export const evaluationsConfig: ResourceConfig = {
   idField: "evaluation_id",
   title: "Évaluations",
   subtitle: "Évaluations de performance du personnel",
-  icon: Star,
   newLabel: "Nouvelle évaluation",
   entityLabel: "l'évaluation",
   csvName: "evaluations",

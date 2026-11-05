@@ -1,6 +1,5 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Printer, ExternalLink } from "lucide-react";
 import { useRef } from "react";
 
 type Props = {
@@ -38,10 +37,10 @@ export function RoutePreviewModal({ open, onOpenChange, title, routeUrl }: Props
             <span>{title}</span>
             <div className="flex gap-2">
               <Button size="sm" variant="outline" onClick={() => window.open(routeUrl, "_blank")}>
-                <ExternalLink className="mr-2 h-4 w-4" /> Nouvel onglet
+                Nouvel onglet
               </Button>
               <Button size="sm" onClick={print}>
-                <Printer className="mr-2 h-4 w-4" /> Imprimer
+                Imprimer
               </Button>
             </div>
           </DialogTitle>
