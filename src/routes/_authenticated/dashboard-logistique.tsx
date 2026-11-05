@@ -1,16 +1,6 @@
 import { AnimatedNumber } from "@/components/dashboard/AnimatedNumber";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Truck,
-  Car,
-  Wrench,
-  Navigation,
-  DollarSign,
-  Package,
-  AlertTriangle,
-  Bell,
-} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -160,53 +150,24 @@ function DashboardLogistique() {
             }
           }}
         >
-          <Bell className="mr-2 h-4 w-4" /> Générer alertes
+          Générer alertes
         </Button>
       </div>
-
       <div className="dash-stagger grid grid-cols-2 gap-4 md:grid-cols-4">
-        <Kpi
-          icon={Navigation}
-          label="Tournées du jour"
-          value={s?.tourneesJour ?? 0}
-          color="#3B82F6"
-        />
-        <Kpi
-          icon={Truck}
-          label="Tournées en cours"
-          value={s?.tourneesEnCours ?? 0}
-          color="#F97316"
-        />
-        <Kpi icon={DollarSign} label="Coût du jour" value={s?.coutJour ?? 0} fcfa color="#10B981" />
-        <Kpi icon={DollarSign} label="Coût du mois" value={s?.coutMois ?? 0} fcfa color="#14B8A6" />
-        <Kpi icon={Car} label="Véhicules disponibles" value={s?.vehDispo ?? 0} color="#10B981" />
-        <Kpi icon={Truck} label="Véhicules en mission" value={s?.vehMission ?? 0} color="#3B82F6" />
-        <Kpi
-          icon={Wrench}
-          label="Véhicules en maintenance"
-          value={s?.vehMaint ?? 0}
-          color="#F59E0B"
-        />
-        <Kpi icon={Package} label="Colis du jour" value={s?.colisJour ?? 0} color="#8B5CF6" />
-        <Kpi
-          icon={Truck}
-          label="Livraisons en cours"
-          value={s?.livraisonsEnCours ?? 0}
-          color="#3B82F6"
-        />
-        <Kpi
-          icon={Truck}
-          label="Expéditions en cours"
-          value={s?.expeditionsEnCours ?? 0}
-          color="#6366F1"
-        />
+        <Kpi label="Tournées du jour" value={s?.tourneesJour ?? 0} />
+        <Kpi label="Tournées en cours" value={s?.tourneesEnCours ?? 0} />
+        <Kpi label="Coût du jour" value={s?.coutJour ?? 0} fcfa />
+        <Kpi label="Coût du mois" value={s?.coutMois ?? 0} fcfa />
+        <Kpi label="Véhicules disponibles" value={s?.vehDispo ?? 0} />
+        <Kpi label="Véhicules en mission" value={s?.vehMission ?? 0} />
+        <Kpi label="Véhicules en maintenance" value={s?.vehMaint ?? 0} />
+        <Kpi label="Colis du jour" value={s?.colisJour ?? 0} />
+        <Kpi label="Livraisons en cours" value={s?.livraisonsEnCours ?? 0} />
+        <Kpi label="Expéditions en cours" value={s?.expeditionsEnCours ?? 0} />
       </div>
-
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <AlertTriangle className="h-4 w-4 text-warning" /> Alertes
-          </CardTitle>
+          <CardTitle className="flex items-center gap-2 text-base">Alertes</CardTitle>
         </CardHeader>
         <CardContent>
           {alertes.length === 0 ? (
@@ -232,28 +193,10 @@ function DashboardLogistique() {
   );
 }
 
-function Kpi({
-  icon: Icon,
-  label,
-  value,
-  color,
-  fcfa = false,
-}: {
-  icon: typeof Truck;
-  label: string;
-  value: number;
-  color: string;
-  fcfa?: boolean;
-}) {
+function Kpi({ label, value, fcfa = false }: { label: string; value: number; fcfa?: boolean }) {
   return (
     <Card>
-      <CardContent className="flex items-center gap-3 p-4">
-        <div
-          className="flex h-10 w-10 items-center justify-center rounded-lg"
-          style={{ background: `${color}1a` }}
-        >
-          <Icon className="h-5 w-5" style={{ color }} />
-        </div>
+      <CardContent className="p-4">
         <div className="min-w-0">
           <div className="text-xs uppercase text-muted-foreground">{label}</div>
           <div className="truncate text-lg font-bold">

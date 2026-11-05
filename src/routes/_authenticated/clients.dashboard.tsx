@@ -2,7 +2,6 @@ import { AnimatedNumber } from "@/components/dashboard/AnimatedNumber";
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { BarChart3, Download } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -45,9 +44,7 @@ function CrmDashboardPage() {
     <div className="dash-anim space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <BarChart3 className="h-6 w-6 text-primary" /> CRM & Analyses commerciales
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">CRM & Analyses commerciales</h1>
           <p className="text-sm text-muted-foreground">
             Ventes, segmentation clients, produits phares — temps réel
           </p>
@@ -63,7 +60,6 @@ function CrmDashboardPage() {
           </div>
         </div>
       </div>
-
       <div className="dash-stagger grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <Kpi label="CA (encaissé)" value={data?.ca_total ?? 0} format={formatFCFA} />
         <Kpi label="Montant facturé" value={data?.montant_facture ?? 0} format={formatFCFA} />
@@ -261,7 +257,7 @@ function RankingCard({
         <CardTitle className="text-base">{title}</CardTitle>
         {onExport && (
           <Button variant="outline" size="sm" onClick={onExport} disabled={!rows.length}>
-            <Download className="mr-2 h-4 w-4" /> PDF
+            PDF
           </Button>
         )}
       </CardHeader>

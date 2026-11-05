@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Pin, PinOff, X, Settings2, Star } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,12 +22,9 @@ export function MesRaccourcisCard() {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Star className="h-4 w-4 text-primary" />
-          Mes raccourcis
-        </CardTitle>
+        <CardTitle className="text-base">Mes raccourcis</CardTitle>
         <Button variant="ghost" size="sm" onClick={() => setOpen(true)}>
-          <Settings2 className="mr-1.5 h-4 w-4" /> Personnaliser
+          Personnaliser
         </Button>
       </CardHeader>
       <CardContent>
@@ -44,7 +41,6 @@ export function MesRaccourcisCard() {
         ) : (
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
             {shortcuts.map(({ def, stat, pinned }) => {
-              const Icon = def.icon;
               const usage = stat?.usage_count ?? 0;
               return (
                 <div key={def.key} className="group relative">
@@ -52,10 +48,11 @@ export function MesRaccourcisCard() {
                     to={def.href}
                     className="flex h-full flex-col items-start gap-2 rounded-lg border bg-card p-3 text-left transition-colors hover:bg-accent"
                   >
-                    <div className="flex w-full items-center justify-between">
-                      <Icon className="h-5 w-5 text-primary" />
-                      {pinned && <Pin className="h-3 w-3 text-muted-foreground" />}
-                    </div>
+                    {pinned && (
+                      <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                        Épinglé
+                      </span>
+                    )}
                     <span className="text-sm font-medium leading-tight">{def.label}</span>
                     {usage >= 20 && (
                       <Badge variant="secondary" className="text-xs">
@@ -71,21 +68,21 @@ export function MesRaccourcisCard() {
                         className="absolute right-1 top-1 h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
                         aria-label="Options"
                       >
-                        <Settings2 className="h-3 w-3" />
+                        <MoreHorizontal className="h-3.5 w-3.5" aria-hidden />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       {pinned ? (
                         <DropdownMenuItem onClick={() => unpin.mutate(def.key)}>
-                          <PinOff className="mr-2 h-4 w-4" /> Désépingler
+                          Désépingler
                         </DropdownMenuItem>
                       ) : (
                         <DropdownMenuItem onClick={() => pin.mutate(def.key)}>
-                          <Pin className="mr-2 h-4 w-4" /> Épingler
+                          Épingler
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem onClick={() => hide.mutate(def.key)}>
-                        <X className="mr-2 h-4 w-4" /> Retirer
+                        Retirer
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

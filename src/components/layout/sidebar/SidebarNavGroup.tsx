@@ -48,8 +48,6 @@ export function SidebarNavGroup({
   currentPath: string;
   onToggle: () => void;
 }) {
-  const GroupIcon = group.groupIcon;
-
   return (
     <li>
       <button
@@ -65,11 +63,6 @@ export function SidebarNavGroup({
         )}
       >
         <span className="flex min-w-0 items-center gap-3">
-          <GroupIcon
-            strokeWidth={1.75}
-            aria-hidden
-            className={cn("h-4 w-4 shrink-0", isActive ? "text-sidebar-primary" : "text-sidebar-foreground/60")}
-          />
           <span className="truncate">{group.label}</span>
         </span>
         <ChevronDown
@@ -81,7 +74,6 @@ export function SidebarNavGroup({
           )}
         />
       </button>
-
       <Collapse open={isOpen}>
         <ul className="mb-1 mt-1 ml-5 space-y-0.5 border-l border-sidebar-border pl-2">
           <NavSections group={group} currentPath={currentPath} parentOpen={isOpen} />
@@ -193,7 +185,6 @@ function SubSection({
         )}
         <span className="truncate">{name}</span>
       </button>
-
       <Collapse open={parentOpen && open}>
         <ul className="mt-0.5 space-y-0.5 pl-2">
           {items.map((item) => (

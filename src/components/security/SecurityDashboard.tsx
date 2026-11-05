@@ -2,17 +2,7 @@ import { AnimatedNumber } from "@/components/dashboard/AnimatedNumber";
 import { formatDateTime } from "@/lib/format";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import {
-  AlertTriangle,
-  Clock,
-  KeyRound,
-  Loader2,
-  Lock,
-  ShieldCheck,
-  UserCheck,
-  UserCog,
-  Users,
-} from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -83,19 +73,18 @@ export function SecurityDashboard() {
   }
 
   const kpis = [
-    { label: "Utilisateurs", value: data.users_total, icon: Users, tone: "text-primary" },
-    { label: "Actifs", value: data.users_actifs, icon: UserCheck, tone: "text-success" },
-    { label: "Suspendus", value: data.users_suspendus, icon: AlertTriangle, tone: "text-warning" },
-    { label: "Verrouillés", value: data.users_verrouilles, icon: Lock, tone: "text-destructive" },
-    { label: "Rôles", value: data.roles_total, icon: ShieldCheck, tone: "text-indigo-500" },
-    { label: "Permissions", value: data.permissions_total, icon: KeyRound, tone: "text-info" },
+    { label: "Utilisateurs", value: data.users_total, tone: "text-primary" },
+    { label: "Actifs", value: data.users_actifs, tone: "text-success" },
+    { label: "Suspendus", value: data.users_suspendus, tone: "text-warning" },
+    { label: "Verrouillés", value: data.users_verrouilles, tone: "text-destructive" },
+    { label: "Rôles", value: data.roles_total, tone: "text-indigo-500" },
+    { label: "Permissions", value: data.permissions_total, tone: "text-info" },
     {
       label: "Approbations en attente",
       value: data.approbations_en_attente,
-      icon: Clock,
       tone: "text-warning",
     },
-    { label: "Connexions 24h", value: data.connexions_24h, icon: UserCog, tone: "text-violet-500" },
+    { label: "Connexions 24h", value: data.connexions_24h, tone: "text-violet-500" },
   ];
 
   const chartData = [
@@ -127,12 +116,10 @@ export function SecurityDashboard() {
                   <AnimatedNumber value={kpi.value} />
                 </p>
               </div>
-              <kpi.icon className={`h-5 w-5 ${kpi.tone}`} />
             </CardContent>
           </Card>
         ))}
       </div>
-
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader className="pb-2">
@@ -150,7 +137,6 @@ export function SecurityDashboard() {
             </ResponsiveContainer>
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-base">Alertes & conflits détectés</CardTitle>
@@ -167,7 +153,6 @@ export function SecurityDashboard() {
                   key={c}
                   className="flex items-start gap-2 rounded-md border border-border bg-muted/40 p-2 text-sm"
                 >
-                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
                   <span>{c}</span>
                 </div>
               ))
@@ -186,7 +171,6 @@ export function SecurityDashboard() {
           </CardContent>
         </Card>
       </div>
-
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-base">Dernières activités</CardTitle>

@@ -1,6 +1,5 @@
 import { forwardRef, lazy, Suspense } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Inbox } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { STATUT_COLORS, type Periode } from "@/lib/dashboard-helpers";
@@ -34,7 +33,7 @@ export const DashboardChartsSection = forwardRef<HTMLDivElement, Props>(
                 to="/commandes"
                 className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
               >
-                Détails <ArrowRight className="h-3.5 w-3.5" />
+                Détails
               </Link>
             </CardHeader>
             <CardContent className="h-72">
@@ -53,7 +52,7 @@ export const DashboardChartsSection = forwardRef<HTMLDivElement, Props>(
                 to="/commandes"
                 className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
               >
-                Détails <ArrowRight className="h-3.5 w-3.5" />
+                Détails
               </Link>
             </CardHeader>
             <CardContent className="h-64">
@@ -62,7 +61,6 @@ export const DashboardChartsSection = forwardRef<HTMLDivElement, Props>(
               </Suspense>
             </CardContent>
           </Card>
-
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-base">Commandes par statut</CardTitle>
@@ -70,13 +68,12 @@ export const DashboardChartsSection = forwardRef<HTMLDivElement, Props>(
                 to="/commandes"
                 className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
               >
-                Détails <ArrowRight className="h-3.5 w-3.5" />
+                Détails
               </Link>
             </CardHeader>
             <CardContent className="h-64">
               {(data?.parStatut.length ?? 0) === 0 ? (
                 <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-sm text-muted-foreground">
-                  <Inbox className="h-7 w-7" />
                   <p>Aucune commande sur les {periode} derniers jours</p>
                   <Link to="/commandes" className="text-primary hover:underline">
                     Créer une commande
