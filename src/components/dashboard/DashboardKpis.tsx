@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Check, Wallet, FileText, Hourglass, Percent, AlertTriangle, Package, Landmark, Users, ShoppingCart, Truck, TrendingUp, TrendingDown, Scale, type LucideIcon } from "lucide-react";
+import { Check } from "lucide-react";
 import type { ReactNode } from "react";
 import { formatFCFA, formatFCFACompact } from "@/lib/format";
 import { AnimatedNumber } from "@/components/dashboard/AnimatedNumber";
@@ -28,9 +28,7 @@ function Cell({
   children,
   sub,
   big = false,
-  icon: Icon,
 }: {
-  icon?: LucideIcon;
   to: To;
   label: string;
   children: ReactNode;
@@ -43,11 +41,6 @@ function Cell({
       className="block min-w-0 px-4 py-4 transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
     >
       <div className="flex items-center gap-2">
-        {Icon ? (
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
-            <Icon className="h-4 w-4" strokeWidth={1.75} aria-hidden />
-          </span>
-        ) : null}
         <p className="truncate text-xs font-medium text-muted-foreground">{label}</p>
       </div>
       <div className={`mt-1 font-semibold tabular-nums ${big ? "text-2xl" : "text-lg"}`}>
@@ -98,15 +91,15 @@ export function DashboardKpis({ data, canSeeCA }: Props) {
     <div className="dash-stagger space-y-4">
       {canSeeCA && (
         <Zone title="Performance" cols="sm:grid-cols-2 lg:grid-cols-4 sm:divide-x">
-          <Cell to="/paiements" label="Chiffre d'affaires encaissé" icon={Wallet} big>
+          <Cell to="/paiements" label="Chiffre d'affaires encaissé" big>
             <Money value={data?.caTotal ?? 0} />
           </Cell>
-          <Cell to="/factures" label="Montant facturé" icon={FileText}>
+          <Cell to="/factures" label="Montant facturé">
             <Money value={facture} />
           </Cell>
           <Cell
             to="/factures"
-            label="Reste à encaisser" icon={Hourglass}
+            label="Reste à encaisser"
             sub={
               facture > 0
                 ? `${((reste / facture) * 100).toFixed(1).replace(".", ",")} % du facturé`
@@ -117,7 +110,7 @@ export function DashboardKpis({ data, canSeeCA }: Props) {
           </Cell>
           <Cell
             to="/paiements"
-            label="Taux d'encaissement" icon={Percent}
+            label="Taux d'encaissement"
             sub={
               <span className="block h-1 w-full overflow-hidden rounded-full bg-muted">
                 <span className="dash-bar block h-full bg-primary" style={{ width: `${taux}%` }} />
@@ -140,7 +133,7 @@ export function DashboardKpis({ data, canSeeCA }: Props) {
         >
           <Cell
             to="/factures"
-            label="Factures en retard" icon={AlertTriangle}
+            label="Factures en retard"
             sub={
               canSeeCA && retards > 0 ? (
                 <Money value={data?.montantRetard ?? 0} className="text-destructive" />
@@ -149,23 +142,23 @@ export function DashboardKpis({ data, canSeeCA }: Props) {
           >
             <CountOrCheck n={retards} tone="destructive" />
           </Cell>
-          <Cell to="/stock" label="Stock bas" icon={Package}>
+          <Cell to="/stock" label="Stock bas">
             <CountOrCheck n={data?.nbStockBas ?? 0} tone="warning" />
           </Cell>
           {canSeeCA && (
-            <Cell to="/clients" label="Encours clients" icon={Landmark}>
+            <Cell to="/clients" label="Encours clients">
               <Money value={data?.soldeTotal ?? 0} />
             </Cell>
           )}
         </Zone>
         <Zone title="Activité" cols="sm:grid-cols-3 sm:divide-x">
-          <Cell to="/clients" label="Clients" icon={Users} sub={`${actifs} actifs · ${pctActifs} %`}>
+          <Cell to="/clients" label="Clients" sub={`${actifs} actifs · ${pctActifs} %`}>
             <AnimatedNumber value={clients} />
           </Cell>
-          <Cell to="/commandes" label="Commandes" icon={ShoppingCart}>
+          <Cell to="/commandes" label="Commandes">
             <AnimatedNumber value={data?.nbCommandes ?? 0} />
           </Cell>
-          <Cell to="/tournees" label="Frais de tournée" icon={Truck}>
+          <Cell to="/tournees" label="Frais de tournée">
             <Money value={data?.fraisTournees ?? 0} />
           </Cell>
         </Zone>
@@ -173,13 +166,13 @@ export function DashboardKpis({ data, canSeeCA }: Props) {
 
       {canSeeCA && (
         <Zone title="Trésorerie" cols="sm:grid-cols-3 sm:divide-x">
-          <Cell to="/comptabilite" label="Recettes" icon={TrendingUp}>
+          <Cell to="/comptabilite" label="Recettes">
             <Money value={data?.recettes ?? 0} />
           </Cell>
-          <Cell to="/comptabilite" label="Dépenses" icon={TrendingDown}>
+          <Cell to="/comptabilite" label="Dépenses">
             <Money value={data?.depenses ?? 0} />
           </Cell>
-          <Cell to="/comptabilite" label="Solde" icon={Scale}>
+          <Cell to="/comptabilite" label="Solde">
             <Money
               value={solde}
               className={solde > 0 ? "text-success" : solde < 0 ? "text-destructive" : ""}
