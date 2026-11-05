@@ -813,6 +813,13 @@
       "when": 1793810813125,
       "tag": "0117_securite_comptes_actifs_roles_actifs",
       "breakpoints": true
+    },
+    {
+      "idx": 118,
+      "version": "7",
+      "when": 1793872294666,
+      "tag": "0118_retrait_garde_exercice_orpheline",
+      "breakpoints": true
     }
   ]
 }
