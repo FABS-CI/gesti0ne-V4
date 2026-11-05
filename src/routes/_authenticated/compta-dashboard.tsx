@@ -1,3 +1,4 @@
+import { AnimatedNumber } from "@/components/dashboard/AnimatedNumber";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -61,7 +62,7 @@ function ComptaDashboard() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="dash-anim space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="ds-page-title">Tableau de bord comptable</h1>
@@ -102,7 +103,7 @@ function ComptaDashboard() {
       {isLoading ? (
         <p className="text-muted-foreground">Chargement…</p>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="dash-stagger grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {kpis.map((k) => {
             const Icon = k.icon;
             return (
@@ -115,7 +116,7 @@ function ComptaDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold" style={{ color: k.color }}>
-                    {formatFCFA(k.value)}
+                    <AnimatedNumber value={k.value} format={formatFCFA} />
                   </div>
                 </CardContent>
               </Card>

@@ -1,3 +1,4 @@
+import { AnimatedNumber } from "@/components/dashboard/AnimatedNumber";
 import { formatDateTime } from "@/lib/format";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -12,15 +13,7 @@ import {
   UserCog,
   Users,
 } from "lucide-react";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -123,14 +116,16 @@ export function SecurityDashboard() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="dash-anim space-y-6">
+      <div className="dash-stagger grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {kpis.map((kpi) => (
           <Card key={kpi.label}>
             <CardContent className="flex items-center justify-between p-4">
               <div>
                 <p className="text-xs text-muted-foreground">{kpi.label}</p>
-                <p className="text-2xl font-bold tabular-nums">{kpi.value}</p>
+                <p className="text-2xl font-bold tabular-nums">
+                  <AnimatedNumber value={kpi.value} />
+                </p>
               </div>
               <kpi.icon className={`h-5 w-5 ${kpi.tone}`} />
             </CardContent>

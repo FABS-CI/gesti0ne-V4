@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Check } from "lucide-react";
 import type { ReactNode } from "react";
 import { formatFCFA, formatFCFACompact } from "@/lib/format";
+import { AnimatedNumber } from "@/components/dashboard/AnimatedNumber";
 import type { DashboardOverview } from "@/hooks/use-dashboard-overview";
 
 interface Props {
@@ -9,12 +10,13 @@ interface Props {
   canSeeCA: boolean;
 }
 
-type To = "/clients" | "/commandes" | "/paiements" | "/factures" | "/stock" | "/tournees" | "/comptabilite";
+type To =
+  "/clients" | "/commandes" | "/paiements" | "/factures" | "/stock" | "/tournees" | "/comptabilite";
 
 function Money({ value, className = "" }: { value: number; className?: string }) {
   return (
     <span className={`tabular-nums ${className}`} title={formatFCFA(value)}>
-      {formatFCFACompact(value)}
+      <AnimatedNumber value={value} format={formatFCFACompact} />
       <span className="ml-1 text-xs font-normal text-muted-foreground">FCFA</span>
     </span>
   );
@@ -49,7 +51,7 @@ function Cell({
 
 function Zone({ title, children, cols }: { title: string; children: ReactNode; cols: string }) {
   return (
-    <section className="min-w-0 rounded-md border bg-card">
+    <section className="dash-lift min-w-0 rounded-md border bg-card">
       <h2 className="border-b px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         {title}
       </h2>
@@ -65,7 +67,12 @@ function CountOrCheck({ n, tone }: { n: number; tone: "destructive" | "warning" 
         <Check className="h-4 w-4" aria-hidden /> Aucun
       </span>
     );
-  return <span className={tone === "destructive" ? "text-destructive" : "text-warning"}>{n}</span>;
+  return (
+    <AnimatedNumber
+      value={n}
+      className={tone === "destructive" ? "text-destructive" : "text-warning"}
+    />
+  );
 }
 
 export function DashboardKpis({ data, canSeeCA }: Props) {
@@ -79,7 +86,7 @@ export function DashboardKpis({ data, canSeeCA }: Props) {
   const solde = data?.solde ?? 0;
 
   return (
-    <div className="space-y-4">
+    <div className="dash-stagger space-y-4">
       {canSeeCA && (
         <Zone title="Performance" cols="sm:grid-cols-2 lg:grid-cols-4 sm:divide-x">
           <Cell to="/paiements" label="Chiffre d'affaires encaissé" big>
@@ -91,7 +98,11 @@ export function DashboardKpis({ data, canSeeCA }: Props) {
           <Cell
             to="/factures"
             label="Reste à encaisser"
-            sub={facture > 0 ? `${((reste / facture) * 100).toFixed(1).replace(".", ",")} % du facturé` : undefined}
+            sub={
+              facture > 0
+                ? `${((reste / facture) * 100).toFixed(1).replace(".", ",")} % du facturé`
+                : undefined
+            }
           >
             <Money value={reste} />
           </Cell>
@@ -100,21 +111,32 @@ export function DashboardKpis({ data, canSeeCA }: Props) {
             label="Taux d'encaissement"
             sub={
               <span className="block h-1 w-full overflow-hidden rounded-full bg-muted">
-                <span className="block h-full bg-primary" style={{ width: `${taux}%` }} />
+                <span className="dash-bar block h-full bg-primary" style={{ width: `${taux}%` }} />
               </span>
             }
           >
-            {(data?.tauxEncaissement ?? 0).toFixed(1).replace(".", ",")} %
+            <AnimatedNumber
+              value={data?.tauxEncaissement ?? 0}
+              decimals={1}
+              format={(n) => `${n.toFixed(1).replace(".", ",")} %`}
+            />
           </Cell>
         </Zone>
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Zone title="À traiter" cols={canSeeCA ? "sm:grid-cols-3 sm:divide-x" : "sm:grid-cols-2 sm:divide-x"}>
+        <Zone
+          title="À traiter"
+          cols={canSeeCA ? "sm:grid-cols-3 sm:divide-x" : "sm:grid-cols-2 sm:divide-x"}
+        >
           <Cell
             to="/factures"
             label="Factures en retard"
-            sub={canSeeCA && retards > 0 ? <Money value={data?.montantRetard ?? 0} className="text-destructive" /> : undefined}
+            sub={
+              canSeeCA && retards > 0 ? (
+                <Money value={data?.montantRetard ?? 0} className="text-destructive" />
+              ) : undefined
+            }
           >
             <CountOrCheck n={retards} tone="destructive" />
           </Cell>
@@ -130,10 +152,10 @@ export function DashboardKpis({ data, canSeeCA }: Props) {
 
         <Zone title="Activité" cols="sm:grid-cols-3 sm:divide-x">
           <Cell to="/clients" label="Clients" sub={`${actifs} actifs · ${pctActifs} %`}>
-            {clients}
+            <AnimatedNumber value={clients} />
           </Cell>
           <Cell to="/commandes" label="Commandes">
-            {data?.nbCommandes ?? 0}
+            <AnimatedNumber value={data?.nbCommandes ?? 0} />
           </Cell>
           <Cell to="/tournees" label="Frais de tournée">
             <Money value={data?.fraisTournees ?? 0} />

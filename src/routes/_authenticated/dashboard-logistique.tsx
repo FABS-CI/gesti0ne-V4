@@ -1,3 +1,4 @@
+import { AnimatedNumber } from "@/components/dashboard/AnimatedNumber";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -138,7 +139,7 @@ function DashboardLogistique() {
   const alertes = data?.alertes ?? [];
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="dash-anim space-y-6 p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="ds-page-title">Tableau de bord logistique</h1>
@@ -163,7 +164,7 @@ function DashboardLogistique() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="dash-stagger grid grid-cols-2 gap-4 md:grid-cols-4">
         <Kpi
           icon={Navigation}
           label="Tournées du jour"
@@ -176,18 +177,8 @@ function DashboardLogistique() {
           value={s?.tourneesEnCours ?? 0}
           color="#F97316"
         />
-        <Kpi
-          icon={DollarSign}
-          label="Coût du jour"
-          value={formatFCFA(s?.coutJour ?? 0)}
-          color="#10B981"
-        />
-        <Kpi
-          icon={DollarSign}
-          label="Coût du mois"
-          value={formatFCFA(s?.coutMois ?? 0)}
-          color="#14B8A6"
-        />
+        <Kpi icon={DollarSign} label="Coût du jour" value={s?.coutJour ?? 0} fcfa color="#10B981" />
+        <Kpi icon={DollarSign} label="Coût du mois" value={s?.coutMois ?? 0} fcfa color="#14B8A6" />
         <Kpi icon={Car} label="Véhicules disponibles" value={s?.vehDispo ?? 0} color="#10B981" />
         <Kpi icon={Truck} label="Véhicules en mission" value={s?.vehMission ?? 0} color="#3B82F6" />
         <Kpi
@@ -246,11 +237,13 @@ function Kpi({
   label,
   value,
   color,
+  fcfa = false,
 }: {
   icon: typeof Truck;
   label: string;
-  value: string | number;
+  value: number;
   color: string;
+  fcfa?: boolean;
 }) {
   return (
     <Card>
@@ -263,7 +256,9 @@ function Kpi({
         </div>
         <div className="min-w-0">
           <div className="text-xs uppercase text-muted-foreground">{label}</div>
-          <div className="truncate text-lg font-bold">{value}</div>
+          <div className="truncate text-lg font-bold">
+            <AnimatedNumber value={value} format={fcfa ? formatFCFA : undefined} />
+          </div>
         </div>
       </CardContent>
     </Card>
