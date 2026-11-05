@@ -15,23 +15,18 @@ async function loadPrixMap(
 
   // 1) Prix + remise vendus sur la facture liée (via la commande)
   if (factureId) {
-    const { data: fac } = await supabase
+    const { data: fac, error: factureError } = await supabase
       .from("factures")
       .select("commande_id")
       .eq("facture_id", factureId)
       .maybeSingle();
+    if (factureError) throw factureError;
     if (fac?.commande_id) {
-      const [{ data: lignes }, { data: commande }] = await Promise.all([
-        supabase
-          .from("commande_lignes")
-          .select("produit_id, prix_unitaire, remise_pct, quantite")
-          .eq("commande_id", fac.commande_id),
-        supabase
-          .from("commandes")
-          .select("remise_globale_pct")
-          .eq("commande_id", fac.commande_id)
-          .maybeSingle(),
-      ]);
+      const { data: lignes, error: lignesError } = await supabase
+        .from("commande_lignes")
+        .select("produit_id, prix_unitaire, remise_pct, quantite")
+        .eq("commande_id", fac.commande_id);
+      if (lignesError) throw lignesError;
       for (const l of (lignes ?? []) as Array<{
         produit_id: string | null;
         prix_unitaire: number | null;
@@ -138,7 +133,7 @@ export async function buildRetourDocBaseFrom(retour: RetourWithLignes): Promise<
       cycle: m?.cycle,
       niveau: m?.niveau,
       matiere: m?.matiere,
-      qteCommandee: info?.quantiteFacturee || Number(l.quantite_demandee ?? l.quantite ?? 0),
+      qteCommandee: info?.quantiteFacturee ?? (retour.facture_id ? undefined : Number(l.quantite_demandee ?? l.quantite ?? 0)),
       qteRetournee: Number(l.quantite_recue ?? l.quantite ?? 0),
       motif: l.motif ?? undefined,
       prixUnitaire: pu || undefined,

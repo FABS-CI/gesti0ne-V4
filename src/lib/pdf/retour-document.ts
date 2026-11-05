@@ -102,7 +102,7 @@ export class RetourDocument extends BaseDocument {
       qte_fact: l.qteCommandee || 0,
       qte_ret: l.qteRetournee || 0,
       pu: l.prixUnitaire || 0,
-      remisePct: l.remisePct ? `${Number(l.remisePct.toFixed(4))} %` : "0 %",
+      remisePct: Number((l.remisePct ?? 0).toFixed(4)),
       net: l.montant || 0,
     }));
 
