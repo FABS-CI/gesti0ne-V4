@@ -4,7 +4,6 @@ import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { ArrowLeft, Ban, Calendar, CreditCard, FileText, Trash2, User, Printer } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -63,7 +62,7 @@ function PaiementDetailPage() {
   const [deleteMotif, setDeleteMotif] = useState("");
   const { data: paiement, isLoading } = useQuery({
     queryKey: ["paiement", paiementId],
-      queryFn: () => getPaiement(paiementId),
+    queryFn: () => getPaiement(paiementId),
   });
 
   const { data: allocations = [] } = useQuery({
@@ -120,25 +119,25 @@ function PaiementDetailPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Button aria-label="Retour" asChild variant="ghost" size="icon">
-            <Link to="/paiements">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
+          <Button aria-label="Retour" asChild variant="ghost" size="sm">
+            <Link to="/paiements">Retour</Link>
           </Button>
           <div>
-            <h1 className="ds-page-title">Paiement {formatDocumentReference(paiement.reference)}</h1>
+            <h1 className="ds-page-title">
+              Paiement {formatDocumentReference(paiement.reference)}
+            </h1>
             <p className="text-sm text-muted-foreground">
               {paiement.client_nom ?? "Client non renseigné"}
             </p>
           </div>
         </div>
-        
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={async () => {
-              const { generateRecuPaiementPDF, downloadBlob, fileNameFor } = await import("@/lib/pdf/fabsTemplates");
+              const { generateRecuPaiementPDF, downloadBlob, fileNameFor } =
+                await import("@/lib/pdf/fabsTemplates");
               const { getRecuContext, MODE_PAIEMENT_LABEL, getPaiementAllocationsDetail } =
                 await import("@/lib/paiements-api");
 
@@ -154,9 +153,17 @@ function PaiementDetailPage() {
                 }));
                 const montant = Number(ctx.paiement.montant);
                 const totalFacture = ctx.facture?.montant_total ?? null;
-                
-                const balanceBefore = ctx.balanceBefore ?? (ctx.facture != null ? Number(ctx.facture.montant_total) - (Number(ctx.facture.montant_paye) - montant) : null);
-                const dejaPayeAvant = totalFacture !== null && balanceBefore !== null ? totalFacture - balanceBefore : null;
+
+                const balanceBefore =
+                  ctx.balanceBefore ??
+                  (ctx.facture != null
+                    ? Number(ctx.facture.montant_total) -
+                      (Number(ctx.facture.montant_paye) - montant)
+                    : null);
+                const dejaPayeAvant =
+                  totalFacture !== null && balanceBefore !== null
+                    ? totalFacture - balanceBefore
+                    : null;
 
                 const blob = await generateRecuPaiementPDF({
                   id: ctx.paiement.paiement_id,
@@ -169,8 +176,7 @@ function PaiementDetailPage() {
                   villeClient: ctx.client?.ville ?? null,
                   representant: ctx.client?.representant ?? null,
                   modePaiement:
-                    MODE_PAIEMENT_LABEL[ctx.paiement.mode_paiement] ??
-                    ctx.paiement.mode_paiement,
+                    MODE_PAIEMENT_LABEL[ctx.paiement.mode_paiement] ?? ctx.paiement.mode_paiement,
                   totalTTC: montant,
                   factureReference: ctx.facture?.reference ?? undefined,
                   factureMontantTotal: totalFacture,
@@ -186,9 +192,8 @@ function PaiementDetailPage() {
                 toast.error(friendlyError(e, "Erreur PDF"));
               }
             }}
-
           >
-            <Printer className="mr-2 h-4 w-4" /> Imprimer Reçu
+            Imprimer Reçu
           </Button>
 
           {statut && (
@@ -201,7 +206,7 @@ function PaiementDetailPage() {
             <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <AlertDialogTrigger asChild>
                 <Button variant="destructive" size="sm">
-                  <Ban className="mr-2 h-4 w-4" /> Annuler
+                  Annuler
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
@@ -249,7 +254,7 @@ function PaiementDetailPage() {
             <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
               <AlertDialogTrigger asChild>
                 <Button variant="destructive" size="sm">
-                  <Trash2 className="mr-2 h-4 w-4" /> Supprimer
+                  Supprimer
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
@@ -290,20 +295,24 @@ function PaiementDetailPage() {
           )}
         </div>
       </div>
-
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <User className="h-4 w-4" /> Client
+              Client
             </CardTitle>
           </CardHeader>
-          <CardContent className="font-medium"><ClientLink clientId={(paiement as { client_id?: string | null }).client_id} nom={paiement.client_nom} /></CardContent>
+          <CardContent className="font-medium">
+            <ClientLink
+              clientId={(paiement as { client_id?: string | null }).client_id}
+              nom={paiement.client_nom}
+            />
+          </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4" /> Date
+              Date
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">{frDate(paiement.date_paiement)}</CardContent>
@@ -311,7 +320,7 @@ function PaiementDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <CreditCard className="h-4 w-4" /> Mode
+              Mode
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">
@@ -321,7 +330,7 @@ function PaiementDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <FileText className="h-4 w-4" /> Montant
+              Montant
             </CardTitle>
           </CardHeader>
           <CardContent className="text-lg font-bold text-primary">

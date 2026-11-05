@@ -1,5 +1,4 @@
 import { askConfirm } from "@/components/common/GlobalConfirm";
-import { Inbox, Pencil, Trash2 } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { EmptyState } from "@/components/common/EmptyState";
 import { formatFCFA, formatDate } from "@/lib/format";
+import { libelleCourt } from "@/lib/libelle-action";
 
 import type { ColumnDef, ResourceConfig, Row } from "./resource-manager-types";
 import { optionMeta } from "./resource-manager-types";
@@ -31,7 +31,8 @@ function renderCell(col: ColumnDef, row: Row): ReactNode {
     );
   }
   // Les colonnes de date sont affichées en JJ/MM/AAAA, même sans type explicite.
-  const isDateCol = col.type === "date" || /date|echeance|échéance|validite|validité/i.test(col.name);
+  const isDateCol =
+    col.type === "date" || /date|echeance|échéance|validite|validité/i.test(col.name);
   if (isDateCol) return v ? formatDate(String(v)) : "—";
   return v ?? "—";
 }
@@ -73,7 +74,6 @@ export function ResourceTable({ config, rows, isLoading, onEdit, onDelete }: Pro
               <TableCell colSpan={config.columns.length + 1} className="py-6">
                 <EmptyState
                   variant="rich"
-                  icon={Inbox}
                   title="Aucun élément pour le moment"
                   description="Créez votre premier enregistrement pour commencer à alimenter cette liste."
                   className="border-none"
@@ -96,56 +96,63 @@ export function ResourceTable({ config, rows, isLoading, onEdit, onDelete }: Pro
                 ))}
                 <TableCell className="text-right">
                   {config.rowActions?.map((action) => {
-                    const Icon = action.icon;
                     if (action.render) {
                       return <span key={action.label}>{action.render(row)}</span>;
                     }
                     if (action.to) {
                       return (
-                        <Button aria-label={action.label}
+                        <Button
+                          aria-label={action.label}
                           key={action.label}
                           asChild
                           variant="ghost"
-                          size="icon"
+                          size="sm"
                           title={action.label}
                         >
-                          <a href={action.to(row)}>
-                            <Icon className="h-4 w-4" />
-                          </a>
+                          <a href={action.to(row)}>{libelleCourt(action.label)}</a>
                         </Button>
                       );
                     }
                     return (
-                      <Button aria-label={action.label}
+                      <Button
+                        aria-label={action.label}
                         key={action.label}
                         variant="ghost"
-                        size="icon"
+                        size="sm"
                         title={action.label}
                         onClick={async () => {
-                          if (action.confirm && !await askConfirm(action.confirm(row))) return;
+                          if (action.confirm && !(await askConfirm(action.confirm(row)))) return;
                           if (action.onClick) await action.onClick(row);
                         }}
                       >
-                        <Icon className="h-4 w-4" />
+                        {libelleCourt(action.label)}
                       </Button>
                     );
                   })}
                   {!config.readOnly && (
                     <>
                       {(config.canEditRow?.(row) ?? true) && (
-                        <Button aria-label="Modifier" variant="ghost" size="icon" onClick={() => onEdit(row)}>
-                          <Pencil className="h-4 w-4" />
+                        <Button
+                          aria-label="Modifier"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onEdit(row)}
+                        >
+                          Modifier
                         </Button>
                       )}
                       {(config.canDeleteRow?.(row) ?? true) && (
-                        <Button aria-label="Supprimer"
+                        <Button
+                          aria-label="Supprimer"
                           variant="ghost"
-                          size="icon"
+                          size="sm"
+                          className="text-destructive"
                           onClick={async () => {
-                            if (await askConfirm("Supprimer cet élément ?")) onDelete(row[config.idField]);
+                            if (await askConfirm("Supprimer cet élément ?"))
+                              onDelete(row[config.idField]);
                           }}
                         >
-                          <Trash2 className="h-4 w-4 text-destructive" />
+                          Supprimer
                         </Button>
                       )}
                     </>

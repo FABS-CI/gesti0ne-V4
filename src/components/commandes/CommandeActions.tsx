@@ -1,15 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import {
-  Eye,
-  Pencil,
-  Trash2,
-  ShoppingCart,
-  FileText,
-  Truck,
-  Mail,
-  CheckCircle,
-  Receipt,
-} from "lucide-react";
+import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DocActionsMenu } from "@/components/commandes/DocActionsMenu";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -57,53 +47,47 @@ export function CommandeActions({
   onDelete,
 }: CommandeActionsProps) {
   const { has } = usePermissions();
-  const hasFactureBL =
-    c.statut === "validee" || c.statut === "facturee" || c.statut === "livree";
+  const hasFactureBL = c.statut === "validee" || c.statut === "facturee" || c.statut === "livree";
 
   return (
     <div className="flex flex-wrap items-center justify-end gap-1">
-      <Button aria-label="Visualiser" asChild variant="ghost" size="icon" title="Visualiser">
+      <Button aria-label="Visualiser" asChild variant="ghost" size="sm" title="Visualiser">
         <Link to="/commandes/$commandeId" params={{ commandeId: c.commande_id }}>
-          <Eye className="h-4 w-4" />
+          Voir
         </Link>
       </Button>
-
       <DocActionsMenu
         label="Bon de commande"
-        icon={ShoppingCart}
         onView={() => viewBonCommande(c)}
         onDownload={() => downloadBonCommande(c)}
         onPrint={() => printBonCommande(c)}
       />
-
       <DocActionsMenu
         label="Proforma"
-        icon={FileText}
         onView={() => viewProforma(c)}
         onDownload={() => downloadProforma(c)}
         onPrint={() => printProforma(c)}
       />
-
       <Button
         aria-label="Envoyer par email"
         variant="ghost"
-        size="icon"
+        size="sm"
         title="Envoyer par email"
         onClick={() => emailCommande(c)}
       >
-        <Mail className="h-4 w-4" />
+        Email
       </Button>
 
       {c.statut === "en_attente_validation" && canValider && (
         <Button
           aria-label="Valider la commande (génère facture + BL)"
           variant="ghost"
-          size="icon"
+          size="sm"
           title="Valider la commande (génère facture + BL)"
           onClick={() => onValider(c.commande_id)}
           disabled={validerPending}
         >
-          <CheckCircle className="h-4 w-4 text-success" />
+          Valider
         </Button>
       )}
 
@@ -111,14 +95,12 @@ export function CommandeActions({
         <>
           <DocActionsMenu
             label="Facture"
-            icon={Receipt}
             onView={() => viewFactureFor(c)}
             onDownload={() => downloadFactureFor(c)}
             onPrint={() => printFactureFor(c)}
           />
           <DocActionsMenu
             label="Bon de livraison"
-            icon={Truck}
             onView={() => viewBLFor(c)}
             onDownload={() => downloadBLFor(c)}
             onPrint={() => printBLFor(c)}
@@ -127,28 +109,28 @@ export function CommandeActions({
       )}
 
       {!readOnly && peutModifierCommande(c.statut, has) && (
-          <Button
-            aria-label="Modifier / voir le détail"
-            asChild
-            variant="ghost"
-            size="icon"
-            title="Modifier / voir le détail"
-          >
-            <Link to="/commandes/$commandeId/modifier" params={{ commandeId: c.commande_id }}>
-              <Pencil className="h-4 w-4" />
-            </Link>
-          </Button>
-        )}
+        <Button
+          aria-label="Modifier / voir le détail"
+          asChild
+          variant="ghost"
+          size="sm"
+          title="Modifier / voir le détail"
+        >
+          <Link to="/commandes/$commandeId/modifier" params={{ commandeId: c.commande_id }}>
+            Modifier
+          </Link>
+        </Button>
+      )}
 
       {aDroitSurCommande(c.statut, "commandes.supprimer", has) && (
         <Button
           aria-label="Supprimer définitivement"
           variant="ghost"
-          size="icon"
+          size="sm"
           title="Supprimer définitivement"
           onClick={() => onDelete(c)}
         >
-          <Trash2 className="h-4 w-4 text-destructive" />
+          Supprimer
         </Button>
       )}
     </div>

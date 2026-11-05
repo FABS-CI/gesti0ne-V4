@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, ShieldAlert, User as UserIcon, Calendar, FileText } from "lucide-react";
 
 import { getPaiementAnnulationAudit, getPaiement } from "@/lib/paiements-api";
 import { formatDateTime, formatFCFA } from "@/lib/format";
@@ -62,24 +61,19 @@ function AuditPaiementDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Button aria-label="Retour" asChild variant="ghost" size="icon">
-          <Link to="/admin/audit-paiements">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
+        <Button aria-label="Retour" asChild variant="ghost" size="sm">
+          <Link to="/admin/audit-paiements">Retour</Link>
         </Button>
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <ShieldAlert className="h-5 w-5 text-primary" /> Détail annulation
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Détail annulation</h1>
           <p className="text-sm text-muted-foreground font-mono">{audit.id}</p>
         </div>
       </div>
-
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4" /> Date/Heure
+              Date/Heure
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">{frDateTime(audit.annule_le)}</CardContent>
@@ -87,7 +81,7 @@ function AuditPaiementDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <UserIcon className="h-4 w-4" /> Utilisateur
+              Utilisateur
             </CardTitle>
           </CardHeader>
           <CardContent className="text-sm font-medium">
@@ -97,7 +91,7 @@ function AuditPaiementDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <FileText className="h-4 w-4" /> Montant annulé
+              Montant annulé
             </CardTitle>
           </CardHeader>
           <CardContent className="text-lg font-bold text-primary">
@@ -111,7 +105,6 @@ function AuditPaiementDetailPage() {
           <CardContent className="font-medium">{paiement?.client_nom ?? "—"}</CardContent>
         </Card>
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle>Raison</CardTitle>

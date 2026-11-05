@@ -2,14 +2,9 @@ import { ClientLink } from "@/components/common/ClientLink";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AlertCircle, ArrowLeft, Clock, User, Pencil, Trash2, Check, X, Zap } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -215,7 +210,10 @@ function SuiviDetail() {
       <div className="p-6">
         <ErrorCard
           title="Échec du chargement du suivi"
-          message={(detailErrorObj as Error)?.message ?? "cause non précisée par le serveur. Réessayez dans un instant"}
+          message={
+            (detailErrorObj as Error)?.message ??
+            "cause non précisée par le serveur. Réessayez dans un instant"
+          }
           onRetry={() => refetch()}
           retrying={detailFetching}
         />
@@ -235,21 +233,26 @@ function SuiviDetail() {
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center gap-3">
-        <Button aria-label="Retour" asChild variant="ghost" size="icon">
-          <Link to="/livraison-suivi">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
+        <Button aria-label="Retour" asChild variant="ghost" size="sm">
+          <Link to="/livraison-suivi">Retour</Link>
         </Button>
         <div>
-          <h1 className="ds-page-title">Suivi — {formatDocumentReference(suivi.commande?.reference)}</h1>
+          <h1 className="ds-page-title">
+            Suivi — {formatDocumentReference(suivi.commande?.reference)}
+          </h1>
           <p className="text-sm text-muted-foreground">
-            <ClientLink clientId={suivi.commande?.client_id} nom={suivi.commande?.client_nom} /> · {suivi.commande?.ville ?? ""}
+            <ClientLink clientId={suivi.commande?.client_id} nom={suivi.commande?.client_nom} /> ·{" "}
+            {suivi.commande?.ville ?? ""}
           </p>
         </div>
         <div className="ml-auto">
           {next === "remise_livreur" || next === "remise_transporteur" ? (
             <Button asChild>
-              <Link to="/livraison-suivi/$commandeRef/remise" params={{ commandeRef }} search={COMMANDE_REF_SEARCH_DEFAULTS}>
+              <Link
+                to="/livraison-suivi/$commandeRef/remise"
+                params={{ commandeRef }}
+                search={COMMANDE_REF_SEARCH_DEFAULTS}
+              >
                 {next === "remise_transporteur" ? "Remise au transporteur" : "Remise au livreur"}
               </Link>
             </Button>
@@ -262,7 +265,6 @@ function SuiviDetail() {
           )}
         </div>
       </div>
-
       <div className="rounded-md border bg-card p-5 space-y-4">
         <div className="flex items-center justify-between">
           <Badge style={{ backgroundColor: STATUT_COLOR[suivi.statut], color: "white" }}>
@@ -290,7 +292,6 @@ function SuiviDetail() {
           ))}
         </div>
       </div>
-
       <div className="grid gap-4 md:grid-cols-2">
         <div className="rounded-md border bg-card p-4 space-y-2 text-sm">
           <h3 className="font-semibold mb-2">Informations</h3>
@@ -374,22 +375,27 @@ function SuiviDetail() {
             {histoError && !histoLoading && (
               <ErrorCard
                 title="Historique indisponible"
-                message={(histoErrorObj as Error)?.message ?? "cause non précisée par le serveur. Réessayez dans un instant"}
+                message={
+                  (histoErrorObj as Error)?.message ??
+                  "cause non précisée par le serveur. Réessayez dans un instant"
+                }
                 onRetry={() => refetchHisto()}
                 retrying={histoFetching}
               />
             )}
-            {!histoLoading && !histoError && histo.map((h) => (
-              <HistoRow
-                key={h.id}
-                h={h}
-                canEdit={canEdit}
-                canDelete={isSuperAdmin}
-                onChanged={() =>
-                  qc.invalidateQueries({ queryKey: ["livsuivi", "histo", suivi.id] })
-                }
-              />
-            ))}
+            {!histoLoading &&
+              !histoError &&
+              histo.map((h) => (
+                <HistoRow
+                  key={h.id}
+                  h={h}
+                  canEdit={canEdit}
+                  canDelete={isSuperAdmin}
+                  onChanged={() =>
+                    qc.invalidateQueries({ queryKey: ["livsuivi", "histo", suivi.id] })
+                  }
+                />
+              ))}
             {!histoLoading && !histoError && histo.length === 0 && (
               <p className="text-xs text-muted-foreground">Aucun événement.</p>
             )}
@@ -414,9 +420,7 @@ function SuiviDetail() {
 
       {debug && (
         <div className="fixed bottom-4 right-4 z-50 rounded-md border bg-background/95 shadow-lg px-3 py-2 text-xs font-mono space-y-0.5">
-          <div className="flex items-center gap-1 font-semibold">
-            <Zap className="h-3 w-3" /> Debug perf
-          </div>
+          <div className="flex items-center gap-1 font-semibold">Debug perf</div>
           <div>détail : {perfRef.current.detailMs.toFixed(0)} ms</div>
           <div>historique : {perfRef.current.histoMs.toFixed(0)} ms</div>
           <div>round-trips : {perfRef.current.roundTrips}</div>
@@ -431,7 +435,6 @@ function SuiviDetail() {
           refetch();
         }}
       />
-
       <ConfirmerReceptionDialog
         open={openRecept}
         onOpenChange={setOpenRecept}
@@ -447,13 +450,25 @@ function SuiviDetail() {
             {suivi.signature_url && (
               <div>
                 <div className="text-xs text-muted-foreground mb-1">Signature</div>
-                <img src={suivi.signature_url} alt="Signature" loading="lazy" decoding="async" className="border rounded-md bg-white max-h-40" />
+                <img
+                  src={suivi.signature_url}
+                  alt="Signature"
+                  loading="lazy"
+                  decoding="async"
+                  className="border rounded-md bg-white max-h-40"
+                />
               </div>
             )}
             {suivi.photo_preuve_url && (
               <div>
                 <div className="text-xs text-muted-foreground mb-1">Bon signé</div>
-                <img src={suivi.photo_preuve_url} alt="Bon signé" loading="lazy" decoding="async" className="border rounded-md max-h-40" />
+                <img
+                  src={suivi.photo_preuve_url}
+                  alt="Bon signé"
+                  loading="lazy"
+                  decoding="async"
+                  className="border rounded-md max-h-40"
+                />
               </div>
             )}
           </div>
@@ -497,7 +512,6 @@ function ErrorCard({
 }) {
   return (
     <div className="rounded-md border border-destructive/40 bg-destructive/5 p-3 flex items-start gap-3">
-      <AlertCircle className="h-4 w-4 text-destructive mt-0.5" />
       <div className="flex-1 space-y-1">
         <div className="text-sm font-medium text-destructive">{title}</div>
         <div className="text-xs text-muted-foreground break-words">{message}</div>
@@ -557,14 +571,20 @@ function HistoRow({
           <div className="font-medium">{STATUT_LABEL[h.etape]}</div>
           <div className="flex gap-1">
             {canEdit && !editing && (
-              <Button aria-label="Modifier" size="icon" variant="ghost" onClick={() => setEditing(true)}>
-                <Pencil className="h-3.5 w-3.5" />
+              <Button
+                aria-label="Modifier"
+                size="sm"
+                variant="ghost"
+                onClick={() => setEditing(true)}
+              >
+                Modifier
               </Button>
             )}
             {canDelete && !editing && (
               <Can permission="livraisons.supprimer">
-                <Button aria-label="Supprimer"
-                  size="icon"
+                <Button
+                  aria-label="Supprimer"
+                  size="sm"
                   variant="ghost"
                   onClick={async () => {
                     const r = await confirm({
@@ -576,7 +596,7 @@ function HistoRow({
                     mutDel.mutate();
                   }}
                 >
-                  <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                  Supprimer
                 </Button>
               </Can>
             )}
@@ -590,10 +610,11 @@ function HistoRow({
               placeholder="Commentaire"
               className="h-8"
             />
-            <Button aria-label="Valider" size="icon" variant="ghost" onClick={() => mutUpd.mutate()}>
-              <Check className="h-4 w-4" />
+            <Button aria-label="Valider" size="sm" variant="ghost" onClick={() => mutUpd.mutate()}>
+              Valider
             </Button>
-            <Button aria-label="Fermer"
+            <Button
+              aria-label="Fermer"
               size="icon"
               variant="ghost"
               onClick={() => {
@@ -621,16 +642,8 @@ function HistoRow({
           </div>
         )}
         <div className="text-xs text-muted-foreground flex gap-3 mt-1">
-          <span className="inline-flex items-center gap-1">
-            <Clock className="h-3 w-3" />
-            {formatDateTime(h.created_at)}
-          </span>
-          {h.user_nom && (
-            <span className="inline-flex items-center gap-1">
-              <User className="h-3 w-3" />
-              {h.user_nom}
-            </span>
-          )}
+          <span className="inline-flex items-center gap-1">{formatDateTime(h.created_at)}</span>
+          {h.user_nom && <span className="inline-flex items-center gap-1">{h.user_nom}</span>}
         </div>
       </div>
       {confirmDialog}

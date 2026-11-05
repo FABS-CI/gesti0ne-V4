@@ -1,11 +1,9 @@
-import { FileText, ShoppingCart, Truck, CreditCard } from "lucide-react";
-
 const cycleSteps = [
-  { label: "Proforma", icon: FileText },
-  { label: "Commande", icon: ShoppingCart, active: true },
-  { label: "Bon de livraison", icon: Truck },
-  { label: "Facture", icon: FileText },
-  { label: "Paiement", icon: CreditCard },
+  { label: "Proforma" },
+  { label: "Commande", active: true },
+  { label: "Bon de livraison" },
+  { label: "Facture" },
+  { label: "Paiement" },
 ];
 
 export function CommandesCycleSteps() {
@@ -20,7 +18,6 @@ export function CommandesCycleSteps() {
                 : "bg-muted text-muted-foreground"
             }`}
           >
-            <step.icon className="h-4 w-4" />
             <span className="hidden sm:inline">{step.label}</span>
           </div>
           {i < cycleSteps.length - 1 && (

@@ -1,9 +1,9 @@
 import type { ComponentType, ReactNode } from "react";
-import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type Props = {
+  /** Ignorée : interface sans icônes décoratives. */
   icon?: ComponentType<{ className?: string }>;
   title: string;
   description?: ReactNode;
@@ -24,11 +24,9 @@ type Props = {
  * - filtres actifs → texte "aucun résultat" + bouton Réinitialiser
  * - liste vraiment vide → texte "aucune donnée" + CTA de création
  *
- * Variante `rich` : icône dans un cercle mis en valeur, plus de respiration,
- * pensé pour les pages entièrement vides (Factures, Commandes, etc.).
+ * Variante `rich` : plus de respiration, titre plus grand, pensé pour les pages entièrement vides (Factures, Commandes, etc.).
  */
 export function EmptyState({
-  icon: Icon,
   title,
   description,
   onReset,
@@ -46,33 +44,12 @@ export function EmptyState({
         className,
       )}
     >
-      {Icon ? (
-        rich ? (
-          <div className="relative">
-            <div
-              aria-hidden
-              className="absolute inset-0 -m-3 rounded-full bg-primary/10 blur-2xl"
-            />
-            <div className="relative flex h-16 w-16 items-center justify-center rounded-md border border-border/60 bg-card">
-              <Icon className="h-7 w-7 text-primary" aria-hidden />
-            </div>
-          </div>
-        ) : (
-          <Icon className="h-10 w-10 text-muted-foreground/60" aria-hidden />
-        )
-      ) : null}
-
       <div className={rich ? "space-y-2 max-w-md" : "space-y-1"}>
         <p className={rich ? "text-lg font-semibold tracking-tight" : "text-sm font-medium"}>
           {title}
         </p>
         {description ? (
-          <p
-            className={cn(
-              "text-muted-foreground",
-              rich ? "text-sm leading-relaxed" : "text-xs",
-            )}
-          >
+          <p className={cn("text-muted-foreground", rich ? "text-sm leading-relaxed" : "text-xs")}>
             {description}
           </p>
         ) : null}
@@ -80,11 +57,10 @@ export function EmptyState({
 
       {onReset ? (
         <Button type="button" variant="outline" size="sm" onClick={onReset} className="gap-1">
-          <RotateCcw className="h-3 w-3" />
           Réinitialiser les filtres
         </Button>
       ) : (
-        action ?? null
+        (action ?? null)
       )}
 
       {hints ? (

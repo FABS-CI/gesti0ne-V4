@@ -2,7 +2,7 @@ import { formatDate } from "@/lib/format";
 import { COMMANDE_REF_SEARCH_DEFAULTS } from "@/lib/route-schemas";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AlertCircle, ArrowLeft, CheckCircle2, Loader2, PackageCheck, Truck } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -94,7 +94,11 @@ function RemisePage() {
       }
       toast.success("Étape validée");
       qc.invalidateQueries({ queryKey: ["livsuivi"] });
-      navigate({ to: "/livraison-suivi/$commandeRef", params: { commandeRef }, search: COMMANDE_REF_SEARCH_DEFAULTS });
+      navigate({
+        to: "/livraison-suivi/$commandeRef",
+        params: { commandeRef },
+        search: COMMANDE_REF_SEARCH_DEFAULTS,
+      });
     },
     onError: (e: Error) => toast.error(friendlyError(e)),
   });
@@ -136,7 +140,11 @@ function RemisePage() {
           page est réservée aux étapes « Remise au livreur » et « Remise au transporteur ».
         </p>
         <Button asChild variant="outline">
-          <Link to="/livraison-suivi/$commandeRef" params={{ commandeRef }} search={COMMANDE_REF_SEARCH_DEFAULTS}>
+          <Link
+            to="/livraison-suivi/$commandeRef"
+            params={{ commandeRef }}
+            search={COMMANDE_REF_SEARCH_DEFAULTS}
+          >
             Retour au suivi
           </Link>
         </Button>
@@ -144,19 +152,21 @@ function RemisePage() {
     );
   }
 
-  const Icon = isTransporteur ? Truck : PackageCheck;
   const title = isTransporteur ? "Remise au transporteur" : "Remise au livreur";
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-6">
       <div className="flex items-center gap-3">
-        <Button aria-label="Retour" asChild variant="ghost" size="icon">
-          <Link to="/livraison-suivi/$commandeRef" params={{ commandeRef }} search={COMMANDE_REF_SEARCH_DEFAULTS}>
-            <ArrowLeft className="h-4 w-4" />
+        <Button aria-label="Retour" asChild variant="ghost" size="sm">
+          <Link
+            to="/livraison-suivi/$commandeRef"
+            params={{ commandeRef }}
+            search={COMMANDE_REF_SEARCH_DEFAULTS}
+          >
+            Retour
           </Link>
         </Button>
         <div className="flex items-center gap-2">
-          <Icon className="h-6 w-6 text-primary" />
           <div>
             <h1 className="ds-page-title">{title}</h1>
             <p className="text-sm text-muted-foreground">
@@ -170,7 +180,6 @@ function RemisePage() {
           </Badge>
         </div>
       </div>
-
       <Section title="Informations de la commande">
         <InfoRow label="N° Commande" value={cmd?.reference} />
         <InfoRow label="Client" value={cmd?.client_nom} />
@@ -188,7 +197,6 @@ function RemisePage() {
           }
         />
       </Section>
-
       <Section title="Informations des colis">
         <InfoRow label="Nombre de colis" value={colis ? String(colis.nb_colis) : null} />
         <InfoRow label="Référence colis" value={colis?.reference} />
@@ -206,7 +214,6 @@ function RemisePage() {
         <InfoRow label="Contenu / Observations" value={colis?.contenu} />
         <InfoRow label="N° Bon de livraison" value={colis?.bl_reference} />
       </Section>
-
       <Section title={isTransporteur ? "Informations du transporteur" : "Informations du livreur"}>
         {isTransporteur ? (
           <>
@@ -230,12 +237,10 @@ function RemisePage() {
           </>
         )}
       </Section>
-
       <Separator />
 
       {missing.length > 0 && (
         <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
           <AlertTitle>Informations manquantes</AlertTitle>
           <AlertDescription>
             Impossible de valider l'étape tant que les données suivantes ne sont pas préchargées :{" "}
@@ -246,7 +251,6 @@ function RemisePage() {
 
       {mut.isError && (
         <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
           <AlertTitle>Échec de la validation</AlertTitle>
           <AlertDescription>
             {(mut.error as Error)?.message ?? "Une erreur inattendue s'est produite."}
@@ -256,7 +260,6 @@ function RemisePage() {
 
       {mut.isSuccess && !mut.data && (
         <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
           <AlertTitle>Aucune mise à jour</AlertTitle>
           <AlertDescription>
             L'API n'a modifié aucune ligne. Le statut a peut-être déjà été avancé par un autre
@@ -267,7 +270,11 @@ function RemisePage() {
 
       <div className="flex items-center justify-between gap-3">
         <Button asChild variant="outline">
-          <Link to="/livraison-suivi/$commandeRef" params={{ commandeRef }} search={COMMANDE_REF_SEARCH_DEFAULTS}>
+          <Link
+            to="/livraison-suivi/$commandeRef"
+            params={{ commandeRef }}
+            search={COMMANDE_REF_SEARCH_DEFAULTS}
+          >
             Retour
           </Link>
         </Button>
@@ -282,11 +289,7 @@ function RemisePage() {
           })}
           size="lg"
         >
-          {mut.isPending ? (
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-          ) : (
-            <CheckCircle2 className="h-4 w-4 mr-2" />
-          )}
+          {mut.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
           {mut.isPending ? "Validation en cours…" : "Valider l'étape"}
         </Button>
       </div>
