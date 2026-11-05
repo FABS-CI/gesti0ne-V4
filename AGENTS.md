@@ -33,5 +33,6 @@
 - Entity names use ClientLink/ProduitLink with real IDs; attachClientIds batches invoice lookups by 200, keeping missing IDs plain text and stopping row clicks.
 - Payslips are computed only by SQL `paie_calculer_bulletin` (employee data + `paie_regimes` overridden by `parametres_paie` + active `rubriques_paie`); `paie_enregistrer_bulletin` reuses it, stores lines in `bulletin_lignes` and a `snapshot`, so preview, bulk generation and saved payslips never diverge and issued payslips never change. `src/lib/paie/regimes-ci.ts` is only a test mirror.
 - Subdirectories (e.g. src/lib/pdf) have their own AGENTS.md to read before changing files there.
+- Return screen and PDF financial display use retourLineAmounts, combining stored line valuation and global discount once; origin references are display-only, preserving historical values.
 - Database integration tests must use the explicit local disposable-database gate in src/test/disposable-database.ts and rollback transactions; inherited PG settings must never activate tests because this project contains live business history.
 - App-owned global function middleware validates supplied bearer identities and active profile status; SQL permissions must enforce the same status because browser database calls bypass server functions. Generated integration middleware stays untouched.

@@ -299,6 +299,7 @@ export async function generateUnifiedRetourPDF(data: DataBase): Promise<Blob> {
     },
     clientNom: data.clientNom || "",
     clientTel: data.clientTel || "",
+    representant: data.representant || "",
     codeClient: data.codeClient || "",
     adresseClient: data.adresseClient || "",
     villeClient: data.villeClient || "",
@@ -306,6 +307,8 @@ export async function generateUnifiedRetourPDF(data: DataBase): Promise<Blob> {
     observations: data.observations || data.notes || undefined,
     origin: data.origin ?? null,
     lignes: data.lignes || [],
+    remiseGlobalePct: data.remiseGlobalePct ?? 0,
+    montantTotalStocke: data.montantTotalStocke,
   };
 
   const doc = new RetourDocument(docBase, {} as any);

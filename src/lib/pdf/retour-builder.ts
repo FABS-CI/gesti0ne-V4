@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { DocBase, DocLigne } from "./fabsTemplates";
 import { loadClientDocInfo } from "./enrich-lignes";
 import { getRetour, type RetourWithLignes } from "@/lib/retours-api";
+import { retourLineAmounts } from "@/lib/retour-document-data";
 
 async function loadPrixMap(
   factureId: string | null,
@@ -31,7 +32,6 @@ async function loadPrixMap(
           .eq("commande_id", fac.commande_id)
           .maybeSingle(),
       ]);
-      const remiseGlobalePct = Number(commande?.remise_globale_pct ?? 0);
       for (const l of (lignes ?? []) as Array<{
         produit_id: string | null;
         prix_unitaire: number | null;
@@ -41,7 +41,7 @@ async function loadPrixMap(
         if (l.produit_id && l.prix_unitaire != null) {
           prices.set(l.produit_id, {
             prix: Number(l.prix_unitaire),
-            remisePct: 100 - (100 - Number(l.remise_pct ?? 0)) * (1 - remiseGlobalePct / 100),
+            remisePct: Number(l.remise_pct ?? 0),
             quantiteFacturee: Number(l.quantite ?? 0),
           });
         }
@@ -50,7 +50,7 @@ async function loadPrixMap(
   }
 
   // 2) Fallback : prix de vente courant du produit (sans remise)
-  const missing = produitIds.filter((id) => !prices.has(id));
+  const missing = factureId ? [] : produitIds.filter((id) => !prices.has(id));
   if (missing.length > 0) {
     const { data: prods } = await supabase
       .from("produits")
@@ -112,24 +112,25 @@ export async function buildRetourDocBaseFrom(retour: RetourWithLignes): Promise<
   let totalBrut = 0;
   let remiseLigneTotal = 0;
   let totalHT = 0;
+  const remiseGlobalePct = Number(retour.remise_globale_pct ?? 0);
   const lignes: DocLigne[] = retour.lignes.map((l) => {
     const info = l.produit_id ? prices.get(l.produit_id) : undefined;
     
     // Un retour dérivé d'une facture reprend toujours son prix et sa remise effectifs.
     // Le catalogue n'est utilisé que pour les anciens retours sans facture liée.
-    const pu = info?.prix ?? Number(l.prix_unitaire ?? 0);
+    const pu = l.prix_unitaire == null ? (info?.prix ?? 0) : Number(l.prix_unitaire);
     // La ligne du retour est l'enregistrement historique du calcul réellement appliqué.
     // Les données de facture servent de repli aux anciens enregistrements incomplets.
     const remisePct = l.remise_pct == null ? (info?.remisePct ?? 0) : Number(l.remise_pct);
     
     const qte = Number(l.quantite ?? 0);
-    const brut = pu * qte;
-    const remiseMontant = Math.round((brut * remisePct) / 100);
-    const montant = brut - remiseMontant;
+    const amounts = retourLineAmounts({ prix: pu, quantite: qte, remisePct, remiseGlobalePct,
+      remiseMontant: l.remise_montant, totalLigne: l.total_ligne });
+    const { brut, remiseLigne: remiseMontant, net: montant } = amounts;
     
     totalBrut += brut;
     remiseLigneTotal += remiseMontant;
-    totalHT += montant;
+    totalHT += amounts.netAvantGlobale;
     const m = l.produit_id ? meta.get(l.produit_id) : undefined;
     return {
       codeArticle: l.reference_produit ?? m?.reference ?? undefined,
@@ -141,8 +142,8 @@ export async function buildRetourDocBaseFrom(retour: RetourWithLignes): Promise<
       qteRetournee: Number(l.quantite_recue ?? l.quantite ?? 0),
       motif: l.motif ?? undefined,
       prixUnitaire: pu || undefined,
-      remisePct: remisePct || undefined,
-      remiseMontant: remiseMontant || undefined,
+      remisePct: amounts.remiseEffectivePct,
+      remiseMontant: amounts.remiseEffectiveMontant,
       montant: montant || undefined,
       etatProduit: l.etat_produit ?? undefined,
       etatReception: l.etat_reception ?? undefined,
@@ -151,12 +152,12 @@ export async function buildRetourDocBaseFrom(retour: RetourWithLignes): Promise<
   });
 
   // Remise globale reprise de la facture d'origine (conservée comme remise globale, pas répartie sur les lignes).
-  const remiseGlobalePct = Number((retour as { remise_globale_pct?: number | null }).remise_globale_pct ?? 0);
-  const remiseGlobale = remiseGlobalePct > 0 ? Math.round((totalHT * remiseGlobalePct) / 100) : 0;
+  const remiseGlobale = totalHT * remiseGlobalePct / 100;
   const totalNet = totalHT - remiseGlobale;
 
   // Priorité aux infos saisies sur le retour, fallback sur la fiche client
   const base: any = {
+    id: retour.retour_id,
     reference: retour.numero || retour.reference,
     date: retour.date_retour,
     clientNom: retour.etablissement || retour.client_nom || clientInfo.clientNom || null,
@@ -177,6 +178,7 @@ export async function buildRetourDocBaseFrom(retour: RetourWithLignes): Promise<
     remiseGlobalePct: remiseGlobalePct || 0,
     montantHT: totalNet || 0,
     totalTTC: totalNet || 0,
+    montantTotalStocke: Number(retour.montant),
     statut: retour.statut,
     observations: retour.observations || retour.notes,
     demandeurNom: retour.created_by_nom,
@@ -188,11 +190,25 @@ export async function buildRetourDocBaseFrom(retour: RetourWithLignes): Promise<
 
   // Enrichissement Documents d'origine
   if (retour.commande_id || retour.facture_id || retour.livraison_id) {
-    const [cmd, fac, bl] = await Promise.all([
-      retour.commande_id ? supabase.from("commandes").select("reference, date_commande").eq("commande_id", retour.commande_id).maybeSingle() : Promise.resolve({ data: null }),
-      retour.facture_id ? supabase.from("factures").select("reference, date_facture").eq("facture_id", retour.facture_id).maybeSingle() : Promise.resolve({ data: null }),
-      retour.livraison_id ? supabase.from("bons_livraison").select("reference, created_at").eq("bl_id", retour.livraison_id).maybeSingle() : Promise.resolve({ data: null }),
-    ]);
+    const fac = retour.facture_id
+      ? await supabase.from("factures").select("reference, date_facture, commande_id, client_nom").eq("facture_id", retour.facture_id).maybeSingle()
+      : { data: null, error: null };
+    if (fac.error) throw fac.error;
+    const commandeId = fac.data?.commande_id ?? retour.commande_id;
+    const cmd = commandeId
+      ? await supabase.from("commandes").select("reference, date_commande, commercial_nom, representant_nom, telephone, ville, adresse").eq("commande_id", commandeId).maybeSingle()
+      : { data: null, error: null };
+    if (cmd.error) throw cmd.error;
+    const bl = retour.livraison_id
+      ? await supabase.from("bons_livraison").select("reference, created_at").eq("bl_id", retour.livraison_id).maybeSingle()
+      : commandeId
+        ? await supabase.from("bons_livraison").select("reference, created_at").eq("commande_id", commandeId).order("created_at", { ascending: true }).limit(1).maybeSingle()
+        : { data: null, error: null };
+    if (bl.error) throw bl.error;
+    base.representant = cmd.data?.commercial_nom || cmd.data?.representant_nom || base.representant;
+    base.clientTel = retour.telephone || cmd.data?.telephone || base.clientTel;
+    base.adresseClient = retour.adresse || cmd.data?.adresse || base.adresseClient;
+    base.villeClient = retour.ville || cmd.data?.ville || base.villeClient;
     base.origin = {
       cmd: cmd.data ? { ref: cmd.data.reference, date: cmd.data.date_commande } : null,
       fac: fac.data ? { ref: fac.data.reference, date: fac.data.date_facture } : null,
