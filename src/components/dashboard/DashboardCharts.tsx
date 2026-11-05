@@ -42,6 +42,8 @@ export function CAAreaChart({ data }: { data: CAPoint[] }) {
           stroke="var(--primary)"
           strokeWidth={2}
           fill="url(#caGrad)"
+          animationDuration={900}
+          animationEasing="ease-out"
         />
       </AreaChart>
     </ResponsiveContainer>
@@ -56,7 +58,14 @@ export function CommandesBarChart({ data }: { data: CAPoint[] }) {
         <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={12} />
         <YAxis stroke="var(--muted-foreground)" fontSize={12} allowDecimals={false} />
         <Tooltip />
-        <Bar dataKey="nb" name="Commandes" fill="var(--info)" radius={[3, 3, 0, 0]} />
+        <Bar
+          dataKey="nb"
+          name="Commandes"
+          fill="var(--info)"
+          radius={[3, 3, 0, 0]}
+          animationDuration={800}
+          animationEasing="ease-out"
+        />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -79,6 +88,8 @@ export function StatutPieChart({
           innerRadius={50}
           outerRadius={85}
           paddingAngle={2}
+          animationDuration={800}
+          animationEasing="ease-out"
         >
           {data.map((s) => (
             <Cell key={s.statut} fill={colors[s.statut] ?? "var(--muted-foreground)"} />

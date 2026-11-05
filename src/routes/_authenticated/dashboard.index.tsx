@@ -82,7 +82,8 @@ function Dashboard() {
         <div>
           <p className="font-semibold">Impossible de charger le tableau de bord</p>
           <p className="text-sm text-muted-foreground">
-            Les chiffres du tableau de bord n'ont pas pu être chargés. Vérifiez votre connexion puis réessayez.
+            Les chiffres du tableau de bord n'ont pas pu être chargés. Vérifiez votre connexion puis
+            réessayez.
           </p>
         </div>
         <Button onClick={() => refetch()}>Réessayer</Button>
@@ -116,7 +117,7 @@ function Dashboard() {
   );
 
   return (
-    <div className="theme-dashboard space-y-4 overflow-x-hidden bg-background text-foreground">
+    <div className="theme-dashboard dash-anim space-y-4 overflow-x-hidden bg-background text-foreground">
       <DashboardHeader
         periode={periode}
         onPeriode={onPeriode}

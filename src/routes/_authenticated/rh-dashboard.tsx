@@ -1,3 +1,4 @@
+import { AnimatedNumber } from "@/components/dashboard/AnimatedNumber";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { formatFCFA } from "@/lib/format";
 
@@ -66,7 +67,8 @@ function RHDashboardPage() {
     },
     {
       label: "Masse salariale",
-      value: formatFCFA(data.masseSalariale),
+      value: data.masseSalariale,
+      fcfa: true,
       icon: Wallet,
       color: "#F97316",
       to: "/paie" as const,
@@ -102,7 +104,7 @@ function RHDashboardPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="dash-anim space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="ds-page-title">Tableau de bord RH</h1>
@@ -122,16 +124,14 @@ function RHDashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="dash-stagger grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {kpis.map((k) => {
           const Icon = k.icon;
           const card = (
             <Card
               key={k.label}
               className={
-                "to" in k && k.to
-                  ? "cursor-pointer transition hover:border-primary/50 hover:shadow-md"
-                  : ""
+                "to" in k && k.to ? "dash-lift cursor-pointer hover:border-primary/50" : ""
               }
             >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -141,7 +141,12 @@ function RHDashboardPage() {
                 <Icon className="h-5 w-5" style={{ color: k.color }} />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{k.value}</div>
+                <div className="text-2xl font-bold">
+                  <AnimatedNumber
+                    value={k.value}
+                    format={"fcfa" in k && k.fcfa ? formatFCFA : undefined}
+                  />
+                </div>
               </CardContent>
             </Card>
           );

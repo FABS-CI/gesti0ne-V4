@@ -25,7 +25,7 @@ interface Props {
 export const DashboardChartsSection = forwardRef<HTMLDivElement, Props>(
   function DashboardChartsSection({ data, canSeeCA, periode }, ref) {
     return (
-      <div ref={ref} className="space-y-4">
+      <div ref={ref} className="dash-stagger space-y-4">
         {canSeeCA && (
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
