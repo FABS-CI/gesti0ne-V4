@@ -36,6 +36,8 @@ import { usePermissions } from "@/hooks/use-permissions";
 import { invalidateRetour } from "@/lib/cache-invalidation";
 import { friendlyError } from "@/lib/friendly-error";
 import { formatDate, formatFCFA } from "@/lib/format";
+import { buildRetourDocBaseFrom } from "@/lib/pdf/retour-builder";
+import { retourOriginReference } from "@/lib/retour-document-data";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -72,6 +74,14 @@ export const Route = createFileRoute("/_authenticated/retours/$retourId")({
   component: RetourDetailPage,
   errorComponent: RouteError,
   notFoundComponent: RouteNotFound,
+  head: () => ({ meta: [
+    { title: "Bon de retour — GESTI0NE" },
+    { name: "description", content: "Détail du retour, facture d’origine, articles et remises." },
+    { property: "og:title", content: "Bon de retour — GESTI0NE" },
+    { property: "og:description", content: "Détail du retour, facture d’origine, articles et remises." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
 });
 
 function frDate(d: string | null | undefined) {
@@ -130,6 +140,14 @@ function RetourDetailPage() {
   });
 
   const [receptionOpen, setReceptionOpen] = useState(false);
+  const documentQ = useQuery({
+    queryKey: ["retour-document", retourId, retour?.updated_at],
+    queryFn: () => {
+      if (!retour) throw new Error("Retour introuvable");
+      return buildRetourDocBaseFrom(retour);
+    },
+    enabled: !!retour,
+  });
   const [refusMagasinOpen, setRefusMagasinOpen] = useState(false);
   const [refusComptaOpen, setRefusComptaOpen] = useState(false);
   const [validationOpen, setValidationOpen] = useState(false);
@@ -257,7 +275,7 @@ function RetourDetailPage() {
           {retour.etablissement ?? retour.client_nom ?? "—"}
         </InfoCard>
         <InfoCard icon={<User className="h-4 w-4" />} title="Représentant">
-          {retour.representant_nom ?? "—"}
+          {documentQ.data?.representant || retour.representant_nom || "—"}
         </InfoCard>
         <InfoCard icon={<Phone className="h-4 w-4" />} title="Téléphone">
           {retour.telephone ?? "—"}
@@ -304,6 +322,18 @@ function RetourDetailPage() {
         )}
       </div>
 
+      {documentQ.isError && <p role="alert" className="text-destructive">Les informations de la facture d’origine n’ont pas pu être chargées.</p>}
+      {documentQ.data?.origin && (
+        <section className="space-y-2 border-y py-4">
+          <h2 className="font-semibold">Documents d’origine</h2>
+          {Object.entries(documentQ.data.origin).map(([type, source]) => source && (
+            <p key={type} className="text-sm">
+              {type === "fac" ? "Facture" : type === "cmd" ? "Commande" : "Bon de livraison"} : {retourOriginReference(source.ref)} · {frDate(source.date)}
+            </p>
+          ))}
+        </section>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle>Produits retournés</CardTitle>
@@ -319,6 +349,10 @@ function RetourDetailPage() {
                   <TableHead className="w-[12%] font-bold">Référence</TableHead>
                   <TableHead className="w-[35%] font-bold">Désignation</TableHead>
                   <TableHead className="w-[10%] text-right font-bold">Qté Dem.</TableHead>
+                  <TableHead className="text-right">Qté fact.</TableHead>
+                  <TableHead className="text-right">P.U. HT</TableHead>
+                  <TableHead className="text-right">Remise</TableHead>
+                  <TableHead className="text-right">Net HT</TableHead>
                   <TableHead className="w-[10%] text-right font-bold">Qté Reçue</TableHead>
                   <TableHead className="w-[13%] font-bold">État</TableHead>
                   <TableHead className="w-[15%] font-bold">Motif</TableHead>
@@ -335,6 +369,10 @@ function RetourDetailPage() {
                       {l.designation}
                     </TableCell>
                     <TableCell className="text-right font-semibold">{l.quantite_demandee ?? l.quantite}</TableCell>
+                    <TableCell className="text-right">{documentQ.data?.lignes?.[i]?.qteCommandee ?? "—"}</TableCell>
+                    <TableCell className="text-right whitespace-nowrap">{documentQ.data?.lignes?.[i] ? formatFCFA(documentQ.data.lignes[i].prixUnitaire ?? 0) : "—"}</TableCell>
+                    <TableCell className="text-right whitespace-nowrap">{documentQ.data?.lignes?.[i] ? `${Number((documentQ.data.lignes[i].remisePct ?? 0).toFixed(4))} %` : "—"}</TableCell>
+                    <TableCell className="text-right whitespace-nowrap">{documentQ.data?.lignes?.[i] ? formatFCFA(documentQ.data.lignes[i].montant ?? 0) : "—"}</TableCell>
                     <TableCell className="text-right font-semibold text-primary">
                       {l.quantite_recue ?? "—"}
                     </TableCell>
@@ -357,6 +395,11 @@ function RetourDetailPage() {
           )}
         </CardContent>
       </Card>
+
+      <div className="text-right space-y-1">
+        {(retour.remise_globale_pct ?? 0) > 0 && <p className="text-sm text-muted-foreground">Remise globale d’origine : {retour.remise_globale_pct} % (incluse)</p>}
+        <p className="font-semibold">Montant du retour : {formatFCFA(retour.montant)}</p>
+      </div>
 
       {retour.observations && (
         <Card>
