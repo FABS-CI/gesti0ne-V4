@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Calendar, FileSignature, User, Wallet } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { formatDate, formatFCFA } from "@/lib/format";
@@ -91,12 +90,11 @@ function ContratDetailPage() {
           ) : undefined
         }
       />
-
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <User className="h-4 w-4" /> Employé
+              Employé
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">{contrat.employe_nom}</CardContent>
@@ -104,17 +102,15 @@ function ContratDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <FileSignature className="h-4 w-4" /> Type
+              Type
             </CardTitle>
           </CardHeader>
-          <CardContent className="font-medium">
-            {TYPES[contrat.type] ?? contrat.type}
-          </CardContent>
+          <CardContent className="font-medium">{TYPES[contrat.type] ?? contrat.type}</CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Wallet className="h-4 w-4" /> Salaire
+              Salaire
             </CardTitle>
           </CardHeader>
           <CardContent className="text-lg font-bold text-primary">
@@ -124,7 +120,7 @@ function ContratDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4" /> Période
+              Période
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">

@@ -1,4 +1,4 @@
-import { Eye, FileDown, FileText } from "lucide-react";
+import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -56,14 +56,13 @@ export function DeclarationsToolbar({
             </SelectContent>
           </Select>
         </div>
-
         <div className="flex flex-wrap gap-2">
           <Can permission="paie.declarer_cnps">
             <Button onClick={() => onPreview(cnps)} disabled={disabled} variant="outline">
               <Eye className="mr-2 h-4 w-4" /> Aperçu CNPS
             </Button>
             <Button onClick={() => onDownload(cnps)} disabled={disabled} variant="secondary">
-              <FileText className="mr-2 h-4 w-4" /> CNPS (PDF)
+              CNPS (PDF)
             </Button>
           </Can>
           <Can permission="paie.declarer_its">
@@ -71,7 +70,7 @@ export function DeclarationsToolbar({
               <Eye className="mr-2 h-4 w-4" /> Aperçu ITS+CN
             </Button>
             <Button onClick={() => onDownload(its)} disabled={disabled} variant="secondary">
-              <FileText className="mr-2 h-4 w-4" /> ITS + CN (PDF)
+              ITS + CN (PDF)
             </Button>
           </Can>
           <Can permission="paie.declarer_fdfp">
@@ -79,7 +78,7 @@ export function DeclarationsToolbar({
               <Eye className="mr-2 h-4 w-4" /> Aperçu DISA
             </Button>
             <Button onClick={() => onDownload(disa)} disabled={disabled}>
-              <FileDown className="mr-2 h-4 w-4" /> DISA (PDF)
+              DISA (PDF)
             </Button>
           </Can>
         </div>

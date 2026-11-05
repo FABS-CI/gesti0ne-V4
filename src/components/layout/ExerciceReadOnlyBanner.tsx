@@ -1,4 +1,3 @@
-import { Lock } from "lucide-react";
 import { useExercice } from "@/contexts/ExerciceContext";
 
 export function ExerciceReadOnlyBanner() {
@@ -7,7 +6,6 @@ export function ExerciceReadOnlyBanner() {
   return (
     <div className="flex items-center justify-between gap-3 border-b border-warning/40 bg-warning/10 px-3 py-1.5 text-xs text-warning sm:px-4">
       <div className="flex items-center gap-2">
-        <Lock className="h-3.5 w-3.5" />
         <span>
           Vous consultez l'exercice <strong>{exerciceConsulte.code}</strong> en lecture seule. Toute
           création est bloquée. Exercice actif : <strong>{exerciceActif.code}</strong>.

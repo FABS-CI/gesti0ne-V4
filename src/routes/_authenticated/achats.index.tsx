@@ -1,19 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { friendlyError } from '@/lib/friendly-error';
+import { friendlyError } from "@/lib/friendly-error";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  ShoppingBag,
-  Search,
-  Plus,
-  Download,
-  Trash2,
-  Eye,
-  Printer,
-  Pencil,
-  RotateCcw,
-  X,
-} from "lucide-react";
+import { Eye, X } from "lucide-react";
 import { Can } from "@/components/rbac/Can";
 import { usePermissions } from "@/hooks/use-permissions";
 import { toast } from "sonner";
@@ -237,31 +226,26 @@ function ApprovisionnementsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <ShoppingBag className="h-6 w-6 text-primary" /> Approvisionnements
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Approvisionnements</h1>
           <p className="text-sm text-muted-foreground">Entrées de stock depuis les fournisseurs</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleExport} disabled={!filtered.length}>
-            <Download className="mr-2 h-4 w-4" /> Exporter
+            Exporter
           </Button>
           {canCreate && (
             <Button asChild>
               <Link to="/achats/nouveau" search={{ edit: undefined }}>
-                <Plus className="mr-2 h-4 w-4" /> Nouvel Approvisionnement
+                Nouvel Approvisionnement
               </Link>
             </Button>
           )}
         </div>
       </div>
-
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <div className="relative lg:col-span-2">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Rechercher (numéro, libellé)…"
-            className="pl-9"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -342,33 +326,71 @@ function ApprovisionnementsPage() {
           </SelectContent>
         </Select>
       </div>
-
       <FilterBadges
         badges={[
-          ...(q ? [{ key: "q", label: `Recherche : ${q}`, onClear: () => setSearch("") } as FilterBadge] : []),
+          ...(q
+            ? [{ key: "q", label: `Recherche : ${q}`, onClear: () => setSearch("") } as FilterBadge]
+            : []),
           ...(statutFilter !== "all"
-            ? [{ key: "statut", label: `Statut : ${STATUT_ACHAT_LABEL[statutFilter]?.label ?? statutFilter}`, onClear: () => setStatutFilter("all") } as FilterBadge]
+            ? [
+                {
+                  key: "statut",
+                  label: `Statut : ${STATUT_ACHAT_LABEL[statutFilter]?.label ?? statutFilter}`,
+                  onClear: () => setStatutFilter("all"),
+                } as FilterBadge,
+              ]
             : []),
           ...(fournisseurFilter !== "all"
-            ? [{ key: "fourn", label: `Fournisseur : ${fournisseurLabel}`, onClear: () => setFournisseurFilter("all") } as FilterBadge]
+            ? [
+                {
+                  key: "fourn",
+                  label: `Fournisseur : ${fournisseurLabel}`,
+                  onClear: () => setFournisseurFilter("all"),
+                } as FilterBadge,
+              ]
             : []),
           ...(article
-            ? [{ key: "article", label: `Article : ${article}`, onClear: () => setArticleSearch("") } as FilterBadge]
+            ? [
+                {
+                  key: "article",
+                  label: `Article : ${article}`,
+                  onClear: () => setArticleSearch(""),
+                } as FilterBadge,
+              ]
             : []),
           ...(refArticle
-            ? [{ key: "refart", label: `Réf. article : ${refArticle}`, onClear: () => setRefArticleSearch("") } as FilterBadge]
+            ? [
+                {
+                  key: "refart",
+                  label: `Réf. article : ${refArticle}`,
+                  onClear: () => setRefArticleSearch(""),
+                } as FilterBadge,
+              ]
             : []),
           ...(categorieFilter !== "all"
-            ? [{ key: "cat", label: `Catégorie : ${CATEGORIE_LABEL[categorieFilter] ?? categorieFilter}`, onClear: () => setCategorieFilter("all") } as FilterBadge]
+            ? [
+                {
+                  key: "cat",
+                  label: `Catégorie : ${CATEGORIE_LABEL[categorieFilter] ?? categorieFilter}`,
+                  onClear: () => setCategorieFilter("all"),
+                } as FilterBadge,
+              ]
             : []),
           ...(dateDebut || dateFin
-            ? [{ key: "periode", label: `Période : ${dateDebut || "…"} → ${dateFin || "…"}`, onClear: () => { setDateDebut(""); setDateFin(""); } } as FilterBadge]
+            ? [
+                {
+                  key: "periode",
+                  label: `Période : ${dateDebut || "…"} → ${dateFin || "…"}`,
+                  onClear: () => {
+                    setDateDebut("");
+                    setDateFin("");
+                  },
+                } as FilterBadge,
+              ]
             : []),
         ]}
         onResetAll={resetAllFilters}
       />
-
-
       <div className="rounded-lg border">
         <ResponsiveTable stickyFirstCol>
           <Table>
@@ -398,7 +420,6 @@ function ApprovisionnementsPage() {
                   <TableCell colSpan={10} className="py-6">
                     <EmptyState
                       variant={hasActiveFilters ? "compact" : "rich"}
-                      icon={ShoppingBag}
                       title={
                         hasActiveFilters
                           ? "Aucun approvisionnement ne correspond aux filtres appliqués."
@@ -414,7 +435,7 @@ function ApprovisionnementsPage() {
                         !hasActiveFilters && canCreate ? (
                           <Button asChild size="sm">
                             <Link to="/achats/nouveau" search={{ edit: undefined }}>
-                              <Plus className="mr-2 h-4 w-4" /> Nouvel approvisionnement
+                              Nouvel approvisionnement
                             </Link>
                           </Button>
                         ) : undefined
@@ -435,7 +456,11 @@ function ApprovisionnementsPage() {
                           {ls.slice(0, 3).map((l, idx) => (
                             <ProductCoverThumb
                               key={l.ligne_id}
-                              produit={l.produits ? { ...l, ...l.produits, titre: l.designation } : { ...l, titre: l.designation }}
+                              produit={
+                                l.produits
+                                  ? { ...l, ...l.produits, titre: l.designation }
+                                  : { ...l, titre: l.designation }
+                              }
                               size="xs"
                               className="h-8 w-8 border-2 border-background shadow-sm"
                             />
@@ -448,7 +473,9 @@ function ApprovisionnementsPage() {
                         </div>
                       </TableCell>
                       <TableCell className="font-mono text-xs">{a.reference}</TableCell>
-                      <TableCell className="whitespace-nowrap">{formatDate(a.date_achat)}</TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {formatDate(a.date_achat)}
+                      </TableCell>
                       <TableCell>{a.fournisseurs?.raison_sociale ?? "—"}</TableCell>
                       <TableCell className="text-right">{ls.length}</TableCell>
                       <TableCell className="text-right">{qte}</TableCell>
@@ -467,19 +494,26 @@ function ApprovisionnementsPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button aria-label="Consulter" variant="ghost" size="icon" asChild title="Consulter">
+                        <Button
+                          aria-label="Consulter"
+                          variant="ghost"
+                          size="sm"
+                          asChild
+                          title="Consulter"
+                        >
                           <Link to="/achats/$achatId" params={{ achatId: a.achat_id }}>
-                            <Eye className="h-4 w-4" />
+                            Voir
                           </Link>
                         </Button>
                         <Can permission="achats.modifier">
-                          <Button aria-label={
+                          <Button
+                            aria-label={
                               ["recu", "paye", "annule"].includes(a.statut)
                                 ? "Modifier (réservé Super Admin)"
                                 : "Modifier"
                             }
                             variant="ghost"
-                            size="icon"
+                            size="sm"
                             asChild
                             title={
                               ["recu", "paye", "annule"].includes(a.statut)
@@ -487,40 +521,37 @@ function ApprovisionnementsPage() {
                                 : "Modifier"
                             }
                           >
-                            <Link
-                              to="/achats/nouveau"
-                              search={{ edit: a.achat_id } as never}
-                            >
-                              <Pencil className="h-4 w-4" />
+                            <Link to="/achats/nouveau" search={{ edit: a.achat_id } as never}>
+                              Modifier
                             </Link>
                           </Button>
                         </Can>
-                        <Button aria-label="Imprimer"
+                        <Button
+                          aria-label="Imprimer"
                           variant="ghost"
-                          size="icon"
+                          size="sm"
                           title="Imprimer"
                           onClick={() => handlePrint(a.achat_id)}
                         >
-                          <Printer className="h-4 w-4" />
+                          Imprimer
                         </Button>
                         <Can permission="achats.supprimer">
-                          <Button aria-label={
+                          <Button
+                            aria-label={
                               ["recu", "paye"].includes(a.statut)
                                 ? "Supprimer (réservé Super Admin)"
                                 : "Supprimer"
                             }
                             variant="ghost"
-                            size="icon"
+                            size="sm"
                             title={
                               ["recu", "paye"].includes(a.statut)
                                 ? "Supprimer (réservé Super Admin)"
                                 : "Supprimer"
                             }
-                            onClick={() =>
-                              setToDelete({ id: a.achat_id, reference: a.reference })
-                            }
+                            onClick={() => setToDelete({ id: a.achat_id, reference: a.reference })}
                           >
-                            <Trash2 className="h-4 w-4 text-destructive" />
+                            Supprimer
                           </Button>
                         </Can>
                       </TableCell>

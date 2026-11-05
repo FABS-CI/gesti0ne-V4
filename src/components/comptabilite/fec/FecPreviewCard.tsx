@@ -1,4 +1,4 @@
-import { Download, Eye, FileArchive, Loader2, X } from "lucide-react";
+import { Eye, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -41,14 +41,10 @@ export function FecPreviewCard({
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={onDownloadFec} disabled={!canDownload || isLoading}>
-            <Download className="mr-2 h-4 w-4" /> FEC (.txt)
+            FEC (.txt)
           </Button>
           <Button onClick={onGenerateZip} disabled={!canDownload || zipPending}>
-            {zipPending ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <FileArchive className="mr-2 h-4 w-4" />
-            )}
+            {zipPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             ZIP (FEC + Balance + Grand livre + Journal)
           </Button>
           {zipPending && (

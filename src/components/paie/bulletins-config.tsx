@@ -1,4 +1,3 @@
-import { FileDown, Wallet } from "lucide-react";
 import { BulletinActionButtons } from "@/components/paie/BulletinActionButtons";
 import type { ResourceConfig } from "@/components/crud/ResourceManager";
 import { formatPeriodeLabel } from "@/lib/paie/periode-label";
@@ -17,7 +16,6 @@ export const bulletinsConfig: ResourceConfig = {
   idField: "bulletin_id",
   title: "Paie",
   subtitle: "Bulletins de salaire",
-  icon: Wallet,
   newLabel: "Nouveau bulletin",
   entityLabel: "le bulletin",
   csvName: "bulletins_paie",
@@ -39,8 +37,13 @@ export const bulletinsConfig: ResourceConfig = {
   rowActions: [
     {
       label: "Valider / Télécharger",
-      icon: FileDown,
-      render: (row) => <BulletinActionButtons bulletinId={String(row.bulletin_id)} statut={row.statut} size="icon" />,
+      render: (row) => (
+        <BulletinActionButtons
+          bulletinId={String(row.bulletin_id)}
+          statut={row.statut}
+          size="icon"
+        />
+      ),
     },
   ],
   columns: [

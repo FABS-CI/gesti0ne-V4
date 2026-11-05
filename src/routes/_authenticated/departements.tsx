@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Building2 } from "lucide-react";
 import { ResourceManager, type ResourceConfig } from "@/components/crud/ResourceManager";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
@@ -14,7 +13,6 @@ const config: ResourceConfig = {
   idField: "departement_id",
   title: "Départements",
   subtitle: "Services et départements de l'entreprise",
-  icon: Building2,
   newLabel: "Nouveau département",
   entityLabel: "le département",
   csvName: "departements",

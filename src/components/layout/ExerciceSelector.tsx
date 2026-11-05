@@ -1,4 +1,4 @@
-import { CalendarRange, Check, Lock } from "lucide-react";
+import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -49,17 +49,9 @@ export function ExerciceSelector() {
         <Button
           variant="outline"
           size="sm"
-          className={cn(
-            "h-9 gap-2 font-medium",
-            isReadOnly && "border-warning/60 text-warning",
-          )}
+          className={cn("h-9 gap-2 font-medium", isReadOnly && "border-warning/60 text-warning")}
           title={isReadOnly ? "Exercice consulté (lecture seule)" : "Exercice actif"}
         >
-          {isReadOnly ? (
-            <Lock className="h-3.5 w-3.5" />
-          ) : (
-            <CalendarRange className="h-3.5 w-3.5" />
-          )}
           <span className="hidden sm:inline">Exercice</span>
           <span className="font-semibold">{exerciceConsulte.code}</span>
         </Button>

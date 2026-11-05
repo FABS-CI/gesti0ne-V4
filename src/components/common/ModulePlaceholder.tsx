@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, type LucideIcon } from "lucide-react";
+import { type LucideIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -9,7 +9,6 @@ export function ModulePlaceholder({
   title,
   subtitle,
   description,
-  icon: Icon,
   color = "#3B82F6",
   shortcuts = [],
   bullets = [],
@@ -17,7 +16,8 @@ export function ModulePlaceholder({
   title: string;
   subtitle?: string;
   description?: string;
-  icon: LucideIcon;
+  /** Ignorée : interface sans icônes décoratives. */
+  icon?: LucideIcon;
   color?: string;
   shortcuts?: ModuleShortcut[];
   bullets?: string[];
@@ -26,12 +26,6 @@ export function ModulePlaceholder({
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <span
-            className="flex h-12 w-12 items-center justify-center rounded-md"
-            style={{ background: `${color}22`, color }}
-          >
-            <Icon className="h-6 w-6" />
-          </span>
           <div>
             <h1 className="ds-page-title">{title}</h1>
             {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
@@ -41,15 +35,12 @@ export function ModulePlaceholder({
           <div className="flex flex-wrap gap-2">
             {shortcuts.map((s) => (
               <Button key={s.to} variant="outline" size="sm" asChild>
-                <Link to={s.to}>
-                  {s.label} <ArrowRight className="ml-2 h-3.5 w-3.5" />
-                </Link>
+                <Link to={s.to}>{s.label}</Link>
               </Button>
             ))}
           </div>
         )}
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Présentation du module</CardTitle>

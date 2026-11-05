@@ -1,6 +1,6 @@
 import { formatDateTime } from "@/lib/format";
 import { useState } from "react";
-import { Download, Eye, Maximize2, Minimize2, Printer, ZoomIn, ZoomOut } from "lucide-react";
+import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -46,39 +46,30 @@ export function JournalPreviewDialog({
             {generatedAt && <span>Généré le {formatDateTime(generatedAt)}</span>}
           </div>
         </DialogHeader>
-
         <div className="flex items-center justify-between gap-2 border-y py-2">
           <div className="flex items-center gap-1">
             <Button
               variant="outline"
-              size="icon"
+              size="sm"
               onClick={() => setZoom((z) => Math.max(50, z - 25))}
               disabled={zoom <= 50}
               aria-label="Dézoomer"
             >
-              <ZoomOut className="h-4 w-4" />
+              Dézoomer
             </Button>
             <span className="w-12 text-center text-sm tabular-nums">{zoom}%</span>
             <Button
               variant="outline"
-              size="icon"
+              size="sm"
               onClick={() => setZoom((z) => Math.min(200, z + 25))}
               disabled={zoom >= 200}
               aria-label="Zoomer"
             >
-              <ZoomIn className="h-4 w-4" />
+              Zoomer
             </Button>
           </div>
           <Button variant="outline" size="sm" onClick={() => setFullscreen((f) => !f)}>
-            {fullscreen ? (
-              <>
-                <Minimize2 className="mr-2 h-4 w-4" /> Réduire
-              </>
-            ) : (
-              <>
-                <Maximize2 className="mr-2 h-4 w-4" /> Plein écran
-              </>
-            )}
+            {fullscreen ? <>Réduire</> : <>Plein écran</>}
           </Button>
         </div>
 
@@ -99,10 +90,10 @@ export function JournalPreviewDialog({
             Fermer
           </Button>
           <Button variant="outline" onClick={onPrint} disabled={pdfLoading}>
-            <Printer className="mr-2 h-4 w-4" /> Imprimer
+            Imprimer
           </Button>
           <Button onClick={onDownload} disabled={pdfLoading}>
-            <Download className="mr-2 h-4 w-4" /> Télécharger le PDF
+            Télécharger le PDF
           </Button>
         </div>
       </DialogContent>

@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { AlertTriangle, Download, FileCode2, FileText, Lock } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -217,7 +216,7 @@ function EtatsFinanciersPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="ds-page-title flex items-center gap-2">
-            <FileText className="h-6 w-6" /> États financiers annuels — FABS-CI
+            États financiers annuels — FABS-CI
           </h1>
           <p className="text-sm text-muted-foreground">
             Bilan, compte de résultat et TFT SYSCOHADA révisé (système normal), calculés depuis la
@@ -240,7 +239,6 @@ function EtatsFinanciersPage() {
 
       {qN.isError && (
         <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Balance indisponible</AlertTitle>
           <AlertDescription>{(qN.error as Error).message}</AlertDescription>
         </Alert>
@@ -262,7 +260,6 @@ function EtatsFinanciersPage() {
       )}
       {versionFigee && (
         <Alert>
-          <Lock className="h-4 w-4" />
           <AlertTitle>
             Version {versionFigee.version} du dossier ({formatDateTime(versionFigee.genere_le)})
           </AlertTitle>
@@ -374,7 +371,7 @@ function BoutonExport({ onClick }: { onClick: () => void }) {
   return (
     <div className="mb-2 flex justify-end">
       <Button variant="outline" size="sm" onClick={onClick}>
-        <Download className="mr-2 h-4 w-4" /> PDF
+        PDF
       </Button>
     </div>
   );
@@ -527,7 +524,7 @@ function NotesAnnexes({
             )
           }
         >
-          <Download className="mr-2 h-4 w-4" /> PDF
+          PDF
         </Button>
       </div>
       <Card>
@@ -596,7 +593,7 @@ function ExportEdi({
     <Card>
       <CardContent className="flex flex-wrap items-center gap-3 p-4">
         <Button onClick={exporter} disabled={!nccValide(ncc)}>
-          <FileCode2 className="mr-2 h-4 w-4" /> Fichier XML e-impots {annee}
+          Fichier XML e-impots {annee}
         </Button>
         <p className="basis-full text-xs text-muted-foreground">
           {!ncc

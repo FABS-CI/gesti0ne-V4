@@ -160,6 +160,70 @@ const ECRANS_NETTOYES = [
   "src/routes/_authenticated/tournees.index.tsx",
   "src/routes/_authenticated/tournees.nouvelle.tsx",
   "src/routes/carton.$colisId.tsx",
+  // Lot 4 (05/11/2026) : comptabilité, exercices, états financiers, finances, achats, fournisseurs, RH, paie.
+  "src/components/common/ModulePlaceholder.tsx",
+  "src/components/comptabilite/ControleIntegriteCard.tsx",
+  "src/components/comptabilite/JournalFilters.tsx",
+  "src/components/comptabilite/JournalPreviewDialog.tsx",
+  "src/components/comptabilite/JournalTable.tsx",
+  "src/components/comptabilite/fec/FecColonnesCard.tsx",
+  "src/components/comptabilite/fec/FecPreviewCard.tsx",
+  "src/components/comptabilite/fec/FecProgressCard.tsx",
+  "src/components/comptabilite/fec/FecValidationCards.tsx",
+  "src/components/data-quality/ReconciliationFinanceCard.tsx",
+  "src/components/etats-financiers/Dossier.tsx",
+  "src/components/etats-financiers/Exports.tsx",
+  "src/components/etats-financiers/NotesImmobilisations.tsx",
+  "src/components/etats-financiers/Preparation.tsx",
+  "src/components/exercices/comparatif/ComparatifTable.tsx",
+  "src/components/exercices/index/CloturePreviewDialog.tsx",
+  "src/components/exercices/index/EditExerciceDialog.tsx",
+  "src/components/exercices/index/ExercicesTable.tsx",
+  "src/components/finances/FinancesKpis.tsx",
+  "src/components/finances/TransactionsTable.tsx",
+  "src/components/fournisseurs/FournisseurFormPage.tsx",
+  "src/components/layout/ExerciceReadOnlyBanner.tsx",
+  "src/components/layout/ExerciceSelector.tsx",
+  "src/components/paie-declarations/DeclarationPreviewDialog.tsx",
+  "src/components/paie-declarations/DeclarationsTable.tsx",
+  "src/components/paie-declarations/DeclarationsToolbar.tsx",
+  "src/components/paie/BulletinActionButtons.tsx",
+  "src/components/paie/bulletins-config.tsx",
+  "src/components/rh/EmployeForm.tsx",
+  "src/components/rh/RhPageHeader.tsx",
+  "src/routes/_authenticated/achats.$achatId.tsx",
+  "src/routes/_authenticated/achats.index.tsx",
+  "src/routes/_authenticated/achats.nouveau.tsx",
+  "src/routes/_authenticated/balance.tsx",
+  "src/routes/_authenticated/comptabilite.audit.tsx",
+  "src/routes/_authenticated/comptabilite.fec.tsx",
+  "src/routes/_authenticated/comptabilite.index.tsx",
+  "src/routes/_authenticated/comptabilite.nouvelle.tsx",
+  "src/routes/_authenticated/conges-en-cours.tsx",
+  "src/routes/_authenticated/conges.index.tsx",
+  "src/routes/_authenticated/contrats.$contratId.index.tsx",
+  "src/routes/_authenticated/departements.tsx",
+  "src/routes/_authenticated/employes.$employeId.index.tsx",
+  "src/routes/_authenticated/employes.index.tsx",
+  "src/routes/_authenticated/etats-comptables.tsx",
+  "src/routes/_authenticated/exercices.comparatif.tsx",
+  "src/routes/_authenticated/exercices.index.tsx",
+  "src/routes/_authenticated/exercices.journal.tsx",
+  "src/routes/_authenticated/exercices.rapport.tsx",
+  "src/routes/_authenticated/finances.tsx",
+  "src/routes/_authenticated/fournisseurs.$fournisseurId.tsx",
+  "src/routes/_authenticated/fournisseurs.index.tsx",
+  "src/routes/_authenticated/grand-livre.tsx",
+  "src/routes/_authenticated/paie-declarations.tsx",
+  "src/routes/_authenticated/paie-exports.tsx",
+  "src/routes/_authenticated/paie-generation.tsx",
+  "src/routes/_authenticated/paie-historique.tsx",
+  "src/routes/_authenticated/paie-parametres.tsx",
+  "src/routes/_authenticated/paie-rapports.tsx",
+  "src/routes/_authenticated/paie-rubriques.tsx",
+  "src/routes/_authenticated/paie.$bulletinId.tsx",
+  "src/routes/_authenticated/plan-comptable.tsx",
+  "src/routes/_authenticated/rapports-comptables.tsx",
 ];
 
 const EMOJI = /\p{Extended_Pictographic}/u;
@@ -186,8 +250,8 @@ describe("écrans sans icônes décoratives", () => {
       expect(iconesImportees(src).filter((n) => !ICONES_FONCTIONNELLES.has(n))).toEqual([]);
     });
     it(`${f} : aucun emoji`, () => {
-      // ©, ® et ™ sont des mentions légales, pas des emojis.
-      expect(EMOJI.test(src.replace(/[©®™]/g, ""))).toBe(false);
+      // ©, ® et ™ (mentions légales) et les flèches ← → ↔ (typographie) ne sont pas des emojis.
+      expect(EMOJI.test(src.replace(/[©®™←-⇿]/g, ""))).toBe(false);
     });
     it(`${f} : aucune icône affichée depuis les données (item.icon, Icon)`, () => {
       expect(src).not.toMatch(/<(?:Icon|GroupIcon|\w+\.icon)\b/);

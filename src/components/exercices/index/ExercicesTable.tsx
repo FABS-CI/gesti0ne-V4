@@ -1,5 +1,4 @@
 import { formatDateLong } from "@/lib/format";
-import { Lock, LockOpen, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -85,7 +84,6 @@ export function ExercicesTable({
                           })
                         }
                       >
-                        <Pencil className="mr-1 h-3.5 w-3.5" />
                         Modifier
                       </Button>
                     )}
@@ -95,7 +93,6 @@ export function ExercicesTable({
                         variant="outline"
                         onClick={() => onPreviewCloture(ex.exercice_id)}
                       >
-                        <Lock className="mr-1 h-3.5 w-3.5" />
                         Aperçu clôture
                       </Button>
                     )}
@@ -105,7 +102,6 @@ export function ExercicesTable({
                         variant="outline"
                         onClick={() => onRouvrir({ exercice_id: ex.exercice_id, code: ex.code })}
                       >
-                        <LockOpen className="mr-1 h-3.5 w-3.5" />
                         Rouvrir
                       </Button>
                     )}

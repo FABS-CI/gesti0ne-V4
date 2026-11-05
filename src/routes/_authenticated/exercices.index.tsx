@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { callRpc } from "@/lib/rpc";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CalendarRange, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -129,10 +129,7 @@ function ExercicesPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <CalendarRange className="h-6 w-6 text-primary" />
-            Exercices comptables
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Exercices comptables</h1>
           <p className="text-sm text-muted-foreground">
             Gérez les exercices et clôturez-les après contrôle de la comptabilité.
           </p>
@@ -151,7 +148,6 @@ function ExercicesPage() {
           </Button>
         </div>
       </div>
-
       <ExercicesTable
         exercices={exercices}
         canModifier={canModifier}
@@ -163,7 +159,6 @@ function ExercicesPage() {
           setARouvrir(e);
         }}
       />
-
       <Dialog open={!!aRouvrir} onOpenChange={(o) => !o && setARouvrir(null)}>
         <DialogContent>
           <DialogHeader>
@@ -196,7 +191,6 @@ function ExercicesPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
       <CloturePreviewDialog
         open={!!previewFor}
         onOpenChange={(o) => !o && setPreviewFor(null)}
@@ -207,7 +201,6 @@ function ExercicesPage() {
         onValidate={() => setConfirmOpen(true)}
         submitting={executerMut.isPending}
       />
-
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent>
           <DialogHeader>
@@ -232,7 +225,6 @@ function ExercicesPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
       <EditExerciceDialog
         editing={editing}
         setEditing={setEditing}

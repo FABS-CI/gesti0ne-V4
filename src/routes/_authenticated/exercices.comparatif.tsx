@@ -1,7 +1,6 @@
 import { formatDate, formatTime } from "@/lib/format";
 import { getCurrentUser } from "@/lib/current-user";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { AlertCircle, ArrowLeft, FileDown, GitCompare, Inbox } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { comparatifSearchSchema, type ComparatifSearch } from "@/lib/route-schemas";
@@ -151,27 +150,22 @@ function ComparatifPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Button aria-label="Retour" asChild variant="ghost" size="icon">
-          <Link to="/exercices">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
+        <Button aria-label="Retour" asChild variant="ghost" size="sm">
+          <Link to="/exercices">Retour</Link>
         </Button>
         <div className="flex-1">
-          <h1 className="ds-page-title flex items-center gap-2">
-            <GitCompare className="h-6 w-6 text-primary" /> Comparatif multi-exercices
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Comparatif multi-exercices</h1>
           <p className="text-sm text-muted-foreground">
             Évolution du chiffre d'affaires, des encaissements et du résultat par exercice
           </p>
         </div>
         <Button variant="outline" onClick={handleExportPdf} disabled={!filteredRows.length}>
-          <FileDown className="mr-2 h-4 w-4" /> Exporter PDF
+          Exporter PDF
         </Button>
       </div>
 
       {error && (
         <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
           <AlertTitle>Impossible de charger le comparatif</AlertTitle>
           <AlertDescription className="flex items-center justify-between gap-3">
             <span>{error instanceof Error ? error.message : "Erreur inattendue"}</span>
@@ -184,7 +178,6 @@ function ComparatifPage() {
 
       {noExercices && (
         <Alert>
-          <Inbox className="h-4 w-4" />
           <AlertTitle>Aucun exercice</AlertTitle>
           <AlertDescription>
             Créez d'abord un exercice depuis la page Exercices pour générer un comparatif.
@@ -203,7 +196,6 @@ function ComparatifPage() {
         showPct={showPct}
         onShowPct={setShowPct}
       />
-
       <ComparatifTable
         isLoading={isLoading}
         rows={filteredRows}

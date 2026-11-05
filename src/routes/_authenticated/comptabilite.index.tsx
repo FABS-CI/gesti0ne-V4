@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { BookOpen, Download, Eye, FileText, Loader2, Plus } from "lucide-react";
+import { Eye, Loader2 } from "lucide-react";
 
 import { exportCsv } from "@/lib/export-csv";
 import { generateJournalComptablePDF, buildJournalFileName } from "@/lib/pdf/pdfGenerator";
@@ -227,21 +227,17 @@ function ComptabilitePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <BookOpen className="h-6 w-6 text-primary" /> Journal comptable
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Journal comptable</h1>
           <p className="text-sm text-muted-foreground">
             Écritures générées automatiquement (ventes & encaissements)
           </p>
         </div>
         <div className="flex gap-2">
           <Button asChild>
-            <Link to="/comptabilite/nouvelle">
-              <Plus className="mr-2 h-4 w-4" /> Nouvelle écriture
-            </Link>
+            <Link to="/comptabilite/nouvelle">Nouvelle écriture</Link>
           </Button>
           <Button variant="outline" onClick={handleExport} disabled={!ecritures.length}>
-            <Download className="mr-2 h-4 w-4" /> PDF
+            PDF
           </Button>
           <Button
             variant="outline"
@@ -256,7 +252,7 @@ function ComptabilitePage() {
             Aperçu
           </Button>
           <Button onClick={handleExportPdf} disabled={!ecritures.length}>
-            <FileText className="mr-2 h-4 w-4" /> PDF
+            PDF
           </Button>
         </div>
       </div>
@@ -274,7 +270,6 @@ function ComptabilitePage() {
       )}
 
       <JournalKpis totalDebit={totalDebit} totalCredit={totalCredit} />
-
       <JournalFilters
         search={search}
         onSearchChange={setSearch}
@@ -287,14 +282,12 @@ function ComptabilitePage() {
         lettrage={lettrage}
         onLettrageChange={setLettrage}
       />
-
       <JournalTable
         isLoading={isLoading}
         ecritures={ecritures}
         expanded={expanded}
         onToggle={(id) => setExpanded((cur) => (cur === id ? null : id))}
       />
-
       <JournalPreviewDialog
         url={previewUrl}
         onClose={() => setPreviewUrl(null)}

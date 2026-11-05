@@ -4,7 +4,6 @@
 
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { CheckCircle2, History, Lock, RefreshCw, Unlock } from "lucide-react";
 import { toast } from "sonner";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -126,7 +125,6 @@ export function PanneauDossier({
         <div className="flex flex-wrap gap-2">
           {peutGenerer && etat.etape !== "valide" && (
             <Button size="sm" onClick={generer} disabled={envoi || !contenuActuel}>
-              <RefreshCw className="mr-2 h-4 w-4" />
               {v ? "Régénérer" : "Générer les états financiers"}
             </Button>
           )}
@@ -137,7 +135,7 @@ export function PanneauDossier({
               disabled={envoi || obstacles.length > 0}
               onClick={() => setSaisie({ action: "valider", texte: "" })}
             >
-              <Lock className="mr-2 h-4 w-4" /> Valider le dossier
+              Valider le dossier
             </Button>
           )}
           {peutValider && etat.etape === "valide" && !saisie && (
@@ -147,12 +145,12 @@ export function PanneauDossier({
               disabled={envoi}
               onClick={() => setSaisie({ action: "rouvrir", texte: "" })}
             >
-              <Unlock className="mr-2 h-4 w-4" /> Rouvrir
+              Rouvrir
             </Button>
           )}
           {versions.length > 0 && (
             <Button size="sm" variant="ghost" onClick={() => setHistorique(!historique)}>
-              <History className="mr-2 h-4 w-4" /> Historique ({versions.length})
+              Historique ({versions.length})
             </Button>
           )}
         </div>
@@ -167,7 +165,6 @@ export function PanneauDossier({
             {v.valide_le && (
               <>
                 <br />
-                <CheckCircle2 className="mr-1 inline h-4 w-4 text-emerald-600" />
                 Validé le {formatDateTime(v.valide_le)}
                 {v.valide_par_nom ? ` par ${v.valide_par_nom}` : ""}
                 {v.commentaire_validation ? ` : « ${v.commentaire_validation} »` : "."}

@@ -1,4 +1,3 @@
-import { Ban, Pencil, Trash2, Wallet } from "lucide-react";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -59,7 +58,6 @@ export function TransactionsTable({ transactions, isLoading, onEdit, onDelete, o
               <TableCell colSpan={8} className="py-6">
                 <EmptyState
                   variant="rich"
-                  icon={Wallet}
                   title="Aucune transaction enregistrée"
                   description="Les recettes et dépenses de trésorerie apparaîtront ici pour alimenter votre suivi financier."
                   className="border-none"
@@ -106,10 +104,10 @@ export function TransactionsTable({ transactions, isLoading, onEdit, onDelete, o
                       <Button
                         aria-label="Modifier"
                         variant="ghost"
-                        size="icon"
+                        size="sm"
                         onClick={() => onEdit(t)}
                       >
-                        <Pencil className="h-4 w-4" />
+                        Modifier
                       </Button>
                     )}
                     {t.statut === "valide" && (
@@ -118,7 +116,7 @@ export function TransactionsTable({ transactions, isLoading, onEdit, onDelete, o
                           aria-label="Annuler la transaction"
                           title="Annuler (la transaction reste dans l'historique)"
                           variant="ghost"
-                          size="icon"
+                          size="sm"
                           onClick={async () => {
                             const r = await confirm({
                               title: "Annuler cette transaction ?",
@@ -129,7 +127,7 @@ export function TransactionsTable({ transactions, isLoading, onEdit, onDelete, o
                             onAnnuler(t.transaction_id);
                           }}
                         >
-                          <Ban className="h-4 w-4 text-destructive" />
+                          Annuler
                         </Button>
                       </Can>
                     )}
@@ -138,7 +136,7 @@ export function TransactionsTable({ transactions, isLoading, onEdit, onDelete, o
                         <Button
                           aria-label="Supprimer"
                           variant="ghost"
-                          size="icon"
+                          size="sm"
                           onClick={async () => {
                             const r = await confirm({
                               title: "Supprimer cette transaction ?",
@@ -149,7 +147,7 @@ export function TransactionsTable({ transactions, isLoading, onEdit, onDelete, o
                             onDelete(t.transaction_id);
                           }}
                         >
-                          <Trash2 className="h-4 w-4 text-destructive" />
+                          Supprimer
                         </Button>
                       </Can>
                     )}

@@ -3,7 +3,7 @@ import { formatDate } from "@/lib/format";
 
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CalendarDays, Plus, Check, X, Pencil, Trash2 } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { Can } from "@/components/rbac/Can";
 import { toast } from "sonner";
 
@@ -38,7 +38,7 @@ import { EmptyState } from "@/components/common/EmptyState";
 
 import { authRouteHead } from "@/lib/route-head";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
-import { friendlyError } from '@/lib/friendly-error';
+import { friendlyError } from "@/lib/friendly-error";
 export const Route = createFileRoute("/_authenticated/conges/")({
   head: () => authRouteHead("Congés"),
   component: CongesListPage,
@@ -79,9 +79,7 @@ function CongesListPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <CalendarDays className="h-6 w-6 text-primary" /> Congés
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Congés</h1>
           <p className="text-sm text-muted-foreground">Demandes et validations de congés</p>
         </div>
         <div className="flex gap-2">
@@ -98,12 +96,9 @@ function CongesListPage() {
               ))}
             </SelectContent>
           </Select>
-          <Button onClick={() => navigate({ to: "/conges/nouveau" })}>
-            <Plus className="mr-2 h-4 w-4" /> Nouvelle demande
-          </Button>
+          <Button onClick={() => navigate({ to: "/conges/nouveau" })}>Nouvelle demande</Button>
         </div>
       </div>
-
       <div className="rounded-lg border">
         <Table>
           <TableHeader>
@@ -129,7 +124,6 @@ function CongesListPage() {
                 <TableCell colSpan={7} className="py-6">
                   <EmptyState
                     variant="rich"
-                    icon={CalendarDays}
                     title="Aucune demande de congé"
                     description="Les demandes soumises par vos employés apparaîtront ici, prêtes à être approuvées ou refusées."
                     className="border-none"
@@ -162,7 +156,7 @@ function CongesListPage() {
                         <>
                           <Button
                             variant="ghost"
-                            size="icon"
+                            size="sm"
                             aria-label="Approuver"
                             disabled={statusMutation.isPending}
                             onClick={() =>
@@ -172,7 +166,7 @@ function CongesListPage() {
                               })
                             }
                           >
-                            <Check className="h-4 w-4 text-success" />
+                            Approuver
                           </Button>
                           <Button
                             variant="ghost"
@@ -192,7 +186,7 @@ function CongesListPage() {
                       )}
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="sm"
                         aria-label="Modifier"
                         onClick={() =>
                           navigate({
@@ -201,12 +195,12 @@ function CongesListPage() {
                           })
                         }
                       >
-                        <Pencil className="h-4 w-4" />
+                        Modifier
                       </Button>
                       <Can permission="conges.supprimer">
                         <Button
                           variant="ghost"
-                          size="icon"
+                          size="sm"
                           aria-label="Supprimer"
                           disabled={deleteMutation.isPending}
                           onClick={async () => {
@@ -218,7 +212,7 @@ function CongesListPage() {
                             deleteMutation.mutate(c.conge_id);
                           }}
                         >
-                          <Trash2 className="h-4 w-4 text-destructive" />
+                          Supprimer
                         </Button>
                       </Can>
                     </TableCell>

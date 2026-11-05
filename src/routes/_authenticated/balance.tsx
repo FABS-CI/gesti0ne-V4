@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Download, FileText, Scale } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -56,9 +55,7 @@ function BalancePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <Scale className="h-6 w-6" /> Balance générale
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Balance générale</h1>
           <p className="text-sm text-muted-foreground">
             {parExercice
               ? `Exercice ${exerciceConsulte.code} : à-nouveaux, mouvements et soldes de clôture`
@@ -109,7 +106,7 @@ function BalancePage() {
               )
             }
           >
-            <Download className="mr-2 h-4 w-4" /> PDF
+            PDF
           </Button>
           <Button
             size="sm"
@@ -118,7 +115,7 @@ function BalancePage() {
             }
             disabled={!rows.length}
           >
-            <FileText className="mr-2 h-4 w-4" /> PDF
+            PDF
           </Button>
         </div>
       </div>
@@ -139,7 +136,6 @@ function BalancePage() {
               </div>
             </CardContent>
           </Card>
-
           <Card>
             <CardContent className="p-0">
               <ResponsiveTable stickyFirstCol>

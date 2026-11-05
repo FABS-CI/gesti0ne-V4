@@ -3,7 +3,6 @@
 
 import { useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { AlertTriangle, CheckCircle2, Info, Upload, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -29,10 +28,10 @@ const STATUT: Record<StatutPreparation, { libelle: string; classe: string }> = {
   pret: { libelle: "Prêt", classe: "bg-emerald-600 text-white" },
 };
 
-const NIVEAU: Record<Niveau, { libelle: string; icone: typeof Info; classe: string }> = {
-  bloquant: { libelle: "Bloquant", icone: XCircle, classe: "text-destructive" },
-  avertissement: { libelle: "À vérifier", icone: AlertTriangle, classe: "text-amber-600" },
-  info: { libelle: "Info", icone: Info, classe: "text-muted-foreground" },
+const NIVEAU: Record<Niveau, { libelle: string; classe: string }> = {
+  bloquant: { libelle: "Bloquant", classe: "text-destructive" },
+  avertissement: { libelle: "À vérifier", classe: "text-amber-600" },
+  info: { libelle: "Info", classe: "text-muted-foreground" },
 };
 
 export function BadgeStatut({ statut }: { statut: StatutPreparation }) {
@@ -54,17 +53,13 @@ export function ListeControles({ controles }: { controles: Controle[] }) {
       </CardHeader>
       <CardContent>
         {controles.length === 0 ? (
-          <p className="flex items-center gap-2 text-sm">
-            <CheckCircle2 className="h-4 w-4 text-emerald-600" /> Aucun point relevé.
-          </p>
+          <p className="flex items-center gap-2 text-sm">Aucun point relevé.</p>
         ) : (
           <ul className="space-y-2">
             {controles.map((c) => {
               const n = NIVEAU[c.niveau];
-              const Icone = n.icone;
               return (
                 <li key={c.code} className="flex gap-2 text-sm">
-                  <Icone className={`mt-0.5 h-4 w-4 shrink-0 ${n.classe}`} aria-hidden />
                   <span>
                     <span className={`font-medium ${n.classe}`}>{n.libelle} : </span>
                     {c.message}
@@ -178,7 +173,6 @@ export function SourceDonnees({
               }}
             />
             <Button variant="outline" size="sm" onClick={() => fichierRef.current?.click()}>
-              <Upload className="mr-2 h-4 w-4" />
               {balanceImportee ? "Remplacer la balance importée" : "Importer une balance"}
             </Button>
           </>

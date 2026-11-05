@@ -3,13 +3,6 @@ import { ClientLink } from "@/components/common/ClientLink";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import {
-  ShieldCheck,
-  AlertTriangle,
-  CheckCircle2,
-  RefreshCw,
-  Wrench,
-} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -159,7 +152,6 @@ function ComptaAuditPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <ShieldCheck className="h-6 w-6 text-info" />
           <div>
             <h1 className="ds-page-title">Audit Comptabilité &amp; Finances</h1>
             <p className="text-sm text-muted-foreground">
@@ -176,7 +168,7 @@ function ComptaAuditPage() {
               soldesQ.refetch();
             }}
           >
-            <RefreshCw className="mr-2 h-4 w-4" /> Relancer l'audit
+            Relancer l'audit
           </Button>
           {canRecalcAll && nbAnomalies > 0 && (
             <Button
@@ -188,7 +180,6 @@ function ComptaAuditPage() {
               disabled={recalcAll.isPending}
               style={{ background: "#EF4444", color: "#fff" }}
             >
-              <Wrench className="mr-2 h-4 w-4" />
               {recalcAll.isPending ? "Correction…" : "Tout recalculer"}
             </Button>
           )}
@@ -199,11 +190,6 @@ function ComptaAuditPage() {
         <Card style={{ borderColor: go ? "#10B981" : "#EF4444", borderWidth: 2 }}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              {go ? (
-                <CheckCircle2 className="h-5 w-5 text-success" />
-              ) : (
-                <AlertTriangle className="h-5 w-5 text-destructive" />
-              )}
               Verdict : {go ? "GO PRODUCTION" : "ANOMALIES DÉTECTÉES"}
             </CardTitle>
           </CardHeader>
@@ -281,9 +267,7 @@ function ComptaAuditPage() {
                       </TableCell>
                       <TableCell>{f.statut}</TableCell>
                       <TableCell>
-                        <Badge style={{ background: "#EF4444", color: "#fff" }}>
-                          {f.probleme}
-                        </Badge>
+                        <Badge style={{ background: "#EF4444", color: "#fff" }}>{f.probleme}</Badge>
                       </TableCell>
                     </TableRow>
                   ))
@@ -293,7 +277,6 @@ function ComptaAuditPage() {
           </ResponsiveTable>
         </CardContent>
       </Card>
-
       <Card>
         <CardHeader>
           <CardTitle>Soldes clients incohérents ({soldes.length})</CardTitle>
@@ -325,12 +308,8 @@ function ComptaAuditPage() {
                       <TableCell>
                         <ClientLink clientId={s.client_id} nom={s.nom} />
                       </TableCell>
-                      <TableCell className="text-right">
-                        {formatFCFA(s.solde_enregistre)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {formatFCFA(s.solde_calcule)}
-                      </TableCell>
+                      <TableCell className="text-right">{formatFCFA(s.solde_enregistre)}</TableCell>
+                      <TableCell className="text-right">{formatFCFA(s.solde_calcule)}</TableCell>
                       <TableCell className="text-right">
                         <Badge style={{ background: "#F97316", color: "#fff" }}>
                           {formatFCFA(s.ecart)}
@@ -343,7 +322,7 @@ function ComptaAuditPage() {
                           onClick={() => recalcClient.mutate(s.client_id)}
                           disabled={recalcClient.isPending}
                         >
-                          <Wrench className="mr-1 h-3 w-3" /> Corriger
+                          Corriger
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -354,7 +333,6 @@ function ComptaAuditPage() {
           </ResponsiveTable>
         </CardContent>
       </Card>
-
       <ControleIntegriteCard />
       <SoldesOuvertureDoublonsCard />
     </div>
@@ -373,10 +351,7 @@ function Kpi({
   return (
     <div className="rounded-lg border p-3">
       <div className="text-xs text-muted-foreground">{label}</div>
-      <div
-        className="mt-1 text-xl font-bold"
-        style={{ color: danger ? "#EF4444" : undefined }}
-      >
+      <div className="mt-1 text-xl font-bold" style={{ color: danger ? "#EF4444" : undefined }}>
         {value}
       </div>
     </div>
