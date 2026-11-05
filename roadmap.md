@@ -1,5 +1,10 @@
 # Audit ERP — module par module
 
+## Bon de retour — demande du 5 novembre 2026
+- [ ] Vérifier RET-261104-001 et ses données d’origine en lecture seule
+- [ ] Corriger références affichées, représentant et remises sans modifier l’historique
+- [ ] Vérifier données écran/PDF, tests ciblés et rendu du bon réel
+
 ## Audit intégral GESTI0NE V4 — 4 novembre 2026
 - [x] Phase 1 : diagnostic initial livré dans audit-gesti0ne-v4-2026-11-04.md (Files) ; 598 tests sûrs réussis, 221 écritures contrôlées, 4 pages connectées ; limites et tentatives SQL rejetées documentées
 - [ ] Couverture exhaustive : parcours sensibles, concurrence, vues publiques et tous les PDF — nécessite un environnement de test jetable avant les opérations d’écriture
