@@ -51,7 +51,6 @@ export type {
 const MOIS_FR = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 
 export function ResourceManager({ config }: { config: ResourceConfig }) {
-  const Icon = config.icon;
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
