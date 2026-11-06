@@ -1,6 +1,8 @@
 // Charte graphique des documents commerciaux FABS-CI (factures, proformas,
 // bons de commande / livraison / retour, avoirs, reçus, relevés).
 // SEUL endroit où ces couleurs sont définies : base-document.ts les applique.
+// Le récapitulatif des montants n'est PAS couvert : il suit le thème choisi
+// dans « Apparence des documents » (recap-themes.ts).
 // Ne pas reprendre la palette de l'interface (bleu pétrole) dans les PDF.
 import { rgb, type RGB } from "pdf-lib";
 
@@ -11,12 +13,6 @@ export const CHARTE_HEX = {
   zebra: "#EAF2FF",
   contour: "#173B78",
   traitInterne: "#A8BFE3",
-  totalFond: "#2563EB",
-  totalTexte: "#FFFFFF",
-  payeFond: "#F3F4F6",
-  payeTexte: "#000000",
-  resteFond: "#E9530D",
-  resteTexte: "#FFFFFF",
 } as const;
 
 export type CharteKey = keyof typeof CHARTE_HEX;

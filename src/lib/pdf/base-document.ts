@@ -879,7 +879,7 @@ export class BaseDocument {
 
     // TOTAL À PAYER : bandeau blanc, bordure couleur du thème.
     const bandY = curY - (TOTAL_H + BAND_H) / 2;
-    roundedRect(this.page, x + 6, bandY, boxW - 12, BAND_H, 4, { color: CHARTE.totalFond, borderColor: CHARTE.contour, borderWidth: 0.8 });
+    roundedRect(this.page, x + 6, bandY, boxW - 12, BAND_H, 4, { color: BODY.blanc, borderColor: theme.total, borderWidth: 1.2 });
     // Zones gauche (libellé) / droite (montant) indépendantes : tailles adaptées pour ne jamais se chevaucher.
     const totalLabel = "TOTAL À PAYER";
     const totalVal = `${formatFCFA(this.totals.totalAPayer, false)} FCFA`;
@@ -888,22 +888,21 @@ export class BaseDocument {
     const fits = () => this.fonts.bold.widthOfTextAtSize(totalLabel, lblSize) + this.fonts.bold.widthOfTextAtSize(totalVal, valSize) + GAP <= avail;
     while (!fits() && valSize > 9) valSize -= 0.5;
     while (!fits() && lblSize > 7) lblSize -= 0.5;
-    this.page.drawText(totalLabel, { x: x + 12, y: bandY + (BAND_H - lblSize * 0.7) / 2, size: lblSize, font: this.fonts.bold, color: CHARTE.totalTexte });
+    this.page.drawText(totalLabel, { x: x + 12, y: bandY + (BAND_H - lblSize * 0.7) / 2, size: lblSize, font: this.fonts.bold, color: BODY.donnee });
     const totalW = this.fonts.bold.widthOfTextAtSize(totalVal, valSize);
-    this.page.drawText(totalVal, { x: x + boxW - totalW - 12, y: bandY + (BAND_H - valSize * 0.7) / 2, size: valSize, font: this.fonts.bold, color: CHARTE.totalTexte });
+    this.page.drawText(totalVal, { x: x + boxW - totalW - 12, y: bandY + (BAND_H - valSize * 0.7) / 2, size: valSize, font: this.fonts.bold, color: BODY.donnee });
     curY -= TOTAL_H;
 
     payRows.forEach((r, i) => {
       const isReste = r.label === "RESTE À PAYER";
-      const last = i === payRows.length - 1;
-      roundedRect(this.page, x, curY - ROW_H, boxW, ROW_H, last ? { bl: 6, br: 6 } : 0, {
-        color: isReste ? CHARTE.resteFond : CHARTE.payeFond,
-      });
-      const txt = isReste ? CHARTE.resteTexte : CHARTE.payeTexte;
-      drawRow(r, 1, { labelColor: txt, valueColor: txt, bold: isReste });
+      if (isReste) {
+        const last = i === payRows.length - 1;
+        roundedRect(this.page, x, curY - ROW_H, boxW, ROW_H, last ? { bl: 6, br: 6 } : 0, { color: BODY.blanc });
+      }
+      drawRow(r, 1, { labelColor: BODY.donnee, valueColor: BODY.donnee, bold: isReste });
     });
 
-    roundedRect(this.page, x, curY, boxW, boxTop - curY, 6, { borderColor: CHARTE.contour, borderWidth: 0.8 });
+    roundedRect(this.page, x, curY, boxW, boxTop - curY, 6, { borderColor: theme.bordure, borderWidth: 0.6 });
     this.drawPaidStamp({ x: MARGINS.x, yBottom: curY, w: x - MARGINS.x - 16, h: boxTop - curY });
     curY -= 16;
 
