@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import {
   ArrowLeft,
   AlertCircle,
-  FileBarChart,
   ShoppingCart,
   FileText,
   Wallet,
@@ -151,8 +150,8 @@ function RapportExercicePage() {
           </Link>
         </Button>
         <div className="flex-1">
-          <h1 className="ds-page-title flex items-center gap-2">
-            <FileBarChart className="h-6 w-6 text-primary" /> Rapport d'exercice
+          <h1 className="ds-page-title">
+            Rapport d'exercice
           </h1>
           <p className="text-sm text-muted-foreground">
             Synthèse ventes et finances pour un exercice donné

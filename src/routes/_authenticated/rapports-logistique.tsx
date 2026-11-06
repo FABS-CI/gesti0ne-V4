@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { BarChart3, Download } from "lucide-react";
+import { Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -138,8 +138,8 @@ function RapportsLogistique() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <BarChart3 className="h-6 w-6" /> Rapports logistique
+          <h1 className="ds-page-title">
+            Rapports logistique
           </h1>
           <p className="text-sm text-muted-foreground">Analyse des tournées et coûts par période</p>
         </div>

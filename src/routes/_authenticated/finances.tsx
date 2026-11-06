@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Download, Plus, Search, Wallet } from "lucide-react";
+import { Download, Plus, Search, } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -158,8 +158,8 @@ function FinancesPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <Wallet className="h-6 w-6 text-primary" /> Finances
+          <h1 className="ds-page-title">
+            Finances
           </h1>
           <p className="text-sm text-muted-foreground">Suivi des recettes et dépenses</p>
         </div>

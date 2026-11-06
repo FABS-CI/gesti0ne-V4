@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
-  ShieldCheck,
   Download,
   RefreshCw,
   CheckCircle2,
@@ -89,8 +88,7 @@ function IntegritePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <ShieldCheck className="h-6 w-6 text-[#FF6200]" />
+          <h1 className="ds-page-title">
             Contrôle d'intégrité du catalogue
           </h1>
           <p className="text-sm text-muted-foreground">
