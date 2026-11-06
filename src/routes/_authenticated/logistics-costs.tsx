@@ -7,7 +7,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   CheckCircle2,
-  DollarSign,
   Eye,
   FileDown,
   Filter,
@@ -207,8 +206,8 @@ function LogisticsCostsPage() {
     <div className="space-y-4 p-4">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <DollarSign className="h-6 w-6" /> Coûts logistiques
+          <h1 className="ds-page-title">
+            Coûts logistiques
           </h1>
           <p className="text-sm text-muted-foreground">
             Consultation, validation comptable et suivi des dépenses des tournées.

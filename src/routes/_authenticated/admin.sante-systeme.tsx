@@ -346,8 +346,8 @@ function SanteSystemePage() {
       {/* Header */}
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <Activity className="h-7 w-7" /> Santé du système
+          <h1 className="ds-page-title">
+            Santé du système
           </h1>
           <p className="text-muted-foreground text-sm">
             Supervision temps réel de l'ERP · Rafraîchissement automatique 30s

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { friendlyError } from '@/lib/friendly-error';
 import { useState } from "react";
-import { FileBarChart } from "lucide-react";
+import { } from "lucide-react";
 import { toast } from "sonner";
 
 import { useExercice } from "@/contexts/ExerciceContext";
@@ -47,8 +47,8 @@ function RapportsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <FileBarChart className="h-6 w-6 text-primary" /> Rapports
+          <h1 className="ds-page-title">
+            Rapports
           </h1>
           <p className="text-sm text-muted-foreground">
             Génération et export des rapports (PDF) — filtrés sur l'exercice consulté
