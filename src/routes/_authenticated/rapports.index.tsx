@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { friendlyError } from "@/lib/friendly-error";
+import { friendlyError } from '@/lib/friendly-error';
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -43,27 +43,28 @@ function RapportsPage() {
   }
 
   return (
-    <div className="theme-dashboard space-y-6">
+    <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">Rapports</h1>
+          <h1 className="ds-page-title">
+            Rapports
+          </h1>
           <p className="text-sm text-muted-foreground">
             Génération et export des rapports (PDF) — filtrés sur l'exercice consulté
           </p>
         </div>
         {exerciceConsulte && <Badge variant="outline">Exercice : {exerciceConsulte.code}</Badge>}
       </div>
+
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {permsLoading
-          ? null
-          : visibleReports.map((def) => (
-              <ReportCard
-                key={def.table}
-                def={def}
-                loading={loading === def.table}
-                onExport={() => generate(def)}
-              />
-            ))}
+        {permsLoading ? null : visibleReports.map((def) => (
+          <ReportCard
+            key={def.table}
+            def={def}
+            loading={loading === def.table}
+            onExport={() => generate(def)}
+          />
+        ))}
       </div>
     </div>
   );

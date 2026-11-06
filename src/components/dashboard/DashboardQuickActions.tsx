@@ -42,13 +42,13 @@ export function DashboardQuickActions() {
 
   return (
     <section aria-label="Actions rapides" className="rounded-md border bg-card px-3 py-2.5">
-      <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      <h2 className="mb-2 text-sm font-medium text-foreground">
         Actions rapides
       </h2>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:flex lg:flex-wrap">
         {canCommande && (
           <Button
-            className="h-9 justify-start font-semibold hover:bg-primary/90 active:bg-primary/80"
+            className="h-9 justify-start"
             onClick={() => setVenteRapide(true)}
           >
             Vente rapide

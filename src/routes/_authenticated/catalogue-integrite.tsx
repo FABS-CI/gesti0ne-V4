@@ -23,16 +23,22 @@ export const Route = createFileRoute("/_authenticated/catalogue-integrite")({
   notFoundComponent: RouteNotFound,
 });
 
-function StatCard({ label, value, color }: { label: string; value: number; color: string }) {
+function StatCard({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: number;
+  tone?: string;
+}) {
   return (
     <Card>
-      <CardContent className="flex items-center gap-3 p-4">
-        <div
-          className="flex h-10 w-10 items-center justify-center rounded-lg"
-          style={{ background: `${color}1a`, color }}
-        ></div>
+      <CardContent className="p-4">
         <div>
-          <p className="text-2xl font-bold">{value}</p>
+          <p className={`text-2xl font-semibold tabular-nums ${value > 0 && tone ? tone : ""}`}>
+            {value}
+          </p>
           <p className="text-sm text-muted-foreground">{label}</p>
         </div>
       </CardContent>
@@ -77,7 +83,7 @@ function IntegritePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
+          <h1 className="ds-page-title">
             Contrôle d'intégrité du catalogue
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -99,15 +105,27 @@ function IntegritePage() {
       ) : data ? (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard label="Articles analysés" value={data.total} color="#3B82F6" />
-            <StatCard label="Conformes" value={data.conformes} color="#10B981" />
-            <StatCard label="ISBN à corriger" value={data.parChamp.isbn} color="#EF4444" />
+            <StatCard
+              label="Articles analysés"
+              value={data.total}
+            />
+            <StatCard
+              label="Conformes"
+              value={data.conformes}
+              tone="text-success"
+            />
+            <StatCard
+              label="ISBN à corriger"
+              value={data.parChamp.isbn}
+              tone="text-destructive"
+            />
             <StatCard
               label="Prix à corriger"
               value={data.parChamp.prix_achat + data.parChamp.prix_vente}
-              color="#F97316"
+              tone="text-warning"
             />
           </div>
+
           <Card>
             <CardHeader>
               <CardTitle>Articles incomplets ({data.problemes.length})</CardTitle>
@@ -159,6 +177,7 @@ function IntegritePage() {
               )}
             </CardContent>
           </Card>
+
           <p className="text-sm text-muted-foreground">
             Corrigez les articles depuis le{" "}
             <Link to="/produits" className="font-medium text-[#FF6200] underline">

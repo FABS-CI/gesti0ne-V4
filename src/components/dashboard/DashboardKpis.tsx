@@ -40,8 +40,10 @@ function Cell({
       to={to}
       className="block min-w-0 px-4 py-4 transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
     >
-      <p className="truncate text-xs font-medium text-muted-foreground">{label}</p>
-      <div className={`mt-1 font-semibold tabular-nums ${big ? "text-2xl" : "text-lg"}`}>
+      <div className="flex items-center gap-2">
+        <p className="truncate text-xs font-medium text-muted-foreground">{label}</p>
+      </div>
+      <div className={`mt-1 font-medium tabular-nums ${big ? "text-2xl" : "text-xl"}`}>
         {children}
       </div>
       {sub ? <div className="mt-1 text-xs text-muted-foreground">{sub}</div> : null}
@@ -51,8 +53,8 @@ function Cell({
 
 function Zone({ title, children, cols }: { title: string; children: ReactNode; cols: string }) {
   return (
-    <section className="dash-lift min-w-0 overflow-hidden rounded-lg border bg-card shadow-sm">
-      <h2 className="border-b bg-muted/40 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+    <section className="min-w-0 overflow-hidden rounded-lg border bg-card">
+      <h2 className="border-b px-4 py-2.5 text-sm font-medium text-foreground">
         {title}
       </h2>
       <div className={`grid divide-y sm:divide-y-0 ${cols}`}>{children}</div>

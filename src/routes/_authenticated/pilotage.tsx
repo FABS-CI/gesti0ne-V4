@@ -17,8 +17,7 @@ export const Route = createFileRoute("/_authenticated/pilotage")({
       { title: "Centre de pilotage — Gesti-One FABS-CI" },
       {
         name: "description",
-        content:
-          "Activité du jour et actions recommandées : impayés, préparations, livraisons, stock.",
+        content: "Activité du jour et actions recommandées : impayés, préparations, livraisons, stock.",
       },
       { property: "og:title", content: "Centre de pilotage — Gesti-One FABS-CI" },
       {
@@ -45,10 +44,10 @@ type Dest =
 
 type Tone = "danger" | "warning" | "info" | "success";
 const TONE: Record<Tone, string> = {
-  danger: "bg-destructive",
-  warning: "bg-warning",
-  info: "bg-primary",
-  success: "bg-success",
+  danger: "text-destructive",
+  warning: "text-warning",
+  info: "text-foreground",
+  success: "text-success",
 };
 
 const fmtDate = (d: string | null | undefined) => {
@@ -64,10 +63,12 @@ function Pilotage() {
   );
 
   return (
-    <div className="theme-dashboard space-y-6">
+    <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">Centre de pilotage</h1>
+          <h1 className="ds-page-title flex items-center gap-2">
+            Centre de pilotage
+          </h1>
           <p className="text-sm text-muted-foreground">
             Que se passe-t-il aujourd'hui ? {data ? `— situation au ${fmtDate(data.today)}` : ""}
           </p>
@@ -114,7 +115,9 @@ function CockpitContent({ data }: { data: CockpitData }) {
   return (
     <>
       <section aria-label="Activité du jour">
-        <h2 className="mb-3 text-sm font-semibold text-muted-foreground">Activité du jour</h2>
+        <h2 className="mb-3 text-sm font-semibold text-muted-foreground">
+          Activité du jour
+        </h2>
         {!hasAny ? (
           <Card>
             <CardContent className="py-10 text-center text-sm text-muted-foreground">
@@ -180,9 +183,12 @@ function CockpitContent({ data }: { data: CockpitData }) {
           </div>
         )}
       </section>
+
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">Actions recommandées</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-base">
+            Actions recommandées
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {actions.length === 0 ? (
@@ -195,12 +201,12 @@ function CockpitContent({ data }: { data: CockpitData }) {
                 <li key={a.key} className="flex flex-wrap items-center justify-between gap-2 py-3">
                   <div className="min-w-0">
                     <p className="text-sm font-medium">{a.title}</p>
-                    {a.detail && (
-                      <div className="mt-1 text-xs text-muted-foreground">{a.detail}</div>
-                    )}
+                    {a.detail && <div className="mt-1 text-xs text-muted-foreground">{a.detail}</div>}
                   </div>
                   <Button asChild size="sm" variant="outline">
-                    <Link to={a.to}>{a.cta}</Link>
+                    <Link to={a.to}>
+                      {a.cta}
+                    </Link>
                   </Button>
                 </li>
               ))}
@@ -208,6 +214,7 @@ function CockpitContent({ data }: { data: CockpitData }) {
           )}
         </CardContent>
       </Card>
+
       <div className="grid gap-4 lg:grid-cols-2">
         {data.direction && <DirectionCard d={data.direction} />}
         {data.anciennete && <AncienneteCard a={data.anciennete} />}
@@ -224,11 +231,7 @@ function CockpitContent({ data }: { data: CockpitData }) {
           <ListCard title="Préparations les plus anciennes" to="/colisage">
             {data.aPreparer.items.map((b) => (
               <Row key={b.id} right={fmtDate(b.date_bon)}>
-                <Link
-                  to="/colisage/$blId"
-                  params={{ blId: b.id }}
-                  className="font-medium hover:underline"
-                >
+                <Link to="/colisage/$blId" params={{ blId: b.id }} className="font-medium hover:underline">
                   {b.reference}
                 </Link>{" "}
                 {b.client_nom && <span className="text-muted-foreground">— {b.client_nom}</span>}
@@ -241,11 +244,7 @@ function CockpitContent({ data }: { data: CockpitData }) {
             {data.livraisonsRetard.items.map((l) => (
               <Row key={l.id} right={fmtDate(l.date_livraison)}>
                 {l.bl_id ? (
-                  <Link
-                    to="/colisage/$blId"
-                    params={{ blId: l.bl_id }}
-                    className="font-medium hover:underline"
-                  >
+                  <Link to="/colisage/$blId" params={{ blId: l.bl_id }} className="font-medium hover:underline">
                     {l.reference ?? "Livraison sans référence"}
                   </Link>
                 ) : (
@@ -260,11 +259,7 @@ function CockpitContent({ data }: { data: CockpitData }) {
           <ListCard title="Produits à réapprovisionner" to="/alertes-stock">
             {data.stockBas.items.map((p) => (
               <Row key={p.id} right={`${Number(p.stock)} / seuil ${Number(p.seuil)}`}>
-                <Link
-                  to="/produits/$produitId"
-                  params={{ produitId: p.id }}
-                  className="font-medium hover:underline"
-                >
+                <Link to="/produits/$produitId" params={{ produitId: p.id }} className="font-medium hover:underline">
                   {p.titre}
                 </Link>
               </Row>
@@ -276,17 +271,26 @@ function CockpitContent({ data }: { data: CockpitData }) {
   );
 }
 
-function Kpi(props: { tone: Tone; label: string; value: number; sub?: string; to: Dest }) {
+function Kpi(props: {
+  tone: Tone;
+  label: string;
+  value: number;
+  sub?: string;
+  to: Dest;
+}) {
   return (
     <Link
       to={props.to}
-      className="group rounded-xl border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-accent/40"
+      className="group rounded-lg border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-accent/40"
     >
       <div className="flex items-start gap-3">
-        <span aria-hidden className={`mt-0.5 h-10 w-1 shrink-0 rounded-full ${TONE[props.tone]}`} />
         <div className="min-w-0 flex-1">
           <p className="text-xs text-muted-foreground">{props.label}</p>
-          <p className="text-2xl font-bold tabular-nums">{props.value}</p>
+          <p
+            className={`mt-1 text-2xl font-semibold tabular-nums ${props.value > 0 ? TONE[props.tone] : ""}`}
+          >
+            {props.value}
+          </p>
           {props.sub && <p className="truncate text-xs text-muted-foreground">{props.sub}</p>}
         </div>
       </div>
@@ -367,7 +371,9 @@ function AncienneteCard({ a }: { a: NonNullable<CockpitData["anciennete"]> }) {
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">Impayés par ancienneté</CardTitle>
+        <CardTitle className="flex items-center gap-2 text-base">
+          Impayés par ancienneté
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         {buckets.map(([label, v, color]) => {

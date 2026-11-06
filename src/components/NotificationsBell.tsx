@@ -72,12 +72,12 @@ export function NotificationsBell() {
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="relative h-10 rounded-lg px-3"
+          className="relative h-9 rounded-md px-3"
           aria-label="Notifications"
         >
           Notifications
           {unread > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-destructive px-1 text-xs font-bold text-white ring-2 ring-card">
+            <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 font-mono text-[10px] font-medium text-destructive-foreground ring-2 ring-card tabular-nums">
               {display}
             </span>
           )}

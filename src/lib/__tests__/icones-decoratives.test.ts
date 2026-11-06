@@ -93,9 +93,30 @@ describe("interface sans icônes décoratives", () => {
   });
 
   it("aucune icône affichée depuis les données (item.icon, Icon)", () => {
+    // Exception (refonte UI lot 1, 06/11/2026) : une icône par module dans le menu
+    // réduit en rail, vérifiée par le bloc dédié plus bas.
+    const RAIL = join("src", "components", "layout", "sidebar", "SidebarNavGroup.tsx");
     const fautes = fichiers
+      .filter(({ f }) => f !== RAIL)
       .filter(({ src }) => /<(?:Icon|GroupIcon|\w+\.icon|\w+\.Icon)\b/.test(src))
       .map(({ f }) => f);
     expect(fautes).toEqual([]);
+  });
+});
+
+describe("menu latéral : une icône par module, aucune par page", () => {
+  const src = readFileSync("src/components/layout/sidebar/SidebarNavGroup.tsx", "utf8");
+  it("les icônes viennent uniquement de group.groupIcon", () => {
+    expect(src).not.toMatch(/item\.icon/);
+    expect(src).toMatch(/group\.groupIcon/);
+  });
+  it("aucune icône lucide décorative importée", () => {
+    expect(iconesImportees(src).filter((n) => !ICONES_FONCTIONNELLES.has(n))).toEqual([]);
+  });
+  it("les icônes de module sont monochromes, trait 1,75 : 20 px dans le menu réduit, 16 px déplié", () => {
+    for (const m of src.matchAll(/<Icon\b[^>]*>/g)) {
+      expect(m[0]).toMatch(/h-(4 w-4|5 w-5)/);
+      expect(m[0]).toMatch(/strokeWidth=\{1\.75\}/);
+    }
   });
 });

@@ -11,12 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
@@ -57,20 +52,9 @@ function SanteSystemePage() {
         return q;
       };
       const [
-        clients,
-        produits,
-        commandes,
-        factures,
-        paiements,
-        mvtStock,
-        opsToday,
-        errorsToday,
-        cmdToday,
-        factToday,
-        payToday,
-        mvtToday,
-        loginFailed24,
-        connectionsToday,
+        clients, produits, commandes, factures, paiements, mvtStock,
+        opsToday, errorsToday, cmdToday, factToday, payToday, mvtToday,
+        loginFailed24, connectionsToday,
       ] = await Promise.all([
         c("clients"),
         c("produits"),
@@ -173,19 +157,12 @@ function SanteSystemePage() {
       const now = Date.now();
       const time = async <T,>(fn: () => Promise<T>): Promise<{ ok: boolean; ms: number }> => {
         const s = performance.now();
-        try {
-          await fn();
-          return { ok: true, ms: Math.round(performance.now() - s) };
-        } catch {
-          return { ok: false, ms: Math.round(performance.now() - s) };
-        }
+        try { await fn(); return { ok: true, ms: Math.round(performance.now() - s) }; }
+        catch { return { ok: false, ms: Math.round(performance.now() - s) }; }
       };
       const [db, auth, storage, fne] = await Promise.all([
         time(async () => {
-          const { error } = await supabase
-            .from("clients")
-            .select("client_id", { head: true, count: "exact" })
-            .limit(1);
+          const { error } = await supabase.from("clients").select("client_id", { head: true, count: "exact" }).limit(1);
           if (error) throw error;
         }),
         time(async () => {
@@ -197,63 +174,25 @@ function SanteSystemePage() {
           if (error) throw error;
         }),
         time(async () => {
-          const { error } = await supabase
-            .from("fne_settings")
-            .select("setting_id", { head: true, count: "exact" })
-            .limit(1);
+          const { error } = await supabase.from("fne_settings").select("setting_id", { head: true, count: "exact" }).limit(1);
           if (error) throw error;
         }),
       ]);
       // Notifications & impression: dérivé des erreurs récentes
       const last5 = new Date(now - 5 * 60_000).toISOString();
       const [notifErr, printErr, waErr, mailErr] = await Promise.all([
-        supabase
-          .from("audit_events")
-          .select("*", { count: "exact", head: true })
-          .eq("status", "error")
-          .eq("module", "notifications")
-          .gte("occurred_at", last5),
-        supabase
-          .from("audit_events")
-          .select("*", { count: "exact", head: true })
-          .eq("status", "error")
-          .eq("module", "impression")
-          .gte("occurred_at", last5),
-        supabase
-          .from("audit_events")
-          .select("*", { count: "exact", head: true })
-          .eq("status", "error")
-          .eq("module", "whatsapp")
-          .gte("occurred_at", last5),
-        supabase
-          .from("audit_events")
-          .select("*", { count: "exact", head: true })
-          .eq("status", "error")
-          .eq("module", "email")
-          .gte("occurred_at", last5),
+        supabase.from("audit_events").select("*", { count: "exact", head: true }).eq("status", "error").eq("module", "notifications").gte("occurred_at", last5),
+        supabase.from("audit_events").select("*", { count: "exact", head: true }).eq("status", "error").eq("module", "impression").gte("occurred_at", last5),
+        supabase.from("audit_events").select("*", { count: "exact", head: true }).eq("status", "error").eq("module", "whatsapp").gte("occurred_at", last5),
+        supabase.from("audit_events").select("*", { count: "exact", head: true }).eq("status", "error").eq("module", "email").gte("occurred_at", last5),
       ]);
       const dyn = (n: number | null): ServiceStatus => (n && n > 0 ? "degraded" : "online");
       return {
         list: [
           { key: "db", label: "Base de données", status: db.ok ? "online" : "offline", ms: db.ms },
-          {
-            key: "auth",
-            label: "Authentification",
-            status: auth.ok ? "online" : "offline",
-            ms: auth.ms,
-          },
-          {
-            key: "storage",
-            label: "Serveur de fichiers",
-            status: storage.ok ? "online" : "offline",
-            ms: storage.ms,
-          },
-          {
-            key: "fne",
-            label: "FNE (facturation)",
-            status: fne.ok ? "online" : "offline",
-            ms: fne.ms,
-          },
+          { key: "auth", label: "Authentification", status: auth.ok ? "online" : "offline", ms: auth.ms },
+          { key: "storage", label: "Serveur de fichiers", status: storage.ok ? "online" : "offline", ms: storage.ms },
+          { key: "fne", label: "FNE (facturation)", status: fne.ok ? "online" : "offline", ms: fne.ms },
           { key: "notifications", label: "Notifications", status: dyn(notifErr.count) },
           { key: "impression", label: "Impression PDF", status: dyn(printErr.count) },
           { key: "whatsapp", label: "WhatsApp", status: dyn(waErr.count) },
@@ -386,12 +325,7 @@ function SanteSystemePage() {
   });
 
   // ===== Rôle guard =====
-  if (rolesLoading)
-    return (
-      <div className="p-6">
-        <Skeleton className="h-8 w-64" />
-      </div>
-    );
+  if (rolesLoading) return <div className="p-6"><Skeleton className="h-8 w-64" /></div>;
   if (!isSuperAdmin) return <Navigate to="/" />;
 
   // ===== État global =====
@@ -408,7 +342,9 @@ function SanteSystemePage() {
       {/* Header */}
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">Santé du système</h1>
+          <h1 className="ds-page-title">
+            Santé du système
+          </h1>
           <p className="text-muted-foreground text-sm">
             Supervision temps réel de l'ERP · Rafraîchissement automatique 30s
           </p>
@@ -417,12 +353,7 @@ function SanteSystemePage() {
           <Button onClick={refreshAll} variant="outline" size="sm">
             Actualiser
           </Button>
-          <Button
-            onClick={() => testServices.mutate()}
-            disabled={testing}
-            variant="outline"
-            size="sm"
-          >
+          <Button onClick={() => testServices.mutate()} disabled={testing} variant="outline" size="sm">
             Tester les services
           </Button>
         </div>
@@ -443,13 +374,9 @@ function SanteSystemePage() {
       {/* Services + Perf */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"> Services</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle className="flex items-center gap-2">Services</CardTitle></CardHeader>
           <CardContent>
-            {services.isLoading ? (
-              <Skeleton className="h-24" />
-            ) : (
+            {services.isLoading ? <Skeleton className="h-24" /> : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {services.data?.list.map((s) => (
                   <div key={s.key} className="flex items-center justify-between rounded border p-3">
@@ -471,19 +398,14 @@ function SanteSystemePage() {
             )}
           </CardContent>
         </Card>
+
         <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Performance requêtes DB</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle className="text-base">Performance requêtes DB</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
             <Row label="Requêtes tracées" value={perf.data?.count ?? 0} />
             <Row label="Moyenne" value={`${(perf.data?.avg ?? 0).toFixed(0)} ms`} />
             <Row label="Max" value={`${(perf.data?.max ?? 0).toFixed(0)} ms`} />
-            <Row
-              label="Erreurs"
-              value={perf.data?.errors ?? 0}
-              error={(perf.data?.errors ?? 0) > 0}
-            />
+            <Row label="Erreurs" value={perf.data?.errors ?? 0} error={(perf.data?.errors ?? 0) > 0} />
           </CardContent>
         </Card>
       </div>
@@ -491,9 +413,7 @@ function SanteSystemePage() {
       {/* Activity + DB stats */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base"> Activité du jour</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle className="flex items-center gap-2 text-base">Activité du jour</CardTitle></CardHeader>
           <CardContent className="grid grid-cols-2 gap-3 text-sm">
             <Row label="Commandes créées" value={kpis.data?.cmdToday ?? "—"} />
             <Row label="Factures créées" value={kpis.data?.factToday ?? "—"} />
@@ -501,10 +421,9 @@ function SanteSystemePage() {
             <Row label="Mouvements de stock" value={kpis.data?.mvtToday ?? "—"} />
           </CardContent>
         </Card>
+
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base"> Base de données</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle className="flex items-center gap-2 text-base">Base de données</CardTitle></CardHeader>
           <CardContent className="grid grid-cols-2 gap-3 text-sm">
             <Row label="Clients" value={kpis.data?.clients ?? "—"} />
             <Row label="Produits" value={kpis.data?.produits ?? "—"} />
@@ -519,25 +438,15 @@ function SanteSystemePage() {
       {/* Sécurité + Sauvegardes + Intégrité */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base"> Sécurité (24h)</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle className="flex items-center gap-2 text-base">Sécurité (24h)</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <Row
-              label="Connexions échouées"
-              value={kpis.data?.loginFailed24 ?? "—"}
-              error={(kpis.data?.loginFailed24 ?? 0) > 10}
-            />
-            <Row
-              label="Connexions réussies (aujourd'hui)"
-              value={kpis.data?.connectionsToday ?? "—"}
-            />
+            <Row label="Connexions échouées" value={kpis.data?.loginFailed24 ?? "—"} error={(kpis.data?.loginFailed24 ?? 0) > 10} />
+            <Row label="Connexions réussies (aujourd'hui)" value={kpis.data?.connectionsToday ?? "—"} />
           </CardContent>
         </Card>
+
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base"> Sauvegardes</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle className="flex items-center gap-2 text-base">Sauvegardes</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
             {backups.data?.list[0] ? (
               <>
@@ -553,10 +462,9 @@ function SanteSystemePage() {
             )}
           </CardContent>
         </Card>
+
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base"> Intégrité</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle className="flex items-center gap-2 text-base">Intégrité</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
             <Row
               label="Stocks négatifs"
@@ -572,21 +480,14 @@ function SanteSystemePage() {
 
       {/* Alertes */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base"> Alertes récentes</CardTitle>
-        </CardHeader>
+        <CardHeader><CardTitle className="flex items-center gap-2 text-base">Alertes récentes</CardTitle></CardHeader>
         <CardContent>
-          {alerts.isLoading ? (
-            <Skeleton className="h-16" />
-          ) : (alerts.data?.length ?? 0) === 0 ? (
+          {alerts.isLoading ? <Skeleton className="h-16" /> : (alerts.data?.length ?? 0) === 0 ? (
             <div className="text-sm text-muted-foreground">Aucune alerte active</div>
           ) : (
             <div className="space-y-2">
               {alerts.data!.map((a: any) => (
-                <div
-                  key={a.id}
-                  className="flex items-start justify-between gap-3 rounded border p-2 text-sm"
-                >
+                <div key={a.id} className="flex items-start justify-between gap-3 rounded border p-2 text-sm">
                   <div>
                     <div className="font-medium">{a.title}</div>
                     <div className="text-xs text-muted-foreground">{a.message}</div>
@@ -606,13 +507,9 @@ function SanteSystemePage() {
 
       {/* Journal des 20 dernières erreurs */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-base">20 dernières erreurs</CardTitle>
-        </CardHeader>
+        <CardHeader><CardTitle className="text-base">20 dernières erreurs</CardTitle></CardHeader>
         <CardContent className="overflow-x-auto">
-          {errors.isLoading ? (
-            <Skeleton className="h-24" />
-          ) : (errors.data?.length ?? 0) === 0 ? (
+          {errors.isLoading ? <Skeleton className="h-24" /> : (errors.data?.length ?? 0) === 0 ? (
             <div className="text-sm text-muted-foreground">Aucune erreur récente</div>
           ) : (
             <Table>
@@ -635,15 +532,10 @@ function SanteSystemePage() {
                     <TableCell className="text-xs">{e.module ?? "—"}</TableCell>
                     <TableCell className="text-xs">{e.action ?? "—"}</TableCell>
                     <TableCell className="text-xs">{e.user_email ?? "—"}</TableCell>
-                    <TableCell
-                      className="text-xs max-w-[380px] truncate"
-                      title={e.error_message ?? ""}
-                    >
+                    <TableCell className="text-xs max-w-[380px] truncate" title={e.error_message ?? ""}>
                       {e.error_message ?? "—"}
                     </TableCell>
-                    <TableCell>
-                      <Badge variant={severityVariant(e.criticite)}>{e.criticite ?? "error"}</Badge>
-                    </TableCell>
+                    <TableCell><Badge variant={severityVariant(e.criticite)}>{e.criticite ?? "error"}</Badge></TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -654,13 +546,9 @@ function SanteSystemePage() {
 
       {/* Dernières connexions */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Dernières connexions</CardTitle>
-        </CardHeader>
+        <CardHeader><CardTitle className="text-base">Dernières connexions</CardTitle></CardHeader>
         <CardContent className="overflow-x-auto">
-          {lastLogins.isLoading ? (
-            <Skeleton className="h-16" />
-          ) : (
+          {lastLogins.isLoading ? <Skeleton className="h-16" /> : (
             <Table>
               <TableHeader>
                 <TableRow>
@@ -677,11 +565,9 @@ function SanteSystemePage() {
                     <TableCell className="text-xs">{l.user_id ?? "—"}</TableCell>
                     <TableCell className="text-xs">{l.ip ?? "—"}</TableCell>
                     <TableCell>
-                      {l.success ? (
-                        <Badge variant="secondary">Succès</Badge>
-                      ) : (
-                        <Badge variant="destructive">Échec</Badge>
-                      )}
+                      {l.success
+                        ? <Badge variant="secondary">Succès</Badge>
+                        : <Badge variant="destructive">Échec</Badge>}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -690,6 +576,7 @@ function SanteSystemePage() {
           )}
         </CardContent>
       </Card>
+
       <div className="text-xs text-muted-foreground text-center pt-4">
         Métriques CPU/RAM/disque non disponibles sur infrastructure serverless (Cloudflare Workers).
         Consultez le tableau de bord de l'hébergeur pour ces indicateurs.
@@ -703,11 +590,7 @@ function SanteSystemePage() {
 type Overall = "excellent" | "attention" | "critique";
 
 function computeOverall(m: {
-  servicesOffline: number;
-  servicesDegraded: number;
-  errorsToday: number;
-  perfAvg: number;
-  stocksNegatifs: number;
+  servicesOffline: number; servicesDegraded: number; errorsToday: number; perfAvg: number; stocksNegatifs: number;
 }): Overall {
   if (m.servicesOffline > 0 || m.errorsToday > 50 || m.stocksNegatifs > 0) return "critique";
   if (m.servicesDegraded > 0 || m.errorsToday > 5 || m.perfAvg > 500) return "attention";
@@ -718,10 +601,7 @@ function OverallCard({ status }: { status: Overall }) {
   const cfg = {
     excellent: { label: "Excellent", cls: "bg-success/10 border-success/40 text-success" },
     attention: { label: "Attention", cls: "bg-warning/10 border-warning/40 text-warning" },
-    critique: {
-      label: "Critique",
-      cls: "bg-destructive/10 border-destructive/40 text-destructive",
-    },
+    critique:  { label: "Critique", cls: "bg-destructive/10 border-destructive/40 text-destructive" },
   }[status];
   return (
     <Card className={`border-2 ${cfg.cls}`}>
@@ -744,25 +624,12 @@ function StatusBadge({ status }: { status: ServiceStatus }) {
   return <Badge variant="secondary">Inconnu</Badge>;
 }
 
-function StatCard({
-  icon,
-  label,
-  value,
-  tone,
-}: {
-  icon?: React.ReactNode;
-  label: string;
-  value: React.ReactNode;
-  tone?: "error" | "warn";
-}) {
-  const color =
-    tone === "error" ? "text-destructive" : tone === "warn" ? "text-warning" : "text-foreground";
+function StatCard({ label, value, tone }: { label: string; value: React.ReactNode; tone?: "error" | "warn" }) {
+  const color = tone === "error" ? "text-destructive" : tone === "warn" ? "text-warning" : "text-foreground";
   return (
     <Card>
       <CardContent className="pt-6">
-        <div className="flex items-center gap-2 text-muted-foreground text-sm">
-          {icon} {label}
-        </div>
+        <div className="text-sm text-muted-foreground">{label}</div>
         <div className={`mt-2 text-3xl font-bold ${color}`}>{value}</div>
       </CardContent>
     </Card>
@@ -787,11 +654,7 @@ function severityVariant(s?: string | null): "default" | "secondary" | "destruct
 function formatBytes(n?: number | null): string {
   if (!n || n <= 0) return "—";
   const units = ["B", "KB", "MB", "GB", "TB"];
-  let i = 0;
-  let v = n;
-  while (v >= 1024 && i < units.length - 1) {
-    v /= 1024;
-    i++;
-  }
+  let i = 0; let v = n;
+  while (v >= 1024 && i < units.length - 1) { v /= 1024; i++; }
   return `${v.toFixed(1)} ${units[i]}`;
 }

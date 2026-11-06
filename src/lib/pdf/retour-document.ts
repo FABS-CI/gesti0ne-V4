@@ -1,4 +1,5 @@
 
+import { CHARTE } from "./charte-documents";
 import { BaseDocument, BODY, roundedRect, COLORS, MARGINS, PAGE, CONTENT_W } from "./base-document";
 import { retourOriginReference } from "@/lib/retour-document-data";
 import { formatFCFA } from "@/lib/format";
@@ -63,7 +64,7 @@ export class RetourDocument extends BaseDocument {
     const boxH = 46 + Math.ceil(entries.length / 2) * 15;
     const boxW = CONTENT_W;
     
-    roundedRect(this.page, MARGINS.x, y - boxH, boxW, boxH, 6, { color: BODY.grisClair, borderColor: BODY.bord, borderWidth: 0.6 });
+    roundedRect(this.page, MARGINS.x, y - boxH, boxW, boxH, 6, { color: BODY.grisClair, borderColor: CHARTE.contour, borderWidth: 0.8 });
 
     this.page.drawText("IDENTIFICATION CLIENT", { x: MARGINS.x + 10, y: y - 15, size: 7, font: this.fonts.bold, color: BODY.ardoise });
     this.page.drawText(String(this.data.clientNom || "CLIENT INCONNU").toUpperCase(), { x: MARGINS.x + 10, y: y - 30, size: 11, font: this.fonts.bold, color: BODY.nuit });

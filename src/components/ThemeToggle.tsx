@@ -9,7 +9,7 @@ export function ThemeToggle() {
     <Button
       variant="outline"
       onClick={toggle}
-      className="h-10 rounded-lg px-3"
+      className="h-9 rounded-md px-3"
       aria-label={isDark ? "Passer en mode clair" : "Passer en mode sombre"}
       title={isDark ? "Mode clair" : "Mode sombre"}
     >

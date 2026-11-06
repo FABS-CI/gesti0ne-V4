@@ -17,18 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { CrmDashboard } from "@/lib/crm-api";
 import { formatFCFA } from "@/lib/format";
 
-const COLORS = [
-  "#0A2540",
-  "#F97316",
-  "#3B82F6",
-  "#10B981",
-  "#8B5CF6",
-  "#EF4444",
-  "#F59E0B",
-  "#14B8A6",
-  "#EC4899",
-  "#84CC16",
-];
+const COLORS = ["var(--chart-1)","var(--chart-2)","var(--chart-3)","var(--chart-4)","var(--chart-5)"];
 
 export default function CrmCharts({ data }: { data: CrmDashboard }) {
   return (
@@ -43,7 +32,7 @@ export default function CrmCharts({ data }: { data: CrmDashboard }) {
               tickFormatter={(v) => `${(v / 1_000_000).toFixed(1)}M`}
             />
             <Tooltip formatter={(v: number) => formatFCFA(v)} />
-            <Line type="monotone" dataKey="ca" stroke="#F97316" strokeWidth={2} />
+            <Line type="monotone" dataKey="ca" stroke="var(--chart-1)" strokeWidth={2} />
           </LineChart>
         </ResponsiveContainer>
       </ChartCard>
@@ -76,7 +65,7 @@ export default function CrmCharts({ data }: { data: CrmDashboard }) {
             <XAxis dataKey="label" tick={{ fontSize: 11 }} />
             <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
             <Tooltip formatter={(v: number) => formatFCFA(v)} />
-            <Bar dataKey="ca" fill="#0A2540" />
+            <Bar dataKey="ca" fill="var(--chart-3)" />
           </BarChart>
         </ResponsiveContainer>
       </ChartCard>
@@ -92,7 +81,7 @@ export default function CrmCharts({ data }: { data: CrmDashboard }) {
             />
             <YAxis type="category" dataKey="label" tick={{ fontSize: 11 }} width={140} />
             <Tooltip formatter={(v: number) => formatFCFA(v)} />
-            <Bar dataKey="ca" fill="#F97316" />
+            <Bar dataKey="ca" fill="var(--chart-1)" />
           </BarChart>
         </ResponsiveContainer>
       </ChartCard>
@@ -108,7 +97,7 @@ export default function CrmCharts({ data }: { data: CrmDashboard }) {
             />
             <YAxis type="category" dataKey="label" tick={{ fontSize: 11 }} width={110} />
             <Tooltip formatter={(v: number) => formatFCFA(v)} />
-            <Bar dataKey="ca" fill="#3B82F6" />
+            <Bar dataKey="ca" fill="var(--chart-2)" />
           </BarChart>
         </ResponsiveContainer>
       </ChartCard>
@@ -121,7 +110,7 @@ export default function CrmCharts({ data }: { data: CrmDashboard }) {
             <YAxis type="category" dataKey="label" tick={{ fontSize: 10 }} width={160} />
             <Tooltip />
             <Legend />
-            <Bar dataKey="qte" name="Quantité" fill="#10B981" />
+            <Bar dataKey="qte" name="Quantité" fill="var(--chart-4)" />
           </BarChart>
         </ResponsiveContainer>
       </ChartCard>

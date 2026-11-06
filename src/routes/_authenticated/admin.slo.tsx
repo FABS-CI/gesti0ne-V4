@@ -119,16 +119,23 @@ function SloPage() {
           value={m?.alerts_open ?? "—"}
           tone={m && m.alerts_open > 0 ? "warn" : "ok"}
         />
-        <MetricCard label="Taille DB" value={m?.db_size ?? "—"} tone="ok" />
+        <MetricCard
+          label="Taille DB"
+          value={m?.db_size ?? "—"}
+          tone="ok"
+        />
         <MetricCard
           label="Connexions actives"
           value={m?.active_connections ?? "—"}
           tone={m && m.active_connections > 40 ? "warn" : "ok"}
         />
       </div>
+
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">Top 10 requêtes lentes</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            Top 10 requêtes lentes
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -164,6 +171,7 @@ function SloPage() {
           </Table>
         </CardContent>
       </Card>
+
       <Card>
         <CardHeader>
           <CardTitle>Alertes d'incident récentes (20)</CardTitle>
@@ -182,7 +190,9 @@ function SloPage() {
             <TableBody>
               {(alertsQ.data ?? []).map((a) => (
                 <TableRow key={a.id}>
-                  <TableCell className="text-xs">{formatDateTime(a.created_at)}</TableCell>
+                  <TableCell className="text-xs">
+                    {formatDateTime(a.created_at)}
+                  </TableCell>
                   <TableCell>
                     <Badge
                       variant={
@@ -242,7 +252,7 @@ function MetricCard({
   return (
     <Card className={toneClass}>
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm flex items-center gap-2 text-muted-foreground">
+        <CardTitle className="text-sm font-normal text-muted-foreground">
           {label}
         </CardTitle>
       </CardHeader>

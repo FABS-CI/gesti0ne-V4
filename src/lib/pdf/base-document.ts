@@ -26,6 +26,7 @@ const formatDocDate = (d: string) => {
 import { buildQrUrl, QR_COLOR_OPTS } from "./qr-logic";
 import { getRecapTheme, recapDocTypeFromLabel, type RecapTheme, type RecapThemeId } from "./recap-themes";
 import { buildPaymentRows } from "./payment-rows";
+import { CHARTE, isZebraRow } from "./charte-documents";
 
 // --- Configuration & Couleurs ---
 
@@ -319,7 +320,7 @@ export class BaseDocument {
       y: yTop - 28,
       size: titleSize,
       font: this.fonts.bold,
-      color: COLORS.noir,
+      color: CHARTE.titre,
     });
 
     // Le statut de paiement n'est plus affiché sous le titre (mention retirée
@@ -473,11 +474,11 @@ export class BaseDocument {
     const avecQr = qrAutorise && shouldShowQr(prefix);
     // Cadre unique (Modèle F) ; séparateur fin entre client et certification.
     roundedRect(this.page, MARGINS.x, y - boxH, avecQr ? CONTENT_W : boxW, boxH, 6, {
-      color: BODY.grisClair, borderColor: BODY.bord, borderWidth: 0.6,
+      color: BODY.grisClair, borderColor: CHARTE.contour, borderWidth: 0.8,
     });
     if (avecQr) {
       const sx = MARGINS.x + boxW + 7.5;
-      this.page.drawLine({ start: { x: sx, y: y - 8 }, end: { x: sx, y: y - boxH + 8 }, color: BODY.bord, thickness: 0.6 });
+      this.page.drawLine({ start: { x: sx, y: y - 8 }, end: { x: sx, y: y - boxH + 8 }, color: CHARTE.traitInterne, thickness: 0.6 });
     }
     const isBL = this.data.type === "Bon de Livraison";
     const isCommande = this.data.type === "Commande";
@@ -663,12 +664,12 @@ export class BaseDocument {
       [0, ...colonnes.map((c) => c.width)].forEach((cw, idx) => {
         vx += cw;
         const edge = idx === 0 || idx === colonnes.length;
-        this.page.drawLine({ start: { x: vx, y: top }, end: { x: vx, y: bottom }, color: BODY.bord, thickness: edge ? 0.6 : w });
+        this.page.drawLine({ start: { x: vx, y: top }, end: { x: vx, y: bottom }, color: edge ? CHARTE.contour : CHARTE.traitInterne, thickness: edge ? 0.8 : w });
       });
     };
     // En-tête : unique aplat bleu électrique du document, titres blancs gras.
     const drawTableHeader = (hy: number) => {
-      this.page.drawRectangle({ x: MARGINS.x, y: hy - 20, width: CONTENT_W, height: 20, color: BODY.ardoise });
+      this.page.drawRectangle({ x: MARGINS.x, y: hy - 20, width: CONTENT_W, height: 20, color: CHARTE.enTete, borderColor: CHARTE.contour, borderWidth: 0.8 });
       let hx = MARGINS.x;
       colonnes.forEach((col, idx) => {
         if (idx > 0) this.page.drawLine({ start: { x: hx, y: hy }, end: { x: hx, y: hy - 20 }, color: COLORS.blanc, thickness: 0.5, opacity: 0.5 });
@@ -677,7 +678,7 @@ export class BaseDocument {
         const headerX = CENTERED_KEYS.includes(col.key)
           ? hx + (col.width - txtW) / 2
           : NUMERIC_KEYS.includes(col.key) ? hx + col.width - txtW - 5 : hx + 5;
-        this.page.drawText(txt, { x: headerX, y: hy - 13.5, size: 8.5, font: this.fonts.bold, color: COLORS.blanc });
+        this.page.drawText(txt, { x: headerX, y: hy - 13.5, size: 8.5, font: this.fonts.bold, color: CHARTE.enTeteTexte });
         hx += col.width;
       });
     };
@@ -724,8 +725,8 @@ export class BaseDocument {
       const rowH = maxRowH;
 
       // Zébrage bleu électrique très léger (~5 %), continu d'une page à l'autre.
-      if (i % 2 === 1) {
-        this.page.drawRectangle({ x: MARGINS.x, y: curY - rowH, width: CONTENT_W, height: rowH, color: BODY.grisClair });
+      if (isZebraRow(i)) {
+        this.page.drawRectangle({ x: MARGINS.x, y: curY - rowH, width: CONTENT_W, height: rowH, color: CHARTE.zebra });
       }
       drawColLines(curY, curY - rowH);
 
@@ -759,8 +760,8 @@ export class BaseDocument {
       this.page.drawLine({
         start: { x: MARGINS.x, y: curY - rowH },
         end: { x: MARGINS.x + CONTENT_W, y: curY - rowH },
-        color: BODY.bord,
-        thickness: i === lignes.length - 1 ? 0.6 : 0.5,
+        color: i === lignes.length - 1 ? CHARTE.contour : CHARTE.traitInterne,
+        thickness: i === lignes.length - 1 ? 0.8 : 0.5,
       });
 
       curY -= rowH;

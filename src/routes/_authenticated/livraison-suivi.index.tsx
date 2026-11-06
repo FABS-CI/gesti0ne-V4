@@ -39,9 +39,9 @@ function LivraisonSuiviIndex() {
   const [statutFilter, setStatutFilter] = useState<LivStatut | "all">("all");
   const [tourneeFilter, setTourneeFilter] = useState<string>("");
   const [pageSize, setPageSize] = useState<number>(25);
-  const [target, setTarget] = useState<(LivSuiviCommande & { colis?: ColisInfo | null }) | null>(
-    null,
-  );
+  const [target, setTarget] = useState<
+    (LivSuiviCommande & { colis?: ColisInfo | null }) | null
+  >(null);
 
   const { data = [], isLoading } = useQuery({
     queryKey: ["livsuivi", "list"],
@@ -87,7 +87,10 @@ function LivraisonSuiviIndex() {
     });
   }, [data, typeFilter, statutFilter, tourneeFilter, q]);
 
-  const paginated = useMemo(() => filtered.slice(0, pageSize), [filtered, pageSize]);
+  const paginated = useMemo(
+    () => filtered.slice(0, pageSize),
+    [filtered, pageSize],
+  );
 
   const stats = useMemo(() => {
     const total = data.length;
@@ -107,11 +110,13 @@ function LivraisonSuiviIndex() {
         </div>
         <div className="ml-auto" />
       </div>
+
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard label="Total commandes" value={stats.total} />
         <StatCard label="En cours" value={stats.enCours} />
         <StatCard label="Terminées" value={stats.livrees} />
       </div>
+
       <div className="rounded-md border bg-card p-4 space-y-4">
         <div className="grid gap-3 md:grid-cols-4">
           <div className="relative md:col-span-2">
@@ -156,10 +161,14 @@ function LivraisonSuiviIndex() {
             className="font-mono"
           />
         </div>
+
         <LivraisonsTable rows={paginated} isLoading={isLoading} onAdvance={setTarget} />
         <div className="flex items-center justify-end gap-2 pt-2 text-xs text-muted-foreground">
           <span>Lignes par page</span>
-          <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
+          <Select
+            value={String(pageSize)}
+            onValueChange={(v) => setPageSize(Number(v))}
+          >
             <SelectTrigger
               className="h-8 w-20"
               aria-label="Lignes par page"
@@ -178,6 +187,7 @@ function LivraisonSuiviIndex() {
           </span>
         </div>
       </div>
+
       <AvancerEtapeDialog
         target={target}
         defaults={target ? computeSuiviDefaults(target) : undefined}
@@ -189,7 +199,7 @@ function LivraisonSuiviIndex() {
 
 function StatCard({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-md border bg-card p-4 flex items-center gap-4">
+    <div className="rounded-md border bg-card p-4">
       <div>
         <div className="text-xs text-muted-foreground">{label}</div>
         <div className="text-2xl font-bold">{value}</div>
