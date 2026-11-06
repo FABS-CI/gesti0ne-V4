@@ -274,12 +274,13 @@ function AuthPage() {
 
   return (
     <div
-      className="login-page-root relative flex min-h-dvh w-full flex-col items-center justify-center bg-background px-4 py-8"
+      className="login-page-root login-glass relative flex min-h-dvh w-full flex-col items-center justify-center bg-background px-4 py-8"
       data-testid="login-page"
     >
       <LoginStyles />
       <LoginPattern />
-      <div className="relative mb-6 flex flex-col items-center gap-3 text-center">
+      {/* Logo seul sur mobile ; sur écran large il est dans le panneau d'accueil. */}
+      <div className="relative mb-6 flex flex-col items-center gap-3 text-center md:hidden">
         <img
           src={fabsLogo}
           alt="Logo Éditions FABS-CI"
@@ -295,10 +296,25 @@ function AuthPage() {
           <p className="text-sm text-muted-foreground">Éditions FABS-CI</p>
         </div>
       </div>
-      <div
-        data-testid="login-card"
-        className="login-card-box relative w-full max-w-[400px] rounded-[12px] border border-border bg-card p-8 shadow-sm"
-      >
+      <div data-testid="login-card" className="login-glass-card relative w-full max-w-[400px] md:max-w-[820px] md:grid md:grid-cols-[1fr_1.1fr]">
+        <aside className="login-glass-welcome hidden md:flex" aria-label="Présentation">
+          <img
+            src={fabsLogo}
+            alt="Logo Éditions FABS-CI"
+            width={64}
+            height={64}
+            loading="eager"
+            decoding="async"
+            className="h-16 w-16 object-contain"
+          />
+          <div>
+            <p className="text-2xl font-semibold leading-tight text-foreground">Bienvenue sur GESTI-one</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Éditions FABS-CI · Gestion commerciale, stock et comptabilité.
+            </p>
+          </div>
+        </aside>
+        <div className="login-card-box p-8">
         <h1 className="mb-6 font-sans text-xl font-semibold tracking-normal text-foreground">Connexion</h1>
 
         <LoginForm
@@ -316,7 +332,7 @@ function AuthPage() {
           setRemember={setRemember}
           authReady={authReady}
         />
-
+        </div>
       </div>
       <footer className="relative mt-6 space-y-1 text-center text-xs text-muted-foreground">
         <p>Besoin d'aide ? Contactez votre administrateur</p>
