@@ -62,7 +62,6 @@ export function AuditStats({ kpi, totalEvents }: Props) {
       {typeof totalEvents === "number" && (
         <Card>
           <CardContent className="flex items-center gap-3 p-4">
-            <Activity className="h-6 w-6 text-warning" />
             <div className="text-sm text-muted-foreground">Événements sur la période</div>
             <div className="ml-auto text-2xl font-bold tabular-nums">
               {formatFCFA(totalEvents, false)}
@@ -71,10 +70,9 @@ export function AuditStats({ kpi, totalEvents }: Props) {
         </Card>
       )}
       <div className="grid gap-2 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-        {TILES.map(({ key, label, icon: Icon, color }) => (
+        {TILES.map(({ key, label }) => (
           <Card key={key}>
-            <CardContent className="flex items-center gap-2 p-3">
-              <Icon className={`h-5 w-5 shrink-0 ${color}`} />
+            <CardContent className="p-3">
               <div className="min-w-0">
                 <div className="text-lg font-bold tabular-nums leading-tight">
                   {formatFCFA(v(key), false)}
