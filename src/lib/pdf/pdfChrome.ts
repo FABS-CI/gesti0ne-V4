@@ -183,7 +183,7 @@ export function drawHeader(
 ) {
   // Plusieurs tableaux peuvent rappeler le chrome sur la même page.
   // Ne jamais superposer une deuxième identité ou un deuxième titre.
-  const pageNumber = doc.internal.getCurrentPageInfo().pageNumber;
+  const pageNumber = doc.getCurrentPageInfo().pageNumber;
   const drawnPages = HEADER_PAGES.get(doc) ?? new Set<number>();
   if (drawnPages.has(pageNumber)) return;
   drawnPages.add(pageNumber);
