@@ -2,8 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
   ShieldCheck,
-  AlertTriangle,
-  AlertCircle,
   Download,
   RefreshCw,
   CheckCircle2,
@@ -34,25 +32,19 @@ export const Route = createFileRoute("/_authenticated/catalogue-integrite")({
 function StatCard({
   label,
   value,
-  color,
-  icon,
+  tone,
 }: {
   label: string;
   value: number;
-  color: string;
-  icon: React.ReactNode;
+  tone?: string;
 }) {
   return (
     <Card>
-      <CardContent className="flex items-center gap-3 p-4">
-        <div
-          className="flex h-10 w-10 items-center justify-center rounded-lg"
-          style={{ background: `${color}1a`, color }}
-        >
-          {icon}
-        </div>
+      <CardContent className="p-4">
         <div>
-          <p className="text-2xl font-bold">{value}</p>
+          <p className={`text-2xl font-semibold tabular-nums ${value > 0 && tone ? tone : ""}`}>
+            {value}
+          </p>
           <p className="text-sm text-muted-foreground">{label}</p>
         </div>
       </CardContent>
@@ -125,26 +117,21 @@ function IntegritePage() {
             <StatCard
               label="Articles analysés"
               value={data.total}
-              color="#3B82F6"
-              icon={<ShieldCheck className="h-5 w-5" />}
             />
             <StatCard
               label="Conformes"
               value={data.conformes}
-              color="#10B981"
-              icon={<CheckCircle2 className="h-5 w-5" />}
+              tone="text-success"
             />
             <StatCard
               label="ISBN à corriger"
               value={data.parChamp.isbn}
-              color="#EF4444"
-              icon={<AlertCircle className="h-5 w-5" />}
+              tone="text-destructive"
             />
             <StatCard
               label="Prix à corriger"
               value={data.parChamp.prix_achat + data.parChamp.prix_vente}
-              color="#F97316"
-              icon={<AlertTriangle className="h-5 w-5" />}
+              tone="text-warning"
             />
           </div>
 

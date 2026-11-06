@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import {
   Activity, RefreshCw, AlertTriangle, CheckCircle2, XCircle, AlertCircle,
-  Users, Database, HardDrive, Shield, ServerCog, FileText, PlayCircle,
+  Database, HardDrive, Shield, ServerCog, FileText, PlayCircle,
 } from "lucide-react";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
@@ -366,10 +366,9 @@ function SanteSystemePage() {
       {/* Overall + KPIs top */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <OverallCard status={overall} />
-        <StatCard icon={<Users className="h-5 w-5" />} label="Connexions aujourd'hui" value={kpis.data?.connectionsToday ?? "—"} />
-        <StatCard icon={<Activity className="h-5 w-5" />} label="Opérations aujourd'hui" value={kpis.data?.opsToday ?? "—"} />
+        <StatCard label="Connexions aujourd'hui" value={kpis.data?.connectionsToday ?? "—"} />
+        <StatCard label="Opérations aujourd'hui" value={kpis.data?.opsToday ?? "—"} />
         <StatCard
-          icon={<AlertTriangle className="h-5 w-5" />}
           label="Erreurs aujourd'hui"
           value={kpis.data?.errorsToday ?? "—"}
           tone={(kpis.data?.errorsToday ?? 0) > 0 ? "error" : undefined}
@@ -630,12 +629,12 @@ function StatusBadge({ status }: { status: ServiceStatus }) {
   return <Badge variant="secondary">Inconnu</Badge>;
 }
 
-function StatCard({ icon, label, value, tone }: { icon?: React.ReactNode; label: string; value: React.ReactNode; tone?: "error" | "warn" }) {
+function StatCard({ label, value, tone }: { label: string; value: React.ReactNode; tone?: "error" | "warn" }) {
   const color = tone === "error" ? "text-destructive" : tone === "warn" ? "text-warning" : "text-foreground";
   return (
     <Card>
       <CardContent className="pt-6">
-        <div className="flex items-center gap-2 text-muted-foreground text-sm">{icon} {label}</div>
+        <div className="text-sm text-muted-foreground">{label}</div>
         <div className={`mt-2 text-3xl font-bold ${color}`}>{value}</div>
       </CardContent>
     </Card>
