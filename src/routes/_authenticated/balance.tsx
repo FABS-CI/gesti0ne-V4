@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Download, FileText, Scale } from "lucide-react";
+import { Download, FileText, } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -56,8 +56,8 @@ function BalancePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <Scale className="h-6 w-6" /> Balance générale
+          <h1 className="ds-page-title">
+            Balance générale
           </h1>
           <p className="text-sm text-muted-foreground">
             {parExercice

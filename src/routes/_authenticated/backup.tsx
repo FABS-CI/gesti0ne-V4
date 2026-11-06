@@ -4,7 +4,6 @@ import { formatDateTime, formatTime } from "@/lib/format";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
-  DatabaseBackup,
   Download,
   Loader2,
   HardDrive,
@@ -238,8 +237,7 @@ function BackupPage() {
     <div className="container mx-auto py-8 space-y-8 max-w-6xl">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="ds-page-title flex items-center gap-3">
-            <DatabaseBackup className="h-8 w-8 text-primary" />
+          <h1 className="ds-page-title">
             Sauvegarde & Restauration
           </h1>
           <p className="text-muted-foreground mt-1">

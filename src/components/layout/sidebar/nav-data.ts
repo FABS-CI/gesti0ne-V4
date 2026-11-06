@@ -18,6 +18,7 @@ import {
   Building2,
   Inbox,
   Wallet,
+  Banknote,
   Calculator,
   ShieldCheck,
   Briefcase,
@@ -286,7 +287,7 @@ export const groups: Group[] = [
   },
   {
     label: "Paie",
-    groupIcon: Wallet,
+    groupIcon: Banknote,
     color: "#EC4899",
     light: "rgba(236,72,153,0.12)",
     grad: "linear-gradient(90deg,#EC4899,#F472B6)",

@@ -95,7 +95,8 @@ export function SidebarAutoHideProvider({ children }: { children: ReactNode }) {
       !!t.closest(".app-sidebar-panel, [data-radix-popper-content-wrapper]");
 
     const onMove = (e: MouseEvent) => {
-      const limit = hoverRef.current ? panelWidth() + TOLERANCE_PX : EDGE_PX;
+      // Fermé, le menu reste visible en rail étroit : survoler le rail suffit à le déployer.
+      const limit = hoverRef.current ? panelWidth() + TOLERANCE_PX : Math.max(EDGE_PX, panelWidth());
       if (e.clientX <= limit || (hoverRef.current && inFloating(e.target))) requestOpen();
       else requestClose();
     };

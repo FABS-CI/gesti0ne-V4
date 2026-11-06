@@ -8,7 +8,7 @@ export function EffectifChart({ data }: { data: Array<{ label: string; count: nu
         <XAxis dataKey="label" tick={{ fontSize: 12 }} />
         <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
         <Tooltip />
-        <Bar dataKey="count" fill="#8B5CF6" radius={[4, 4, 0, 0]} name="Effectif" />
+        <Bar dataKey="count" fill="var(--chart-1)" radius={[4, 4, 0, 0]} name="Effectif" />
       </BarChart>
     </ResponsiveContainer>
   );

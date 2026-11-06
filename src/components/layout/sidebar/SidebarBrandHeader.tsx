@@ -2,26 +2,35 @@ import { Pin, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSidebarAutoHide } from "@/hooks/use-sidebar-auto-hide";
 import fabsLogo from "@/assets/fabs-logo.png";
-import { SidebarHeader, useSidebar } from "@/components/ui/sidebar";
+import { SidebarFooter, SidebarHeader, useSidebar } from "@/components/ui/sidebar";
 
-export function SidebarBrandHeader(_props: { accentGrad?: string | null }) {
+export function SidebarBrandHeader({ compact = false }: { compact?: boolean }) {
   const { isMobile, setOpenMobile } = useSidebar();
   const auto = useSidebarAutoHide();
   return (
-    <SidebarHeader className="relative border-b border-sidebar-border bg-sidebar px-4 py-4">
-      <div className="flex items-center gap-3 pr-10">
+    <SidebarHeader
+      className={cn(
+        "relative flex h-14 shrink-0 justify-center border-b border-sidebar-border bg-sidebar",
+        compact ? "items-center px-2" : "px-4",
+      )}
+    >
+      <div className={cn("flex items-center gap-3", !compact && "pr-10")}>
         <img
           src={fabsLogo}
           alt="Logo Éditions FABS-CI"
-          width={36}
-          height={36}
+          width={32}
+          height={32}
           decoding="async"
-          className="h-9 w-9 shrink-0 rounded-md bg-white object-contain p-1"
+          className="h-8 w-8 shrink-0 rounded-md bg-white object-contain p-1"
         />
-        <div className="min-w-0 leading-tight">
-          <p className="truncate text-sm font-semibold text-sidebar-foreground">Éditions FABS-CI</p>
-          <p className="truncate text-xs text-sidebar-foreground/50">GESTI-one</p>
-        </div>
+        {!compact && (
+          <div className="min-w-0 leading-tight">
+            <p className="truncate text-sm font-semibold text-sidebar-accent-foreground">
+              Éditions FABS-CI
+            </p>
+            <p className="truncate text-xs text-sidebar-foreground/60">GESTI-one</p>
+          </div>
+        )}
       </div>
 
       {isMobile && (
@@ -34,7 +43,7 @@ export function SidebarBrandHeader(_props: { accentGrad?: string | null }) {
           <X className="h-5 w-5" strokeWidth={1.75} />
         </button>
       )}
-      {!isMobile && auto?.enabled && (
+      {!isMobile && !compact && auto?.enabled && (
         <button
           type="button"
           aria-label={auto.pinned ? "Désépingler le menu" : "Épingler le menu"}
@@ -55,5 +64,20 @@ export function SidebarBrandHeader(_props: { accentGrad?: string | null }) {
         </button>
       )}
     </SidebarHeader>
+  );
+}
+
+/** Signature ÉDITIONS FABS-CI en pied de menu (masquée en rail). */
+export function SidebarBrandFooter({ compact = false }: { compact?: boolean }) {
+  if (compact) return null;
+  return (
+    <SidebarFooter className="border-t border-sidebar-border bg-sidebar px-4 py-3">
+      <p className="text-[11px] leading-4 text-sidebar-foreground/55">
+        « Les livres sont des fenêtres par lesquelles on regarde le monde »
+      </p>
+      <p className="mt-1 text-[11px] leading-4 text-sidebar-foreground/40">
+        © 2026 Éditions FABS-CI. Tous droits réservés.
+      </p>
+    </SidebarFooter>
   );
 }

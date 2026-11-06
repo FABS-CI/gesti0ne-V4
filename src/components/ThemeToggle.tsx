@@ -12,7 +12,7 @@ export function ThemeToggle() {
       variant="outline"
       size="icon"
       onClick={toggle}
-      className="h-10 w-10 rounded-lg"
+      className="h-9 w-9 rounded-md"
       aria-label={isDark ? "Passer en mode clair" : "Passer en mode sombre"}
       title={isDark ? "Mode clair" : "Mode sombre"}
     >

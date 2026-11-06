@@ -1,4 +1,5 @@
 
+import { CHARTE } from "./charte-documents";
 import { BaseDocument, BODY, roundedRect, COLORS, MARGINS, PAGE, CONTENT_W } from "./base-document";
 import { retourOriginReference } from "@/lib/retour-document-data";
 import { formatFCFA } from "@/lib/format";
@@ -37,7 +38,7 @@ export class RetourDocument extends BaseDocument {
     if ((this.data as any).origin) {
       const orig = (this.data as any).origin;
       if (orig.fac) {
-        this.drawBandeau(MARGINS.x, y, CONTENT_W, "FACTURE D'ORIGINE");
+        this.page.drawText("FACTURE D'ORIGINE", { x: MARGINS.x, y: y - 10, size: 8, font: this.fonts.bold, color: BODY.ardoise });
         this.page.drawText(`N° : ${orig.fac.ref}`, { x: MARGINS.x, y: y - 27, size: 10, font: this.fonts.bold, color: BODY.nuit });
         this.page.drawText(`Date : ${this.formatDate(orig.fac.date)}`, { x: MARGINS.x + 280, y: y - 27, size: 10, font: this.fonts.bold, color: BODY.nuit });
         let nextY = y - 45;
@@ -63,9 +64,9 @@ export class RetourDocument extends BaseDocument {
     const boxH = 46 + Math.ceil(entries.length / 2) * 15;
     const boxW = CONTENT_W;
     
-    this.drawBloc(MARGINS.x, y - boxH, boxW, boxH);
-    this.drawBandeau(MARGINS.x, y, boxW, "IDENTIFICATION CLIENT");
-    this.drawContour(MARGINS.x, y - boxH, boxW, boxH);
+    roundedRect(this.page, MARGINS.x, y - boxH, boxW, boxH, 6, { color: BODY.grisClair, borderColor: CHARTE.contour, borderWidth: 0.8 });
+
+    this.page.drawText("IDENTIFICATION CLIENT", { x: MARGINS.x + 10, y: y - 15, size: 7, font: this.fonts.bold, color: BODY.ardoise });
     this.page.drawText(String(this.data.clientNom || "CLIENT INCONNU").toUpperCase(), { x: MARGINS.x + 10, y: y - 30, size: 11, font: this.fonts.bold, color: BODY.nuit });
     
     entries.forEach((item, i) => {
@@ -117,7 +118,8 @@ export class RetourDocument extends BaseDocument {
   }
 
   drawSectionTitle(y: number, title: string): number {
-    this.drawBandeau(MARGINS.x, y, CONTENT_W, title);
+    this.page.drawText(title, { x: MARGINS.x, y: y - 10, size: 8, font: this.fonts.bold, color: BODY.nuit });
+    this.page.drawLine({ start: { x: MARGINS.x, y: y - 14 }, end: { x: MARGINS.x + CONTENT_W, y: y - 14 }, color: BODY.bord, thickness: 0.5 });
     return y - 22;
   }
 

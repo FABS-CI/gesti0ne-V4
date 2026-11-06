@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Activity, RefreshCw, AlertTriangle } from "lucide-react";
+import { RefreshCw, AlertTriangle } from "lucide-react";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
 export const Route = createFileRoute("/_authenticated/admin/perf")({
@@ -86,8 +86,8 @@ function PerfPage() {
     <div className="container mx-auto space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <Activity className="h-8 w-8" /> Suivi performance requêtes
+          <h1 className="ds-page-title">
+            Suivi performance requêtes
           </h1>
           <p className="text-muted-foreground">
             200 dernières requêtes critiques instrumentées via <code>trackQuery()</code>

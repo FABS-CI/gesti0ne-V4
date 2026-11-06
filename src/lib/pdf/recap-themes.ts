@@ -58,10 +58,10 @@ export const RECAP_THEMES: Record<RecapThemeId, RecapTheme> = {
   // Thème par défaut = charte FABS-CI (charte-documents.ts) : remises sur bleu très
   // clair, traits #A8BFE3, contour bleu foncé, TOTAL À PAYER bleu électrique.
   bleu: make("bleu", "Bleu FABS-CI", {
-    fond: CHARTE_HEX.zebre,
+    fond: CHARTE_HEX.zebra,
     filet: CHARTE_HEX.traitInterne,
-    bordure: CHARTE_HEX.bordureExterieure,
-    total: CHARTE_HEX.bleu,
+    bordure: CHARTE_HEX.contour,
+    total: CHARTE_HEX.enTete,
     texte: "#1E3A8A",
   }),
   ardoise: make("ardoise", "Gris ardoise", {

@@ -4,13 +4,8 @@ import type { ReactNode } from "react";
 import {
   AlertTriangle,
   ArrowRight,
-  Boxes,
-  ClipboardList,
   PackageOpen,
   RefreshCw,
-  RotateCcw,
-  Truck,
-  Wallet,
 } from "lucide-react";
 
 import { useExerciceConsulteId } from "@/contexts/ExerciceContext";
@@ -55,10 +50,10 @@ type Dest =
 
 type Tone = "danger" | "warning" | "info" | "success";
 const TONE: Record<Tone, string> = {
-  danger: "text-destructive bg-destructive/10",
-  warning: "text-warning bg-warning/10",
-  info: "text-primary bg-primary/10",
-  success: "text-success bg-success/10",
+  danger: "text-destructive",
+  warning: "text-warning",
+  info: "text-foreground",
+  success: "text-success",
 };
 
 const fmtDate = (d: string | null | undefined) => {
@@ -74,7 +69,7 @@ function Pilotage() {
   );
 
   return (
-    <div className="theme-dashboard space-y-6">
+    <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="ds-page-title flex items-center gap-2">
@@ -142,7 +137,6 @@ function CockpitContent({ data }: { data: CockpitData }) {
             {data.impayes30 && (
               <Kpi
                 tone="danger"
-                icon={<Wallet className="h-5 w-5" />}
                 label="Factures impayées depuis plus de 30 jours"
                 value={data.impayes30.count}
                 sub={formatFCFA(data.impayes30.montant)}
@@ -152,7 +146,6 @@ function CockpitContent({ data }: { data: CockpitData }) {
             {data.aPreparer && (
               <Kpi
                 tone="warning"
-                icon={<ClipboardList className="h-5 w-5" />}
                 label="Commandes à préparer"
                 value={data.aPreparer.count}
                 sub="bons de livraison à préparer"
@@ -162,7 +155,6 @@ function CockpitContent({ data }: { data: CockpitData }) {
             {data.livraisonsRetard && (
               <Kpi
                 tone="warning"
-                icon={<Truck className="h-5 w-5" />}
                 label="Livraisons en retard"
                 value={data.livraisonsRetard.count}
                 sub="date prévue dépassée"
@@ -172,7 +164,6 @@ function CockpitContent({ data }: { data: CockpitData }) {
             {data.paiementsJour && (
               <Kpi
                 tone="success"
-                icon={<Wallet className="h-5 w-5" />}
                 label="Paiements reçus aujourd'hui"
                 value={data.paiementsJour.count}
                 sub={formatFCFA(data.paiementsJour.montant)}
@@ -182,7 +173,6 @@ function CockpitContent({ data }: { data: CockpitData }) {
             {data.stockBas && (
               <Kpi
                 tone="danger"
-                icon={<Boxes className="h-5 w-5" />}
                 label="Produits sous le seuil d'alerte"
                 value={data.stockBas.count}
                 sub="stock réel des dépôts"
@@ -192,7 +182,6 @@ function CockpitContent({ data }: { data: CockpitData }) {
             {data.retoursAttente && (
               <Kpi
                 tone="info"
-                icon={<RotateCcw className="h-5 w-5" />}
                 label="Retours en attente"
                 value={data.retoursAttente.count}
                 sub="à traiter"
@@ -292,7 +281,6 @@ function CockpitContent({ data }: { data: CockpitData }) {
 
 function Kpi(props: {
   tone: Tone;
-  icon: ReactNode;
   label: string;
   value: number;
   sub?: string;
@@ -301,13 +289,16 @@ function Kpi(props: {
   return (
     <Link
       to={props.to}
-      className="group rounded-xl border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-accent/40"
+      className="group rounded-lg border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-accent/40"
     >
       <div className="flex items-start gap-3">
-        <span className={`rounded-lg p-2 ${TONE[props.tone]}`}>{props.icon}</span>
         <div className="min-w-0 flex-1">
           <p className="text-xs text-muted-foreground">{props.label}</p>
-          <p className="text-2xl font-bold tabular-nums">{props.value}</p>
+          <p
+            className={`mt-1 text-2xl font-semibold tabular-nums ${props.value > 0 ? TONE[props.tone] : ""}`}
+          >
+            {props.value}
+          </p>
           {props.sub && <p className="truncate text-xs text-muted-foreground">{props.sub}</p>}
         </div>
         <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />

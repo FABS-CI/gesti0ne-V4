@@ -1,7 +1,7 @@
 import { formatDateTime } from "@/lib/format";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { AlertTriangle, Database, Activity, Zap, RefreshCw, ExternalLink } from "lucide-react";
+import { Zap, RefreshCw, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -113,25 +113,21 @@ function SloPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <MetricCard
-          icon={<AlertTriangle className="w-4 h-4" />}
           label="Erreurs 24 h"
           value={m?.errors_24h ?? "—"}
           tone={m && m.errors_24h > 5 ? "danger" : "ok"}
         />
         <MetricCard
-          icon={<AlertTriangle className="w-4 h-4" />}
           label="Alertes ouvertes"
           value={m?.alerts_open ?? "—"}
           tone={m && m.alerts_open > 0 ? "warn" : "ok"}
         />
         <MetricCard
-          icon={<Database className="w-4 h-4" />}
           label="Taille DB"
           value={m?.db_size ?? "—"}
           tone="ok"
         />
         <MetricCard
-          icon={<Activity className="w-4 h-4" />}
           label="Connexions actives"
           value={m?.active_connections ?? "—"}
           tone={m && m.active_connections > 40 ? "warn" : "ok"}
@@ -246,12 +242,10 @@ function SloPage() {
 }
 
 function MetricCard({
-  icon,
   label,
   value,
   tone,
 }: {
-  icon: React.ReactNode;
   label: string;
   value: React.ReactNode;
   tone: "ok" | "warn" | "danger";
@@ -261,8 +255,8 @@ function MetricCard({
   return (
     <Card className={toneClass}>
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm flex items-center gap-2 text-muted-foreground">
-          {icon} {label}
+        <CardTitle className="text-sm font-normal text-muted-foreground">
+          {label}
         </CardTitle>
       </CardHeader>
       <CardContent>
