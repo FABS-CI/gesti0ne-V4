@@ -113,7 +113,7 @@ function Dashboard() {
   );
 
   return (
-    <div className="theme-dashboard dash-anim space-y-4 overflow-x-hidden bg-background text-foreground">
+    <div className="dash-anim space-y-4 overflow-x-hidden bg-background text-foreground">
       <DashboardHeader
         periode={periode}
         onPeriode={onPeriode}

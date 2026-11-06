@@ -18,7 +18,6 @@ import { useIdlePrefetch, type PrefetchTarget } from "@/hooks/use-idle-prefetch"
 import { ShieldAlert } from "lucide-react";
 import { ExerciceProvider } from "@/contexts/ExerciceContext";
 import { ExerciceReadOnlyBanner } from "./ExerciceReadOnlyBanner";
-import { buildModuleThemeVars, getModuleColor } from "@/lib/module-theme";
 import { SystemAlertsBanner } from "@/components/SystemAlertsBanner";
 import { useAndroidBackButton } from "@/hooks/use-android-back-button";
 import { useMobileKeyboard } from "@/hooks/use-mobile-keyboard";
@@ -58,7 +57,6 @@ export function AppShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { isRestricted } = useRouteRestrictions();
   const blocked = isRestricted(pathname);
-  const moduleThemeVars = buildModuleThemeVars(getModuleColor(pathname));
   const perfOverlayEnabled = usePerfOverlayEnabled();
 
   // Écoute globale des notifications temps réel (son + toast + notif navigateur)
@@ -105,8 +103,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             <AppSidebar />
           </AutoHideSidebarSlot>
           <div className="flex min-w-0 flex-1 flex-col">
-            <header className="app-shell-header sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-border/70 bg-card/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-card/85 px-3 pt-[var(--safe-area-top)] sm:px-4">
-              <SidebarTrigger className="hover:bg-accent h-9 w-9 shrink-0 rounded-full" />
+            <header className="app-shell-header sticky top-0 z-30 flex h-14 items-center gap-2 border-b bg-card px-3 pt-[var(--safe-area-top)] sm:px-4">
+              <SidebarTrigger className="h-9 w-9 shrink-0 rounded-md text-muted-foreground hover:bg-accent hover:text-foreground" aria-label="Réduire ou développer le menu" />
               <Topbar />
             </header>
             <div className="app-shell-banner">
@@ -114,8 +112,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <SystemAlertsBanner />
             </div>
             <main
-              className="app-shell-main min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-3 pb-[calc(6rem+var(--keyboard-height,0px)+var(--safe-area-bottom))] sm:p-5 md:pb-[calc(1rem+var(--keyboard-height,0px)+var(--safe-area-bottom))] lg:p-8"
-              style={moduleThemeVars}
+              className="app-shell-main min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-3 pb-[calc(6rem+var(--keyboard-height,0px)+var(--safe-area-bottom))] sm:p-6 md:pb-[calc(1rem+var(--keyboard-height,0px)+var(--safe-area-bottom))] lg:px-8 lg:pt-6"
             >
               {blocked ? (
                 <AccessDenied />

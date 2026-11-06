@@ -74,12 +74,12 @@ export function NotificationsBell() {
         <Button
           variant="outline"
           size="icon"
-          className="relative h-10 w-10 rounded-lg"
+          className="relative h-9 w-9 rounded-md"
           aria-label="Notifications"
         >
-          <Bell className="h-[18px] w-[18px]" />
+          <Bell className="h-4 w-4" strokeWidth={1.75} />
           {unread > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-destructive px-1 text-xs font-bold text-white ring-2 ring-card">
+            <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 font-mono text-[10px] font-medium text-destructive-foreground ring-2 ring-card tabular-nums">
               {display}
             </span>
           )}

@@ -49,7 +49,7 @@ export function MesRaccourcisCard() {
                     className="flex h-full flex-col items-start gap-2 rounded-lg border bg-card p-3 text-left transition-colors hover:bg-accent"
                   >
                     {pinned && (
-                      <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                      <span className="text-xs text-muted-foreground">
                         Épinglé
                       </span>
                     )}
