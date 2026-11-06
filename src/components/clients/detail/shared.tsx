@@ -51,23 +51,15 @@ export function Kpi({
   className?: string;
   onClick?: () => void;
 }) {
-  const bar = color ?? "hsl(var(--primary))";
+  void color;
   return (
-    <Card 
-      className={`relative overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-md ${className || ""}`}
-      onClick={onClick}
-    >
-      <span
-        aria-hidden
-        className="absolute inset-y-0 left-0 w-1"
-        style={{ backgroundColor: bar }}
-      />
-      <CardHeader className="pb-2 pl-5">
+    <Card className={className || ""} onClick={onClick}>
+      <CardHeader className="pb-2">
         <CardTitle className="text-xs text-muted-foreground">
           {label}
         </CardTitle>
       </CardHeader>
-      <CardContent className={`pl-5 text-xl font-bold tracking-tight ${accent ?? ""}`}>
+      <CardContent className={`text-xl font-semibold tabular-nums tracking-tight ${accent ?? ""}`}>
         {value}
       </CardContent>
     </Card>
