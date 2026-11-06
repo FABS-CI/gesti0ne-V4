@@ -1,3 +1,4 @@
+import { CHARTE } from "./charte-documents";
 import { formatDocumentReference } from "@/lib/document-reference";
 
 import { BaseDocument, BODY, roundedRect, COLORS, MARGINS, PAGE, CONTENT_W, CONTENT_BOTTOM } from "./base-document";
@@ -68,7 +69,7 @@ export class StatementDocument extends BaseDocument {
 
     // Bloc Client
     roundedRect(this.page, MARGINS.x, y - boxH, CONTENT_W, boxH, 6, {
-      color: BODY.grisClair, borderColor: BODY.bord, borderWidth: 0.6,
+      color: BODY.grisClair, borderColor: CHARTE.contour, borderWidth: 0.8,
     });
     const sepX = MARGINS.x + boxW + 7.5;
     this.page.drawLine({ start: { x: sepX, y: y - 8 }, end: { x: sepX, y: y - boxH + 8 }, color: BODY.bord, thickness: 0.6 });
