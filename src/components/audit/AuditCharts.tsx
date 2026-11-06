@@ -53,9 +53,9 @@ export function AuditCharts({ days = 30 }: { days?: number }) {
               <XAxis dataKey="day" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
               <Tooltip />
-              <Area type="monotone" dataKey="info" stackId="1" stroke="#3B82F6" fill="#3B82F6" fillOpacity={0.4} />
-              <Area type="monotone" dataKey="warning" stackId="1" stroke="#F59E0B" fill="#F59E0B" fillOpacity={0.5} />
-              <Area type="monotone" dataKey="critical" stackId="1" stroke="#EF4444" fill="#EF4444" fillOpacity={0.6} />
+              <Area type="monotone" dataKey="info" stackId="1" stroke="var(--chart-2)" fill="var(--chart-2)" fillOpacity={0.4} />
+              <Area type="monotone" dataKey="warning" stackId="1" stroke="var(--warning, #F59E0B)" fill="var(--warning, #F59E0B)" fillOpacity={0.5} />
+              <Area type="monotone" dataKey="critical" stackId="1" stroke="var(--destructive)" fill="var(--destructive)" fillOpacity={0.6} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -70,7 +70,7 @@ export function AuditCharts({ days = 30 }: { days?: number }) {
               <XAxis type="number" tick={{ fontSize: 11 }} allowDecimals={false} />
               <YAxis type="category" dataKey="module" tick={{ fontSize: 11 }} width={120} />
               <Tooltip />
-              <Bar dataKey="total" fill="#F97316" radius={[0, 4, 4, 0]} />
+              <Bar dataKey="total" fill="var(--chart-1)" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
