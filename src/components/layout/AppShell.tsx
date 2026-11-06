@@ -105,7 +105,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <AppSidebar />
           </AutoHideSidebarSlot>
           <div className="flex min-w-0 flex-1 flex-col">
-            <header className="app-shell-header sticky top-0 z-30 flex h-16 items-center gap-2 border-b bg-card px-3 pt-[var(--safe-area-top)] sm:px-4">
+            <header className="app-shell-header sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-border/70 bg-card/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-card/85 px-3 pt-[var(--safe-area-top)] sm:px-4">
               <SidebarTrigger className="hover:bg-accent h-9 w-9 shrink-0 rounded-full" />
               <Topbar />
             </header>
