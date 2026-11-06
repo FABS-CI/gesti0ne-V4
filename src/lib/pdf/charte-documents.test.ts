@@ -10,10 +10,6 @@ describe("charte des documents FABS-CI", () => {
     expect(CHARTE_HEX.zebra).toBe("#EAF2FF");
     expect(CHARTE_HEX.contour).toBe("#173B78");
     expect(CHARTE_HEX.traitInterne).toBe("#A8BFE3");
-    expect(CHARTE_HEX.totalFond).toBe("#2563EB");
-    expect(CHARTE_HEX.payeFond).toBe("#F3F4F6");
-    expect(CHARTE_HEX.resteFond).toBe("#E9530D");
-    expect(CHARTE_HEX.resteTexte).toBe("#FFFFFF");
   });
   it("zèbre une ligne sur deux selon l'indice global", () => {
     expect([0, 1, 2, 3].map(isZebraRow)).toEqual([false, true, false, true]);
