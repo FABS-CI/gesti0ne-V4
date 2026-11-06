@@ -8499,6 +8499,7 @@ export type Database = {
         Returns: undefined
       }
       _statut_libelle: { Args: { v: string }; Returns: string }
+      account_is_active: { Args: { _user_id: string }; Returns: boolean }
       affecter_colis_tournee: {
         Args: { _colis_ids: string[]; _tournee_id: string }
         Returns: Json
@@ -9096,16 +9097,6 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
-      }
-      creer_ecriture_manuelle: {
-        Args: {
-          _date: string
-          _journal: string
-          _libelle: string
-          _lignes: Json
-          _reference: string
-        }
-        Returns: string
       }
       creer_incident_stock: {
         Args: { _payload: Json }

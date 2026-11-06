@@ -27,8 +27,8 @@ export function CAAreaChart({ data }: { data: CAPoint[] }) {
             <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-        <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={12} />
+        <CartesianGrid vertical={false} stroke="var(--border)" />
+        <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={12} tickLine={false} axisLine={false} />
         <YAxis
           stroke="var(--muted-foreground)"
           fontSize={12}
@@ -42,6 +42,8 @@ export function CAAreaChart({ data }: { data: CAPoint[] }) {
           stroke="var(--primary)"
           strokeWidth={2}
           fill="url(#caGrad)"
+          animationDuration={900}
+          animationEasing="ease-out"
         />
       </AreaChart>
     </ResponsiveContainer>
@@ -52,11 +54,18 @@ export function CommandesBarChart({ data }: { data: CAPoint[] }) {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-        <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={12} />
-        <YAxis stroke="var(--muted-foreground)" fontSize={12} allowDecimals={false} />
+        <CartesianGrid vertical={false} stroke="var(--border)" />
+        <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={12} tickLine={false} axisLine={false} />
+        <YAxis stroke="var(--muted-foreground)" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
         <Tooltip />
-        <Bar dataKey="nb" name="Commandes" fill="var(--info)" radius={[3, 3, 0, 0]} />
+        <Bar
+          dataKey="nb"
+          name="Commandes"
+          fill="var(--chart-2)"
+          radius={[3, 3, 0, 0]}
+          animationDuration={800}
+          animationEasing="ease-out"
+        />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -79,6 +88,8 @@ export function StatutPieChart({
           innerRadius={50}
           outerRadius={85}
           paddingAngle={2}
+          animationDuration={800}
+          animationEasing="ease-out"
         >
           {data.map((s) => (
             <Cell key={s.statut} fill={colors[s.statut] ?? "var(--muted-foreground)"} />

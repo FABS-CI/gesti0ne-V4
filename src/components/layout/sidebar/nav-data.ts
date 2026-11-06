@@ -18,6 +18,7 @@ import {
   Building2,
   Inbox,
   Wallet,
+  Banknote,
   Calculator,
   ShieldCheck,
   Briefcase,
@@ -117,23 +118,59 @@ export const groups: Group[] = [
     grad: "linear-gradient(90deg,#10B981,#34D399)",
     shadow: "rgba(16,185,129,0.3)",
     items: [
-      // 📂 Catalogue — Données de référence
+      // Catalogue — Données de référence
       { title: "Produits", url: "/produits", icon: BookOpen, ready: true, section: "Catalogue" },
       { title: "Dépôts", url: "/depots", icon: Warehouse, ready: true, section: "Catalogue" },
-      { title: "Fournisseurs", url: "/fournisseurs", icon: Building2, ready: true, section: "Catalogue" },
+      {
+        title: "Fournisseurs",
+        url: "/fournisseurs",
+        icon: Building2,
+        ready: true,
+        section: "Catalogue",
+      },
 
-      // 📂 Réception — Entrées de marchandises
-      { title: "Approvisionnements", url: "/achats", icon: Inbox, ready: true, section: "Réception" },
+      // Réception — Entrées de marchandises
+      {
+        title: "Approvisionnements",
+        url: "/achats",
+        icon: Inbox,
+        ready: true,
+        section: "Réception",
+      },
       { title: "Mouvements", url: "/stock", icon: Package, ready: true, section: "Réception" },
 
-      // 📂 Stock — Gestion et contrôle des stocks
+      // Stock — Gestion et contrôle des stocks
       { title: "Transferts", url: "/transferts", icon: Warehouse, ready: true, section: "Stock" },
-      { title: "Inventaires", url: "/inventaires", icon: ClipboardList, ready: true, section: "Stock" },
-      { title: "Alertes de Stock", url: "/alertes-stock", icon: AlertTriangle, ready: true, section: "Stock" },
-      { title: "Incidents de Stock", url: "/incidents", icon: AlertTriangle, ready: true, section: "Stock" },
-      { title: "Audit stock", url: "/stock/audit", icon: ClipboardList, ready: true, section: "Stock" },
+      {
+        title: "Inventaires",
+        url: "/inventaires",
+        icon: ClipboardList,
+        ready: true,
+        section: "Stock",
+      },
+      {
+        title: "Alertes de Stock",
+        url: "/alertes-stock",
+        icon: AlertTriangle,
+        ready: true,
+        section: "Stock",
+      },
+      {
+        title: "Incidents de Stock",
+        url: "/incidents",
+        icon: AlertTriangle,
+        ready: true,
+        section: "Stock",
+      },
+      {
+        title: "Audit stock",
+        url: "/stock/audit",
+        icon: ClipboardList,
+        ready: true,
+        section: "Stock",
+      },
 
-      // 📂 Préparation — Préparation des commandes
+      // Préparation — Préparation des commandes
       { title: "Colisage", url: "/colisage", icon: Package, ready: true, section: "Préparation" },
       {
         title: "Préparateurs / Responsables colisage",
@@ -142,17 +179,41 @@ export const groups: Group[] = [
         ready: true,
         section: "Préparation",
       },
-      { title: "Bons de livraison", url: "/bons-livraison", icon: Truck, ready: true, section: "Préparation" },
+      {
+        title: "Bons de livraison",
+        url: "/bons-livraison",
+        icon: Truck,
+        ready: true,
+        section: "Préparation",
+      },
 
-      // 📂 Livraison — Transport et suivi
+      // Livraison — Transport et suivi
       { title: "Livreurs", url: "/livreurs", icon: Users, ready: true, section: "Livraison" },
       { title: "Flotte", url: "/fleet", icon: Car, ready: true, section: "Livraison" },
       { title: "Tournées", url: "/tournees", icon: Navigation, ready: true, section: "Livraison" },
-      { title: "Suivi des livraisons", url: "/livraison-suivi", icon: Truck, ready: true, section: "Livraison" },
+      {
+        title: "Suivi des livraisons",
+        url: "/livraison-suivi",
+        icon: Truck,
+        ready: true,
+        section: "Livraison",
+      },
 
-      // 📂 Analyse — Indicateurs et rapports
-      { title: "Dashboard logistique", url: "/dashboard-logistique", icon: BarChart3, ready: true, section: "Analyse" },
-      { title: "Rapports logistique", url: "/rapports-logistique", icon: BarChart3, ready: true, section: "Analyse" },
+      // Analyse — Indicateurs et rapports
+      {
+        title: "Dashboard logistique",
+        url: "/dashboard-logistique",
+        icon: BarChart3,
+        ready: true,
+        section: "Analyse",
+      },
+      {
+        title: "Rapports logistique",
+        url: "/rapports-logistique",
+        icon: BarChart3,
+        ready: true,
+        section: "Analyse",
+      },
     ],
   },
   {
@@ -226,7 +287,7 @@ export const groups: Group[] = [
   },
   {
     label: "Paie",
-    groupIcon: Wallet,
+    groupIcon: Banknote,
     color: "#EC4899",
     light: "rgba(236,72,153,0.12)",
     grad: "linear-gradient(90deg,#EC4899,#F472B6)",
@@ -271,9 +332,18 @@ export const groups: Group[] = [
       { title: "Journal d'audit", url: "/audit", icon: History, ready: true },
       { title: "Backup", url: "/backup", icon: Database, ready: true },
       { title: "Santé du système", url: "/admin/sante-systeme", icon: Shield, ready: true },
-      { title: "Renommage des clients", url: "/admin/renommage-clients", icon: UserCog, ready: true },
-      { title: "Apparence des documents", url: "/admin/apparence-documents", icon: FileText, ready: true },
-
+      {
+        title: "Renommage des clients",
+        url: "/admin/renommage-clients",
+        icon: UserCog,
+        ready: true,
+      },
+      {
+        title: "Apparence des documents",
+        url: "/admin/apparence-documents",
+        icon: FileText,
+        ready: true,
+      },
     ],
   },
   {

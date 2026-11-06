@@ -10,7 +10,7 @@ function walk(dir: string, out: string[] = []): string[] {
   for (const name of readdirSync(dir)) {
     const p = join(dir, name);
     if (statSync(p).isDirectory()) walk(p, out);
-    else if (p.endsWith(".tsx") && !SKIP.test(p)) out.push(p);
+    else if (p.endsWith(".tsx") && !SKIP.test(p.replace(/\\/g, "/"))) out.push(p);
   }
   return out;
 }

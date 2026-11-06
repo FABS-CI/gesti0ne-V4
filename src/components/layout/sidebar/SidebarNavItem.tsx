@@ -2,6 +2,11 @@ import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import type { Group, Item } from "./nav-data";
 
+/**
+ * Lien de navigation de second niveau (sans icône : l'icône est portée par le module).
+ * État actif : fond légèrement relevé + filet bleu électrique de 2 px posé sur le
+ * trait vertical du groupe — la signature visuelle de l'élément courant.
+ */
 export function SidebarNavItem({
   item,
   active,
@@ -11,14 +16,13 @@ export function SidebarNavItem({
   active: boolean;
   activeText?: string;
 }) {
-  const Icon = item.icon;
   return (
     <li>
       <Link
         to={item.url}
         aria-current={active ? "page" : undefined}
         className={cn(
-          "sidebar-nav-item relative flex min-h-10 items-center gap-3 rounded-md px-3 text-sm lg:min-h-9",
+          "sidebar-nav-item relative flex min-h-9 items-center rounded-md px-3 text-sm lg:min-h-8",
           "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
           active
             ? "bg-sidebar-accent font-medium text-sidebar-accent-foreground"
@@ -28,14 +32,9 @@ export function SidebarNavItem({
         {active && (
           <span
             aria-hidden
-            className="absolute inset-y-1.5 -left-2 w-0.5 rounded-full bg-sidebar-primary"
+            className="absolute inset-y-1.5 -left-[9px] w-0.5 rounded-full bg-sidebar-primary"
           />
         )}
-        <Icon
-          strokeWidth={1.75}
-          aria-hidden
-          className={cn("h-4 w-4 shrink-0", active ? "text-sidebar-primary" : "text-sidebar-foreground/50")}
-        />
         <span className="truncate">{item.title}</span>
       </Link>
     </li>

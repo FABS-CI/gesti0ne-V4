@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
-  ArrowRightLeft,
   Send,
   CheckCircle,
   XCircle,
@@ -166,7 +165,6 @@ function TransfertDetailPage() {
             </Link>
           </Button>
           <h1 className="ds-page-title flex items-center gap-2">
-            <ArrowRightLeft className="h-6 w-6 text-primary" />
             <span className="font-mono">{transfert.numero}</span>
             <Badge variant={colors[transfert.statut]}>{labels[transfert.statut]}</Badge>
           </h1>

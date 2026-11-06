@@ -89,6 +89,7 @@ export type Retour = {
   livraison_id: string | null;
   commande_id: string | null;
   montant: number;
+  remise_globale_pct?: number | null;
   created_by: string | null;
   created_by_nom: string | null;
   created_at: string;

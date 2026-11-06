@@ -1,19 +1,8 @@
+import { AnimatedNumber } from "@/components/dashboard/AnimatedNumber";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { formatFCFA } from "@/lib/format";
 
 import { useQuery } from "@tanstack/react-query";
-import {
-  Users,
-  UserCheck,
-  Wallet,
-  CalendarDays,
-  UserX,
-  FileWarning,
-  ArrowRight,
-  AlertCircle,
-  Building2,
-  Plane,
-} from "lucide-react";
 import { lazy, Suspense } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -53,56 +42,50 @@ function RHDashboardPage() {
     {
       label: "Employés",
       value: data.totalEmployes,
-      icon: Users,
       color: "#8B5CF6",
       to: "/employes" as const,
     },
     {
       label: "Actifs",
       value: data.employesActifs,
-      icon: UserCheck,
       color: "#10B981",
       to: "/employes" as const,
     },
     {
       label: "Masse salariale",
-      value: formatFCFA(data.masseSalariale),
-      icon: Wallet,
+      value: data.masseSalariale,
+      fcfa: true,
       color: "#F97316",
       to: "/paie" as const,
     },
     {
       label: "Congés en attente",
       value: data.congesEnAttente,
-      icon: CalendarDays,
       color: "#3B82F6",
       to: "/conges" as const,
     },
     {
       label: "Employés en congé",
       value: data.employesEnConge,
-      icon: Plane,
       color: "#0EA5E9",
       to: "/conges-en-cours" as const,
     },
     {
       label: "Absences en cours",
       value: data.absencesEnCours,
-      icon: UserX,
       color: "#EF4444",
       to: "/absences" as const,
     },
     {
       label: "Contrats à échéance (30j)",
       value: data.contratsExpirantBientot,
-      icon: FileWarning,
       color: "#F59E0B",
       to: "/contrats" as const,
     },
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="dash-anim space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="ds-page-title">Tableau de bord RH</h1>
@@ -110,38 +93,34 @@ function RHDashboardPage() {
         </div>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" asChild>
-            <Link to="/employes">
-              <Users className="mr-2 h-4 w-4" /> Employés
-            </Link>
+            <Link to="/employes">Employés</Link>
           </Button>
           <Button variant="outline" size="sm" asChild>
-            <Link to="/paie">
-              <Wallet className="mr-2 h-4 w-4" /> Paie
-            </Link>
+            <Link to="/paie">Paie</Link>
           </Button>
         </div>
       </div>
-
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="dash-stagger grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {kpis.map((k) => {
-          const Icon = k.icon;
           const card = (
             <Card
               key={k.label}
               className={
-                "to" in k && k.to
-                  ? "cursor-pointer transition hover:border-primary/50 hover:shadow-md"
-                  : ""
+                "to" in k && k.to ? "dash-lift cursor-pointer hover:border-primary/50" : ""
               }
             >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   {k.label}
                 </CardTitle>
-                <Icon className="h-5 w-5" style={{ color: k.color }} />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{k.value}</div>
+                <div className="text-2xl font-bold">
+                  <AnimatedNumber
+                    value={k.value}
+                    format={"fcfa" in k && k.fcfa ? formatFCFA : undefined}
+                  />
+                </div>
               </CardContent>
             </Card>
           );
@@ -159,9 +138,7 @@ function RHDashboardPage() {
       {data.alertes.length > 0 && (
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <AlertCircle className="h-5 w-5 text-warning" /> Alertes
-            </CardTitle>
+            <CardTitle className="flex items-center gap-2 text-base">Alertes</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {data.alertes.map((a, i) => (
@@ -177,7 +154,7 @@ function RHDashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <Building2 className="h-5 w-5 text-violet-500" /> Effectif par département
+              Effectif par département
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -190,28 +167,23 @@ function RHDashboardPage() {
             )}
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Accès rapides</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-2 sm:grid-cols-2">
             {[
-              { to: "/employes", label: "Employés", icon: Users },
-              { to: "/conges", label: "Congés", icon: CalendarDays },
-              { to: "/absences", label: "Absences", icon: UserX },
-              { to: "/contrats", label: "Contrats", icon: FileWarning },
-              { to: "/evaluations", label: "Évaluations", icon: UserCheck },
-              { to: "/paie", label: "Paie", icon: Wallet },
+              { to: "/employes", label: "Employés" },
+              { to: "/conges", label: "Congés" },
+              { to: "/absences", label: "Absences" },
+              { to: "/contrats", label: "Contrats" },
+              { to: "/evaluations", label: "Évaluations" },
+              { to: "/paie", label: "Paie" },
             ].map((l) => {
-              const Icon = l.icon;
               return (
                 <Button key={l.to} variant="outline" className="justify-between" asChild>
                   <Link to={l.to}>
-                    <span className="flex items-center gap-2">
-                      <Icon className="h-4 w-4" /> {l.label}
-                    </span>
-                    <ArrowRight className="h-4 w-4" />
+                    <span className="flex items-center gap-2">{l.label}</span>
                   </Link>
                 </Button>
               );

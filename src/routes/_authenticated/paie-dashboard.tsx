@@ -1,6 +1,6 @@
+import { AnimatedNumber } from "@/components/dashboard/AnimatedNumber";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Wallet, FileText, CheckCircle2, Clock, Users, TrendingUp } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -46,39 +46,37 @@ function PaieDashboardPage() {
   const kpis = [
     {
       label: "Bulletins générés",
-      value: String(data?.total ?? 0),
-      icon: FileText,
+      value: data?.total ?? 0,
       color: "#3B82F6",
     },
     {
       label: "Bulletins validés",
-      value: String(data?.valides ?? 0),
-      icon: CheckCircle2,
+      value: data?.valides ?? 0,
       color: "#10B981",
     },
-    { label: "En attente", value: String(data?.enAttente ?? 0), icon: Clock, color: "#F59E0B" },
+    { label: "En attente", value: data?.enAttente ?? 0, color: "#F59E0B" },
     {
       label: "Masse salariale",
-      value: formatFCFA(data?.masse ?? 0),
-      icon: Wallet,
+      value: data?.masse ?? 0,
+      fcfa: true,
       color: "#8B5CF6",
     },
     {
       label: "Retenues cumulées",
-      value: formatFCFA(data?.retenues ?? 0),
-      icon: TrendingUp,
+      value: data?.retenues ?? 0,
+      fcfa: true,
       color: "#EF4444",
     },
     {
       label: "Net total à payer",
-      value: formatFCFA(data?.nets ?? 0),
-      icon: Users,
+      value: data?.nets ?? 0,
+      fcfa: true,
       color: "#14B8A6",
     },
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="dash-anim space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="ds-page-title">Tableau de bord Paie</h1>
@@ -105,20 +103,21 @@ function PaieDashboardPage() {
       {isLoading ? (
         <p className="text-muted-foreground">Chargement…</p>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="dash-stagger grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {kpis.map((k) => {
-            const Icon = k.icon;
             return (
               <Card key={k.label}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
                     {k.label}
                   </CardTitle>
-                  <Icon className="h-5 w-5" style={{ color: k.color }} />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold" style={{ color: k.color }}>
-                    {k.value}
+                    <AnimatedNumber
+                      value={k.value}
+                      format={"fcfa" in k && k.fcfa ? formatFCFA : undefined}
+                    />
                   </div>
                 </CardContent>
               </Card>

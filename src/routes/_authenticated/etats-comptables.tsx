@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { AlertTriangle, Download, FileCode2, FileText, Lock } from "lucide-react";
+import { AlertTriangle, Download, FileCode2, Lock } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -216,8 +216,8 @@ function EtatsFinanciersPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <FileText className="h-6 w-6" /> États financiers annuels — FABS-CI
+          <h1 className="ds-page-title">
+            États financiers annuels — FABS-CI
           </h1>
           <p className="text-sm text-muted-foreground">
             Bilan, compte de résultat et TFT SYSCOHADA révisé (système normal), calculés depuis la

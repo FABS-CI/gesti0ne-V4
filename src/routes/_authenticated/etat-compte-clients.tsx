@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { FileText, Search, Download, FileDown, Bug } from "lucide-react";
+import { Search, Download, FileDown, Bug } from "lucide-react";
 import { toast } from "sonner";
 
 import { formatDateTime, formatFCFA } from "@/lib/format";
@@ -182,8 +182,8 @@ function EtatComptePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <FileText className="h-6 w-6 text-primary" /> États de compte clients
+          <h1 className="ds-page-title">
+            États de compte clients
           </h1>
           <p className="text-sm text-muted-foreground">Soldes et créances clients</p>
         </div>

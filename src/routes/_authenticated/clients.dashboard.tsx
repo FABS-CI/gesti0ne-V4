@@ -1,7 +1,7 @@
+import { AnimatedNumber } from "@/components/dashboard/AnimatedNumber";
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { BarChart3, Download } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -41,12 +41,10 @@ function CrmDashboardPage() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="dash-anim space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <BarChart3 className="h-6 w-6 text-primary" /> CRM & Analyses commerciales
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">CRM & Analyses commerciales</h1>
           <p className="text-sm text-muted-foreground">
             Ventes, segmentation clients, produits phares — temps réel
           </p>
@@ -62,13 +60,17 @@ function CrmDashboardPage() {
           </div>
         </div>
       </div>
-
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        <Kpi label="CA (encaissé)" value={formatFCFA(data?.ca_total ?? 0)} />
-        <Kpi label="Montant facturé" value={formatFCFA(data?.montant_facture ?? 0)} />
-        <Kpi label="Reste à encaisser" value={formatFCFA(data?.reste_a_encaisser ?? 0)} />
-        <Kpi label="Taux encaissement" value={`${(data?.taux_encaissement ?? 0).toFixed(1)}%`} />
-        <Kpi label="Commandes" value={String(data?.nb_commandes ?? 0)} />
+      <div className="dash-stagger grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <Kpi label="CA (encaissé)" value={data?.ca_total ?? 0} format={formatFCFA} />
+        <Kpi label="Montant facturé" value={data?.montant_facture ?? 0} format={formatFCFA} />
+        <Kpi label="Reste à encaisser" value={data?.reste_a_encaisser ?? 0} format={formatFCFA} />
+        <Kpi
+          label="Taux encaissement"
+          value={data?.taux_encaissement ?? 0}
+          decimals={1}
+          format={(n) => `${n.toFixed(1)}%`}
+        />
+        <Kpi label="Commandes" value={data?.nb_commandes ?? 0} />
       </div>
 
       {isLoading || !data ? (
@@ -105,9 +107,9 @@ function CrmDashboardPage() {
                   { label: "Clients classés", value: String((data?.top_clients ?? []).length) },
                   {
                     label: "CA cumulé",
-                    value:
-                      formatFCFA((data?.top_clients ?? [])
-                        .reduce((s, c) => s + Number(c.ca || 0), 0)),
+                    value: formatFCFA(
+                      (data?.top_clients ?? []).reduce((s, c) => s + Number(c.ca || 0), 0),
+                    ),
                   },
                 ],
               },
@@ -133,9 +135,9 @@ function CrmDashboardPage() {
                   { label: "Représentants", value: String((data?.top_representants ?? []).length) },
                   {
                     label: "CA cumulé",
-                    value:
-                      formatFCFA((data?.top_representants ?? [])
-                        .reduce((s, r) => s + Number(r.ca || 0), 0)),
+                    value: formatFCFA(
+                      (data?.top_representants ?? []).reduce((s, r) => s + Number(r.ca || 0), 0),
+                    ),
                   },
                 ],
               },
@@ -167,9 +169,9 @@ function CrmDashboardPage() {
                   },
                   {
                     label: "CA cumulé",
-                    value:
-                      formatFCFA((data?.top_produits ?? [])
-                        .reduce((s, p) => s + Number(p.ca || 0), 0)),
+                    value: formatFCFA(
+                      (data?.top_produits ?? []).reduce((s, p) => s + Number(p.ca || 0), 0),
+                    ),
                   },
                 ],
               },
@@ -201,9 +203,9 @@ function CrmDashboardPage() {
                   },
                   {
                     label: "CA cumulé",
-                    value:
-                      formatFCFA((data?.flop_produits ?? [])
-                        .reduce((s, p) => s + Number(p.ca || 0), 0)),
+                    value: formatFCFA(
+                      (data?.flop_produits ?? []).reduce((s, p) => s + Number(p.ca || 0), 0),
+                    ),
                   },
                 ],
               },
@@ -215,12 +217,24 @@ function CrmDashboardPage() {
   );
 }
 
-function Kpi({ label, value }: { label: string; value: string }) {
+function Kpi({
+  label,
+  value,
+  format,
+  decimals = 0,
+}: {
+  label: string;
+  value: number;
+  format?: (n: number) => string;
+  decimals?: number;
+}) {
   return (
     <Card>
       <CardContent className="p-4">
         <p className="text-sm text-muted-foreground">{label}</p>
-        <p className="mt-1 text-2xl font-bold">{value}</p>
+        <p className="mt-1 text-2xl font-bold">
+          <AnimatedNumber value={value} format={format} decimals={decimals} />
+        </p>
       </CardContent>
     </Card>
   );
@@ -243,7 +257,7 @@ function RankingCard({
         <CardTitle className="text-base">{title}</CardTitle>
         {onExport && (
           <Button variant="outline" size="sm" onClick={onExport} disabled={!rows.length}>
-            <Download className="mr-2 h-4 w-4" /> PDF
+            PDF
           </Button>
         )}
       </CardHeader>

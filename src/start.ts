@@ -3,6 +3,7 @@ import { getRequestHeader, setResponseHeader } from "@tanstack/react-start/serve
 
 import { renderErrorPage } from "./lib/error-page";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
+import { enforceActiveAccount } from "@/lib/account-status-middleware";
 
 function newRequestId(): string {
   try {
@@ -35,6 +36,6 @@ const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
 });
 
 export const startInstance = createStart(() => ({
-  functionMiddleware: [attachSupabaseAuth],
+  functionMiddleware: [attachSupabaseAuth, enforceActiveAccount],
   requestMiddleware: [errorMiddleware],
 }));

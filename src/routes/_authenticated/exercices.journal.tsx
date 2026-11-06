@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, History } from "lucide-react";
+import { ArrowLeft, } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { formatDateTime, formatFCFA } from "@/lib/format";
@@ -58,8 +58,8 @@ function JournalCloturePage() {
           </Link>
         </Button>
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <History className="h-6 w-6 text-primary" /> Journal de clôture
+          <h1 className="ds-page-title">
+            Journal de clôture
           </h1>
           <p className="text-sm text-muted-foreground">
             Historique des clôtures d'exercice et reports à-nouveau

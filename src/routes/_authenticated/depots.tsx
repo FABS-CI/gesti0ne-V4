@@ -2,7 +2,7 @@ import { askConfirm } from "@/components/common/GlobalConfirm";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Warehouse } from "lucide-react";
+import { Plus, } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -148,8 +148,8 @@ function DepotsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <Warehouse className="h-6 w-6 text-primary" /> Dépôts
+          <h1 className="ds-page-title">
+            Dépôts
           </h1>
           <p className="text-sm text-muted-foreground">Gestion des entrepôts</p>
         </div>

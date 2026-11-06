@@ -1,5 +1,8 @@
 
+import { CHARTE } from "./charte-documents";
 import { BaseDocument, BODY, roundedRect, COLORS, MARGINS, PAGE, CONTENT_W } from "./base-document";
+import { retourOriginReference } from "@/lib/retour-document-data";
+import { formatFCFA } from "@/lib/format";
 
 export class RetourDocument extends BaseDocument {
   async drawContent() {
@@ -13,6 +16,16 @@ export class RetourDocument extends BaseDocument {
     
     // 3. Tableau des articles retournés
     y = this.drawEnrichedTable(y);
+
+    const globalPct = Number((this.data as any).remiseGlobalePct ?? 0);
+    const total = (this.data as any).montantTotalStocke;
+    if (y < MARGINS.bottom + 70) { this.addNewPage(); y = PAGE.h - 120; }
+    if (globalPct > 0) {
+      y = this.drawLongText(y - 15, `Remise globale d'origine : ${globalPct} % (incluse dans les remises et nets des lignes)`, 9);
+    }
+    if (typeof total === "number") {
+      y = this.drawLongText(y - 15, `MONTANT DU RETOUR : ${formatFCFA(total)}`, 10);
+    }
 
     if (this.data.observations) {
       y = this.drawSectionTitle(y, "MOTIFS & OBSERVATIONS");
@@ -28,7 +41,12 @@ export class RetourDocument extends BaseDocument {
         this.page.drawText("FACTURE D'ORIGINE", { x: MARGINS.x, y: y - 10, size: 8, font: this.fonts.bold, color: BODY.ardoise });
         this.page.drawText(`N° : ${orig.fac.ref}`, { x: MARGINS.x, y: y - 27, size: 10, font: this.fonts.bold, color: BODY.nuit });
         this.page.drawText(`Date : ${this.formatDate(orig.fac.date)}`, { x: MARGINS.x + 280, y: y - 27, size: 10, font: this.fonts.bold, color: BODY.nuit });
-        return y - 45;
+        let nextY = y - 45;
+        for (const [label, source] of [["Commande", orig.cmd], ["Bon de livraison", orig.bl]] as const) {
+          if (!source) continue;
+          nextY = this.drawLongText(nextY, `${label} : ${retourOriginReference(source.ref)} — ${this.formatDate(source.date)}`, 9);
+        }
+        return nextY - 10;
       }
     }
     return y;
@@ -37,6 +55,7 @@ export class RetourDocument extends BaseDocument {
   async drawClientSection(y: number): Promise<number> {
     const entries = [
       { l: "Code client", v: (this.data as any).codeClient },
+      { l: "Représentant", v: (this.data as any).representant },
       { l: "Adresse", v: (this.data as any).adresseClient },
       { l: "Ville", v: (this.data as any).villeClient },
       { l: "Téléphone", v: this.data.clientTel },
@@ -45,7 +64,7 @@ export class RetourDocument extends BaseDocument {
     const boxH = 46 + Math.ceil(entries.length / 2) * 15;
     const boxW = CONTENT_W;
     
-    roundedRect(this.page, MARGINS.x, y - boxH, boxW, boxH, 6, { color: BODY.grisClair, borderColor: BODY.bord, borderWidth: 0.6 });
+    roundedRect(this.page, MARGINS.x, y - boxH, boxW, boxH, 6, { color: BODY.grisClair, borderColor: CHARTE.contour, borderWidth: 0.8 });
 
     this.page.drawText("IDENTIFICATION CLIENT", { x: MARGINS.x + 10, y: y - 15, size: 7, font: this.fonts.bold, color: BODY.ardoise });
     this.page.drawText(String(this.data.clientNom || "CLIENT INCONNU").toUpperCase(), { x: MARGINS.x + 10, y: y - 30, size: 11, font: this.fonts.bold, color: BODY.nuit });
@@ -69,12 +88,12 @@ export class RetourDocument extends BaseDocument {
 
   drawEnrichedTable(y: number): number {
     const colonnes = [
-      { label: "Code", key: "code", width: 55 },
-      { label: "Désignation", key: "designation", width: 172 },
-      { label: "Qté fact.", key: "qte_fact", width: 52 },
-      { label: "Qté retour", key: "qte_ret", width: 58 },
+      { label: "Code", key: "code", width: 65 },
+      { label: "Désignation", key: "designation", width: 152 },
+      { label: "Qté fact.", key: "qte_fact", width: 58 },
+      { label: "Qté retour", key: "qte_ret", width: 62 },
       { label: "P.U. HT", key: "pu", width: 65 },
-      { label: "Remise", key: "remPct", width: 50 },
+      { label: "Remise", key: "remisePct", width: 50 },
       { label: "Net HT", key: "net", width: 75 },
     ];
 
@@ -84,7 +103,7 @@ export class RetourDocument extends BaseDocument {
       qte_fact: l.qteCommandee || 0,
       qte_ret: l.qteRetournee || 0,
       pu: l.prixUnitaire || 0,
-      remPct: l.remisePct || 0,
+      remisePct: Number((l.remisePct ?? 0).toFixed(4)),
       net: l.montant || 0,
     }));
 
