@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Package, Search, Truck } from "lucide-react";
+import { Search, Truck } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -114,9 +114,9 @@ function LivraisonSuiviIndex() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard label="Total commandes" value={stats.total} icon={<Package />} />
-        <StatCard label="En cours" value={stats.enCours} icon={<Truck />} />
-        <StatCard label="Terminées" value={stats.livrees} icon={<Truck />} />
+        <StatCard label="Total commandes" value={stats.total} />
+        <StatCard label="En cours" value={stats.enCours} />
+        <StatCard label="Terminées" value={stats.livrees} />
       </div>
 
       <div className="rounded-md border bg-card p-4 space-y-4">
@@ -201,10 +201,9 @@ function LivraisonSuiviIndex() {
   );
 }
 
-function StatCard({ label, value, icon }: { label: string; value: number; icon: React.ReactNode }) {
+function StatCard({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-md border bg-card p-4 flex items-center gap-4">
-      <div className="p-2 rounded-md bg-primary/10 text-primary">{icon}</div>
+    <div className="rounded-md border bg-card p-4">
       <div>
         <div className="text-xs text-muted-foreground">{label}</div>
         <div className="text-2xl font-bold">{value}</div>
