@@ -7,13 +7,17 @@
 // donc automatiquement de la couleur du module courant.
 import type { CSSProperties } from "react";
 
+// Refonte Admin V2 : une seule couleur d'identité (bleu pétrole) pour tous
+// les modules ; l'orange est réservé aux alertes.
+const PETROLE = "#1E6A86";
+
 type ModuleDef = { prefixes: string[]; color: string };
 
 // Ordre important : le premier préfixe qui matche gagne. Les préfixes plus
 // spécifiques sont donc listés avant les préfixes courts.
 const MODULES: ModuleDef[] = [
   {
-    color: "#3B82F6", // Tableau de bord
+    color: PETROLE, // Tableau de bord
     prefixes: [
       "/dashboard",
       "/rapports/analyse",
@@ -21,7 +25,7 @@ const MODULES: ModuleDef[] = [
     ],
   },
   {
-    color: "#10B981", // Stocks & logistique
+    color: PETROLE, // Stocks & logistique
     prefixes: [
       "/produits",
       "/depots",
@@ -41,11 +45,11 @@ const MODULES: ModuleDef[] = [
     ],
   },
   {
-    color: "#EAB308", // Finances
+    color: PETROLE, // Finances
     prefixes: ["/finances", "/fne", "/etat-compte-clients"],
   },
   {
-    color: "#0EA5E9", // Comptabilité
+    color: PETROLE, // Comptabilité
     prefixes: [
       "/compta-dashboard",
       "/comptabilite",
@@ -58,7 +62,7 @@ const MODULES: ModuleDef[] = [
     ],
   },
   {
-    color: "#8B5CF6", // Ressources humaines
+    color: PETROLE, // Ressources humaines
     prefixes: [
       "/rh-dashboard",
       "/employes",
@@ -72,19 +76,19 @@ const MODULES: ModuleDef[] = [
     ],
   },
   {
-    color: "#EC4899", // Paie
+    color: PETROLE, // Paie
     prefixes: ["/paie"],
   },
   {
-    color: "#EF4444", // Notifications
+    color: PETROLE, // Notifications
     prefixes: ["/notifications", "/historique-envois"],
   },
   {
-    color: "#F59E0B", // Documents & sauvegardes
+    color: PETROLE, // Documents & sauvegardes
     prefixes: ["/file-storage", "/backup"],
   },
   {
-    color: "#6366F1", // Administration
+    color: PETROLE, // Administration
     prefixes: [
       "/utilisateurs",
       "/import-donnees",
@@ -96,7 +100,7 @@ const MODULES: ModuleDef[] = [
     ],
   },
   {
-    color: "#F97316", // Gestion commerciale (défaut / fallback)
+    color: PETROLE, // Gestion commerciale (défaut / fallback)
     prefixes: [
       "/clients",
       "/commandes",
@@ -112,7 +116,7 @@ const MODULES: ModuleDef[] = [
   },
 ];
 
-const DEFAULT_COLOR = "#F97316";
+const DEFAULT_COLOR = PETROLE;
 
 export function getModuleColor(pathname: string): string {
   for (const m of MODULES) {
