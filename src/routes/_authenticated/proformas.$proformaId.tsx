@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Calendar, FileDown, FileText, Loader2, Receipt, RefreshCw, User } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 import { generateUnifiedCommercialPDF } from "@/lib/pdf/unified-generator";
@@ -68,7 +68,9 @@ async function getCommandeLiee(commandeId: string | null) {
   if (!commandeId) return null;
   const { data, error } = await supabase
     .from("commandes")
-    .select("commande_id, reference, numero, adresse, ville, representant_nom, telephone, client_id")
+    .select(
+      "commande_id, reference, numero, adresse, ville, representant_nom, telephone, client_id",
+    )
     .eq("commande_id", commandeId)
     .maybeSingle();
   if (error) throw error;
@@ -79,7 +81,9 @@ async function getClientConditions(clientId: string | null) {
   if (!clientId) return null;
   const { data, error } = await supabase
     .from("clients")
-    .select("client_id, nom, adresse, ville, commune, telephone, email, representant, mode_paiement, delai_paiement")
+    .select(
+      "client_id, nom, adresse, ville, commune, telephone, email, representant, mode_paiement, delai_paiement",
+    )
     .eq("client_id", clientId)
     .maybeSingle();
   if (error) throw error;
@@ -93,7 +97,9 @@ function InfoLigne({ label, value }: { label: string; value?: string | null }) {
     <div className="flex flex-wrap items-center justify-between gap-2 border-b py-2 last:border-0">
       <span className="text-sm text-muted-foreground">{label}</span>
       {vide ? (
-        <Badge variant="destructive" className="animate-pulse">Champ manquant</Badge>
+        <Badge variant="destructive" className="animate-pulse">
+          Champ manquant
+        </Badge>
       ) : (
         <span className="text-sm font-medium">{value}</span>
       )}
@@ -180,7 +186,6 @@ function ProformaDetailPage() {
               }
             }}
           >
-            <RefreshCw className="mr-2 h-4 w-4" />
             Régénérer le PDF
           </Button>
           {(() => {
@@ -223,27 +228,22 @@ function ProformaDetailPage() {
                         clientNom: proforma.client_nom,
                         date: proforma.date_proforma,
                       } as any,
-                    }
+                    },
                   )
                 }
               >
-                {st.loading ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <FileDown className="mr-2 h-4 w-4" />
-                )}
+                {st.loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 {st.loading ? "Génération…" : "Télécharger PDF"}
               </Button>
             );
           })()}
         </div>
       </div>
-
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <User className="h-4 w-4" /> Client
+              Client
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">{proforma.client_nom ?? "—"}</CardContent>
@@ -251,7 +251,7 @@ function ProformaDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4" /> Date
+              Date
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">{frDate(proforma.date_proforma)}</CardContent>
@@ -259,7 +259,7 @@ function ProformaDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <FileText className="h-4 w-4" /> Validité
+              Validité
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">{frDate(proforma.date_validite)}</CardContent>
@@ -267,7 +267,7 @@ function ProformaDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Receipt className="h-4 w-4" /> Total
+              Total
             </CardTitle>
           </CardHeader>
           <CardContent className="text-lg font-bold text-primary">
@@ -275,11 +275,13 @@ function ProformaDetailPage() {
           </CardContent>
         </Card>
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle>
-            Informations reprises {commande ? `de la commande ${commande.reference ?? commande.numero ?? ""}` : "du client"}
+            Informations reprises{" "}
+            {commande
+              ? `de la commande ${commande.reference ?? commande.numero ?? ""}`
+              : "du client"}
           </CardTitle>
         </CardHeader>
         <CardContent className="grid gap-x-8 sm:grid-cols-2">
@@ -294,7 +296,10 @@ function ProformaDetailPage() {
           <InfoLigne
             label="Contact"
             value={
-              [commande?.representant_nom ?? client?.representant, commande?.telephone ?? client?.telephone]
+              [
+                commande?.representant_nom ?? client?.representant,
+                commande?.telephone ?? client?.telephone,
+              ]
                 .filter(Boolean)
                 .join(" — ") || null
             }
@@ -308,11 +313,16 @@ function ProformaDetailPage() {
                 : null
             }
           />
-          <InfoLigne label="Commande liée" value={commande?.reference ?? commande?.numero ?? null} />
-          <InfoLigne label="Date de validité" value={proforma.date_validite ? frDate(proforma.date_validite) : null} />
+          <InfoLigne
+            label="Commande liée"
+            value={commande?.reference ?? commande?.numero ?? null}
+          />
+          <InfoLigne
+            label="Date de validité"
+            value={proforma.date_validite ? frDate(proforma.date_validite) : null}
+          />
         </CardContent>
       </Card>
-
       <Card>
         <CardHeader>
           <CardTitle>Lignes de proforma</CardTitle>
@@ -340,8 +350,18 @@ function ProformaDetailPage() {
                   <TableRow key={l.ligne_id}>
                     <TableCell>{l.designation}</TableCell>
                     <TableCell className="text-right text-destructive">
-                      {Number(l.quantite ?? 0) * Number(l.prix_unitaire ?? 0) > 0 && l.total_ligne != null
-                        ? formatPercent(Math.max(0, (1 - Number(l.total_ligne) / (Number(l.quantite) * Number(l.prix_unitaire))) * 100), 2)
+                      {Number(l.quantite ?? 0) * Number(l.prix_unitaire ?? 0) > 0 &&
+                      l.total_ligne != null
+                        ? formatPercent(
+                            Math.max(
+                              0,
+                              (1 -
+                                Number(l.total_ligne) /
+                                  (Number(l.quantite) * Number(l.prix_unitaire))) *
+                                100,
+                            ),
+                            2,
+                          )
                         : "—"}
                     </TableCell>
                     <TableCell className="text-right">{l.quantite}</TableCell>

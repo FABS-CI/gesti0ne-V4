@@ -1,7 +1,7 @@
 import { formatDateTime } from "@/lib/format";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { History, ShieldAlert, Download, Circle } from "lucide-react";
+import { Circle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { exportCsv } from "@/lib/export-csv";
@@ -316,7 +316,6 @@ function AuditPage() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-20 text-center">
-        <ShieldAlert className="h-10 w-10 text-destructive" />
         <h1 className="ds-page-title">Accès restreint</h1>
         <p className="max-w-md text-sm text-muted-foreground">
           Le journal d'audit est réservé au Super Administrateur.
@@ -378,7 +377,6 @@ function AuditPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <History className="h-6 w-6 text-warning" />
           <div>
             <h1 className="ds-page-title">Journal d'audit</h1>
             <p className="text-sm text-muted-foreground">
@@ -387,7 +385,7 @@ function AuditPage() {
           </div>
         </div>
         <Button variant="outline" size="sm" onClick={onExport}>
-          <Download className="mr-2 h-4 w-4" /> Exporter
+          Exporter
         </Button>
         <Button
           variant="outline"
@@ -404,16 +402,12 @@ function AuditPage() {
             URL.revokeObjectURL(url);
           }}
         >
-          <Download className="mr-2 h-4 w-4" /> JSON
+          JSON
         </Button>
       </div>
-
       <AuditLiveBar onApplyPreset={applyPreset} />
-
       <AuditStats kpi={kpi} totalEvents={totalEvents} />
-
       <AuditCharts days={Number(periodFilter) || 30} />
-
       <AuditFilters
         search={search}
         setSearch={setSearch}
@@ -428,7 +422,6 @@ function AuditPage() {
         users={users}
         actions={actions}
       />
-
       <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)}>
         <TabsList>
           <TabsTrigger value="all">Chronologie</TabsTrigger>
@@ -438,11 +431,9 @@ function AuditPage() {
             Connectés ({connectedUsers.length})
           </TabsTrigger>
           <TabsTrigger value="alerts" className="gap-2">
-            <ShieldAlert className="h-3.5 w-3.5 text-destructive" />
             Alertes ({alerts?.filter((a) => !a.acknowledged_at).length ?? 0})
           </TabsTrigger>
         </TabsList>
-
         <TabsContent value="all" className="mt-4">
           <ChronologieTab
             rows={chrono?.rows ?? []}
@@ -455,7 +446,6 @@ function AuditPage() {
             onPageChange={setChronoPage}
           />
         </TabsContent>
-
         <TabsContent value="by-user" className="mt-4">
           <ByUserTab
             perUser={perUser}
@@ -465,7 +455,6 @@ function AuditPage() {
             }}
           />
         </TabsContent>
-
         <TabsContent value="online" className="mt-4">
           <OnlineTab
             onlineSearch={onlineSearch}
@@ -487,7 +476,6 @@ function AuditPage() {
             onExportCsv={onExportConnected}
             onExportPDF={onExportConnectedPDF}
           />
-
           <OnlineUserDialog
             selectedOnlineUser={selectedOnlineUser}
             onClose={() => setSelectedOnlineUser(null)}
@@ -501,7 +489,6 @@ function AuditPage() {
             }}
           />
         </TabsContent>
-
         <TabsContent value="alerts" className="mt-4">
           <div className="rounded-lg border">
             {(alerts ?? []).length === 0 ? (
@@ -536,7 +523,6 @@ function AuditPage() {
           </div>
         </TabsContent>
       </Tabs>
-
       <EventDetailDialog selected={selected} onClose={() => setSelected(null)} />
     </div>
   );

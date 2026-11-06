@@ -1,4 +1,4 @@
-import { RotateCcw, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { ReactNode } from "react";
@@ -45,7 +45,6 @@ export function FilterBadges({ badges, onResetAll, className }: Props) {
         onClick={onResetAll}
         className="h-7 gap-1 text-xs"
       >
-        <RotateCcw className="h-3 w-3" />
         Réinitialiser
       </Button>
     </div>

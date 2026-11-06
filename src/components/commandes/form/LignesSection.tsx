@@ -1,4 +1,3 @@
-import { AlertTriangle, Package, Plus, Trash2 } from "lucide-react";
 import { ProductCoverThumb } from "@/components/produits/ProductCoverThumb";
 import type { UseFormReturn, FieldArrayWithId } from "react-hook-form";
 import type { UseQueryResult } from "@tanstack/react-query";
@@ -59,7 +58,6 @@ export function LignesSection({
     <section className="relative overflow-hidden rounded-md border bg-card p-4 sm:p-5 space-y-4">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <h2 className="flex min-w-0 items-center gap-2 truncate text-base sm:text-lg font-semibold">
-          <Package className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
           <span className="truncate">
             3. Produits{" "}
             <span className="text-xs font-normal text-muted-foreground">
@@ -68,7 +66,6 @@ export function LignesSection({
           </span>
         </h2>
         <Button type="button" variant="outline" size="sm" onClick={addLigne} className="shrink-0">
-          <Plus className="h-4 w-4 sm:mr-2" />
           <span className="hidden sm:inline">Ajouter</span>
         </Button>
       </div>
@@ -84,18 +81,17 @@ export function LignesSection({
             <Table className="w-full table-auto [&_th]:px-2 [&_td]:px-2 [&_th]:py-2 [&_td]:py-2 text-xs">
               <TableHeader>
                 <TableRow>
-                   <TableHead className="w-[50px]">Cover</TableHead>
-                   <TableHead className="min-w-[200px]">Produit</TableHead>
-                   <TableHead className="w-[100px]">Réf.</TableHead>
- 
-                   <TableHead className="text-right w-[80px]">Stock</TableHead>
-                   <TableHead className="text-right w-[110px]">P.U.</TableHead>
-                   <TableHead className="text-right w-[80px]">Rem.%</TableHead>
-                   <TableHead className="text-right w-[100px]">Qté</TableHead>
-                   <TableHead className="text-right w-[100px]">Remise</TableHead>
-                   <TableHead className="text-right w-[110px]">Vente HT</TableHead>
-                   <TableHead className="text-right w-[120px]">Total HT</TableHead>
-                   <TableHead className="w-[40px]" />
+                  <TableHead className="w-[50px]">Cover</TableHead>
+                  <TableHead className="min-w-[200px]">Produit</TableHead>
+                  <TableHead className="w-[100px]">Réf.</TableHead>
+                  <TableHead className="text-right w-[80px]">Stock</TableHead>
+                  <TableHead className="text-right w-[110px]">P.U.</TableHead>
+                  <TableHead className="text-right w-[80px]">Rem.%</TableHead>
+                  <TableHead className="text-right w-[100px]">Qté</TableHead>
+                  <TableHead className="text-right w-[100px]">Remise</TableHead>
+                  <TableHead className="text-right w-[110px]">Vente HT</TableHead>
+                  <TableHead className="text-right w-[120px]">Total HT</TableHead>
+                  <TableHead className="w-[40px]" />
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -111,7 +107,7 @@ export function LignesSection({
                   const stock =
                     typeof stockLive === "number"
                       ? stockLive
-                      : (l as { stock_produit?: number | null })?.stock_produit ?? null;
+                      : ((l as { stock_produit?: number | null })?.stock_produit ?? null);
                   const over = typeof stock === "number" && (l?.quantite || 0) > stock;
                   return (
                     <TableRow
@@ -123,7 +119,9 @@ export function LignesSection({
                           produit={{
                             titre: l?.designation,
                             cover_path: (l as any)?.cover_path || (l as any)?.produits?.cover_path,
-                            cover_thumb_path: (l as any)?.cover_thumb_path || (l as any)?.produits?.cover_thumb_path,
+                            cover_thumb_path:
+                              (l as any)?.cover_thumb_path ||
+                              (l as any)?.produits?.cover_thumb_path,
                           }}
                           size="xs"
                         />
@@ -136,12 +134,16 @@ export function LignesSection({
                             onChange={(_id, produit) => onProduitChange(i, produit)}
                           />
                           {err?.produit_id && (
-                            <p className="text-xs text-destructive mt-0.5">{err.produit_id.message}</p>
+                            <p className="text-xs text-destructive mt-0.5">
+                              {err.produit_id.message}
+                            </p>
                           )}
                         </div>
                       </TableCell>
-
-                      <TableCell className="font-mono text-xs select-all py-3" title="Référence produit">
+                      <TableCell
+                        className="font-mono text-xs select-all py-3"
+                        title="Référence produit"
+                      >
                         {form.watch(`lignes.${i}.reference_produit`) || "—"}
                       </TableCell>
                       <TableCell className="text-right text-xs py-3">
@@ -173,10 +175,14 @@ export function LignesSection({
                           disabled={remiseEnLigneDisabled}
                         />
                         {err?.remise_pct && (
-                          <p className="text-xs text-destructive mt-0.5 leading-tight">{err.remise_pct.message}</p>
+                          <p className="text-xs text-destructive mt-0.5 leading-tight">
+                            {err.remise_pct.message}
+                          </p>
                         )}
                         {remiseEnLigneDisabled && (
-                          <p className="text-xs text-warning mt-0.5 leading-tight">Bloqué (RG active)</p>
+                          <p className="text-xs text-warning mt-0.5 leading-tight">
+                            Bloqué (RG active)
+                          </p>
                         )}
                       </TableCell>
                       <TableCell className="text-right">
@@ -184,7 +190,7 @@ export function LignesSection({
                           control={form.control}
                           name={`lignes.${i}.quantite`}
                           integer
-                           min={0}
+                          min={0}
                           className={`text-right h-10 px-1 min-w-[80px] ${over ? "border-destructive" : ""}`}
                         />
                       </TableCell>
@@ -198,8 +204,15 @@ export function LignesSection({
                         {formatFCFA(calc.totalLigne)}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button aria-label="Supprimer" type="button" variant="ghost" size="icon" onClick={() => remove(i)} className="h-8 w-8">
-                          <Trash2 className="h-4 w-4 text-destructive" />
+                        <Button
+                          aria-label="Supprimer"
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => remove(i)}
+                          className="h-8 w-8"
+                        >
+                          Supprimer
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -223,7 +236,7 @@ export function LignesSection({
               const stock =
                 typeof stockLive === "number"
                   ? stockLive
-                  : (l as { stock_produit?: number | null })?.stock_produit ?? null;
+                  : ((l as { stock_produit?: number | null })?.stock_produit ?? null);
               const over = typeof stock === "number" && (l?.quantite || 0) > stock;
               return (
                 <div
@@ -237,7 +250,8 @@ export function LignesSection({
                       produit={{
                         titre: l?.designation,
                         cover_path: (l as any)?.cover_path || (l as any)?.produits?.cover_path,
-                        cover_thumb_path: (l as any)?.cover_thumb_path || (l as any)?.produits?.cover_thumb_path,
+                        cover_thumb_path:
+                          (l as any)?.cover_thumb_path || (l as any)?.produits?.cover_thumb_path,
                       }}
                       size="sm"
                       className="mt-5"
@@ -255,30 +269,27 @@ export function LignesSection({
                         <p className="text-xs text-destructive">{err.produit_id.message}</p>
                       )}
                     </div>
-
-                    <Button aria-label="Supprimer"
+                    <Button
+                      aria-label="Supprimer"
                       type="button"
                       variant="ghost"
-                      size="icon"
+                      size="sm"
                       onClick={() => remove(i)}
                       className="shrink-0"
                     >
-                      <Trash2 className="h-4 w-4 text-destructive" />
+                      Supprimer
                     </Button>
                   </div>
-
                   <div className="flex flex-wrap items-center gap-2 text-xs">
                     <Badge variant="outline" className="font-mono">
                       {form.watch(`lignes.${i}.reference_produit`) || "—"}
                     </Badge>
                     {stock != null && (
                       <Badge variant={over ? "destructive" : "secondary"} className="gap-1">
-                        {over && <AlertTriangle className="h-3 w-3" />}
                         Stock : {stock}
                       </Badge>
                     )}
                   </div>
-
                   <div className="grid grid-cols-3 gap-2">
                     <div>
                       <Label className="text-xs">P.U.</Label>
@@ -302,10 +313,14 @@ export function LignesSection({
                         disabled={remiseEnLigneDisabled}
                       />
                       {err?.remise_pct && (
-                        <p className="text-xs text-destructive mt-0.5 leading-tight">{err.remise_pct.message}</p>
+                        <p className="text-xs text-destructive mt-0.5 leading-tight">
+                          {err.remise_pct.message}
+                        </p>
                       )}
                       {remiseEnLigneDisabled && (
-                        <p className="text-xs text-warning mt-0.5 leading-tight">Bloqué (RG active)</p>
+                        <p className="text-xs text-warning mt-0.5 leading-tight">
+                          Bloqué (RG active)
+                        </p>
                       )}
                     </div>
                     <div>
@@ -319,7 +334,6 @@ export function LignesSection({
                       />
                     </div>
                   </div>
-
                   <div className="border-t pt-2 flex justify-between text-xs">
                     <span className="text-muted-foreground">
                       Vente {formatFCFA(calc.brut)} · Remise −{formatFCFA(calc.montantRem)}
@@ -335,7 +349,6 @@ export function LignesSection({
 
       {hasOvershoot && (
         <div className="rounded-md border border-destructive/40 bg-destructive/10 text-destructive text-xs p-3 flex gap-2">
-          <AlertTriangle className="h-4 w-4 shrink-0" />
           <span>
             Certaines quantités dépassent le stock disponible (lignes&nbsp;:{" "}
             {overshootIndexes.map((i) => i + 1).join(", ")}). Corrigez avant d'enregistrer.

@@ -1,4 +1,3 @@
-import { Bug } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
@@ -24,7 +23,7 @@ export function EtatCompteDebugPanel({ clients, debugByClient, dateDebut, dateFi
     <Card className="border-dashed">
       <CardContent className="space-y-3 p-4 text-xs">
         <div className="flex flex-wrap items-center gap-2 font-medium">
-          <Bug className="h-4 w-4" /> Panneau debug — calculs partagés tableau ↔ PDF
+          Panneau debug — calculs partagés tableau ↔ PDF
         </div>
         <div className="grid gap-2 sm:grid-cols-2">
           <div>

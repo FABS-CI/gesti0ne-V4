@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Radio, RefreshCw, XCircle, Trash2, LogIn, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -44,15 +43,12 @@ export function AuditLiveBar({ onApplyPreset }: Props) {
             error_message?: string | null;
           };
           if (row.status === "error") {
-            toast.error(
-              `Échec — ${ACTION_LABEL[row.action ?? ""] ?? row.action ?? "action"}`,
-              {
-                description: [row.user_email, row.table_name, row.error_message]
-                  .filter(Boolean)
-                  .join(" · ")
-                  .slice(0, 160),
-              },
-            );
+            toast.error(`Échec — ${ACTION_LABEL[row.action ?? ""] ?? row.action ?? "action"}`, {
+              description: [row.user_email, row.table_name, row.error_message]
+                .filter(Boolean)
+                .join(" · ")
+                .slice(0, 160),
+            });
           }
         },
       )
@@ -101,15 +97,11 @@ export function AuditLiveBar({ onApplyPreset }: Props) {
           )}
           <span
             className={`relative inline-flex h-2 w-2 rounded-full ${
-              status === "live"
-                ? "bg-success"
-                : status === "down"
-                  ? "bg-destructive"
-                  : "bg-warning"
+              status === "live" ? "bg-success" : status === "down" ? "bg-destructive" : "bg-warning"
             }`}
           />
         </span>
-        <Radio className="h-3 w-3" />
+
         {status === "live" ? "Temps réel actif" : status === "down" ? "Déconnecté" : "Connexion…"}
       </Badge>
 
@@ -127,7 +119,6 @@ export function AuditLiveBar({ onApplyPreset }: Props) {
             setNewCount(0);
           }}
         >
-          <RefreshCw className="h-3.5 w-3.5" />
           {newCount} nouveau{newCount > 1 ? "x" : ""} — rafraîchir
         </Button>
       ) : (
@@ -142,7 +133,7 @@ export function AuditLiveBar({ onApplyPreset }: Props) {
           className="h-7 gap-1 px-2 text-xs"
           onClick={() => onApplyPreset?.("last15")}
         >
-          <Clock className="h-3.5 w-3.5" /> 15 min
+          15 min
         </Button>
         <Button
           size="sm"
@@ -150,7 +141,7 @@ export function AuditLiveBar({ onApplyPreset }: Props) {
           className="h-7 gap-1 px-2 text-xs text-destructive hover:text-destructive"
           onClick={() => onApplyPreset?.("errors")}
         >
-          <XCircle className="h-3.5 w-3.5" /> Échecs
+          Échecs
         </Button>
         <Button
           size="sm"
@@ -158,7 +149,7 @@ export function AuditLiveBar({ onApplyPreset }: Props) {
           className="h-7 gap-1 px-2 text-xs"
           onClick={() => onApplyPreset?.("deletions")}
         >
-          <Trash2 className="h-3.5 w-3.5" /> Suppressions
+          Suppressions
         </Button>
         <Button
           size="sm"
@@ -166,7 +157,7 @@ export function AuditLiveBar({ onApplyPreset }: Props) {
           className="h-7 gap-1 px-2 text-xs"
           onClick={() => onApplyPreset?.("logins")}
         >
-          <LogIn className="h-3.5 w-3.5" /> Connexions
+          Connexions
         </Button>
       </div>
     </div>

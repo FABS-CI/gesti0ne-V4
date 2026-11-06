@@ -3,7 +3,6 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useEffect, useMemo, useState } from "react";
-import { ShoppingCart } from "lucide-react";
 import { AdvancedSearchBar, type AdvancedFilters } from "@/components/search/AdvancedSearchBar";
 import { type Commande, STATUTS_COMMANDE } from "@/lib/commandes-api";
 import { FilterBadges, type FilterBadge } from "@/components/common/FilterBadges";
@@ -145,8 +144,11 @@ function CommandesPage() {
   return (
     <RenderProfiler id="page:commandes">
       <div className="space-y-6">
-        <PageHeader title="Ventes & Commandes" description="Pilotez le cycle de vente complet" className="mb-0" />
-
+        <PageHeader
+          title="Ventes & Commandes"
+          description="Pilotez le cycle de vente complet"
+          className="mb-0"
+        />
         <CommandesToolbar
           search={search}
           onSearchChange={setSearch}
@@ -159,10 +161,8 @@ function CommandesPage() {
           filtersOpen={filtersOpen || hasAdvanced}
           onToggleFilters={() => setFiltersOpen((o) => !o)}
         />
-
         <CommandesCycleSteps />
         <CommandesKpis kpis={kpis} />
-
         <FilterBadges
           badges={
             [
@@ -197,21 +197,21 @@ function CommandesPage() {
         />
 
         {(filtersOpen || hasAdvanced) && (
-        <div className="rounded-xl border bg-card p-3 shadow-sm">
-          <AdvancedSearchBar
-            fields={[
-              "reference",
-              "client",
-              "telephone",
-              "commercial",
-              "ville",
-              "dates",
-              "montants",
-            ]}
-            value={advanced}
-            onChange={setAdvanced}
-          />
-        </div>
+          <div className="rounded-xl border bg-card p-3 shadow-sm">
+            <AdvancedSearchBar
+              fields={[
+                "reference",
+                "client",
+                "telephone",
+                "commercial",
+                "ville",
+                "dates",
+                "montants",
+              ]}
+              value={advanced}
+              onChange={setAdvanced}
+            />
+          </div>
         )}
 
         <CommandesTable
@@ -228,14 +228,12 @@ function CommandesPage() {
           validerPending={validerMutation.isPending}
           onDelete={setCommandeToDelete}
         />
-
         <TablePagination
           page={page}
           pageSize={COMMANDES_PAGE_SIZE}
           total={total}
           onPageChange={setPage}
         />
-
         <DeleteCommandeDialog
           commande={commandeToDelete}
           onOpenChange={(o) => !o && setCommandeToDelete(null)}
@@ -248,7 +246,6 @@ function CommandesPage() {
             );
           }}
         />
-
         <FraisTransportDialog
           open={commandeAValider !== null}
           reference={items.find((c) => c.commande_id === commandeAValider)?.reference}
@@ -269,7 +266,6 @@ function CommandesPage() {
             );
           }}
         />
-
       </div>
     </RenderProfiler>
   );

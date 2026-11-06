@@ -1,4 +1,4 @@
-import { FileDown, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -33,7 +33,7 @@ export function DeclarationPreviewDialog({ preview, onClose }: Props) {
                 a.remove();
               }}
             >
-              <FileDown className="mr-2 h-4 w-4" /> Télécharger
+              Télécharger
             </Button>
             <Button size="sm" variant="ghost" onClick={onClose}>
               <X className="h-4 w-4" />

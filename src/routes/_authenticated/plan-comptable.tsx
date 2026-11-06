@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AlertTriangle, Loader2, Pencil, Plus, Search } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -158,9 +158,7 @@ function PlanComptablePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title">
-            Plan comptable
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Plan comptable</h1>
           <p className="text-sm text-muted-foreground">
             Référentiel SYSCOHADA révisé : {comptes.filter((c) => c.dans_plan).length} comptes, dont{" "}
             {comptes.filter((c) => c.nb_lignes > 0).length} mouvementés
@@ -168,14 +166,13 @@ function PlanComptablePage() {
         </div>
         {peutCreer && (
           <Button size="sm" onClick={() => ouvrir()}>
-            <Plus className="mr-2 h-4 w-4" /> Nouveau compte
+            Nouveau compte
           </Button>
         )}
       </div>
 
       {absents.length > 0 && (
         <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
           <AlertTitle>
             {absents.length} compte(s) utilisé(s) par des écritures mais absents du plan
           </AlertTitle>
@@ -204,10 +201,8 @@ function PlanComptablePage() {
           <div className="min-w-[220px] flex-1">
             <Label htmlFor="recherche-compte">Recherche</Label>
             <div className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 id="recherche-compte"
-                className="pl-8"
                 placeholder="Numéro ou libellé"
                 value={recherche}
                 onChange={(e) => setRecherche(e.target.value)}
@@ -246,7 +241,6 @@ function PlanComptablePage() {
           </div>
         </CardContent>
       </Card>
-
       <Card>
         <CardContent className="p-0">
           {q.error ? (
@@ -322,12 +316,12 @@ function PlanComptablePage() {
                           <TableCell>
                             {c.dans_plan && peutModifier && (
                               <Button
-                                size="icon"
+                                size="sm"
                                 variant="ghost"
                                 aria-label={`Modifier le compte ${c.numero}`}
                                 onClick={() => ouvrir(c)}
                               >
-                                <Pencil className="h-4 w-4" />
+                                Modifier
                               </Button>
                             )}
                           </TableCell>
@@ -341,7 +335,6 @@ function PlanComptablePage() {
           )}
         </CardContent>
       </Card>
-
       <Dialog open={!!edition} onOpenChange={(o) => !o && setEdition(null)}>
         <DialogContent>
           <DialogHeader>

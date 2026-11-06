@@ -1,11 +1,12 @@
-// Interface sans icônes décoratives : garde-fou des écrans déjà nettoyés.
+// Interface sans icônes décoratives (décision du 05/11/2026) : garde-fou sur tout l'ERP.
 //
 // Règle : une icône n'est gardée que si elle sert à utiliser l'écran (case cochée,
 // flèche de liste ou de tri, fermeture, chargement, menu d'options, mot de passe…).
-// Titres, cartes, menus, boutons qui ont déjà un libellé : texte seul, sans emoji.
-// Les écrans s'ajoutent à ECRANS_NETTOYES au fil des lots.
+// Titres, cartes, menus, alertes, boutons qui ont déjà un libellé : texte seul, sans emoji.
+// Tous les écrans de src/ sont vérifiés, sauf les composants de base src/components/ui
+// (flèches du calendrier et du carrousel, loupe de la palette de commandes, etc.).
 
-import { readFileSync, readdirSync } from "node:fs";
+import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -36,29 +37,23 @@ const ICONES_FONCTIONNELLES = new Set([
   "LucideIcon",
 ]);
 
-const dossier = (d: string) =>
-  readdirSync(d)
-    .filter((f) => f.endsWith(".tsx") && !f.includes(".test."))
-    .map((f) => join(d, f));
+const EXCLUS = [join("src", "components", "ui")];
 
-/** Lot 1 (05/11/2026) : tableaux de bord et navigation. */
-const ECRANS_NETTOYES = [
-  ...dossier("src/components/dashboard"),
-  "src/routes/_authenticated/dashboard.index.tsx",
-  "src/routes/_authenticated/compta-dashboard.tsx",
-  "src/routes/_authenticated/paie-dashboard.tsx",
-  "src/routes/_authenticated/rh-dashboard.tsx",
-  "src/routes/_authenticated/dashboard-logistique.tsx",
-  "src/routes/_authenticated/clients.dashboard.tsx",
-  "src/components/security/SecurityDashboard.tsx",
-  "src/components/layout/sidebar/SidebarNavItem.tsx",
-  // SidebarNavGroup : retiré le 06/11/2026 (refonte UI lot 1) — une icône par module,
-  // nécessaire au menu réduit en rail ; voir le test dédié plus bas.
-  "src/components/layout/MobileBottomNav.tsx",
-];
+function ecrans(dossier: string): string[] {
+  const out: string[] = [];
+  for (const nom of readdirSync(dossier)) {
+    const chemin = join(dossier, nom);
+    if (EXCLUS.includes(chemin)) continue;
+    if (statSync(chemin).isDirectory()) out.push(...ecrans(chemin));
+    else if (nom.endsWith(".tsx") && !nom.includes(".test.")) out.push(chemin);
+  }
+  return out;
+}
 
 const EMOJI = /\p{Extended_Pictographic}/u;
-const IMPORT_LUCIDE = /import\s*(?:type\s*)?\{([^}]*)\}\s*from\s*"lucide-react"/g;
+// ©, ® et ™ (mentions légales) et les flèches ← → ↔ (typographie) ne sont pas des emojis.
+const TYPOGRAPHIE = /[©®™←-⇿]/g;
+const IMPORT_LUCIDE = /import\s*(?:type\s*)?\{([^}]*)\}\s*from\s*["']lucide-react["']/g;
 
 function iconesImportees(src: string): string[] {
   const noms: string[] = [];
@@ -74,19 +69,39 @@ function iconesImportees(src: string): string[] {
   return noms;
 }
 
-describe("écrans sans icônes décoratives", () => {
-  for (const f of ECRANS_NETTOYES) {
-    const src = readFileSync(f, "utf8");
-    it(`${f} : seulement des icônes fonctionnelles`, () => {
-      expect(iconesImportees(src).filter((n) => !ICONES_FONCTIONNELLES.has(n))).toEqual([]);
-    });
-    it(`${f} : aucun emoji`, () => {
-      expect(EMOJI.test(src)).toBe(false);
-    });
-    it(`${f} : aucune icône affichée depuis les données (item.icon, Icon)`, () => {
-      expect(src).not.toMatch(/<(?:Icon|GroupIcon|\w+\.icon)\b/);
-    });
-  }
+describe("interface sans icônes décoratives", () => {
+  const fichiers = ecrans("src").map((f) => ({ f, src: readFileSync(f, "utf8") }));
+
+  it("vérifie bien l'ensemble des écrans", () => {
+    expect(fichiers.length).toBeGreaterThan(300);
+  });
+
+  it("seulement des icônes fonctionnelles", () => {
+    const fautes = fichiers.flatMap(({ f, src }) =>
+      iconesImportees(src)
+        .filter((n) => !ICONES_FONCTIONNELLES.has(n))
+        .map((n) => `${f} : ${n}`),
+    );
+    expect(fautes).toEqual([]);
+  });
+
+  it("aucun emoji", () => {
+    const fautes = fichiers
+      .filter(({ src }) => EMOJI.test(src.replace(TYPOGRAPHIE, "")))
+      .map(({ f }) => f);
+    expect(fautes).toEqual([]);
+  });
+
+  it("aucune icône affichée depuis les données (item.icon, Icon)", () => {
+    // Exception (refonte UI lot 1, 06/11/2026) : une icône par module dans le menu
+    // réduit en rail, vérifiée par le bloc dédié plus bas.
+    const RAIL = join("src", "components", "layout", "sidebar", "SidebarNavGroup.tsx");
+    const fautes = fichiers
+      .filter(({ f }) => f !== RAIL)
+      .filter(({ src }) => /<(?:Icon|GroupIcon|\w+\.icon|\w+\.Icon)\b/.test(src))
+      .map(({ f }) => f);
+    expect(fautes).toEqual([]);
+  });
 });
 
 describe("menu latéral : une icône par module, aucune par page", () => {

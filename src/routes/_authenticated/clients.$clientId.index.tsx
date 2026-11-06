@@ -2,7 +2,6 @@ import { DocumentTimeline } from "@/components/factures/DocumentTimeline";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { ArrowLeft, FileText, Mail, Pencil, PlusCircle, RotateCcw, Wallet, ReceiptText } from "lucide-react";
 
 import { TYPE_COLOR, normalizeTypeClient } from "@/lib/company";
 import { formatFCFA } from "@/lib/format";
@@ -41,7 +40,6 @@ import {
 } from "@/lib/client-detail-queries";
 import { useClientRealtime } from "@/hooks/use-client-realtime";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
-
 
 export const Route = createFileRoute("/_authenticated/clients/$clientId/")({
   component: ClientDetailPage,
@@ -125,16 +123,13 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
           ? { label: "Impayés", cls: "bg-warning text-white" }
           : { label: "Actif", cls: "bg-success text-white" };
 
-
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Button aria-label="Retour" variant="ghost" size="icon" asChild>
-            <Link to="/clients">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
+          <Button aria-label="Retour" variant="ghost" size="sm" asChild>
+            <Link to="/clients">Retour</Link>
           </Button>
           <div>
             <h1 className="ds-page-title">{client.nom}</h1>
@@ -146,7 +141,7 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
             className="bg-warning hover:bg-warning text-white"
             onClick={() => setEditOpen(true)}
           >
-            <Pencil className="mr-2 h-4 w-4" /> Modifier le client
+            Modifier le client
           </Button>
           <Button
             onClick={() =>
@@ -156,7 +151,7 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
               })
             }
           >
-            <PlusCircle className="mr-2 h-4 w-4" /> Commander
+            Commander
           </Button>
           <Button
             variant="secondary"
@@ -164,32 +159,40 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
               navigate({ to: "/paiements/nouveau", search: { clientId: client.client_id } })
             }
           >
-            <Wallet className="mr-2 h-4 w-4" /> Imputer un paiement
+            Imputer un paiement
           </Button>
           <Button
             variant="secondary"
             className="bg-purple-600 hover:bg-purple-700 text-white"
             onClick={() =>
-              navigate({ to: "/retours/nouveau", search: { clientId: client.client_id, type_retour: "avoir" } })
+              navigate({
+                to: "/retours/nouveau",
+                search: { clientId: client.client_id, type_retour: "avoir" },
+              })
             }
           >
-            <ReceiptText className="mr-2 h-4 w-4" /> Avoir
+            Avoir
           </Button>
           <Button
             variant="outline"
             onClick={() =>
-              navigate({ to: "/retours/nouveau", search: { clientId: client.client_id, type_retour: "physique" } })
+              navigate({
+                to: "/retours/nouveau",
+                search: { clientId: client.client_id, type_retour: "physique" },
+              })
             }
           >
-            <RotateCcw className="mr-2 h-4 w-4" /> Retour
+            Retour
           </Button>
           <Button
             className="whitespace-nowrap bg-success text-white shadow-sm transition-colors hover:bg-success"
             onClick={() => setReleveOpen(true)}
           >
-            <FileText className="mr-2 h-4 w-4" /> Relevé de compte
+            Relevé de compte
           </Button>
-          <Badge style={{ backgroundColor: type?.bg ?? "#CFD8DC", color: type?.color ?? "#0A2540" }}>
+          <Badge
+            style={{ backgroundColor: type?.bg ?? "#CFD8DC", color: type?.color ?? "#0A2540" }}
+          >
             {type?.label ?? client.type_client}
           </Badge>
           <Badge className={statutEnrichi.cls}>{statutEnrichi.label}</Badge>
@@ -200,9 +203,7 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
       {client.email && (
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" asChild>
-            <a href={`mailto:${client.email}`}>
-              <Mail className="mr-2 h-4 w-4" /> Email
-            </a>
+            <a href={`mailto:${client.email}`}>Email</a>
           </Button>
         </div>
       )}
@@ -300,57 +301,47 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
           <TabsTrigger value="historique">Historique</TabsTrigger>
           <TabsTrigger value="audit">Audit</TabsTrigger>
         </TabsList>
-
         <TabsContent value="infos" className="space-y-4" data-testid="client-readonly-card">
           <ClientInfosTab client={client} typeLabel={type?.label ?? client.type_client} />
         </TabsContent>
-
         <TabsContent value="commandes">
           <Section fallback={<SkeletonTable rows={6} cols={5} />}>
             <LazyCommandesTab clientId={clientId} />
           </Section>
         </TabsContent>
-
         <TabsContent value="proformas">
           <Section fallback={<SkeletonTable rows={6} cols={5} />}>
             <LazyProformasTab clientId={clientId} />
           </Section>
         </TabsContent>
-
         <TabsContent value="factures">
           <ClientFacturesTab factures={factures} />
         </TabsContent>
-
         <TabsContent value="bl">
           <Section fallback={<SkeletonTable rows={6} cols={6} />}>
             <LazyBLTab clientId={clientId} />
           </Section>
         </TabsContent>
-
         <TabsContent value="paiements">
           <Section fallback={<SkeletonTable rows={6} cols={5} />}>
             <LazyPaiementsTab clientId={clientId} />
           </Section>
         </TabsContent>
-
         <TabsContent value="livraisons">
           <Section fallback={<SkeletonTable rows={6} cols={5} />}>
             <LazyLivraisonsTab clientId={clientId} />
           </Section>
         </TabsContent>
-
         <TabsContent value="avoirs">
           <Section fallback={<SkeletonTable rows={6} cols={5} />}>
             <LazyAvoirsTab clientId={clientId} />
           </Section>
         </TabsContent>
-
         <TabsContent value="stats" className="space-y-4">
           <Section fallback={<SkeletonKpiRow count={8} />}>
             <LazyStatsTab clientId={clientId} client={client} counts={counts} factures={factures} />
           </Section>
         </TabsContent>
-
         <TabsContent value="historique">
           <DocumentTimeline type="client" id={clientId} />
         </TabsContent>

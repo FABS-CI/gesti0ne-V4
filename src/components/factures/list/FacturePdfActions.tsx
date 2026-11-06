@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { Receipt, Truck, CircleDollarSign, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { friendlyError } from "@/lib/friendly-error";
 import { Button } from "@/components/ui/button";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -96,12 +96,7 @@ export function FacturePdfActions({ facture: f, pdfState: st }: Props) {
         aria-label="Télécharger la facture (PDF)"
         onClick={downloadFacture}
       >
-        {st.loading ? (
-          <Loader2 className="mr-1 h-4 w-4 animate-spin" />
-        ) : (
-          <Receipt className="mr-1 h-4 w-4" />
-        )}{" "}
-        FAC
+        {st.loading ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : null} FAC
       </Button>
       <Button
         variant="outline"
@@ -119,17 +114,17 @@ export function FacturePdfActions({ facture: f, pdfState: st }: Props) {
           })
         }
       >
-        <Truck className="mr-1 h-4 w-4" /> BL
+        BL
       </Button>
       {showSolder && (
         <Button
           variant="ghost"
-          size="icon"
+          size="sm"
           title="Solder la facture"
           aria-label="Solder la facture"
           onClick={() => setSolderOpen(true)}
         >
-          <CircleDollarSign className="h-5 w-5 text-accent-foreground" />
+          Solder
         </Button>
       )}
       <SuperAdminDeleteButton

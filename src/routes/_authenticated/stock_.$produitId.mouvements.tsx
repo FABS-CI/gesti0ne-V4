@@ -2,7 +2,6 @@ import { formatDate, formatTime } from "@/lib/format";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -137,20 +136,15 @@ function AjustementPage() {
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <Button asChild variant="ghost" size="sm">
-          <Link to="/stock">
-            <ArrowLeft className="mr-1 h-4 w-4" /> Retour au stock
-          </Link>
+          <Link to="/stock">Retour au stock</Link>
         </Button>
         <div>
-          <h1 className="ds-page-title">
-            Ajustement manuel de stock
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Ajustement manuel de stock</h1>
           <p className="text-sm text-muted-foreground">
             {produit?.reference} · {produit?.titre}
           </p>
         </div>
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Informations produit</CardTitle>
@@ -223,10 +217,7 @@ function AjustementPage() {
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Heure</Label>
-                <Input
-                  readOnly
-                  value={formatTime(now)}
-                />
+                <Input readOnly value={formatTime(now)} />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Utilisateur</Label>
@@ -289,7 +280,6 @@ function AjustementPage() {
                 />
               </div>
             </div>
-
             <div className="space-y-1">
               <Label className="text-xs">
                 Motif de l'ajustement <span className="text-destructive">*</span>

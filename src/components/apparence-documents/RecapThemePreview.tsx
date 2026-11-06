@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Loader2, Maximize2, Download } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -100,7 +100,7 @@ export function RecapThemePreview({ docType, onDocTypeChange, theme }: Props) {
         )}
         <div className="ml-auto flex gap-2">
           <Button size="sm" variant="outline" disabled={!blob} onClick={() => setBig(true)}>
-            <Maximize2 className="mr-2 h-4 w-4" /> Ouvrir en grand
+            Ouvrir en grand
           </Button>
           <Button
             size="sm"
@@ -108,7 +108,7 @@ export function RecapThemePreview({ docType, onDocTypeChange, theme }: Props) {
             disabled={!blob}
             onClick={() => blob && downloadBlob(blob, filename)}
           >
-            <Download className="mr-2 h-4 w-4" /> Télécharger l'exemple
+            Télécharger l'exemple
           </Button>
         </div>
       </div>

@@ -1,27 +1,17 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Download, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import {
-  type Client,
-  deleteClient,
-  disableClient,
-  listClients,
-} from "@/lib/clients-api";
+import { type Client, deleteClient, disableClient, listClients } from "@/lib/clients-api";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { useActifsExerciceIds } from "@/hooks/use-actifs-exercice";
 import { usePermissions } from "@/hooks/use-permissions";
 import { CrmFiltersPanel } from "@/components/clients/CrmFilters";
 import { searchClientsCrm, type CrmFilters } from "@/lib/crm-api";
 import { describeSupabaseError } from "@/lib/rbac-api";
-import {
-  PAGE_SIZE,
-  exportClientsPdf,
-  isCrmActive,
-} from "@/lib/clients-index-helpers";
+import { PAGE_SIZE, exportClientsPdf, isCrmActive } from "@/lib/clients-index-helpers";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ClientsFilters } from "@/components/clients/list/ClientsFilters";
@@ -59,11 +49,7 @@ function ClientsPage() {
   const crmActive = isCrmActive(crmFilters);
 
   const hasActiveFilters =
-    !!search ||
-    typeFilter !== "all" ||
-    actifFilter !== "true" ||
-    actifsExercice ||
-    crmActive;
+    !!search || typeFilter !== "all" || actifFilter !== "true" || actifsExercice || crmActive;
 
   const resetAllFilters = () => {
     setSearch("");
@@ -210,7 +196,6 @@ function ClientsPage() {
             <p className="text-sm text-muted-foreground">{total} client(s)</p>
           </div>
         </div>
-
         <ClientsFilters
           search={search}
           setSearch={setSearch}
@@ -226,12 +211,10 @@ function ClientsPage() {
           actions={
             <>
               <Button variant="outline" onClick={handleExport}>
-                <Download className="mr-2 h-4 w-4" /> Export PDF
+                Export PDF
               </Button>
               {!readOnly && (
-                <Button onClick={() => navigate({ to: "/clients/nouveau" })}>
-                  <Plus className="mr-2 h-4 w-4" /> Nouveau client
-                </Button>
+                <Button onClick={() => navigate({ to: "/clients/nouveau" })}>Nouveau client</Button>
               )}
             </>
           }

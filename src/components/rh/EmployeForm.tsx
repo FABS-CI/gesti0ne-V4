@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, Banknote, Briefcase, Download, IdCard, Loader2, Phone, Plus, Save, Trash2, Upload, UserCircle2, X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirmDelete } from "@/hooks/use-confirm-delete";
 
@@ -136,9 +136,16 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
   const qc = useQueryClient();
   const editing = !!employe;
   const [form, setForm] = useState<EmployeFormValues>(() => buildInitial(employe));
-  const { data: rubriquesData } = useQuery({ queryKey: ["paie_rubriques"], queryFn: listRubriques });
-  const rubriquesActives = (rubriquesData ?? []).filter((r) => r.actif).map((r) => ({ code: r.code, libelle: r.libelle }));
-  const [initialSnapshot, setInitialSnapshot] = useState(() => JSON.stringify(buildInitial(employe)));
+  const { data: rubriquesData } = useQuery({
+    queryKey: ["paie_rubriques"],
+    queryFn: listRubriques,
+  });
+  const rubriquesActives = (rubriquesData ?? [])
+    .filter((r) => r.actif)
+    .map((r) => ({ code: r.code, libelle: r.libelle }));
+  const [initialSnapshot, setInitialSnapshot] = useState(() =>
+    JSON.stringify(buildInitial(employe)),
+  );
   const isDirty = JSON.stringify(form) !== initialSnapshot;
   const [tab, setTab] = useState("identite");
   const [errorTab, setErrorTab] = useState<string | null>(null);
@@ -171,7 +178,9 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
       setErrorTab(null);
       if (!editing && pendingAccount.enabled && !pendingAccount.email.trim()) {
         setTab("compte");
-        throw new Error("Indiquez l'e-mail de connexion du compte, ou décochez la création d'accès.");
+        throw new Error(
+          "Indiquez l'e-mail de connexion du compte, ou décochez la création d'accès.",
+        );
       }
       const input = parsed.data as EmployeInput;
       return editing ? updateEmploye(employe!.employe_id, input) : createEmploye(input);
@@ -183,7 +192,9 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
             await uploadEmployeDocument(emp.employe_id, d.file, d.type);
           } catch (e) {
             toast.error(`Document « ${d.file.name} » non envoyé`, {
-              description: friendlyError(e, "Échec de l'envoi") + " — l'employé est bien créé, ajoutez-le depuis sa fiche.",
+              description:
+                friendlyError(e, "Échec de l'envoi") +
+                " — l'employé est bien créé, ajoutez-le depuis sa fiche.",
             });
           }
         }
@@ -196,7 +207,8 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
           } catch (e) {
             toast.error("Compte d'accès non créé", {
               description:
-                friendlyError(e, "Erreur") + " — l'employé est bien créé, réessayez depuis sa fiche.",
+                friendlyError(e, "Erreur") +
+                " — l'employé est bien créé, réessayez depuis sa fiche.",
             });
           }
         }
@@ -229,17 +241,41 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
           </p>
         </div>
         <Button variant="outline" size="sm" onClick={() => navigate({ to: "/employes" })}>
-          <ArrowLeft className="mr-2 h-4 w-4" /> Retour
+          Retour
         </Button>
       </div>
-
       <Tabs value={tab} onValueChange={setTab} className="space-y-4">
         <TabsList className="flex flex-wrap h-auto">
-          <TabsTrigger value="identite" className={errorTab === "identite" ? "text-destructive" : undefined}>Identité</TabsTrigger>
-          <TabsTrigger value="contact" className={errorTab === "contact" ? "text-destructive" : undefined}>Contact</TabsTrigger>
-          <TabsTrigger value="professionnel" className={errorTab === "professionnel" ? "text-destructive" : undefined}>Professionnel</TabsTrigger>
-          <TabsTrigger value="financier" className={errorTab === "financier" ? "text-destructive" : undefined}>Financier</TabsTrigger>
-          <TabsTrigger value="administratif" className={errorTab === "administratif" ? "text-destructive" : undefined}>Administratif</TabsTrigger>
+          <TabsTrigger
+            value="identite"
+            className={errorTab === "identite" ? "text-destructive" : undefined}
+          >
+            Identité
+          </TabsTrigger>
+          <TabsTrigger
+            value="contact"
+            className={errorTab === "contact" ? "text-destructive" : undefined}
+          >
+            Contact
+          </TabsTrigger>
+          <TabsTrigger
+            value="professionnel"
+            className={errorTab === "professionnel" ? "text-destructive" : undefined}
+          >
+            Professionnel
+          </TabsTrigger>
+          <TabsTrigger
+            value="financier"
+            className={errorTab === "financier" ? "text-destructive" : undefined}
+          >
+            Financier
+          </TabsTrigger>
+          <TabsTrigger
+            value="administratif"
+            className={errorTab === "administratif" ? "text-destructive" : undefined}
+          >
+            Administratif
+          </TabsTrigger>
           <TabsTrigger value="documents">Documents</TabsTrigger>
           <TabsTrigger value="compte">Compte</TabsTrigger>
           <span
@@ -255,7 +291,7 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
         {/* IDENTITÉ */}
         <TabsContent value="identite">
           <Card>
-            <SectionHeader icon={UserCircle2} title="Identité" color="#3B82F6" />
+            <SectionHeader title="Identité" color="#3B82F6" />
             <CardContent className="grid gap-4 sm:grid-cols-2 pl-5 sm:pl-6">
               <div className="sm:col-span-2 flex items-center gap-4">
                 <Avatar className="h-20 w-20">
@@ -355,7 +391,7 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
         {/* CONTACT */}
         <TabsContent value="contact">
           <Card>
-            <SectionHeader icon={Phone} title="Contact" color="#0EA5E9" />
+            <SectionHeader title="Contact" color="#0EA5E9" />
             <CardContent className="grid gap-4 sm:grid-cols-2 pl-5 sm:pl-6">
               <Field label="Lieu de résidence" full>
                 <Input
@@ -396,7 +432,7 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
         {/* PROFESSIONNEL */}
         <TabsContent value="professionnel">
           <Card>
-            <SectionHeader icon={Briefcase} title="Informations professionnelles" color="#8B5CF6" />
+            <SectionHeader title="Informations professionnelles" color="#8B5CF6" />
             <CardContent className="grid gap-4 sm:grid-cols-2 pl-5 sm:pl-6">
               <Field label="Service">
                 <Input
@@ -459,7 +495,7 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
         {/* FINANCIER */}
         <TabsContent value="financier">
           <Card>
-            <SectionHeader icon={Banknote} title="Rémunération & paiement" color="#10B981" />
+            <SectionHeader title="Rémunération & paiement" color="#10B981" />
             <CardContent className="grid gap-4 sm:grid-cols-2 pl-5 sm:pl-6">
               <Field label="Salaire de base (FCFA) *">
                 <Input
@@ -483,7 +519,9 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
                   min={0}
                   step={1}
                   value={form.nombre_enfants ?? 0}
-                  onChange={(e) => set("nombre_enfants", Math.max(0, Math.floor(Number(e.target.value) || 0)))}
+                  onChange={(e) =>
+                    set("nombre_enfants", Math.max(0, Math.floor(Number(e.target.value) || 0)))
+                  }
                 />
               </Field>
               <Field label="Parts fiscales">
@@ -499,7 +537,12 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => set("parts", partsFiscales(form.situation_matrimoniale, form.nombre_enfants ?? 0))}
+                    onClick={() =>
+                      set(
+                        "parts",
+                        partsFiscales(form.situation_matrimoniale, form.nombre_enfants ?? 0),
+                      )
+                    }
                   >
                     Recalculer
                   </Button>
@@ -545,7 +588,7 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
         {/* ADMINISTRATIF */}
         <TabsContent value="administratif">
           <Card>
-            <SectionHeader icon={IdCard} title="Administratif & sécurité sociale" color="#F97316" />
+            <SectionHeader title="Administratif & sécurité sociale" color="#F97316" />
             <CardContent className="grid gap-4 sm:grid-cols-2 pl-5 sm:pl-6">
               <Field label="Niveau d'études" full>
                 <Input
@@ -595,7 +638,6 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
             <PendingDocumentsTab docs={pendingDocs} onChange={setPendingDocs} />
           )}
         </TabsContent>
-
         <TabsContent value="compte">
           {editing ? (
             <AccountTab employeId={employe!.employe_id} defaultEmail={employe!.email ?? ""} />
@@ -611,7 +653,6 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
           {editing ? <HistoriqueTab employeId={employe!.employe_id} /> : null}
         </TabsContent>
       </Tabs>
-
       <div className="sticky bottom-0 -mx-4 flex flex-wrap items-center justify-end gap-2 border-t bg-background px-4 py-3 sm:mx-0 sm:rounded-lg sm:border">
         <UnsavedIndicator dirty={isDirty} />
         <Button
@@ -622,11 +663,7 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
           <X className="mr-2 h-4 w-4" /> Annuler
         </Button>
         <Button onClick={() => save.mutate()} disabled={save.isPending}>
-          {save.isPending ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Save className="mr-2 h-4 w-4" />
-          )}
+          {save.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
           {editing ? "Enregistrer" : "Créer"}
         </Button>
       </div>
@@ -726,11 +763,7 @@ function PhotoUpload({
         disabled={busy}
         onClick={() => ref.current?.click()}
       >
-        {busy ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <Upload className="mr-2 h-4 w-4" />
-        )}
+        {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
         Changer la photo
       </Button>
     </div>
@@ -759,7 +792,7 @@ function MoneyList({
           variant="outline"
           onClick={() => onChange([...items, { libelle: "", montant: 0 }])}
         >
-          <Plus className="mr-1 h-4 w-4" /> Ajouter
+          Ajouter
         </Button>
       </div>
       {items.length === 0 && <p className="text-xs text-muted-foreground">Aucun élément.</p>}
@@ -797,16 +830,19 @@ function MoneyList({
             <option value="">Sans rubrique</option>
             <option value="503">503 — Transport</option>
             {rubriques.map((r) => (
-              <option key={r.code} value={r.code}>{r.code} — {r.libelle}</option>
+              <option key={r.code} value={r.code}>
+                {r.code} — {r.libelle}
+              </option>
             ))}
           </select>
-          <Button aria-label="Supprimer"
+          <Button
+            aria-label="Supprimer"
             type="button"
-            size="icon"
+            size="sm"
             variant="ghost"
             onClick={() => onChange(items.filter((_, j) => j !== i))}
           >
-            <Trash2 className="h-4 w-4" />
+            Supprimer
           </Button>
         </div>
       ))}
@@ -833,7 +869,7 @@ function TextValueList({
           variant="outline"
           onClick={() => onChange([...items, { libelle: "", valeur: "" }])}
         >
-          <Plus className="mr-1 h-4 w-4" /> Ajouter
+          Ajouter
         </Button>
       </div>
       {items.length === 0 && <p className="text-xs text-muted-foreground">Aucun élément.</p>}
@@ -857,13 +893,14 @@ function TextValueList({
               onChange(n);
             }}
           />
-          <Button aria-label="Supprimer"
+          <Button
+            aria-label="Supprimer"
             type="button"
-            size="icon"
+            size="sm"
             variant="ghost"
             onClick={() => onChange(items.filter((_, j) => j !== i))}
           >
-            <Trash2 className="h-4 w-4" />
+            Supprimer
           </Button>
         </div>
       ))}
@@ -895,7 +932,7 @@ function DiplomeList({
           variant="outline"
           onClick={() => onChange([...items, { intitule: "" }])}
         >
-          <Plus className="mr-1 h-4 w-4" /> Ajouter
+          Ajouter
         </Button>
       </div>
       {items.length === 0 && <p className="text-xs text-muted-foreground">Aucun élément.</p>}
@@ -929,13 +966,14 @@ function DiplomeList({
               onChange(n);
             }}
           />
-          <Button aria-label="Supprimer"
+          <Button
+            aria-label="Supprimer"
             type="button"
-            size="icon"
+            size="sm"
             variant="ghost"
             onClick={() => onChange(items.filter((_, j) => j !== i))}
           >
-            <Trash2 className="h-4 w-4" />
+            Supprimer
           </Button>
         </div>
       ))}
@@ -978,7 +1016,7 @@ function TagsInput({
           }}
         />
         <Button type="button" variant="outline" onClick={add}>
-          <Plus className="h-4 w-4" />
+          Ajouter
         </Button>
       </div>
       <div className="flex flex-wrap gap-1">
@@ -1062,11 +1100,7 @@ function DocumentsTab({ employeId }: { employeId: string }) {
             onChange={(e) => handle(e.target.files?.[0] ?? null)}
           />
           <Button type="button" onClick={() => ref.current?.click()} disabled={busy}>
-            {busy ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Upload className="mr-2 h-4 w-4" />
-            )}
+            {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             Ajouter un document
           </Button>
         </div>
@@ -1083,11 +1117,16 @@ function DocumentsTab({ employeId }: { employeId: string }) {
                 <span className="text-xs text-muted-foreground">
                   {d.taille_octets ? `${Math.round(d.taille_octets / 1024)} Ko` : ""}
                 </span>
-                <Button aria-label="Télécharger" size="icon" variant="ghost" onClick={() => download(d)}>
-                  <Download className="h-4 w-4" />
+                <Button
+                  aria-label="Télécharger"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => download(d)}
+                >
+                  Télécharger
                 </Button>
-                <Button aria-label="Supprimer" size="icon" variant="ghost" onClick={() => del(d)}>
-                  <Trash2 className="h-4 w-4" />
+                <Button aria-label="Supprimer" size="sm" variant="ghost" onClick={() => del(d)}>
+                  Supprimer
                 </Button>
               </div>
             ))}
@@ -1332,17 +1371,44 @@ const TAB_LABELS: Record<string, string> = {
 const FIELD_TABS: Record<string, string[]> = {
   contact: ["adresse", "commune", "ville", "pays", "email", "telephone", "telephone_secondaire"],
   professionnel: [
-    "departement", "fonction_id", "poste", "service", "responsable_hierarchique_id",
-    "type_contrat", "date_embauche", "date_fin_contrat", "statut_employe", "temps_travail",
-    "categorie", "echelon", "site_affectation", "actif",
+    "departement",
+    "fonction_id",
+    "poste",
+    "service",
+    "responsable_hierarchique_id",
+    "type_contrat",
+    "date_embauche",
+    "date_fin_contrat",
+    "statut_employe",
+    "temps_travail",
+    "categorie",
+    "echelon",
+    "site_affectation",
+    "actif",
   ],
   financier: [
-    "salaire", "sursalaire", "nombre_enfants", "parts", "primes", "indemnites", "avantages", "mode_paiement", "banque",
-    "numero_compte", "devise", "centre_cout",
+    "salaire",
+    "sursalaire",
+    "nombre_enfants",
+    "parts",
+    "primes",
+    "indemnites",
+    "avantages",
+    "mode_paiement",
+    "banque",
+    "numero_compte",
+    "devise",
+    "centre_cout",
   ],
   administratif: [
-    "niveau_etudes", "diplomes", "competences", "certifications", "contact_urgence_nom",
-    "contact_urgence_telephone", "contact_urgence_lien", "observations",
+    "niveau_etudes",
+    "diplomes",
+    "competences",
+    "certifications",
+    "contact_urgence_nom",
+    "contact_urgence_telephone",
+    "contact_urgence_lien",
+    "observations",
   ],
 };
 
@@ -1391,13 +1457,17 @@ function PendingDocumentsTab({
               const files = Array.from(e.target.files ?? []);
               onChange([
                 ...docs,
-                ...files.map((file) => ({ key: `${Date.now()}-${file.name}-${Math.random()}`, file, type })),
+                ...files.map((file) => ({
+                  key: `${Date.now()}-${file.name}-${Math.random()}`,
+                  file,
+                  type,
+                })),
               ]);
               if (ref.current) ref.current.value = "";
             }}
           />
           <Button type="button" onClick={() => ref.current?.click()}>
-            <Upload className="mr-2 h-4 w-4" /> Ajouter un document
+            Ajouter un document
           </Button>
         </div>
         {docs.length === 0 ? (
@@ -1417,7 +1487,7 @@ function PendingDocumentsTab({
                   variant="ghost"
                   onClick={() => onChange(docs.filter((x) => x.key !== d.key))}
                 >
-                  <Trash2 className="mr-1 h-4 w-4" /> Retirer
+                  Retirer
                 </Button>
               </div>
             ))}
@@ -1461,8 +1531,8 @@ function PendingAccountTab({
           </Field>
         ) : null}
         <p className="text-xs text-muted-foreground">
-          Le compte est créé et l'invitation envoyée après l'enregistrement de la fiche. Les
-          droits se règlent ensuite dans la gestion des utilisateurs.
+          Le compte est créé et l'invitation envoyée après l'enregistrement de la fiche. Les droits
+          se règlent ensuite dans la gestion des utilisateurs.
         </p>
       </CardContent>
     </Card>

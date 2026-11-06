@@ -3,18 +3,7 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import {
-  KeyRound,
-  Lock,
-  LockOpen,
-  MoreHorizontal,
-  Pencil,
-  Plus,
-  Search,
-  UserCheck,
-  UserX,
-  ShieldCheck,
-} from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 
 import {
   secCreateUser,
@@ -88,7 +77,10 @@ type UserRow = {
 
 const NONE = "__none__";
 
-const STATUT_META: Record<Statut, { label: string; variant: "default" | "secondary" | "destructive" }> = {
+const STATUT_META: Record<
+  Statut,
+  { label: string; variant: "default" | "secondary" | "destructive" }
+> = {
   actif: { label: "Actif", variant: "default" },
   suspendu: { label: "Suspendu", variant: "secondary" },
   verrouille: { label: "Verrouillé", variant: "destructive" },
@@ -212,8 +204,12 @@ export function UsersAdmin() {
   const depots = refs.data?.depots ?? [];
   const roles = refs.data?.roles ?? [];
 
-  const labelOf = (list: { [k: string]: unknown }[], idKey: string, labelKey: string, id: string | null) =>
-    id ? ((list.find((x) => x[idKey] === id)?.[labelKey] as string) ?? "—") : "—";
+  const labelOf = (
+    list: { [k: string]: unknown }[],
+    idKey: string,
+    labelKey: string,
+    id: string | null,
+  ) => (id ? ((list.find((x) => x[idKey] === id)?.[labelKey] as string) ?? "—") : "—");
 
   const openEdit = (u: UserRow) =>
     setForm({
@@ -247,13 +243,12 @@ export function UsersAdmin() {
     <div className="space-y-4">
       <div className="grid gap-3 sm:grid-cols-3">
         {[
-          { label: "Utilisateurs", value: counters.total, icon: UserCheck },
-          { label: "Comptes actifs", value: counters.actifs, icon: ShieldCheck },
-          { label: "Suspendus / verrouillés", value: counters.bloques, icon: Lock },
+          { label: "Utilisateurs", value: counters.total },
+          { label: "Comptes actifs", value: counters.actifs },
+          { label: "Suspendus / verrouillés", value: counters.bloques },
         ].map((kpi) => (
           <Card key={kpi.label}>
             <CardContent className="flex items-center gap-3 p-4">
-              <kpi.icon className="h-5 w-5 text-muted-foreground" />
               <div>
                 <p className="text-xs text-muted-foreground">{kpi.label}</p>
                 <p className="text-xl font-semibold tabular-nums">{kpi.value}</p>
@@ -262,21 +257,20 @@ export function UsersAdmin() {
           </Card>
         ))}
       </div>
-
       <Card>
         <CardContent className="space-y-4 p-4">
           <div className="flex flex-col gap-2 md:flex-row md:items-center">
             <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Rechercher un nom, e-mail, matricule…"
-                className="pl-8"
               />
             </div>
             <Select value={statutFilter} onValueChange={setStatutFilter}>
-              <SelectTrigger className="md:w-44"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="md:w-44">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="tous">Tous les statuts</SelectItem>
                 <SelectItem value="actif">Actif</SelectItem>
@@ -285,19 +279,20 @@ export function UsersAdmin() {
               </SelectContent>
             </Select>
             <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="md:w-52"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="md:w-52">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="tous">Tous les rôles</SelectItem>
                 {roles.map((r) => (
-                  <SelectItem key={r.code} value={r.code}>{r.label}</SelectItem>
+                  <SelectItem key={r.code} value={r.code}>
+                    {r.label}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <Button onClick={() => setForm({ ...emptyForm })}>
-              <Plus className="mr-2 h-4 w-4" /> Nouvel utilisateur
-            </Button>
+            <Button onClick={() => setForm({ ...emptyForm })}>Nouvel utilisateur</Button>
           </div>
-
           <div className="overflow-x-auto rounded-md border">
             <Table>
               <TableHeader>
@@ -316,7 +311,9 @@ export function UsersAdmin() {
                 {users.isLoading &&
                   Array.from({ length: 5 }).map((_, i) => (
                     <TableRow key={i}>
-                      <TableCell colSpan={8}><Skeleton className="h-8 w-full" /></TableCell>
+                      <TableCell colSpan={8}>
+                        <Skeleton className="h-8 w-full" />
+                      </TableCell>
                     </TableRow>
                   ))}
                 {!users.isLoading && rows.length === 0 && (
@@ -379,11 +376,9 @@ export function UsersAdmin() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => openEdit(u)}>
-                            <Pencil className="mr-2 h-4 w-4" /> Modifier
-                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => openEdit(u)}>Modifier</DropdownMenuItem>
                           <DropdownMenuItem onClick={() => setPwdTarget(u)}>
-                            <KeyRound className="mr-2 h-4 w-4" /> Réinitialiser le mot de passe
+                            Réinitialiser le mot de passe
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           {u.statut !== "actif" ? (
@@ -392,7 +387,7 @@ export function UsersAdmin() {
                                 statutMutation.mutate({ user_id: u.id, statut: "actif" })
                               }
                             >
-                              <LockOpen className="mr-2 h-4 w-4" /> Réactiver / déverrouiller
+                              Réactiver / déverrouiller
                             </DropdownMenuItem>
                           ) : (
                             <>
@@ -401,7 +396,7 @@ export function UsersAdmin() {
                                   statutMutation.mutate({ user_id: u.id, statut: "suspendu" })
                                 }
                               >
-                                <UserX className="mr-2 h-4 w-4" /> Suspendre
+                                Suspendre
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 className="text-destructive"
@@ -409,7 +404,7 @@ export function UsersAdmin() {
                                   statutMutation.mutate({ user_id: u.id, statut: "verrouille" })
                                 }
                               >
-                                <Lock className="mr-2 h-4 w-4" /> Verrouiller
+                                Verrouiller
                               </DropdownMenuItem>
                             </>
                           )}
@@ -423,11 +418,12 @@ export function UsersAdmin() {
           </div>
         </CardContent>
       </Card>
-
       <Dialog open={!!form} onOpenChange={(o) => !o && setForm(null)}>
         <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{form?.user_id ? "Modifier l'utilisateur" : "Nouvel utilisateur"}</DialogTitle>
+            <DialogTitle>
+              {form?.user_id ? "Modifier l'utilisateur" : "Nouvel utilisateur"}
+            </DialogTitle>
             <DialogDescription>
               Identité, rattachement (service, département, dépôts) et rôles.
             </DialogDescription>
@@ -452,7 +448,10 @@ export function UsersAdmin() {
                 </div>
                 <div className="space-y-1.5">
                   <Label>Nom</Label>
-                  <Input value={form.nom} onChange={(e) => setForm({ ...form, nom: e.target.value })} />
+                  <Input
+                    value={form.nom}
+                    onChange={(e) => setForm({ ...form, nom: e.target.value })}
+                  />
                 </div>
                 <div className="space-y-1.5">
                   <Label>Prénom</Label>
@@ -502,7 +501,6 @@ export function UsersAdmin() {
                   </div>
                 )}
               </div>
-
               <div className="grid gap-3 sm:grid-cols-3">
                 <div className="space-y-1.5">
                   <Label>Service</Label>
@@ -510,11 +508,15 @@ export function UsersAdmin() {
                     value={form.service_id}
                     onValueChange={(v) => setForm({ ...form, service_id: v })}
                   >
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value={NONE}>—</SelectItem>
                       {services.map((s) => (
-                        <SelectItem key={s.service_id} value={s.service_id}>{s.libelle}</SelectItem>
+                        <SelectItem key={s.service_id} value={s.service_id}>
+                          {s.libelle}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -525,7 +527,9 @@ export function UsersAdmin() {
                     value={form.departement_id}
                     onValueChange={(v) => setForm({ ...form, departement_id: v })}
                   >
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value={NONE}>—</SelectItem>
                       {departements.map((d) => (
@@ -551,17 +555,20 @@ export function UsersAdmin() {
                       })
                     }
                   >
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value={NONE}>—</SelectItem>
                       {depots.map((d) => (
-                        <SelectItem key={d.depot_id} value={d.depot_id}>{d.nom}</SelectItem>
+                        <SelectItem key={d.depot_id} value={d.depot_id}>
+                          {d.nom}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
               </div>
-
               <div className="space-y-2">
                 <Label>Dépôts autorisés (périmètre)</Label>
                 <div className="grid gap-2 rounded-md border p-3 sm:grid-cols-3">
@@ -583,7 +590,6 @@ export function UsersAdmin() {
                   ))}
                 </div>
               </div>
-
               <div className="space-y-2">
                 <Label>Rôles</Label>
                 <div className="grid gap-2 rounded-md border p-3 sm:grid-cols-3">
@@ -609,7 +615,9 @@ export function UsersAdmin() {
           )}
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setForm(null)}>Annuler</Button>
+            <Button variant="outline" onClick={() => setForm(null)}>
+              Annuler
+            </Button>
             <Button
               disabled={saveMutation.isPending || !form?.nom_complet.trim()}
               onClick={() => form && saveMutation.mutate(form)}
@@ -619,7 +627,6 @@ export function UsersAdmin() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
       <Dialog open={!!pwdTarget} onOpenChange={(o) => !o && setPwdTarget(null)}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -631,12 +638,13 @@ export function UsersAdmin() {
             <Input type="password" value={pwdValue} onChange={(e) => setPwdValue(e.target.value)} />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setPwdTarget(null)}>Annuler</Button>
+            <Button variant="outline" onClick={() => setPwdTarget(null)}>
+              Annuler
+            </Button>
             <Button
               disabled={pwdValue.length < 8 || pwdMutation.isPending}
               onClick={() =>
-                pwdTarget &&
-                pwdMutation.mutate({ user_id: pwdTarget.id, new_password: pwdValue })
+                pwdTarget && pwdMutation.mutate({ user_id: pwdTarget.id, new_password: pwdValue })
               }
             >
               Réinitialiser

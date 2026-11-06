@@ -3,7 +3,6 @@ import { formatDate } from "@/lib/format";
 
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Download, FileSpreadsheet, Plane, Printer, Search } from "lucide-react";
 
 import {
   listEmployesEnConge,
@@ -154,37 +153,30 @@ function CongesEnCoursPage() {
         <div className="min-w-0">
           <div className="mb-1">
             <Button variant="ghost" size="sm" asChild>
-              <Link to="/rh-dashboard">
-                <ArrowLeft className="mr-2 h-4 w-4" /> Retour au tableau de bord
-              </Link>
+              <Link to="/rh-dashboard">Retour au tableau de bord</Link>
             </Button>
           </div>
-          <h1 className="ds-page-title">
-            Employés en congé
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Employés en congé</h1>
           <p className="text-sm text-muted-foreground">
             {sorted.length} employé(s) actuellement en congé approuvé
           </p>
         </div>
         <div className="flex flex-wrap gap-2 print:hidden">
           <Button variant="outline" size="sm" onClick={handleExportExcel} disabled={!sorted.length}>
-            <FileSpreadsheet className="mr-2 h-4 w-4" /> Excel
+            Excel
           </Button>
           <Button variant="outline" size="sm" onClick={handleExportPdf} disabled={!sorted.length}>
-            <Download className="mr-2 h-4 w-4" /> PDF
+            PDF
           </Button>
           <Button variant="outline" size="sm" onClick={handlePrint} disabled={!sorted.length}>
-            <Printer className="mr-2 h-4 w-4" /> Imprimer
+            Imprimer
           </Button>
         </div>
       </div>
-
       <div className="flex flex-wrap gap-2 print:hidden">
         <div className="relative min-w-[240px] flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Rechercher (nom, matricule, poste)…"
-            className="pl-9"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -231,7 +223,6 @@ function CongesEnCoursPage() {
           </SelectContent>
         </Select>
       </div>
-
       <div className="rounded-lg border">
         <Table>
           <TableHeader>
@@ -296,7 +287,6 @@ function CongesEnCoursPage() {
                 <TableCell colSpan={9} className="py-6">
                   <EmptyState
                     variant="rich"
-                    icon={Plane}
                     title="Aucun employé en congé actuellement"
                     description="Personne n'est absent au titre d'un congé approuvé sur la période sélectionnée."
                     className="border-none"

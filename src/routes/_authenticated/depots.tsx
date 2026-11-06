@@ -2,7 +2,6 @@ import { askConfirm } from "@/components/common/GlobalConfirm";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -24,7 +23,7 @@ import { DepotsTable } from "@/components/depots/DepotsTable";
 import { DepotFormDialog } from "@/components/depots/DepotFormDialog";
 import { useConfirmDelete } from "@/hooks/use-confirm-delete";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
-import { friendlyError } from '@/lib/friendly-error';
+import { friendlyError } from "@/lib/friendly-error";
 
 export const Route = createFileRoute("/_authenticated/depots")({
   component: DepotsPage,
@@ -148,16 +147,11 @@ function DepotsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title">
-            Dépôts
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Dépôts</h1>
           <p className="text-sm text-muted-foreground">Gestion des entrepôts</p>
         </div>
-        <Button onClick={openNew}>
-          <Plus className="mr-2 h-4 w-4" /> Nouveau dépôt
-        </Button>
+        <Button onClick={openNew}>Nouveau dépôt</Button>
       </div>
-
       <DepotsFilters
         search={search}
         onSearchChange={(v) => {
@@ -169,7 +163,6 @@ function DepotsPage() {
         statutFilter={statutFilter}
         onStatutFilterChange={setStatutFilter}
       />
-
       <DepotsTable
         isLoading={isLoading}
         items={pageItems}

@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserRoles } from "@/hooks/use-user-roles";
@@ -39,10 +38,8 @@ export function SystemAlertsBanner() {
     if (!isSuperAdmin) return;
     const channel = supabase
       .channel("incident-alerts-banner")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "incident_alerts" },
-        () => qc.invalidateQueries({ queryKey: ["system-alerts-banner"] }),
+      .on("postgres_changes", { event: "*", schema: "public", table: "incident_alerts" }, () =>
+        qc.invalidateQueries({ queryKey: ["system-alerts-banner"] }),
       )
       .subscribe();
     return () => {
@@ -72,7 +69,6 @@ export function SystemAlertsBanner() {
     <div className="bg-destructive/10 border-b border-destructive/30 px-4 py-2">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 text-sm text-destructive">
-          <AlertTriangle className="h-4 w-4 shrink-0" />
           <span className="font-medium">
             {data.length} incident{data.length > 1 ? "s" : ""} actif{data.length > 1 ? "s" : ""}
             {critical > 0 && ` (${critical} critique${critical > 1 ? "s" : ""})`}

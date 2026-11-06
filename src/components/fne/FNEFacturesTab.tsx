@@ -3,7 +3,6 @@ import { formatDocumentReference } from "@/lib/document-reference";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { ExternalLink, Plus, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -57,10 +56,7 @@ export function FNEFacturesTab() {
     <div className="space-y-4 pt-4">
       <div className="flex justify-end">
         <Button asChild style={{ backgroundColor: FNE_ORANGE, color: "#fff" }}>
-          <Link to="/fne-nouvelle">
-            <Plus className="h-4 w-4 mr-1" />
-            Nouvelle FNE
-          </Link>
+          <Link to="/fne-nouvelle">Nouvelle FNE</Link>
         </Button>
       </div>
       <Card>
@@ -68,9 +64,8 @@ export function FNEFacturesTab() {
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <CardTitle className="text-base">Factures FNE</CardTitle>
             <div className="relative">
-              <Search className="h-4 w-4 absolute left-2 top-2.5 text-muted-foreground" />
               <Input
-                className="pl-8 w-64"
+                className="w-64"
                 placeholder="Réf. / client / code DGI…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -126,8 +121,15 @@ export function FNEFacturesTab() {
                       nav({ to: "/fne-detail/$factureId", params: { factureId: r.fne_id } })
                     }
                   >
-                    <TableCell className="font-mono text-xs">{formatDocumentReference(r.reference)}</TableCell>
-                    <TableCell><ClientLink clientId={(r as { client_id?: string | null }).client_id} nom={r.client_nom} /></TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {formatDocumentReference(r.reference)}
+                    </TableCell>
+                    <TableCell>
+                      <ClientLink
+                        clientId={(r as { client_id?: string | null }).client_id}
+                        nom={r.client_nom}
+                      />
+                    </TableCell>
                     <TableCell className="font-mono text-xs">{r.code_dgi ?? "—"}</TableCell>
                     <TableCell className="text-right">
                       {formatFCFA(Number(r.montant ?? 0))}
@@ -138,9 +140,7 @@ export function FNEFacturesTab() {
                     <TableCell>
                       <FneStatusBadge statut={r.statut ?? "pending"} />
                     </TableCell>
-                    <TableCell>
-                      <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                    </TableCell>
+                    <TableCell></TableCell>
                   </TableRow>
                 ))}
               </TableBody>

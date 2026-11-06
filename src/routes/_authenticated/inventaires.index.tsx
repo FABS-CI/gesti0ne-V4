@@ -2,7 +2,7 @@ import { askConfirm } from "@/components/common/GlobalConfirm";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ClipboardList, Plus, Eye, FileText, Layers, Globe2, Lock, LockOpen, Printer, Trash2, RotateCcw, X } from "lucide-react";
+import { Eye, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -163,7 +163,6 @@ function InventairesPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <ClipboardList className="h-7 w-7 text-primary" />
           <div>
             <h1 className="ds-page-title">Inventaires</h1>
             <p className="text-sm text-muted-foreground">
@@ -173,64 +172,56 @@ function InventairesPage() {
         </div>
         <div className="flex flex-wrap gap-2">
           <Can permission="inventaires.creer">
-          <Dialog open={theoriqueOpen} onOpenChange={setTheoriqueOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline">
-                <Layers className="h-4 w-4 mr-2" />
-                Inventaire théorique
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Inventaire théorique par dépôt</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-2">
-                <Label>Dépôt</Label>
-                <Select value={theoriqueDepot} onValueChange={setTheoriqueDepot}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choisir un dépôt" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {depots.map((d) => (
-                      <SelectItem key={d.depot_id} value={d.depot_id}>
-                        {d.nom}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <DialogFooter>
-                <Button
-                  onClick={() => theoriqueDepot && theoriqueMut.mutate(theoriqueDepot)}
-                  disabled={!theoriqueDepot || theoriqueMut.isPending}
-                >
-                  Générer
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+            <Dialog open={theoriqueOpen} onOpenChange={setTheoriqueOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline">Inventaire théorique</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Inventaire théorique par dépôt</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-2">
+                  <Label>Dépôt</Label>
+                  <Select value={theoriqueDepot} onValueChange={setTheoriqueDepot}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choisir un dépôt" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {depots.map((d) => (
+                        <SelectItem key={d.depot_id} value={d.depot_id}>
+                          {d.nom}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <DialogFooter>
+                  <Button
+                    onClick={() => theoriqueDepot && theoriqueMut.mutate(theoriqueDepot)}
+                    disabled={!theoriqueDepot || theoriqueMut.isPending}
+                  >
+                    Générer
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </Can>
           <Can permission="inventaires.creer">
-          <Button
-            variant="outline"
-            onClick={() => globalMut.mutate()}
-            disabled={globalMut.isPending}
-          >
-            <Globe2 className="h-4 w-4 mr-2" />
-            Inventaire global
-          </Button>
+            <Button
+              variant="outline"
+              onClick={() => globalMut.mutate()}
+              disabled={globalMut.isPending}
+            >
+              Inventaire global
+            </Button>
           </Can>
           <Can permission="inventaires.creer">
-          <Button asChild>
-            <Link to="/inventaires/nouveau-physique">
-              <Plus className="h-4 w-4 mr-2" />
-              Nouvel inventaire physique
-            </Link>
-          </Button>
+            <Button asChild>
+              <Link to="/inventaires/nouveau-physique">Nouvel inventaire physique</Link>
+            </Button>
           </Can>
         </div>
       </div>
-
       <div className="rounded-md border bg-card p-4 flex flex-wrap gap-3">
         <Input
           placeholder="Rechercher (numéro, dépôt)…"
@@ -265,16 +256,32 @@ function InventairesPage() {
           </SelectContent>
         </Select>
       </div>
-
       <FilterBadges
         badges={[
-          ...(q ? [{ key: "q", label: `Recherche : ${q}`, onClear: () => setQ("") } as FilterBadge] : []),
-          ...(type ? [{ key: "type", label: `Type : ${typeLabel}`, onClear: () => setType("") } as FilterBadge] : []),
-          ...(statut ? [{ key: "statut", label: `Statut : ${statutLabel}`, onClear: () => setStatut("") } as FilterBadge] : []),
+          ...(q
+            ? [{ key: "q", label: `Recherche : ${q}`, onClear: () => setQ("") } as FilterBadge]
+            : []),
+          ...(type
+            ? [
+                {
+                  key: "type",
+                  label: `Type : ${typeLabel}`,
+                  onClear: () => setType(""),
+                } as FilterBadge,
+              ]
+            : []),
+          ...(statut
+            ? [
+                {
+                  key: "statut",
+                  label: `Statut : ${statutLabel}`,
+                  onClear: () => setStatut(""),
+                } as FilterBadge,
+              ]
+            : []),
         ]}
         onResetAll={resetAllFilters}
       />
-
       <div className="rounded-md border bg-card">
         <ResponsiveTable stickyFirstCol>
           <Table>
@@ -303,7 +310,6 @@ function InventairesPage() {
                   <TableCell colSpan={9} className="py-6">
                     <EmptyState
                       variant={hasActiveFilters ? "compact" : "rich"}
-                      icon={ClipboardList}
                       title={
                         hasActiveFilters
                           ? "Aucun inventaire ne correspond aux filtres appliqués."
@@ -329,9 +335,7 @@ function InventairesPage() {
                     <TableRow key={i.inventaire_id}>
                       <TableCell className="font-mono text-xs">{i.numero}</TableCell>
                       <TableCell className="capitalize">{i.type_inventaire}</TableCell>
-                      <TableCell>
-                        {formatDate(i.date_inventaire)}
-                      </TableCell>
+                      <TableCell>{formatDate(i.date_inventaire)}</TableCell>
                       <TableCell>{i.depots?.nom ?? "—"}</TableCell>
                       <TableCell className="text-right">{i.nb_produits}</TableCell>
                       <TableCell className="text-right">
@@ -349,49 +353,55 @@ function InventairesPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-1 justify-end">
-                          <Button aria-label="Ouvrir" asChild size="icon" variant="ghost" title="Ouvrir">
+                          <Button
+                            aria-label="Ouvrir"
+                            asChild
+                            size="sm"
+                            variant="ghost"
+                            title="Ouvrir"
+                          >
                             <Link
                               to="/inventaires/$inventaireId"
                               params={{ inventaireId: i.inventaire_id }}
                             >
-                              {i.statut === "brouillon" ? (
-                                <FileText className="h-4 w-4" />
-                              ) : (
-                                <Eye className="h-4 w-4" />
-                              )}
+                              Ouvrir
                             </Link>
                           </Button>
                           {i.statut === "brouillon" ? (
-                            <Button aria-label="Verrouiller"
-                              size="icon"
+                            <Button
+                              aria-label="Verrouiller"
+                              size="sm"
                               variant="ghost"
                               title="Verrouiller"
                               onClick={() => verrouillerMut.mutate(i.inventaire_id)}
                               disabled={verrouillerMut.isPending}
                             >
-                              <LockOpen className="h-4 w-4" />
+                              Verrouiller
                             </Button>
                           ) : (
-                            <Button aria-label="Déverrouiller"
-                              size="icon"
+                            <Button
+                              aria-label="Déverrouiller"
+                              size="sm"
                               variant="ghost"
                               title="Déverrouiller"
                               onClick={() => deverrouillerMut.mutate(i.inventaire_id)}
                               disabled={deverrouillerMut.isPending}
                             >
-                              <Lock className="h-4 w-4 text-primary" />
+                              Déverrouiller
                             </Button>
                           )}
-                          <Button aria-label="Imprimer"
-                            size="icon"
+                          <Button
+                            aria-label="Imprimer"
+                            size="sm"
                             variant="ghost"
                             title="Imprimer"
                             onClick={() => window.open(`/inventaires/${i.inventaire_id}`, "_blank")}
                           >
-                            <Printer className="h-4 w-4" />
+                            Imprimer
                           </Button>
-                          <Button aria-label="Supprimer"
-                            size="icon"
+                          <Button
+                            aria-label="Supprimer"
+                            size="sm"
                             variant="ghost"
                             title="Supprimer"
                             onClick={async () => {
@@ -401,7 +411,7 @@ function InventairesPage() {
                             }}
                             disabled={supprimerMut.isPending}
                           >
-                            <Trash2 className="h-4 w-4 text-destructive" />
+                            Supprimer
                           </Button>
                         </div>
                       </TableCell>

@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Camera, PenLine } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ResponsiveDialog } from "@/components/ui/responsive-dialog";
@@ -42,7 +41,10 @@ export function ConfirmerReceptionDialog({
   function pos(e: React.PointerEvent<HTMLCanvasElement>) {
     const c = canvasRef.current!;
     const r = c.getBoundingClientRect();
-    return { x: ((e.clientX - r.left) * c.width) / r.width, y: ((e.clientY - r.top) * c.height) / r.height };
+    return {
+      x: ((e.clientX - r.left) * c.width) / r.width,
+      y: ((e.clientY - r.top) * c.height) / r.height,
+    };
   }
   function down(e: React.PointerEvent<HTMLCanvasElement>) {
     drawing.current = true;
@@ -130,11 +132,15 @@ export function ConfirmerReceptionDialog({
           </div>
           <div>
             <Label>Téléphone</Label>
-            <Input value={tel} onChange={(e) => setTel(e.target.value)} placeholder="07 00 00 00 00" />
+            <Input
+              value={tel}
+              onChange={(e) => setTel(e.target.value)}
+              placeholder="07 00 00 00 00"
+            />
           </div>
         </div>
         <div>
-          <Label className="flex items-center gap-1"><PenLine className="h-3 w-3" /> Signature</Label>
+          <Label className="flex items-center gap-1"> Signature</Label>
           <canvas
             ref={canvasRef}
             width={480}
@@ -150,7 +156,7 @@ export function ConfirmerReceptionDialog({
           </Button>
         </div>
         <div>
-          <Label className="flex items-center gap-1"><Camera className="h-3 w-3" /> Photo bon signé (optionnel)</Label>
+          <Label className="flex items-center gap-1"> Photo bon signé (optionnel)</Label>
           <Input
             type="file"
             accept="image/*"

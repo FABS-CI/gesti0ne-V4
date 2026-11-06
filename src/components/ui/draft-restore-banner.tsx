@@ -1,5 +1,4 @@
 import { formatDateTime } from "@/lib/format";
-import { FileClock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type Props = {
@@ -18,15 +17,12 @@ type Props = {
 export function DraftRestoreBanner({ updatedAt, onRestore, onDiscard, label }: Props) {
   const when = (() => {
     const d = new Date(updatedAt);
-    return Number.isFinite(d.getTime())
-      ? formatDateTime(d)
-      : "";
+    return Number.isFinite(d.getTime()) ? formatDateTime(d) : "";
   })();
 
   return (
     <div className="flex flex-col gap-3 rounded-md border border-warning/60 bg-warning/10 p-4 text-sm sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-start gap-2">
-        <FileClock className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
         <div>
           <p className="font-medium">
             Un brouillon non terminé a été trouvé

@@ -1,5 +1,4 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { AlertTriangle, RefreshCw, Sticker } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -43,7 +42,6 @@ export function FNEDashboardTab() {
             qc.invalidateQueries({ queryKey: ["fne-sticker"] });
           }}
         >
-          <RefreshCw className={`h-4 w-4 mr-1 ${sf || kf ? "animate-spin" : ""}`} />
           Actualiser
         </Button>
       </div>
@@ -69,12 +67,11 @@ export function FNEDashboardTab() {
           </Card>
         ))}
       </div>
-
       <div className="grid md:grid-cols-2 gap-4">
         <Card className={stickerLow ? "border-destructive" : undefined}>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Sticker className="h-4 w-4" /> Stickers fiscaux
+              Stickers fiscaux
               {stickerLow && (
                 <Badge variant="destructive" className="ml-2">
                   Seuil atteint
@@ -85,7 +82,6 @@ export function FNEDashboardTab() {
           <CardContent>
             {sticker?.mode === "sandbox" ? (
               <div className="rounded border border-warning/40 bg-warning/10 p-3 text-sm text-warning">
-                <AlertTriangle className="h-4 w-4 inline mr-1" />
                 {sticker.warning}
               </div>
             ) : (

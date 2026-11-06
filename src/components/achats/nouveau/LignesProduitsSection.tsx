@@ -1,4 +1,3 @@
-import { Plus, Trash2, PackagePlus, Package } from "lucide-react";
 import { ProductCoverThumb } from "@/components/produits/ProductCoverThumb";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,7 +35,9 @@ export const emptyLigne = (): LigneUI => ({
 });
 
 /** Montant d'une ligne après remise. */
-export function montantLigne(l: Pick<LigneUI, "quantite" | "prix_unitaire" | "remise_pct">): number {
+export function montantLigne(
+  l: Pick<LigneUI, "quantite" | "prix_unitaire" | "remise_pct">,
+): number {
   const brut = (l.quantite || 0) * (l.prix_unitaire || 0);
   const pct = Math.min(Math.max(l.remise_pct || 0, 0), 100);
   return Math.round(brut * (1 - pct / 100) * 100) / 100;
@@ -68,11 +69,9 @@ export function LignesProduitsSection({
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">2. Produits livrés</h2>
         <Button type="button" variant="outline" size="sm" onClick={onAdd}>
-          <Plus className="h-4 w-4 mr-2" />
           Ajouter une ligne
         </Button>
       </div>
-
       <div className="overflow-x-auto -mx-5 px-5">
         <Table className="min-w-[800px]">
           <TableHeader>
@@ -91,13 +90,15 @@ export function LignesProduitsSection({
             {lignes.map((l, i) => (
               <TableRow key={i}>
                 <TableCell>
-                  <ProductCoverThumb 
-                    produit={{ 
-                      titre: l.designation, 
-                      cover_path: l.produit_id ? (l as any).cover_path : undefined, 
-                      cover_thumb_path: l.produit_id ? (l as any).cover_thumb_path : undefined
-                    } as any} 
-                    size="xs" 
+                  <ProductCoverThumb
+                    produit={
+                      {
+                        titre: l.designation,
+                        cover_path: l.produit_id ? (l as any).cover_path : undefined,
+                        cover_thumb_path: l.produit_id ? (l as any).cover_thumb_path : undefined,
+                      } as any
+                    }
+                    size="xs"
                   />
                 </TableCell>
                 <TableCell>
@@ -108,19 +109,23 @@ export function LignesProduitsSection({
                         onChange={(_id, produit) => onPick(i, produit)}
                       />
                     </div>
-                    <Button aria-label="Créer un nouveau produit"
+                    <Button
+                      aria-label="Créer un nouveau produit"
                       type="button"
                       variant="outline"
-                      size="icon"
+                      size="sm"
                       title="Créer un nouveau produit"
                       onClick={() => onOpenQuickCreate(i)}
                       className="h-10 w-10 shrink-0"
                     >
-                      <PackagePlus className="h-4 w-4" />
+                      Créer
                     </Button>
                   </div>
                 </TableCell>
-                <TableCell className="font-mono text-xs select-all whitespace-nowrap overflow-hidden text-ellipsis" title={l.reference_produit || "—"}>
+                <TableCell
+                  className="font-mono text-xs select-all whitespace-nowrap overflow-hidden text-ellipsis"
+                  title={l.reference_produit || "—"}
+                >
                   {l.reference_produit || "—"}
                 </TableCell>
                 <TableCell className="text-right">
@@ -129,7 +134,9 @@ export function LignesProduitsSection({
                     inputMode="numeric"
                     min={1}
                     value={l.quantite || ""}
-                    onChange={(e) => onUpdate(i, { quantite: e.target.value === "" ? 0 : Number(e.target.value) })}
+                    onChange={(e) =>
+                      onUpdate(i, { quantite: e.target.value === "" ? 0 : Number(e.target.value) })
+                    }
                     className="text-right h-10 w-full min-w-[70px] text-base"
                   />
                 </TableCell>
@@ -139,7 +146,11 @@ export function LignesProduitsSection({
                     inputMode="decimal"
                     min={0}
                     value={l.prix_unitaire || ""}
-                    onChange={(e) => onUpdate(i, { prix_unitaire: e.target.value === "" ? 0 : Number(e.target.value) })}
+                    onChange={(e) =>
+                      onUpdate(i, {
+                        prix_unitaire: e.target.value === "" ? 0 : Number(e.target.value),
+                      })
+                    }
                     className="text-right h-10 w-full min-w-[100px] text-base"
                   />
                 </TableCell>
@@ -153,7 +164,10 @@ export function LignesProduitsSection({
                     value={l.remise_pct || ""}
                     onChange={(e) =>
                       onUpdate(i, {
-                        remise_pct: e.target.value === "" ? 0 : Math.min(Math.max(Number(e.target.value), 0), 100),
+                        remise_pct:
+                          e.target.value === ""
+                            ? 0
+                            : Math.min(Math.max(Number(e.target.value), 0), 100),
                       })
                     }
                     className="text-right h-10 w-full min-w-[80px] text-base"
@@ -163,15 +177,16 @@ export function LignesProduitsSection({
                   {formatFCFA(montantLigne(l))}
                 </TableCell>
                 <TableCell>
-                  <Button aria-label="Supprimer"
+                  <Button
+                    aria-label="Supprimer"
                     type="button"
                     variant="ghost"
-                    size="icon"
+                    size="sm"
                     onClick={() => onRemove(i)}
                     disabled={lignes.length === 1}
                     className="h-10 w-10"
                   >
-                    <Trash2 className="h-4 w-4 text-destructive" />
+                    Supprimer
                   </Button>
                 </TableCell>
               </TableRow>
@@ -179,7 +194,6 @@ export function LignesProduitsSection({
           </TableBody>
         </Table>
       </div>
-
       <div className="flex justify-end gap-6 border-t pt-4 text-sm">
         <span className="text-muted-foreground">
           Quantité totale : <span className="font-semibold">{qteTotale}</span>

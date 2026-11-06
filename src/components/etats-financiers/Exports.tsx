@@ -4,7 +4,6 @@
 
 import { useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { FileSpreadsheet, FileText, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -111,10 +110,10 @@ export function ExportsDossier({ donnees }: { donnees: DonneesExport }) {
       <CardContent className="space-y-3 text-sm">
         <div className="flex flex-wrap gap-2">
           <Button onClick={pdf} disabled={!!envoi}>
-            <FileText className="mr-2 h-4 w-4" /> Exporter en PDF (dossier complet)
+            Exporter en PDF (dossier complet)
           </Button>
           <Button variant="outline" onClick={excel} disabled={!!envoi || !modele}>
-            <FileSpreadsheet className="mr-2 h-4 w-4" /> Exporter en Excel
+            Exporter en Excel
           </Button>
         </div>
         <p className="text-xs text-muted-foreground">
@@ -125,7 +124,6 @@ export function ExportsDossier({ donnees }: { donnees: DonneesExport }) {
             ? ` Attention : ${bloquants} contrôle(s) bloquant(s), le dossier ne doit pas être déposé en l'état.`
             : ""}
         </p>
-
         <div className="space-y-2 rounded-md border p-3">
           <p className="font-medium">Modèle Excel de la liasse</p>
           {modele ? (
@@ -158,7 +156,6 @@ export function ExportsDossier({ donnees }: { donnees: DonneesExport }) {
                 disabled={!!envoi}
                 onClick={() => fichierRef.current?.click()}
               >
-                <Upload className="mr-2 h-4 w-4" />
                 {modele ? "Déposer un nouveau modèle" : "Déposer le modèle"}
               </Button>
             </>

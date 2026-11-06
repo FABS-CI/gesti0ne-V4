@@ -2,7 +2,7 @@ import React from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Eye, Copy, Pencil, Trash2 } from "lucide-react";
+import { Check, Eye } from "lucide-react";
 import type { PdfTemplate, PdfTemplateId } from "@/lib/pdf/pdfConfig";
 import { Apercu } from "./Apercu";
 import { Can } from "@/components/rbac/Can";
@@ -64,12 +64,12 @@ export const TemplateCard = React.memo(function TemplateCard({
           onClick={() => onDuplicate(t)}
           title="Dupliquer ce modèle"
         >
-          <Copy className="h-4 w-4" />
+          Dupliquer
         </Button>
         {t.custom && (
           <>
             <Button size="sm" variant="outline" onClick={() => onEdit(t)}>
-              <Pencil className="h-4 w-4" />
+              Modifier
             </Button>
             <Can permission="modeles_documents.supprimer">
               <Button
@@ -78,7 +78,7 @@ export const TemplateCard = React.memo(function TemplateCard({
                 onClick={() => onDelete(t)}
                 className="text-destructive"
               >
-                <Trash2 className="h-4 w-4" />
+                Supprimer
               </Button>
             </Can>
           </>

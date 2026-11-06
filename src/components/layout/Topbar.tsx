@@ -1,7 +1,6 @@
 import { lazy, memo, Suspense } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { LogOut, RefreshCw, UserCircle } from "lucide-react";
 const GlobalSearch = lazy(() =>
   import("@/components/GlobalSearch").then((m) => ({ default: m.GlobalSearch })),
 );
@@ -115,17 +114,14 @@ function TopbarImpl() {
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link to="/profil">
-                <UserCircle className="mr-2 h-4 w-4" />
                 Mon profil
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleRefreshPermissions}>
-              <RefreshCw className="mr-2 h-4 w-4" />
               Recharger mes permissions
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
-              <LogOut className="mr-2 h-4 w-4" />
               Déconnexion
             </DropdownMenuItem>
           </DropdownMenuContent>

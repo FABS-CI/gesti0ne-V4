@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Download, FileDown } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -77,9 +76,7 @@ function GrandLivrePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title">
-            Grand livre
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Grand livre</h1>
           <p className="text-sm text-muted-foreground">Détail des écritures par compte</p>
         </div>
         <div className="flex gap-2">
@@ -124,14 +121,14 @@ function GrandLivrePage() {
                       },
                       { label: "Total débit", value: formatFCFA(td) },
                       { label: "Total crédit", value: formatFCFA(tc) },
-                      { label: "Solde", value: formatFCFA((td - tc)) },
+                      { label: "Solde", value: formatFCFA(td - tc) },
                     ];
                   })(),
                 },
               )
             }
           >
-            <Download className="mr-2 h-4 w-4" /> PDF
+            PDF
           </Button>
           <Button
             size="sm"
@@ -144,11 +141,10 @@ function GrandLivrePage() {
             }
             disabled={!filtered.length}
           >
-            <FileDown className="mr-2 h-4 w-4" /> PDF
+            PDF
           </Button>
         </div>
       </div>
-
       <Card>
         <CardContent className="flex flex-wrap gap-3 p-4">
           <div>
@@ -177,7 +173,6 @@ function GrandLivrePage() {
           </div>
         </CardContent>
       </Card>
-
       <Card>
         <CardContent className="p-0">
           <ResponsiveTable stickyFirstCol>
@@ -211,11 +206,7 @@ function GrandLivrePage() {
                   filtered.map((l) => (
                     <TableRow key={l.ligne_id}>
                       <TableCell className="font-mono text-xs">{l.compte}</TableCell>
-                      <TableCell>
-                        {l.date_ecriture
-                          ? formatDate(l.date_ecriture)
-                          : "—"}
-                      </TableCell>
+                      <TableCell>{l.date_ecriture ? formatDate(l.date_ecriture) : "—"}</TableCell>
                       <TableCell>{l.journal}</TableCell>
                       <TableCell className="font-mono text-xs">{l.reference}</TableCell>
                       <TableCell className="max-w-[280px] truncate">{l.libelle}</TableCell>

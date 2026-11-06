@@ -2,7 +2,6 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { formatDate, formatDateTime, formatFCFA, formatTime } from "@/lib/format";
 
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, FileDown, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { exportListePDF } from "@/lib/pdf/exportListe";
@@ -233,7 +232,6 @@ async function fetchFeuille(tourneeId: string): Promise<FeuilleData> {
     clientMap.set(c.client_id, c);
   });
 
-
   const factureMap = new Map<
     string,
     { reference: string | null; montant: number; paye: number; statut: string | null }
@@ -348,8 +346,7 @@ async function fetchFeuille(tourneeId: string): Promise<FeuilleData> {
 }
 
 function fmt(n: number): string {
-  return formatFCFA(Math.round(n), false)
-    .replace(/[\u00a0\u202f]/g, " ");
+  return formatFCFA(Math.round(n), false).replace(/[\u00a0\u202f]/g, " ");
 }
 
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
@@ -450,16 +447,14 @@ function FeuilleTourneePage() {
       {!isEmbed && (
         <div className="print:hidden flex items-center justify-between border-b p-4">
           <Button asChild variant="ghost" size="sm">
-            <Link to="/tournees">
-              <ArrowLeft className="h-4 w-4 mr-1" /> Retour
-            </Link>
+            <Link to="/tournees">Retour</Link>
           </Button>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={() => window.print()}>
-              <Printer className="h-4 w-4 mr-2" /> Imprimer
+              Imprimer
             </Button>
             <Button size="sm" onClick={handlePdf}>
-              <FileDown className="h-4 w-4 mr-2" /> PDF
+              PDF
             </Button>
           </div>
         </div>
@@ -471,18 +466,16 @@ function FeuilleTourneePage() {
           <div className="max-w-[55%]">
             <h1 className="ds-page-title">{COMPANY.nom}</h1>
             <p className="text-xs text-muted-foreground leading-snug">{COMPANY.adresse}</p>
-            <p className="text-xs text-muted-foreground">
-              Tél : {COMPANY.telephones.join(" / ")}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Email : {COMPANY.email}
-            </p>
+            <p className="text-xs text-muted-foreground">Tél : {COMPANY.telephones.join(" / ")}</p>
+            <p className="text-xs text-muted-foreground">Email : {COMPANY.email}</p>
             <p className="text-xs text-muted-foreground mt-0.5">{COMPANY.slogan}</p>
           </div>
           <div className="text-right">
             <h2 className="text-xl font-bold">Bon de tournée</h2>
             <p className="text-sm font-mono">{bonRef}</p>
-            <p className="text-xs">N° tournée : <b>{t.reference}</b></p>
+            <p className="text-xs">
+              N° tournée : <b>{t.reference}</b>
+            </p>
             {t.date_tournee && <p className="text-xs">Date : {formatDate(t.date_tournee)}</p>}
             <div className="flex justify-end gap-2 mt-2 items-start">
               <div className="text-center">
@@ -518,14 +511,8 @@ function FeuilleTourneePage() {
             }
           />
           <Field label="Heure de départ" value={t.heure_depart ?? undefined} />
-          <Field
-            label="Distance"
-            value={t.distance_km ? `${t.distance_km} km` : undefined}
-          />
-          <Field
-            label="Créé le"
-            value={t.created_at ? formatDateTime(t.created_at) : undefined}
-          />
+          <Field label="Distance" value={t.distance_km ? `${t.distance_km} km` : undefined} />
+          <Field label="Créé le" value={t.created_at ? formatDateTime(t.created_at) : undefined} />
           <Field label="Statut" value={STATUT_META[t.statut]?.label ?? t.statut} />
         </div>
 
@@ -575,9 +562,7 @@ function FeuilleTourneePage() {
                   <td className="border p-1">{l.adresse ?? "—"}</td>
                   <td className="border p-1">
                     {[l.ville_livraison, l.commune].filter(Boolean).join(" · ") || "—"}
-                    {l.gare_nom ? (
-                      <div className="text-xs">Gare : {l.gare_nom}</div>
-                    ) : null}
+                    {l.gare_nom ? <div className="text-xs">Gare : {l.gare_nom}</div> : null}
                   </td>
                   <td className="border p-1 text-right">{l.nb_cartons || 0}</td>
                   <td className="border p-1 text-right">{l.quantite_commandee}</td>
@@ -609,9 +594,7 @@ function FeuilleTourneePage() {
 
         {/* Récapitulatif */}
         <div className="mt-4 border rounded p-3 bg-muted">
-          <div className="text-xs font-semibold mb-2">
-            Récapitulatif automatique
-          </div>
+          <div className="text-xs font-semibold mb-2">Récapitulatif automatique</div>
           <div className="grid grid-cols-4 md:grid-cols-6 gap-2 text-xs">
             <Field label="Clients" value={String(clientsSet.size)} />
             <Field label="Livraisons" value={String(nbLivraisons)} />
@@ -620,10 +603,7 @@ function FeuilleTourneePage() {
             <Field label="Colis" value={String(totalColis)} />
             <Field label="Cartons" value={String(totalCartons)} />
             <Field label="Poids total" value={totalPoids ? `${fmt(totalPoids)}` : undefined} />
-            <Field
-              label="Distance"
-              value={t.distance_km ? `${t.distance_km} km` : undefined}
-            />
+            <Field label="Distance" value={t.distance_km ? `${t.distance_km} km` : undefined} />
             <Field label="Montant transporté" value={`${fmt(montantTransporte)} FCFA`} />
             <Field label="Déjà encaissé" value={`${fmt(montantEncaisse)} FCFA`} />
             <Field label="À encaisser" value={`${fmt(montantRestant)} FCFA`} />
@@ -680,9 +660,7 @@ function FeuilleTourneePage() {
 
         {/* Observations */}
         <div className="mt-4">
-          <div className="text-xs font-semibold mb-1">
-            Observations / Incidents
-          </div>
+          <div className="text-xs font-semibold mb-1">Observations / Incidents</div>
           {t.notes && (
             <p className="whitespace-pre-wrap text-xs mb-2 border-l-2 border-border pl-2 italic">
               {t.notes}
@@ -690,11 +668,11 @@ function FeuilleTourneePage() {
           )}
           <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
             <div className="border rounded p-2 min-h-[50px]">
-               Incident&nbsp;&nbsp;&nbsp; Produit manquant&nbsp;&nbsp;&nbsp; Produit cassé
+              Incident&nbsp;&nbsp;&nbsp; Produit manquant&nbsp;&nbsp;&nbsp; Produit cassé
               <br />
-               Refus client&nbsp;&nbsp;&nbsp; Retour&nbsp;&nbsp;&nbsp; Paiement partiel
+              Refus client&nbsp;&nbsp;&nbsp; Retour&nbsp;&nbsp;&nbsp; Paiement partiel
               <br />
-               Paiement refusé
+              Paiement refusé
             </div>
             <div className="border rounded p-2 min-h-[50px]">
               <span className="italic">Autres remarques :</span>
@@ -704,17 +682,9 @@ function FeuilleTourneePage() {
 
         {/* Signatures 5 blocs */}
         <div className="grid grid-cols-5 gap-2 mt-6 text-xs">
-          {[
-            "Resp. logistique",
-            "Préparateur",
-            "Chauffeur",
-            "Contrôleur",
-            "Client",
-          ].map((label) => (
+          {["Resp. logistique", "Préparateur", "Chauffeur", "Contrôleur", "Client"].map((label) => (
             <div key={label} className="border rounded p-2 min-h-[70px]">
-              <div className="font-semibold text-xs text-muted-foreground">
-                {label}
-              </div>
+              <div className="font-semibold text-xs text-muted-foreground">{label}</div>
               <div className="mt-1 text-xs">Nom : ______________</div>
               <div className="mt-6 border-t pt-1 text-xs text-muted-foreground">
                 Date / Heure : ____ / ____

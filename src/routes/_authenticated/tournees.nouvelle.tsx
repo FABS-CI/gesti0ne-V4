@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Loader2, Navigation, Save } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -107,7 +107,6 @@ function NouvelleTourneePage() {
     },
   });
 
-
   useEffect(() => {
     const ch = supabase
       .channel("nouvelle-tournee-colis-sync")
@@ -155,11 +154,7 @@ function NouvelleTourneePage() {
 
   const depotIds = useMemo(
     () =>
-      Array.from(
-        new Set(
-          (cmdQ.data ?? []).map((c) => c.depot_id).filter((v): v is string => !!v),
-        ),
-      ),
+      Array.from(new Set((cmdQ.data ?? []).map((c) => c.depot_id).filter((v): v is string => !!v))),
     [cmdQ.data],
   );
   const depotQ = useQuery({
@@ -195,10 +190,7 @@ function NouvelleTourneePage() {
   const depotsListQ = useQuery({
     queryKey: ["depots-all-for-tournee"],
     queryFn: async (): Promise<DepotRow[]> => {
-      const { data, error } = await supabase
-        .from("depots")
-        .select("depot_id,nom")
-        .order("nom");
+      const { data, error } = await supabase.from("depots").select("depot_id,nom").order("nom");
       if (error) throw error;
       return (data ?? []) as DepotRow[];
     },
@@ -251,7 +243,11 @@ function NouvelleTourneePage() {
       const rep = (cmd?.representant_nom ?? cmd?.commercial_nom ?? "").toLowerCase();
       const ville = (c.ville_livraison ?? cmd?.ville ?? "").toLowerCase();
       if (dateColis && (c.date_colisage ?? "").slice(0, 10) !== dateColis) return false;
-      if (cf && !cli.toLowerCase().includes(cf) && !(cmd?.client_id ?? "").toLowerCase().includes(cf))
+      if (
+        cf &&
+        !cli.toLowerCase().includes(cf) &&
+        !(cmd?.client_id ?? "").toLowerCase().includes(cf)
+      )
         return false;
       if (rf && !rep.includes(rf)) return false;
       if (vf && !ville.includes(vf)) return false;
@@ -275,7 +271,7 @@ function NouvelleTourneePage() {
     // Chaque ligne de la table `colis` = 1 carton (numero_carton).
     // Un « colis » (envoi/BL) peut regrouper plusieurs cartons ⇒ compte les BL uniques.
     const nb_cartons = selectedRows.reduce(
-      (s, r) => s + Math.max(1, Number(r.numero_carton ? 1 : r.nb_cartons ?? 1)),
+      (s, r) => s + Math.max(1, Number(r.numero_carton ? 1 : (r.nb_cartons ?? 1))),
       0,
     );
     const blIds = new Set<string>();
@@ -289,7 +285,6 @@ function NouvelleTourneePage() {
     }
     return { nb_colis, nb_cartons, nb_clients: clientIds.size };
   }, [selectedRows, clientByCmd]);
-
 
   const [form, setForm] = useState<TourneeFormState>({
     reference: defaultRef(),
@@ -424,10 +419,13 @@ function NouvelleTourneePage() {
       const tourneeId = (created as { tournee_id: string }).tournee_id;
 
       const ids = Array.from(selected);
-      const { error: upErr } = await supabase.rpc("affecter_colis_tournee" as never, {
-        _tournee_id: tourneeId,
-        _colis_ids: ids,
-      } as never);
+      const { error: upErr } = await supabase.rpc(
+        "affecter_colis_tournee" as never,
+        {
+          _tournee_id: tourneeId,
+          _colis_ids: ids,
+        } as never,
+      );
       if (upErr) throw upErr;
 
       await finaliserTournee(tourneeId);
@@ -441,7 +439,10 @@ function NouvelleTourneePage() {
       qc.invalidateQueries({ queryKey: ["livsuivi"] });
       navigate({ to: "/tournees" });
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "cause non précisée par le serveur. Réessayez dans un instant";
+      const msg =
+        e instanceof Error
+          ? e.message
+          : "cause non précisée par le serveur. Réessayez dans un instant";
       toast.error("Impossible de créer la tournée", { description: msg });
     } finally {
       setSaving(false);
@@ -456,11 +457,9 @@ function NouvelleTourneePage() {
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/tournees" })}>
-            <ArrowLeft className="h-4 w-4 mr-1.5" />
             Retour
           </Button>
           <div className="flex items-center gap-2">
-            <Navigation className="h-5 w-5 text-primary" />
             <div>
               <h1 className="ds-page-title">Nouvelle tournée</h1>
               <p className="text-xs text-muted-foreground mt-1">
@@ -471,11 +470,7 @@ function NouvelleTourneePage() {
         </div>
         <div className="flex flex-col items-end gap-1">
           <Button onClick={() => setConfirmOpen(true)} disabled={!canSave}>
-            {saving ? (
-              <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
-            ) : (
-              <Save className="h-4 w-4 mr-1.5" />
-            )}
+            {saving ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : null}
             Valider la tournée
           </Button>
           {missingFields.length > 0 && !saving && (
@@ -485,7 +480,6 @@ function NouvelleTourneePage() {
           )}
         </div>
       </div>
-
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -512,7 +506,6 @@ function NouvelleTourneePage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
         <Card className="xl:col-span-2">
           <CardHeader className="pb-2">
@@ -593,7 +586,6 @@ function NouvelleTourneePage() {
             />
           </CardContent>
         </Card>
-
         <div className="space-y-4">
           <Card>
             <CardHeader className="pb-2">
@@ -605,7 +597,6 @@ function NouvelleTourneePage() {
               <Stat label="Clients" value={totals.nb_clients} />
             </CardContent>
           </Card>
-
           <NewTourneeInfoCard
             form={form}
             setForm={setForm}

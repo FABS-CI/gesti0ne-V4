@@ -1,12 +1,19 @@
 import { formatDocumentReference } from "@/lib/document-reference";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { FileDown, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { formatFCFA } from "@/lib/format";
 import { buildEtatCompteClientPDF, loadReleveClient } from "@/lib/pdf/etat-compte-builder";
 import { downloadBlob, fileNameFor } from "@/lib/pdf/fabsTemplates";
@@ -17,7 +24,13 @@ import { supabase } from "@/integrations/supabase/client";
 type Props = {
   open: boolean;
   onOpenChange: (o: boolean) => void;
-  client: { client_id: string; nom: string; reference: string | null; telephone?: string | null; representant?: string | null };
+  client: {
+    client_id: string;
+    nom: string;
+    reference: string | null;
+    telephone?: string | null;
+    representant?: string | null;
+  };
 };
 
 const fmtDate = (d: string) =>
@@ -33,19 +46,30 @@ export function ClientReleveDialog({ open, onOpenChange, client }: Props) {
     try {
       if (type === "Paiement") {
         const { data: p } = await supabase
-          .from("paiements").select("paiement_id").eq("reference", reference).maybeSingle();
+          .from("paiements")
+          .select("paiement_id")
+          .eq("reference", reference)
+          .maybeSingle();
         if (!p) return toast.error(`Paiement ${reference} introuvable`);
         onOpenChange(false);
         navigate({ to: "/paiements/$paiementId", params: { paiementId: p.paiement_id } });
       } else if (type === "Avoir") {
         const { data: r } = await supabase
-          .from("retours").select("retour_id").eq("reference", reference).eq("client_id", client.client_id).maybeSingle();
+          .from("retours")
+          .select("retour_id")
+          .eq("reference", reference)
+          .eq("client_id", client.client_id)
+          .maybeSingle();
         if (!r) return toast.error(`Retour ${reference} introuvable`);
         onOpenChange(false);
         navigate({ to: "/retours/$retourId", params: { retourId: r.retour_id } });
       } else {
         const { data: f } = await supabase
-          .from("factures").select("facture_id").eq("reference", reference).eq("client_id", client.client_id).maybeSingle();
+          .from("factures")
+          .select("facture_id")
+          .eq("reference", reference)
+          .eq("client_id", client.client_id)
+          .maybeSingle();
         if (!f) return toast.error(`Facture ${reference} introuvable`);
         onOpenChange(false);
         navigate({ to: "/factures/$factureId", params: { factureId: f.facture_id } });
@@ -92,7 +116,9 @@ export function ClientReleveDialog({ open, onOpenChange, client }: Props) {
         {isLoading ? (
           <div className="py-10 text-center text-muted-foreground">Chargement…</div>
         ) : error ? (
-          <div className="py-10 text-center text-destructive">{friendlyError(error, "Erreur de chargement")}</div>
+          <div className="py-10 text-center text-destructive">
+            {friendlyError(error, "Erreur de chargement")}
+          </div>
         ) : data ? (
           <div className="space-y-4">
             <div className="rounded-md border overflow-x-auto">
@@ -120,7 +146,9 @@ export function ClientReleveDialog({ open, onOpenChange, client }: Props) {
                       const isRetour = l.type === "Avoir";
                       return (
                         <TableRow key={`${formatDocumentReference(l.reference)}-${i}`}>
-                          <TableCell className="whitespace-nowrap">{fmtDate(String(l.date ?? ""))}</TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            {fmtDate(String(l.date ?? ""))}
+                          </TableCell>
                           <TableCell className="font-mono text-xs">
                             {l.reference ? (
                               <button
@@ -133,10 +161,18 @@ export function ClientReleveDialog({ open, onOpenChange, client }: Props) {
                             ) : null}
                           </TableCell>
                           <TableCell>{l.libelle}</TableCell>
-                          <TableCell className="text-right">{formatFCFA(Number(l.debit || 0))}</TableCell>
-                          <TableCell className="text-right">{formatFCFA(isRetour ? 0 : Number(l.credit || 0))}</TableCell>
-                          <TableCell className="text-right">{formatFCFA(isRetour ? Number(l.credit || 0) : 0)}</TableCell>
-                          <TableCell className="text-right font-medium">{formatFCFA(Number(l.soldeProgressif || 0))}</TableCell>
+                          <TableCell className="text-right">
+                            {formatFCFA(Number(l.debit || 0))}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {formatFCFA(isRetour ? 0 : Number(l.credit || 0))}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {formatFCFA(isRetour ? Number(l.credit || 0) : 0)}
+                          </TableCell>
+                          <TableCell className="text-right font-medium">
+                            {formatFCFA(Number(l.soldeProgressif || 0))}
+                          </TableCell>
                         </TableRow>
                       );
                     })
@@ -144,24 +180,25 @@ export function ClientReleveDialog({ open, onOpenChange, client }: Props) {
                 </TableBody>
               </Table>
             </div>
-
             <div className="ml-auto w-full max-w-md rounded-md border p-3 text-sm space-y-1.5">
               <div className="font-semibold">Récapitulatif</div>
               {data.totalDebit !== 0 && <Row label="Total Débit" value={data.totalDebit} />}
               {data.totalPaiement > 0 && <Row label="Total Paiement" value={data.totalPaiement} />}
               {data.totalRetours > 0 && <Row label="Total Retours" value={data.totalRetours} />}
               {data.totalTransport > 0 && (
-                <Row label="Frais de transport compris dans les factures" value={data.totalTransport} />
+                <Row
+                  label="Frais de transport compris dans les factures"
+                  value={data.totalTransport}
+                />
               )}
               <div className="flex justify-between border-t pt-1.5 font-bold text-destructive">
                 <span>{data.solde >= 0 ? "SOLDE DÉBITEUR (IMPAYÉ)" : "SOLDE CRÉDITEUR"}</span>
                 <span>{formatFCFA(Math.abs(data.solde))}</span>
               </div>
             </div>
-
             <div className="flex justify-end">
               <Button onClick={handlePdf} disabled={busy}>
-                {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FileDown className="mr-2 h-4 w-4" />}
+                {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 Télécharger le PDF
               </Button>
             </div>

@@ -1,13 +1,6 @@
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import {
-  FileText,
-  LayoutDashboard,
-  Receipt,
-  Settings as SettingsIcon,
-  ShieldCheck,
-} from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -51,7 +44,6 @@ function FNEModule() {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
-          <ShieldCheck className="h-8 w-8" style={{ color: FNE_ORANGE }} />
           <div>
             <h1 className="ds-page-title">FNE — Facture Normalisée Électronique</h1>
             <div className="text-sm text-muted-foreground flex items-center gap-2">
@@ -65,25 +57,12 @@ function FNEModule() {
           </div>
         </div>
       </div>
-
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
-          <TabsTrigger value="dashboard">
-            <LayoutDashboard className="h-4 w-4 mr-1" />
-            Tableau de bord
-          </TabsTrigger>
-          <TabsTrigger value="factures">
-            <Receipt className="h-4 w-4 mr-1" />
-            Factures FNE
-          </TabsTrigger>
-          <TabsTrigger value="logs">
-            <FileText className="h-4 w-4 mr-1" />
-            Historique
-          </TabsTrigger>
-          <TabsTrigger value="settings">
-            <SettingsIcon className="h-4 w-4 mr-1" />
-            Paramètres
-          </TabsTrigger>
+          <TabsTrigger value="dashboard">Tableau de bord</TabsTrigger>
+          <TabsTrigger value="factures">Factures FNE</TabsTrigger>
+          <TabsTrigger value="logs">Historique</TabsTrigger>
+          <TabsTrigger value="settings">Paramètres</TabsTrigger>
         </TabsList>
         <TabsContent value="dashboard">
           <FNEDashboardTab />

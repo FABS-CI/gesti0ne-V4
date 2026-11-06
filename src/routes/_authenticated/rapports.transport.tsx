@@ -2,7 +2,6 @@ import { ClientLink } from "@/components/common/ClientLink";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Download } from "lucide-react";
 import {
   Bar,
   BarChart,
@@ -144,7 +143,7 @@ function RapportTransportPage() {
           Frais de transport
         </h1>
         <Button variant="outline" onClick={exporter} disabled={!d}>
-          <Download className="mr-2 h-4 w-4" /> Exporter
+          Exporter
         </Button>
       </div>
 

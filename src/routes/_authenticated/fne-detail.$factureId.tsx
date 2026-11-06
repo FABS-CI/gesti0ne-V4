@@ -3,16 +3,6 @@ import { askConfirm } from "@/components/common/GlobalConfirm";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  ArrowLeft,
-  Copy,
-  RefreshCw,
-  Undo2,
-  CheckCircle2,
-  Printer,
-  Download,
-  RotateCw,
-} from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -59,7 +49,9 @@ function FNEDetail() {
   const refund = useMutation({
     mutationFn: () => refundFNEInvoice(factureId),
     onSuccess: (avoir) => {
-      toast.success(`Avoir ${avoir.code_dgi ?? ""} émis : ${formatFCFA(Number(avoir.montant ?? 0))}`);
+      toast.success(
+        `Avoir ${avoir.code_dgi ?? ""} émis : ${formatFCFA(Number(avoir.montant ?? 0))}`,
+      );
       qc.invalidateQueries({ queryKey: ["fne-invoice", factureId] });
       qc.invalidateQueries({ queryKey: ["fne-list"] });
     },
@@ -121,10 +113,7 @@ function FNEDetail() {
     <div className="space-y-4 print:space-y-2">
       <div className="flex items-center justify-between print:hidden">
         <Button asChild variant="ghost" size="sm">
-          <Link to="/fne">
-            <ArrowLeft className="h-4 w-4 mr-1" />
-            Retour
-          </Link>
+          <Link to="/fne">Retour</Link>
         </Button>
         <div className="flex gap-2 flex-wrap">
           <Button
@@ -132,15 +121,12 @@ function FNEDetail() {
             size="sm"
             onClick={() => qc.invalidateQueries({ queryKey: ["fne-invoice", factureId] })}
           >
-            <RefreshCw className="h-4 w-4 mr-1" />
             Rafraîchir
           </Button>
           <Button variant="outline" size="sm" onClick={() => window.print()}>
-            <Printer className="h-4 w-4 mr-1" />
             Imprimer / PDF
           </Button>
           <Button variant="outline" size="sm" onClick={downloadJSON}>
-            <Download className="h-4 w-4 mr-1" />
             JSON
           </Button>
           {canRetry && (
@@ -150,7 +136,6 @@ function FNEDetail() {
               disabled={retry.isPending}
               onClick={() => retry.mutate()}
             >
-              <RotateCw className="h-4 w-4 mr-1" />
               {retry.isPending ? "Envoi…" : "Réessayer"}
             </Button>
           )}
@@ -168,13 +153,11 @@ function FNEDetail() {
                   refund.mutate();
               }}
             >
-              <Undo2 className="h-4 w-4 mr-1" />
               Émettre un avoir
             </Button>
           )}
         </div>
       </div>
-
       <div className="grid md:grid-cols-2 gap-4">
         <Card>
           <CardHeader>
@@ -186,7 +169,12 @@ function FNEDetail() {
             </Badge>
             <dl className="grid grid-cols-3 gap-2 text-sm mt-4">
               <dt className="text-muted-foreground">Client</dt>
-              <dd className="col-span-2"><ClientLink clientId={(f as { client_id?: string | null }).client_id} nom={f.client_nom} /></dd>
+              <dd className="col-span-2">
+                <ClientLink
+                  clientId={(f as { client_id?: string | null }).client_id}
+                  nom={f.client_nom}
+                />
+              </dd>
               <dt className="text-muted-foreground">Montant</dt>
               <dd className="col-span-2">{formatFCFA(Number(f.montant ?? 0))}</dd>
               <dt className="text-muted-foreground">Template</dt>
@@ -197,13 +185,14 @@ function FNEDetail() {
               <dd className="col-span-2 font-mono text-xs flex items-center gap-1">
                 {f.code_dgi ?? "—"}{" "}
                 {f.code_dgi && (
-                  <Button aria-label="Copier"
-                    size="icon"
+                  <Button
+                    aria-label="Copier"
+                    size="sm"
                     variant="ghost"
                     className="h-5 w-5"
                     onClick={() => copy(f.code_dgi!)}
                   >
-                    <Copy className="h-3 w-3" />
+                    Copier
                   </Button>
                 )}
               </dd>
@@ -211,13 +200,14 @@ function FNEDetail() {
               <dd className="col-span-2 font-mono text-xs truncate flex items-center gap-1">
                 {f.token ?? "—"}{" "}
                 {f.token && (
-                  <Button aria-label="Copier"
-                    size="icon"
+                  <Button
+                    aria-label="Copier"
+                    size="sm"
                     variant="ghost"
                     className="h-5 w-5"
                     onClick={() => copy(f.token!)}
                   >
-                    <Copy className="h-3 w-3" />
+                    Copier
                   </Button>
                 )}
               </dd>
@@ -225,7 +215,6 @@ function FNEDetail() {
               <dd className="col-span-2">
                 {f.source === "dgi_api" ? (
                   <Badge className="gap-1" style={{ backgroundColor: "#10B981", color: "#fff" }}>
-                    <CheckCircle2 className="h-3 w-3" />
                     API DGI
                   </Badge>
                 ) : (
@@ -233,9 +222,7 @@ function FNEDetail() {
                 )}
               </dd>
               <dt className="text-muted-foreground">Créée le</dt>
-              <dd className="col-span-2">
-                {f.created_at ? formatDateTime(f.created_at) : "—"}
-              </dd>
+              <dd className="col-span-2">{f.created_at ? formatDateTime(f.created_at) : "—"}</dd>
               <dt className="text-muted-foreground">Soumise le</dt>
               <dd className="col-span-2">
                 {f.submitted_at ? formatDateTime(f.submitted_at) : "—"}
@@ -274,7 +261,6 @@ function FNEDetail() {
           </CardContent>
         </Card>
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Articles facturés</CardTitle>

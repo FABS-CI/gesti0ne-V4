@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { History } from "lucide-react";
 import { ResourceManager } from "@/components/crud/ResourceManager";
 import { bulletinsConfig } from "@/components/paie/bulletins-config";
 import { authRouteHead } from "@/lib/route-head";
@@ -9,7 +8,6 @@ const historiqueConfig = {
   ...bulletinsConfig,
   title: "Historique des paies",
   subtitle: "Tous les bulletins enregistrés",
-  icon: History,
   newHref: undefined,
 };
 

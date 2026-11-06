@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Loader2, Plus, Save, Trash2, X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -138,17 +138,14 @@ function NouvelleEcriturePage() {
   return (
     <div className="space-y-4 pb-24">
       <div className="flex items-center gap-3">
-        <Button aria-label="Retour" asChild variant="ghost" size="icon">
-          <Link to="/comptabilite">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
+        <Button aria-label="Retour" asChild variant="ghost" size="sm">
+          <Link to="/comptabilite">Retour</Link>
         </Button>
         <div>
           <h1 className="ds-page-title">Nouvelle écriture comptable</h1>
           <p className="text-sm text-muted-foreground">Saisie manuelle — SYSCOHADA</p>
         </div>
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle className="text-base">En-tête</CardTitle>
@@ -191,12 +188,11 @@ function NouvelleEcriturePage() {
           </div>
         </CardContent>
       </Card>
-
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-base">Lignes de l'écriture</CardTitle>
           <Button size="sm" variant="outline" onClick={addLigne}>
-            <Plus className="mr-2 h-4 w-4" /> Ajouter une ligne
+            Ajouter une ligne
           </Button>
         </CardHeader>
         <CardContent>
@@ -256,12 +252,12 @@ function NouvelleEcriturePage() {
                   <TableCell>
                     <Button
                       aria-label="Supprimer"
-                      size="icon"
+                      size="sm"
                       variant="ghost"
                       onClick={() => removeLigne(i)}
                       disabled={lignes.length <= 1}
                     >
-                      <Trash2 className="h-4 w-4 text-destructive" />
+                      Supprimer
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -275,7 +271,6 @@ function NouvelleEcriturePage() {
               </option>
             ))}
           </datalist>
-
           <div className="mt-4 flex flex-wrap justify-end gap-6 text-sm">
             <div>
               <span className="text-muted-foreground">Total débit : </span>
@@ -295,7 +290,6 @@ function NouvelleEcriturePage() {
           </div>
         </CardContent>
       </Card>
-
       <div className="fixed inset-x-0 bottom-[calc(56px+env(safe-area-inset-bottom))] md:bottom-0 z-40 flex justify-end gap-2 border-t bg-background/95 p-3 backdrop-blur">
         <Button variant="outline" onClick={() => navigate({ to: "/comptabilite" })}>
           <X className="mr-2 h-4 w-4" /> Annuler
@@ -304,11 +298,7 @@ function NouvelleEcriturePage() {
           disabled={save.isPending || !totals.balanced || !libelle.trim() || comptesInconnus > 0}
           onClick={() => save.mutate()}
         >
-          {save.isPending ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Save className="mr-2 h-4 w-4" />
-          )}
+          {save.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
           Enregistrer
         </Button>
       </div>

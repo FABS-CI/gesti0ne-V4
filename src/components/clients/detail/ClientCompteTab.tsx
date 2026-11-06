@@ -1,5 +1,4 @@
 import { formatDocumentReference } from "@/lib/document-reference";
-import { AlertTriangle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Kpi } from "./shared";
 import { frDate } from "@/lib/client-detail-helpers";
@@ -59,7 +58,6 @@ export function ClientCompteTab({
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-destructive">
-              <AlertTriangle className="h-4 w-4" />
               {facturesImpayees.length} facture(s) impayée(s)
             </CardTitle>
           </CardHeader>

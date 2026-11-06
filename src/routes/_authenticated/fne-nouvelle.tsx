@@ -2,7 +2,6 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Plus, Trash2, Code, Send } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -102,10 +101,7 @@ function NewFNE() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <Button asChild variant="ghost" size="sm">
-          <Link to="/fne">
-            <ArrowLeft className="h-4 w-4 mr-1" />
-            Retour
-          </Link>
+          <Link to="/fne">Retour</Link>
         </Button>
         <div className="flex gap-2">
           <Button
@@ -113,7 +109,6 @@ function NewFNE() {
             size="sm"
             onClick={() => setMode(mode === "form" ? "json" : "form")}
           >
-            <Code className="h-4 w-4 mr-1" />
             {mode === "form" ? "Voir JSON" : "Voir formulaire"}
           </Button>
           <Button
@@ -121,7 +116,6 @@ function NewFNE() {
             onClick={() => submit.mutate()}
             style={{ backgroundColor: "#FF6200", color: "#fff" }}
           >
-            <Send className="h-4 w-4 mr-1" />
             {submit.isPending ? "Soumission…" : "Soumettre à la DGI"}
           </Button>
         </div>
@@ -221,7 +215,6 @@ function NewFNE() {
               </div>
             </CardContent>
           </Card>
-
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Récapitulatif</CardTitle>
@@ -257,7 +250,6 @@ function NewFNE() {
               </div>
             </CardContent>
           </Card>
-
           <Card className="lg:col-span-3">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-base">Lignes de facture</CardTitle>
@@ -278,7 +270,6 @@ function NewFNE() {
                   ])
                 }
               >
-                <Plus className="h-4 w-4 mr-1" />
                 Ajouter
               </Button>
             </CardHeader>
@@ -355,12 +346,13 @@ function NewFNE() {
                         {formatFCFA(it.quantity * it.amount * (1 - (it.discount ?? 0) / 100))}
                       </TableCell>
                       <TableCell>
-                        <Button aria-label="Supprimer"
-                          size="icon"
+                        <Button
+                          aria-label="Supprimer"
+                          size="sm"
                           variant="ghost"
                           onClick={() => setItems(items.filter((_, j) => j !== i))}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          Supprimer
                         </Button>
                       </TableCell>
                     </TableRow>

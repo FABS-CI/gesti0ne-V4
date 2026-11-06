@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Bell, CheckCheck, Inbox } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -73,11 +72,10 @@ export function NotificationsBell() {
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          size="icon"
-          className="relative h-9 w-9 rounded-md"
+          className="relative h-9 rounded-md px-3"
           aria-label="Notifications"
         >
-          <Bell className="h-4 w-4" strokeWidth={1.75} />
+          Notifications
           {unread > 0 && (
             <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 font-mono text-[10px] font-medium text-destructive-foreground ring-2 ring-card tabular-nums">
               {display}
@@ -95,14 +93,12 @@ export function NotificationsBell() {
             disabled={unread === 0}
             className="h-7 px-2 text-xs"
           >
-            <CheckCheck className="h-3.5 w-3.5 mr-1" />
             Tout marquer lu
           </Button>
         </div>
         <ScrollArea className="max-h-[420px]">
           {items.length === 0 ? (
             <div className="flex flex-col items-center gap-2 py-10 text-muted-foreground">
-              <Inbox className="h-8 w-8 opacity-40" />
               <p className="text-sm">Aucune notification</p>
             </div>
           ) : (

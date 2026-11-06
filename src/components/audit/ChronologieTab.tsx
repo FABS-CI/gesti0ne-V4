@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Eye, Monitor, Smartphone, Tablet } from "lucide-react";
+import { Eye } from "lucide-react";
 import {
   ACTION_LABEL,
   ACTION_VARIANT,
@@ -33,9 +33,7 @@ type Props = {
 };
 
 function DeviceIcon({ device }: { device?: string | null }) {
-  if (device === "Mobile") return <Smartphone className="h-3.5 w-3.5" />;
-  if (device === "Tablette") return <Tablet className="h-3.5 w-3.5" />;
-  return <Monitor className="h-3.5 w-3.5" />;
+  return <span>{device === "Mobile" || device === "Tablette" ? device : "Ordinateur"}</span>;
 }
 
 const Row = React.memo(function Row({
@@ -55,9 +53,7 @@ const Row = React.memo(function Row({
     <TableRow className="hover:bg-muted/40">
       <TableCell className="whitespace-nowrap text-xs">
         <div>{formatDate(r.occurred_at)}</div>
-        <div className="text-muted-foreground">
-          {formatTime(r.occurred_at)}
-        </div>
+        <div className="text-muted-foreground">{formatTime(r.occurred_at)}</div>
       </TableCell>
       <TableCell>
         <button
@@ -107,7 +103,9 @@ const Row = React.memo(function Row({
         <div className="font-mono">{r.ip_address ?? "—"}</div>
         {(r.country_code || localisation) && (
           <div className="text-muted-foreground flex items-center gap-1">
-            {r.country_code && <span className="text-sm leading-none">{countryFlag(r.country_code)}</span>}
+            {r.country_code && (
+              <span className="text-sm leading-none">{countryFlag(r.country_code)}</span>
+            )}
             <span>{localisation || r.country_code}</span>
           </div>
         )}
@@ -150,7 +148,9 @@ export function ChronologieTab({
       Array.from(
         new Set(
           rows
-            .map((r) => (r.country_code ? `${r.country_code}|${r.country ?? r.country_code}` : null))
+            .map((r) =>
+              r.country_code ? `${r.country_code}|${r.country ?? r.country_code}` : null,
+            )
             .filter(Boolean) as string[],
         ),
       ),

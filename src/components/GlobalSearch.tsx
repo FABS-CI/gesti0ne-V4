@@ -2,23 +2,7 @@ import { formatDocumentReference, toStoredReferencePattern } from "@/lib/documen
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Users,
-  Package,
-  FileText,
-  Truck,
-  UserCircle,
-  Search,
-  Loader2,
-  Wallet,
-  ShoppingCart,
-  Undo2,
-  UserPlus,
-  ScrollText,
-  Gauge,
-  History,
-  type LucideIcon,
-} from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import {
   CommandDialog,
@@ -44,38 +28,39 @@ type Hit = {
   params?: Record<string, string>;
 };
 
-type QuickAction = { id: string; label: string; to: string; icon: LucideIcon; keywords: string };
+type QuickAction = { id: string; label: string; to: string; keywords: string };
 
 const QUICK_ACTIONS: QuickAction[] = [
-  { id: "a-cmd", label: "Nouvelle commande", to: "/commandes/nouvelle", icon: ShoppingCart, keywords: "commande vente bc" },
-  { id: "a-pai", label: "Nouveau paiement", to: "/paiements/nouveau", icon: Wallet, keywords: "paiement encaissement reglement" },
-  { id: "a-ret", label: "Nouveau retour", to: "/retours/nouveau", icon: Undo2, keywords: "retour avoir" },
-  { id: "a-cli", label: "Nouveau client", to: "/clients/nouveau", icon: UserPlus, keywords: "client creer" },
-  { id: "a-rel", label: "Relevé de compte d'un client", to: "/etat-compte-clients", icon: ScrollText, keywords: "releve etat compte solde" },
-  { id: "a-pil", label: "Centre de pilotage", to: "/pilotage", icon: Gauge, keywords: "pilotage tableau bord aujourd'hui" },
+  {
+    id: "a-cmd",
+    label: "Nouvelle commande",
+    to: "/commandes/nouvelle",
+    keywords: "commande vente bc",
+  },
+  {
+    id: "a-pai",
+    label: "Nouveau paiement",
+    to: "/paiements/nouveau",
+    keywords: "paiement encaissement reglement",
+  },
+  { id: "a-ret", label: "Nouveau retour", to: "/retours/nouveau", keywords: "retour avoir" },
+  { id: "a-cli", label: "Nouveau client", to: "/clients/nouveau", keywords: "client creer" },
+  {
+    id: "a-rel",
+    label: "Relevé de compte d'un client",
+    to: "/etat-compte-clients",
+    keywords: "releve etat compte solde",
+  },
+  {
+    id: "a-pil",
+    label: "Centre de pilotage",
+    to: "/pilotage",
+    keywords: "pilotage tableau bord aujourd'hui",
+  },
 ];
 
 const RECENT_KEY = "fabs.globalSearch.recent";
 const RECENT_MAX = 8;
-
-function iconFor(group: string): LucideIcon {
-  switch (group) {
-    case "Clients":
-      return Users;
-    case "Utilisateurs":
-      return UserCircle;
-    case "Produits":
-      return Package;
-    case "Bons de livraison":
-      return Truck;
-    case "Paiements":
-      return Wallet;
-    case "Commandes":
-      return ShoppingCart;
-    default:
-      return FileText;
-  }
-}
 
 function readRecent(): Hit[] {
   try {
@@ -98,7 +83,10 @@ async function search(q: string): Promise<Hit[]> {
 }
 
 function fold(s: string) {
-  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
 }
 
 export function GlobalSearch() {
@@ -138,7 +126,7 @@ export function GlobalSearch() {
 
   const allowedPages = useMemo(() => {
     const seen = new Set<string>();
-    const out: { url: string; title: string; group: string; icon: LucideIcon }[] = [];
+    const out: { url: string; title: string; group: string }[] = [];
     for (const g of NAV_GROUPS) {
       if (g.superAdminOnly && !isSuperAdmin) continue;
       for (const it of g.items) {
@@ -149,21 +137,26 @@ export function GlobalSearch() {
           if (req !== null && !(Array.isArray(req) ? hasAny(req) : has(req))) continue;
         }
         seen.add(it.url);
-        out.push({ url: it.url, title: it.title, group: g.label, icon: it.icon as LucideIcon });
+        out.push({ url: it.url, title: it.title, group: g.label });
       }
     }
     return out;
   }, [has, hasAny, isSuperAdmin]);
 
   const term = fold(value.trim());
-  const visiblePages = term.length >= 2
-    ? allowedPages.filter((p) => fold(`${p.title} ${p.group}`).includes(term)).slice(0, 8)
-    : [];
+  const visiblePages =
+    term.length >= 2
+      ? allowedPages.filter((p) => fold(`${p.title} ${p.group}`).includes(term)).slice(0, 8)
+      : [];
   const visibleActions = term
     ? allowedActions.filter((a) => fold(`${a.label} ${a.keywords}`).includes(term))
     : allowedActions;
 
-  const { data: hits = [], isFetching, isError } = useQuery({
+  const {
+    data: hits = [],
+    isFetching,
+    isError,
+  } = useQuery({
     queryKey: ["global-search", debounced],
     queryFn: () => search(debounced),
     enabled: open && debounced.trim().length >= 2,
@@ -210,7 +203,6 @@ export function GlobalSearch() {
   const showRecent = !term && recent.length > 0;
 
   function renderHit(h: Hit, keyPrefix: string) {
-    const Icon = iconFor(h.group);
     return (
       <CommandItem
         key={`${keyPrefix}-${h.group}-${h.id}`}
@@ -218,18 +210,18 @@ export function GlobalSearch() {
         onSelect={() => goHit(h)}
         className="gap-2"
       >
-        <Icon className="h-4 w-4 text-muted-foreground" />
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm">{formatDocumentReference(h.label)}</div>
           {h.sub && (
             <div className="truncate text-xs text-muted-foreground">
-              {h.sub.replace(/(\d+)(?:\.\d+)? FCFA/g, (_m, n: string) => `${n.replace(/\B(?=(\d{3})+(?!\d))/g, " ")} FCFA`)}
+              {h.sub.replace(
+                /(\d+)(?:\.\d+)? FCFA/g,
+                (_m, n: string) => `${n.replace(/\B(?=(\d{3})+(?!\d))/g, " ")} FCFA`,
+              )}
             </div>
           )}
         </div>
-        {keyPrefix === "recent" && (
-          <span className="text-xs text-muted-foreground">{h.group}</span>
-        )}
+        {keyPrefix === "recent" && <span className="text-xs text-muted-foreground">{h.group}</span>}
       </CommandItem>
     );
   }
@@ -241,14 +233,16 @@ export function GlobalSearch() {
         onClick={() => setOpen(true)}
         className="flex h-9 w-full max-w-xl items-center gap-2 rounded-md border border-input bg-background px-3 text-sm text-muted-foreground transition-colors hover:border-foreground/25 hover:bg-muted/50"
       >
-        <Search className="h-4 w-4 shrink-0" strokeWidth={1.75} />
         <span className="flex-1 truncate text-left">Rechercher</span>
         <kbd className="hidden rounded border bg-muted px-1.5 py-0.5 font-mono text-[11px] text-muted-foreground sm:inline-block">
           Ctrl + K
         </kbd>
       </button>
-
-      <CommandDialog shouldFilter={false} open={open} onOpenChange={(o) => (o ? setOpen(true) : close())}>
+      <CommandDialog
+        shouldFilter={false}
+        open={open}
+        onOpenChange={(o) => (o ? setOpen(true) : close())}
+      >
         <CommandInput
           value={value}
           onValueChange={setValue}
@@ -264,7 +258,6 @@ export function GlobalSearch() {
                   onSelect={() => goAction(a)}
                   className="gap-2"
                 >
-                  <a.icon className="h-4 w-4 text-primary" />
                   <span className="text-sm">{a.label}</span>
                 </CommandItem>
               ))}
@@ -285,7 +278,6 @@ export function GlobalSearch() {
                     }}
                     className="gap-2"
                   >
-                    <p.icon className="h-4 w-4 text-muted-foreground" />
                     <span className="flex-1 truncate text-sm">{p.title}</span>
                     <span className="text-xs text-muted-foreground">{p.group}</span>
                   </CommandItem>
@@ -316,16 +308,16 @@ export function GlobalSearch() {
               grouped.map(([group, items]) => (
                 <div key={group}>
                   <CommandSeparator />
-                  <CommandGroup heading={group}>{items.map((h) => renderHit(h, "hit"))}</CommandGroup>
+                  <CommandGroup heading={group}>
+                    {items.map((h) => renderHit(h, "hit"))}
+                  </CommandGroup>
                 </div>
               ))
             ))}
 
           <CommandEmpty>
             {term.length < 2 ? (
-              <span className="inline-flex items-center gap-2">
-                <History className="h-4 w-4" /> Tapez au moins 2 caractères…
-              </span>
+              <span className="inline-flex items-center gap-2">Tapez au moins 2 caractères…</span>
             ) : isFetching ? (
               "Recherche…"
             ) : (

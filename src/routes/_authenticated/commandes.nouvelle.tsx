@@ -2,7 +2,6 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
-import { ArrowLeft, ShoppingCart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { FloatingCalculator } from "@/components/commandes/FloatingCalculator";
@@ -10,10 +9,12 @@ import { CommandeForm } from "@/components/commandes/CommandeForm";
 import { usePermissions } from "@/hooks/use-permissions";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
-const searchSchema = z.object({
-  clientId: z.string().optional(),
-  periode: z.string().or(z.number()).optional(),
-}).passthrough();
+const searchSchema = z
+  .object({
+    clientId: z.string().optional(),
+    periode: z.string().or(z.number()).optional(),
+  })
+  .passthrough();
 
 export const Route = createFileRoute("/_authenticated/commandes/nouvelle")({
   validateSearch: zodValidator(searchSchema),

@@ -3,12 +3,22 @@ import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
-import { invalidateCommande, invalidateFacture, invalidateColisage } from "@/lib/cache-invalidation";
+import {
+  invalidateCommande,
+  invalidateFacture,
+  invalidateColisage,
+} from "@/lib/cache-invalidation";
 import { supabase } from "@/integrations/supabase/client";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { Info, Loader2, Percent, Save, Truck, User } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useServerDraft } from "@/hooks/use-server-draft";
 import { DraftRestoreBanner } from "@/components/ui/draft-restore-banner";
@@ -57,23 +67,24 @@ const ligneSchema = z.object({
   cover_thumb_path: z.string().nullable().optional(),
 });
 
-const formSchema = z.object({
-  date_commande: z.string().min(1, "Date requise"),
-  client_id: z.string().min(1, "Sélectionnez un client"),
-  etablissement: z.string().optional(),
-  representant_nom: z.string().optional(),
-  telephone: z.string().optional(),
-  ville: z.string().optional(),
-  adresse: z.string().optional(),
-  remise_globale_pct: z.number().min(0).max(100).optional().or(z.literal(undefined)),
-  taux_tva: z.number().min(0).max(100).optional().or(z.literal(undefined)),
-  depot_id: z.string().optional(),
-  depot_override_motif: z.string().nullable().optional(),
-  appliquer_tva: z.boolean(),
-  type_frais_transport: z.enum(["aucun", "livraison", "expedition"]),
-  montant_frais_transport: z.number().min(0, "Montant ≥ 0").optional().or(z.literal(undefined)),
-  lignes: z.array(ligneSchema).min(1, "Ajoutez au moins une ligne produit"),
-})
+const formSchema = z
+  .object({
+    date_commande: z.string().min(1, "Date requise"),
+    client_id: z.string().min(1, "Sélectionnez un client"),
+    etablissement: z.string().optional(),
+    representant_nom: z.string().optional(),
+    telephone: z.string().optional(),
+    ville: z.string().optional(),
+    adresse: z.string().optional(),
+    remise_globale_pct: z.number().min(0).max(100).optional().or(z.literal(undefined)),
+    taux_tva: z.number().min(0).max(100).optional().or(z.literal(undefined)),
+    depot_id: z.string().optional(),
+    depot_override_motif: z.string().nullable().optional(),
+    appliquer_tva: z.boolean(),
+    type_frais_transport: z.enum(["aucun", "livraison", "expedition"]),
+    montant_frais_transport: z.number().min(0, "Montant ≥ 0").optional().or(z.literal(undefined)),
+    lignes: z.array(ligneSchema).min(1, "Ajoutez au moins une ligne produit"),
+  })
   .refine(
     (data) => {
       const hasRemiseLigne = data.lignes.some((l) => (l.remise_pct || 0) > 0);
@@ -81,9 +92,10 @@ const formSchema = z.object({
       return !(hasRemiseLigne && hasRemiseGlobale);
     },
     {
-      message: "Il est interdit d'utiliser simultanément une remise globale et des remises en ligne.",
+      message:
+        "Il est interdit d'utiliser simultanément une remise globale et des remises en ligne.",
       path: ["remise_globale_pct"],
-    }
+    },
   );
 
 // On crée aussi un type pour Zod data brut avant transformation/validation du schéma final si nécessaire
@@ -129,7 +141,7 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
       telephone: "",
       ville: "",
       adresse: "",
-      
+
       remise_globale_pct: undefined,
       taux_tva: undefined,
       appliquer_tva: false,
@@ -177,7 +189,8 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
   const appliquerTva = useWatch({ control: form.control, name: "appliquer_tva" });
   const tauxTvaRaw = useWatch({ control: form.control, name: "taux_tva" }) || 0;
   const tauxTva = appliquerTva ? tauxTvaRaw : 0;
-  const typeFraisWatch = useWatch({ control: form.control, name: "type_frais_transport" }) ?? "aucun";
+  const typeFraisWatch =
+    useWatch({ control: form.control, name: "type_frais_transport" }) ?? "aucun";
   const montantFraisWatch = useWatch({ control: form.control, name: "montant_frais_transport" });
   const fraisPrevus: FraisTransport = normaliserFraisTransport(typeFraisWatch, montantFraisWatch);
   const montantFraisPrevu = montantFraisTransport(fraisPrevus);
@@ -217,8 +230,6 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
     isEmpty: (v) => !v.client_id && !(v.lignes ?? []).some((l) => l?.produit_id || l?.designation),
   });
 
-
-
   // Clé d'idempotence stable pour toute la saisie (anti-doublon)
   const idempotencyKey = useMemo(() => newIdempotencyKey("cmd"), []);
 
@@ -235,23 +246,27 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
       const payload: any = {
         date_commande: values.date_commande,
         client_id: values.client_id,
-        client_nom: (values as any).client_nom || selectedClient?.nom || values.etablissement || null,
+        client_nom:
+          (values as any).client_nom || selectedClient?.nom || values.etablissement || null,
         etablissement: values.etablissement || null,
         representant_nom: values.representant_nom || null,
         telephone: values.telephone || null,
         ville: values.ville || null,
         adresse: values.adresse || null,
-        
+
         remise_globale_pct: values.remise_globale_pct || 0,
-        taux_tva: values.appliquer_tva ? (values.taux_tva || 0) : 0,
+        taux_tva: values.appliquer_tva ? values.taux_tva || 0 : 0,
         auto_validate: values.auto_validate,
         // Valeurs confirmées dans la fenêtre de validation, sinon frais prévus dans la saisie
         ...(() => {
-          const f: FraisTransport = values.frais_transport ?? (
-            values.type_frais_transport && values.type_frais_transport !== "aucun"
-              ? { type: values.type_frais_transport, montant: Number(values.montant_frais_transport ?? 0) }
-              : { type: null, montant: null }
-          );
+          const f: FraisTransport =
+            values.frais_transport ??
+            (values.type_frais_transport && values.type_frais_transport !== "aucun"
+              ? {
+                  type: values.type_frais_transport,
+                  montant: Number(values.montant_frais_transport ?? 0),
+                }
+              : { type: null, montant: null });
           return {
             type_frais_transport: f.type ?? null,
             montant_frais_transport: f.type ? Number(f.montant ?? 0) : null,
@@ -354,11 +369,11 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
       decision: validate ? "valider_facture" : "mettre_en_attente",
     });
     setConfirmOpen(false);
-    mutation.mutate({ 
-      ...pendingValues, 
+    mutation.mutate({
+      ...pendingValues,
       auto_validate: validate,
       frais_transport: validate ? frais : undefined,
-      client_nom: selectedClient?.nom || pendingValues.etablissement || null
+      client_nom: selectedClient?.nom || pendingValues.etablissement || null,
     } as any);
   };
 
@@ -487,14 +502,10 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
         />
       ) : null}
       <div className="space-y-6">
-
         <div className="space-y-6 min-w-0">
           {/* 1. Client */}
           <section className="scroll-mt-20 rounded-md border bg-card p-4 sm:p-5 space-y-4">
             <h2 className="flex items-center gap-2 text-base sm:text-lg font-semibold">
-              <span aria-hidden className="grid h-7 w-7 shrink-0 place-items-center text-muted-foreground">
-                <User className="h-4 w-4" />
-              </span>
               1. Client
             </h2>
             <div>
@@ -532,7 +543,11 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
                 <Label className="text-xs">Client (Établissement)</Label>
-                <Input readOnly className="bg-muted font-semibold" {...form.register("etablissement")} />
+                <Input
+                  readOnly
+                  className="bg-muted font-semibold"
+                  {...form.register("etablissement")}
+                />
               </div>
               <div>
                 <Label className="text-xs">Représentant</Label>
@@ -556,9 +571,6 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
           {/* 2. Infos commande */}
           <section className="scroll-mt-20 rounded-md border bg-card p-4 sm:p-5 space-y-4">
             <h2 className="flex items-center gap-2 text-base sm:text-lg font-semibold">
-              <span aria-hidden className="grid h-7 w-7 shrink-0 place-items-center text-muted-foreground">
-                <Info className="h-4 w-4" />
-              </span>
               2. Informations Générales
             </h2>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -599,9 +611,6 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
           {/* 4. Remise globale */}
           <section className="scroll-mt-20 rounded-md border bg-card p-4 sm:p-5 space-y-3">
             <h2 className="flex items-center gap-2 text-base sm:text-lg font-semibold">
-              <span aria-hidden className="grid h-7 w-7 shrink-0 place-items-center text-muted-foreground">
-                <Percent className="h-4 w-4" />
-              </span>
               4. Remise globale
             </h2>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -618,14 +627,18 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
                   disabled={hasRemiseEnLigne}
                 />
                 {form.formState.errors.remise_globale_pct && (
-                  <p className="text-xs text-destructive mt-0.5">{form.formState.errors.remise_globale_pct.message}</p>
+                  <p className="text-xs text-destructive mt-0.5">
+                    {form.formState.errors.remise_globale_pct.message}
+                  </p>
                 )}
                 <p className="text-xs text-muted-foreground mt-1">
                   S'applique sur le total HT après remises de ligne.
                   <br />
-                  <span className={`text-xs font-semibold ${hasRemiseEnLigne ? "text-destructive" : "text-warning"}`}>
-                    {hasRemiseEnLigne 
-                      ? "Attention : Remise globale bloquée car des remises en ligne sont utilisées. Supprimez-les pour l'activer." 
+                  <span
+                    className={`text-xs font-semibold ${hasRemiseEnLigne ? "text-destructive" : "text-warning"}`}
+                  >
+                    {hasRemiseEnLigne
+                      ? "Attention : Remise globale bloquée car des remises en ligne sont utilisées. Supprimez-les pour l'activer."
                       : "Note : Impossible d'utiliser une remise globale si des remises en ligne sont déjà saisies."}
                   </span>
                 </p>
@@ -636,9 +649,6 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
           {/* 5. Frais de transport */}
           <section className="scroll-mt-20 rounded-md border bg-card p-4 sm:p-5 space-y-3">
             <h2 className="flex items-center gap-2 text-base sm:text-lg font-semibold">
-              <span aria-hidden className="grid h-7 w-7 shrink-0 place-items-center text-muted-foreground">
-                <Truck className="h-4 w-4" />
-              </span>
               5. Frais de transport
             </h2>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -647,11 +657,18 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
                 <Select
                   value={typeFraisWatch}
                   onValueChange={(v) => {
-                    form.setValue("type_frais_transport", v as "aucun" | "livraison" | "expedition", { shouldDirty: true });
-                    if (v === "aucun") form.setValue("montant_frais_transport", undefined, { shouldValidate: true });
+                    form.setValue(
+                      "type_frais_transport",
+                      v as "aucun" | "livraison" | "expedition",
+                      { shouldDirty: true },
+                    );
+                    if (v === "aucun")
+                      form.setValue("montant_frais_transport", undefined, { shouldValidate: true });
                   }}
                 >
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="aucun">Aucun frais</SelectItem>
                     <SelectItem value="livraison">Livraison</SelectItem>
@@ -669,7 +686,9 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
                   disabled={typeFraisWatch === "aucun"}
                 />
                 {form.formState.errors.montant_frais_transport ? (
-                  <p className="text-xs text-destructive">{form.formState.errors.montant_frais_transport.message}</p>
+                  <p className="text-xs text-destructive">
+                    {form.formState.errors.montant_frais_transport.message}
+                  </p>
                 ) : (
                   <p className="text-xs text-muted-foreground">{formatFCFA(montantFraisPrevu)}</p>
                 )}
@@ -696,11 +715,7 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
                 disabled={mutation.isPending || hasOvershoot}
                 className="w-full"
               >
-                {mutation.isPending ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <Save className="h-4 w-4 mr-2" />
-                )}
+                {mutation.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
                 {mutation.isPending
                   ? "Enregistrement…"
                   : mode === "edit"
@@ -726,32 +741,36 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <div className="text-xs uppercase text-muted-foreground">Net à payer</div>
-            <div className="truncate text-lg font-bold">{formatFCFA(totaux.ttc + montantFraisPrevu)}</div>
+            <div className="truncate text-lg font-bold">
+              {formatFCFA(totaux.ttc + montantFraisPrevu)}
+            </div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            {isDirty && <span role="status" aria-label="Modifications non enregistrées" title="Modifications non enregistrées" className="h-2 w-2 rounded-full bg-warning" />}
+            {isDirty && (
+              <span
+                role="status"
+                aria-label="Modifications non enregistrées"
+                title="Modifications non enregistrées"
+                className="h-2 w-2 rounded-full bg-warning"
+              />
+            )}
             <Button type="button" variant="outline" size="sm" asChild>
               <Link to="/commandes">Annuler</Link>
             </Button>
             <Button type="submit" size="sm" disabled={mutation.isPending || hasOvershoot}>
-              {mutation.isPending ? (
-                <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-              ) : (
-                <Save className="h-4 w-4 mr-1" />
-              )}
+              {mutation.isPending ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : null}
               {mutation.isPending ? "Envoi…" : mode === "edit" ? "MAJ" : "Enregistrer"}
             </Button>
           </div>
         </div>
       </div>
-
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <AlertDialogContent className="max-w-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>Confirmer la création de la commande</AlertDialogTitle>
             <AlertDialogDescription>
-              Vérifiez le récapitulatif avant enregistrement. Cette action créera la
-              commande dans le système.
+              Vérifiez le récapitulatif avant enregistrement. Cette action créera la commande dans
+              le système.
             </AlertDialogDescription>
           </AlertDialogHeader>
           {pendingValues && (
@@ -780,7 +799,11 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
                   </thead>
                   <tbody>
                     {pendingValues.lignes.map((l, i) => {
-                      const c = computeLigne(l.quantite || 0, l.prix_unitaire || 0, l.remise_pct || 0);
+                      const c = computeLigne(
+                        l.quantite || 0,
+                        l.prix_unitaire || 0,
+                        l.remise_pct || 0,
+                      );
                       return (
                         <tr key={i} className="border-t">
                           <td className="p-2">{l.designation}</td>
@@ -798,27 +821,32 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
                 <InfoCell label="Articles" value={String(totalArticles)} />
                 <InfoCell label="Quantité totale" value={String(totalQuantite)} />
                 <InfoCell label="Total HT (net)" value={formatFCFA(totaux.htApresRG)} />
-                <InfoCell
-                  label={`TVA (${tauxTva}%)`}
-                  value={formatFCFA(totaux.tva)}
-                />
+                <InfoCell label={`TVA (${tauxTva}%)`} value={formatFCFA(totaux.tva)} />
                 <InfoCell
                   label={`Remise globale (${pendingValues.remise_globale_pct}%)`}
                   value={`- ${formatFCFA(totaux.remiseGlobaleMontant)}`}
                 />
                 {fraisPrevus.type && (
                   <InfoCell
-                    label={fraisPrevus.type === "expedition" ? "Frais d'expédition" : "Frais de livraison"}
+                    label={
+                      fraisPrevus.type === "expedition"
+                        ? "Frais d'expédition"
+                        : "Frais de livraison"
+                    }
                     value={formatFCFA(montantFraisPrevu)}
                   />
                 )}
-                <InfoCell label="Total à payer" value={formatFCFA(totaux.ttc + montantFraisPrevu)} emphasis />
+                <InfoCell
+                  label="Total à payer"
+                  value={formatFCFA(totaux.ttc + montantFraisPrevu)}
+                  emphasis
+                />
               </div>
             </div>
           )}
           <AlertDialogFooter>
             <AlertDialogCancel>Modifier la saisie</AlertDialogCancel>
-            <Button 
+            <Button
               variant="default"
               onClick={() => {
                 if (canValiderCommande) {
@@ -835,8 +863,6 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-
       <AlertDialog open={!!recap} onOpenChange={(o) => !o && setRecap(null)}>
         <AlertDialogContent className="max-w-lg">
           <AlertDialogHeader>
@@ -903,7 +929,8 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
           <AlertDialogHeader>
             <AlertDialogTitle>Action de validation</AlertDialogTitle>
             <AlertDialogDescription>
-              La commande est prête. Vous disposez des droits de validation. Que souhaitez-vous faire ?
+              La commande est prête. Vous disposez des droits de validation. Que souhaitez-vous
+              faire ?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="grid gap-3 py-4">
@@ -915,12 +942,13 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
                 confirmSubmit(false);
               }}
             >
-              <span className="font-semibold text-base text-warning">Option 2 : Mettre en attente</span>
+              <span className="font-semibold text-base text-warning">
+                Option 2 : Mettre en attente
+              </span>
               <span className="text-xs text-muted-foreground text-left">
                 Crée uniquement la proforma et le bon de commande. Le statut sera "En attente".
               </span>
             </Button>
-            
             <Button
               className="justify-start h-auto py-3 px-4 flex-col items-start gap-1"
               onClick={() => {
@@ -935,7 +963,9 @@ export function CommandeForm({ mode, commandeId, initialValues, presetClientId }
             </Button>
           </div>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setConfirmOpen(true)}>Retour au récapitulatif</AlertDialogCancel>
+            <AlertDialogCancel onClick={() => setConfirmOpen(true)}>
+              Retour au récapitulatif
+            </AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

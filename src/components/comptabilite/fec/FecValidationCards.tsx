@@ -1,4 +1,3 @@
-import { AlertTriangle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResponsiveTable } from "@/components/layout/ResponsiveTable";
 import {
@@ -51,7 +50,7 @@ export function FecValidationCards({
         <Card className="border-destructive/40">
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2 text-destructive">
-              <AlertTriangle className="h-4 w-4" /> Erreurs bloquantes ({blocking.length})
+              Erreurs bloquantes ({blocking.length})
             </CardTitle>
           </CardHeader>
           <CardContent className="max-h-72 overflow-auto p-0">
@@ -68,7 +67,7 @@ export function FecValidationCards({
         <Card className="border-warning/40">
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2 text-warning">
-              <AlertTriangle className="h-4 w-4" /> Avertissements ({warnings.length})
+              Avertissements ({warnings.length})
             </CardTitle>
           </CardHeader>
           <CardContent className="max-h-72 overflow-auto p-0">

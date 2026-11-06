@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Gift, Plus, Search, Eye, Printer, Ban, Loader2, RotateCcw, X } from "lucide-react";
+import { Eye, Loader2, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -132,8 +132,7 @@ function SpecimensListPage() {
     };
   }, [specimens]);
 
-  const hasActiveFilters =
-    !!q || statut !== "all" || !!ville || !!dateFrom || !!dateTo;
+  const hasActiveFilters = !!q || statut !== "all" || !!ville || !!dateFrom || !!dateTo;
   const resetAllFilters = () => {
     setQ("");
     setStatut("all");
@@ -146,7 +145,6 @@ function SpecimensListPage() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Gift className="h-7 w-7 text-primary" />
           <div>
             <h1 className="ds-page-title">Gestion des Spécimens</h1>
             <p className="text-muted-foreground text-sm">
@@ -155,28 +153,21 @@ function SpecimensListPage() {
           </div>
         </div>
         <Can permission="specimens.creer">
-          <Button onClick={() => navigate({ to: "/specimens/nouveau" })}>
-            <Plus className="h-4 w-4 mr-2" />
-            Nouveau Spécimen
-          </Button>
+          <Button onClick={() => navigate({ to: "/specimens/nouveau" })}>Nouveau Spécimen</Button>
         </Can>
       </div>
-
       <div className="grid gap-4 md:grid-cols-4">
         <StatCard label="Total" value={stats.total} />
         <StatCard label="Enregistrés" value={stats.enregistre} accent="text-success" />
         <StatCard label="Annulés" value={stats.annule} accent="text-destructive" />
         <StatCard label="Quantité totale remise" value={stats.quantite} />
       </div>
-
       <div className="grid gap-3 md:grid-cols-5">
         <div className="relative md:col-span-2">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Numéro, établissement, représentant, donneur, motif…"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            className="pl-9"
           />
         </div>
         <Select value={statut} onValueChange={setStatut}>
@@ -198,21 +189,44 @@ function SpecimensListPage() {
           <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
         </div>
       </div>
-
       <FilterBadges
         badges={[
-          ...(q ? [{ key: "q", label: `Recherche : ${q}`, onClear: () => setQ("") } as FilterBadge] : []),
-          ...(statut !== "all"
-            ? [{ key: "statut", label: `Statut : ${STATUT_SPECIMEN_LABEL[statut]?.label ?? statut}`, onClear: () => setStatut("all") } as FilterBadge]
+          ...(q
+            ? [{ key: "q", label: `Recherche : ${q}`, onClear: () => setQ("") } as FilterBadge]
             : []),
-          ...(ville ? [{ key: "ville", label: `Ville : ${ville}`, onClear: () => setVille("") } as FilterBadge] : []),
+          ...(statut !== "all"
+            ? [
+                {
+                  key: "statut",
+                  label: `Statut : ${STATUT_SPECIMEN_LABEL[statut]?.label ?? statut}`,
+                  onClear: () => setStatut("all"),
+                } as FilterBadge,
+              ]
+            : []),
+          ...(ville
+            ? [
+                {
+                  key: "ville",
+                  label: `Ville : ${ville}`,
+                  onClear: () => setVille(""),
+                } as FilterBadge,
+              ]
+            : []),
           ...(dateFrom || dateTo
-            ? [{ key: "periode", label: `Période : ${dateFrom || "…"} → ${dateTo || "…"}`, onClear: () => { setDateFrom(""); setDateTo(""); } } as FilterBadge]
+            ? [
+                {
+                  key: "periode",
+                  label: `Période : ${dateFrom || "…"} → ${dateTo || "…"}`,
+                  onClear: () => {
+                    setDateFrom("");
+                    setDateTo("");
+                  },
+                } as FilterBadge,
+              ]
             : []),
         ]}
         onResetAll={resetAllFilters}
       />
-
       <div className="rounded-md border bg-card">
         <ResponsiveTable stickyFirstCol>
           <Table>
@@ -242,7 +256,6 @@ function SpecimensListPage() {
                   <TableCell colSpan={10} className="py-6">
                     <EmptyState
                       variant={hasActiveFilters ? "compact" : "rich"}
-                      icon={Gift}
                       title={
                         hasActiveFilters
                           ? "Aucun spécimen ne correspond aux filtres appliqués."
@@ -280,17 +293,18 @@ function SpecimensListPage() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">
-                          <Button aria-label="Voir" asChild variant="ghost" size="icon" title="Voir">
+                          <Button aria-label="Voir" asChild variant="ghost" size="sm" title="Voir">
                             <Link
                               to="/specimens/$specimenId"
                               params={{ specimenId: s.specimen_id }}
                             >
-                              <Eye className="h-4 w-4" />
+                              Voir
                             </Link>
                           </Button>
-                          <Button aria-label="Imprimer"
+                          <Button
+                            aria-label="Imprimer"
                             variant="ghost"
-                            size="icon"
+                            size="sm"
                             title="Imprimer"
                             disabled={printingId === s.specimen_id}
                             onClick={() => handlePrint(s)}
@@ -298,18 +312,19 @@ function SpecimensListPage() {
                             {printingId === s.specimen_id ? (
                               <Loader2 className="h-4 w-4 animate-spin" />
                             ) : (
-                              <Printer className="h-4 w-4" />
+                              "Imprimer"
                             )}
                           </Button>
                           {s.statut === "enregistre" && (
                             <Can permission="specimens.annuler">
-                              <Button aria-label="Annuler"
+                              <Button
+                                aria-label="Annuler"
                                 variant="ghost"
-                                size="icon"
+                                size="sm"
                                 title="Annuler"
                                 onClick={() => setToCancel(s)}
                               >
-                                <Ban className="h-4 w-4 text-destructive" />
+                                Annuler
                               </Button>
                             </Can>
                           )}
@@ -323,7 +338,6 @@ function SpecimensListPage() {
           </Table>
         </ResponsiveTable>
       </div>
-
       <AlertDialog open={!!toCancel} onOpenChange={(o) => !o && setToCancel(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>

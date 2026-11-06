@@ -1,5 +1,4 @@
 import { formatDateTime } from "@/lib/format";
-import { Printer } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,13 +12,7 @@ import { generateRecapCoutsTourneePDF } from "@/lib/pdf/tourneePdf";
 import { viewCached } from "@/lib/pdf/actions";
 import { CATEGORIES, fmtFCFA, statutMeta, type TourneeCout } from "./types";
 
-export function DetailDialog({
-  row,
-  onClose,
-}: {
-  row: TourneeCout | null;
-  onClose: () => void;
-}) {
+export function DetailDialog({ row, onClose }: { row: TourneeCout | null; onClose: () => void }) {
   if (!row) return null;
   const meta = statutMeta(row.validation_statut);
   const openPdf = () =>
@@ -121,9 +114,7 @@ export function DetailDialog({
           <Button variant="outline" onClick={onClose}>
             Fermer
           </Button>
-          <Button onClick={openPdf}>
-            <Printer className="mr-2 h-4 w-4" /> Aperçu / Imprimer
-          </Button>
+          <Button onClick={openPdf}>Aperçu / Imprimer</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

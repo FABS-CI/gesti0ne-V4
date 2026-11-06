@@ -4,7 +4,6 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
-import { RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -146,20 +145,15 @@ function RpcErrorsPage() {
     <div className="container mx-auto space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="ds-page-title">
-            Erreurs RPC — 7 derniers jours
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Erreurs RPC — 7 derniers jours</h1>
           <p className="text-sm text-muted-foreground">
-            Journal des échecs de requêtes critiques instrumentées. Réservé aux
-            super-admins.
+            Journal des échecs de requêtes critiques instrumentées. Réservé aux super-admins.
           </p>
         </div>
         <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
-          <RefreshCw className={`mr-2 h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
           Actualiser
         </Button>
       </div>
-
       <Card>
         <CardContent className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-1">
@@ -244,7 +238,6 @@ function RpcErrorsPage() {
           </Card>
         ))}
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle>Dernières erreurs</CardTitle>

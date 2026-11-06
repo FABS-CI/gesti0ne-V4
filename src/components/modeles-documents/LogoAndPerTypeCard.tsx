@@ -38,7 +38,6 @@ export function LogoAndPerTypeCard({
           modèle global ci-dessous est utilisé.
         </p>
       </div>
-
       <div className="flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-3">
           {settings.logo_url ? (
@@ -68,7 +67,6 @@ export function LogoAndPerTypeCard({
           )}
         </div>
       </div>
-
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {DOC_TYPES.map(([type, label]) => (
           <div key={type} className="space-y-1">

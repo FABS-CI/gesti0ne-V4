@@ -1,7 +1,6 @@
 import { getCurrentUser } from "@/lib/current-user";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Volume2, VolumeX, Play, Bell } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -91,17 +90,12 @@ export function NotificationPreferencesPanel() {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-base flex items-center gap-2">
-          <Bell className="h-4 w-4" /> Mes préférences de notification
+          Mes préférences de notification
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {prefs.son_actif ? (
-              <Volume2 className="h-4 w-4" />
-            ) : (
-              <VolumeX className="h-4 w-4 text-muted-foreground" />
-            )}
             <Label className="cursor-pointer">Alerte sonore</Label>
           </div>
           <Switch
@@ -110,7 +104,6 @@ export function NotificationPreferencesPanel() {
             disabled={saving}
           />
         </div>
-
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <Label>Volume</Label>
@@ -129,12 +122,17 @@ export function NotificationPreferencesPanel() {
               }}
               onValueCommit={([v]) => save({ ...prefs, volume: v })}
             />
-            <Button aria-label="Tester" size="icon" variant="outline" onClick={() => play()} title="Tester">
-              <Play className="h-4 w-4" />
+            <Button
+              aria-label="Tester"
+              size="sm"
+              variant="outline"
+              onClick={() => play()}
+              title="Tester"
+            >
+              Tester
             </Button>
           </div>
         </div>
-
         <div className="space-y-2">
           <Label className="text-sm">Mélodie de notification</Label>
           <div className="flex items-center gap-2">
@@ -156,14 +154,15 @@ export function NotificationPreferencesPanel() {
                 ))}
               </SelectContent>
             </Select>
-            <Button aria-label="Écouter"
-              size="icon"
+            <Button
+              aria-label="Écouter"
+              size="sm"
               variant="outline"
               onClick={() => play(undefined, prefs.son_notification)}
               title="Écouter"
               disabled={!prefs.son_actif}
             >
-              <Play className="h-4 w-4" />
+              Écouter
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
@@ -171,7 +170,6 @@ export function NotificationPreferencesPanel() {
             moment.
           </p>
         </div>
-
         <div className="flex items-center justify-between">
           <Label>Notifications système du navigateur</Label>
           {prefs.notifs_navigateur ? (
@@ -182,7 +180,6 @@ export function NotificationPreferencesPanel() {
             </Button>
           )}
         </div>
-
         <div className="space-y-2">
           <Label className="text-xs text-muted-foreground uppercase">
             Désactiver certains modules

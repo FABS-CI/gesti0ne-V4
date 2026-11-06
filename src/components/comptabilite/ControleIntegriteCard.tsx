@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, RefreshCw } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -90,7 +90,6 @@ export function ControleIntegriteCard() {
       <CardHeader className="flex flex-row items-center justify-between gap-2">
         <CardTitle>Rapprochement pièces ↔ écritures {q.data ? `(${rows.length})` : ""}</CardTitle>
         <Button size="sm" variant="outline" onClick={() => q.refetch()} disabled={q.isFetching}>
-          <RefreshCw className={`mr-1 h-3 w-3 ${q.isFetching ? "animate-spin" : ""}`} />
           Relancer
         </Button>
       </CardHeader>
@@ -169,7 +168,6 @@ export function ControleIntegriteCard() {
           </ResponsiveTable>
         )}
       </CardContent>
-
       <Dialog open={!!aNeutraliser} onOpenChange={(o) => !o && setANeutraliser(null)}>
         <DialogContent>
           <DialogHeader>

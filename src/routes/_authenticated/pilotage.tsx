@@ -1,12 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import type { ReactNode } from "react";
-import {
-  AlertTriangle,
-  ArrowRight,
-  PackageOpen,
-  RefreshCw,
-} from "lucide-react";
 
 import { useExerciceConsulteId } from "@/contexts/ExerciceContext";
 import { cockpitQueryOptions, type CockpitData } from "@/lib/cockpit-api";
@@ -80,7 +74,6 @@ function Pilotage() {
           </p>
         </div>
         <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
-          <RefreshCw className={`mr-2 h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
           Actualiser
         </Button>
       </header>
@@ -88,7 +81,6 @@ function Pilotage() {
       {isError ? (
         <Card>
           <CardContent className="flex flex-col items-center gap-3 py-12 text-center">
-            <AlertTriangle data-status-icon className="h-8 w-8 text-destructive" />
             <p className="font-medium">Impossible de charger le centre de pilotage</p>
             <p className="text-sm text-muted-foreground">{error?.message}</p>
             <Button onClick={() => refetch()}>Réessayer</Button>
@@ -213,7 +205,7 @@ function CockpitContent({ data }: { data: CockpitData }) {
                   </div>
                   <Button asChild size="sm" variant="outline">
                     <Link to={a.to}>
-                      {a.cta} <ArrowRight className="ml-1 h-4 w-4" />
+                      {a.cta}
                     </Link>
                   </Button>
                 </li>
@@ -301,7 +293,6 @@ function Kpi(props: {
           </p>
           {props.sub && <p className="truncate text-xs text-muted-foreground">{props.sub}</p>}
         </div>
-        <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
       </div>
     </Link>
   );
@@ -381,7 +372,7 @@ function AncienneteCard({ a }: { a: NonNullable<CockpitData["anciennete"]> }) {
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-base">
-          <PackageOpen className="h-4 w-4 text-muted-foreground" /> Impayés par ancienneté
+          Impayés par ancienneté
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">

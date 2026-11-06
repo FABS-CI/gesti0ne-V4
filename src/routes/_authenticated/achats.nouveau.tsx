@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2, Save, ShoppingBag } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { ProductCoverThumb } from "@/components/produits/ProductCoverThumb";
 
 import { Button } from "@/components/ui/button";
@@ -160,13 +160,13 @@ function NouvelApprovisionnementPage() {
           remise_pct: l.remise_pct ?? 0,
         })),
       };
-      return isEdit
-        ? modifierApprovisionnement(editId!, payload)
-        : creerApprovisionnement(payload);
+      return isEdit ? modifierApprovisionnement(editId!, payload) : creerApprovisionnement(payload);
     },
     onSuccess: () => {
       toast.success(
-        isEdit ? "Approvisionnement modifié avec succès" : "Approvisionnement enregistré avec succès",
+        isEdit
+          ? "Approvisionnement modifié avec succès"
+          : "Approvisionnement enregistré avec succès",
       );
       invalidateAchat(qc, { fournisseurId });
       if (isEdit && editId) {
@@ -259,12 +259,9 @@ function NouvelApprovisionnementPage() {
   return (
     <div className="space-y-6 p-1">
       <div className="flex items-center gap-3">
-        <Button aria-label="Retour" asChild variant="ghost" size="icon">
-          <Link to="/achats">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
+        <Button aria-label="Retour" asChild variant="ghost" size="sm">
+          <Link to="/achats">Retour</Link>
         </Button>
-        <ShoppingBag className="h-6 w-6 text-primary" />
         <div>
           <h1 className="ds-page-title">
             {isEdit ? "Modifier l'approvisionnement" : "Nouvel Approvisionnement"}
@@ -308,7 +305,6 @@ function NouvelApprovisionnementPage() {
         notes={notes}
         onNotesChange={setNotes}
       />
-
       <LignesProduitsSection
         lignes={lignes}
         onUpdate={updateLigne}
@@ -322,21 +318,15 @@ function NouvelApprovisionnementPage() {
         qteTotale={qteTotale}
         montantTotal={montantTotal}
       />
-
       <div className="flex justify-end gap-3">
         <Button type="button" variant="outline" asChild>
           <Link to="/achats">Annuler</Link>
         </Button>
         <Button onClick={submit} disabled={saveMutation.isPending}>
-          {saveMutation.isPending ? (
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-          ) : (
-            <Save className="h-4 w-4 mr-2" />
-          )}
+          {saveMutation.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
           {saveMutation.isPending ? "Enregistrement…" : "Enregistrer"}
         </Button>
       </div>
-
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
@@ -430,18 +420,13 @@ function NouvelApprovisionnementPage() {
               >
                 Retour à la modification
               </Button>
-              <Button
-                onClick={() => saveMutation.mutate()}
-                disabled={saveMutation.isPending}
-              >
-                <Save className="h-4 w-4 mr-2" />
+              <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
                 {saveMutation.isPending ? "Enregistrement…" : "Confirmer l'approvisionnement"}
               </Button>
             </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
       <QuickCreateProduitDialog
         open={quickOpen}
         onOpenChange={(o) => {

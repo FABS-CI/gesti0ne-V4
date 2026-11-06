@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle2, Loader2, Scale } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -72,10 +72,9 @@ export function CloturePreviewDialog({
                 </p>
               )}
             </div>
-
             <div className="rounded-lg border p-3">
               <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase text-muted-foreground">
-                <Scale className="h-3.5 w-3.5" /> Écritures de l&apos;exercice
+                Écritures de l&apos;exercice
               </p>
               <div className="grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
                 <div className="flex justify-between">
@@ -124,7 +123,6 @@ export function CloturePreviewDialog({
 
             {blocages.map((b) => (
               <Alert key={b.code} variant={b.severite === "error" ? "destructive" : "default"}>
-                <AlertTriangle className="h-4 w-4" />
                 <AlertTitle className="text-xs uppercase">
                   {b.severite === "error" ? "Bloquant" : "À vérifier"}
                 </AlertTitle>
@@ -150,7 +148,6 @@ export function CloturePreviewDialog({
             Annuler
           </Button>
           <Button disabled={!preview?.peut_cloturer || submitting} onClick={onValidate}>
-            <CheckCircle2 className="mr-1 h-4 w-4" />
             Valider la clôture
           </Button>
         </DialogFooter>

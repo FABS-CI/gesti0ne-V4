@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
-import { AlertCircle, ArrowLeft, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 import { usePermissions } from "@/hooks/use-permissions";
 
@@ -26,7 +25,11 @@ import {
   FacturesImpayeesCard,
   type FactureImpayeeRow,
 } from "@/components/paiements/nouveau/FacturesImpayeesCard";
-import { PaiementFormCard, PaiementFormActions, type FormState } from "@/components/paiements/nouveau/PaiementFormCard";
+import {
+  PaiementFormCard,
+  PaiementFormActions,
+  type FormState,
+} from "@/components/paiements/nouveau/PaiementFormCard";
 import { RecapCard } from "@/components/paiements/nouveau/RecapCard";
 import { formatFCFA, formatDate } from "@/lib/format";
 import { computeRecap, repartirMontantRecu, type RecapLine } from "@/lib/paiement-recap";
@@ -114,9 +117,10 @@ function NouveauPaiementPage() {
     else ids.delete(f.facture_id);
 
     const selection = factures.filter((facture) => ids.has(facture.facture_id));
-    const premierMontant = checked && Object.keys(allocs).length === 0 && form.montant <= 0
-      ? Number(f.solde)
-      : Number(form.montant);
+    const premierMontant =
+      checked && Object.keys(allocs).length === 0 && form.montant <= 0
+        ? Number(f.solde)
+        : Number(form.montant);
     if (premierMontant !== form.montant) {
       setForm((s) => ({ ...s, montant: premierMontant }));
     }
@@ -192,7 +196,9 @@ function NouveauPaiementPage() {
       const f = factures.find((x) => x.facture_id === fid);
       if (!f) continue;
       if (Number(m) > Number(f.solde) + 0.01) {
-        toast.error(`Le montant affecté dépasse le solde de la facture ${formatDocumentReference(f.reference)}`);
+        toast.error(
+          `Le montant affecté dépasse le solde de la facture ${formatDocumentReference(f.reference)}`,
+        );
         return false;
       }
     }
@@ -238,7 +244,6 @@ function NouveauPaiementPage() {
     return (
       <div className="mx-auto max-w-xl space-y-4 py-10">
         <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
           <AlertTitle>Client invalide</AlertTitle>
           <AlertDescription>{clientError}</AlertDescription>
         </Alert>
@@ -257,12 +262,9 @@ function NouveauPaiementPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Button aria-label="Retour" asChild variant="ghost" size="icon">
-          <Link to="/paiements">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
+        <Button aria-label="Retour" asChild variant="ghost" size="sm">
+          <Link to="/paiements">Retour</Link>
         </Button>
-        <CreditCard className="h-6 w-6 text-primary" />
         <div>
           <h1 className="ds-page-title">Nouveau paiement</h1>
           <p className="text-sm text-muted-foreground">
@@ -270,7 +272,6 @@ function NouveauPaiementPage() {
           </p>
         </div>
       </div>
-
       <ClientsDebiteursSelector
         value={clientId}
         onSelect={(client) => {
@@ -348,15 +349,15 @@ function NouveauPaiementPage() {
               {recapLignes.map((rec) => (
                 <div key={rec.reference} className="space-y-1">
                   <div className="flex justify-between">
-                    <span className="font-mono text-xs">{formatDocumentReference(rec.reference)}</span>
+                    <span className="font-mono text-xs">
+                      {formatDocumentReference(rec.reference)}
+                    </span>
                     <span className="font-semibold text-primary">
                       {formatFCFA(rec.montant_impute)}
                     </span>
                   </div>
                   <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>
-                      Reste avant : {formatFCFA(rec.reste_avant)}
-                    </span>
+                    <span>Reste avant : {formatFCFA(rec.reste_avant)}</span>
                     <span>Reste après : {formatFCFA(rec.reste_apres)}</span>
                   </div>
                 </div>

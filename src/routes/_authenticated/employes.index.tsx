@@ -2,18 +2,7 @@ import { askConfirm } from "@/components/common/GlobalConfirm";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  Users2,
-  Search,
-  Plus,
-  Download,
-  Pencil,
-  Trash2,
-  ListOrdered,
-  FileText,
-  RotateCcw,
-  X,
-} from "lucide-react";
+import { X } from "lucide-react";
 import { toast } from "sonner";
 import { Can } from "@/components/rbac/Can";
 
@@ -48,7 +37,7 @@ import {
 
 import { authRouteHead } from "@/lib/route-head";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
-import { friendlyError } from '@/lib/friendly-error';
+import { friendlyError } from "@/lib/friendly-error";
 export const Route = createFileRoute("/_authenticated/employes/")({
   head: () => authRouteHead("Employés"),
   component: EmployesPage,
@@ -167,10 +156,9 @@ function EmployesPage() {
           },
           {
             label: "Masse salariale brute",
-            value:
-              formatFCFA(employes
-                .filter((e) => e.actif)
-                .reduce((s, e) => s + (Number(e.salaire) || 0), 0)),
+            value: formatFCFA(
+              employes.filter((e) => e.actif).reduce((s, e) => s + (Number(e.salaire) || 0), 0),
+            ),
           },
         ],
       },
@@ -181,14 +169,12 @@ function EmployesPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <div className="min-w-0">
-          <h1 className="ds-page-title">
-            Employés
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Employés</h1>
           <p className="text-sm text-muted-foreground">Gestion du personnel</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={handleExport} disabled={!employes.length}>
-            <Download className="mr-2 h-4 w-4" /> Exporter
+            Exporter
           </Button>
           <Button
             variant="outline"
@@ -198,24 +184,18 @@ function EmployesPage() {
             }}
             disabled={renumberMutation.isPending || !employes.length}
           >
-            <ListOrdered className="mr-2 h-4 w-4" /> Renuméroter
+            Renuméroter
           </Button>
-          <Button onClick={() => navigate({ to: "/employes/nouveau" })}>
-            <Plus className="mr-2 h-4 w-4" /> Nouvel employé
-          </Button>
+          <Button onClick={() => navigate({ to: "/employes/nouveau" })}>Nouvel employé</Button>
         </div>
       </div>
-
       <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder="Rechercher..."
-          className="pl-9"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
-
       <div className="rounded-lg border">
         <Table>
           <TableHeader>
@@ -242,7 +222,6 @@ function EmployesPage() {
                 <TableCell colSpan={8} className="py-6">
                   <EmptyState
                     variant={q ? "compact" : "rich"}
-                    icon={Users2}
                     title={
                       q
                         ? "Aucun employé ne correspond à votre recherche."
@@ -258,9 +237,7 @@ function EmployesPage() {
                       !q ? (
                         <Can permission="employes.creer">
                           <Button asChild size="sm">
-                            <Link to="/employes/nouveau">
-                              <Plus className="mr-2 h-4 w-4" /> Nouvel employé
-                            </Link>
+                            <Link to="/employes/nouveau">Nouvel employé</Link>
                           </Button>
                         </Can>
                       ) : undefined
@@ -289,7 +266,7 @@ function EmployesPage() {
                     <Button
                       asChild
                       variant="ghost"
-                      size="icon"
+                      size="sm"
                       aria-label={`Modifier ${emp.nom_complet}`}
                     >
                       <Link
@@ -297,22 +274,22 @@ function EmployesPage() {
                         params={{ employeId: emp.employe_id }}
                         title={`Modifier ${emp.nom_complet}`}
                       >
-                        <Pencil className="h-4 w-4" />
+                        Modifier
                       </Link>
                     </Button>
                     <Can permission="employes.supprimer">
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="sm"
                         aria-label="Supprimer l'employé"
                         onClick={() => setToDelete(emp)}
                       >
-                        <Trash2 className="h-4 w-4 text-destructive" />
+                        Supprimer
                       </Button>
                     </Can>
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="sm"
                       aria-label={`Télécharger la fiche PDF de ${emp.nom_complet}`}
                       title="Télécharger la fiche PDF"
                       onClick={async () => {
@@ -323,7 +300,7 @@ function EmployesPage() {
                         }
                       }}
                     >
-                      <FileText className="h-4 w-4" />
+                      Télécharger
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -332,7 +309,6 @@ function EmployesPage() {
           </TableBody>
         </Table>
       </div>
-
       <ConfirmDeleteDialog
         open={!!toDelete}
         onOpenChange={(o) => !o && setToDelete(null)}

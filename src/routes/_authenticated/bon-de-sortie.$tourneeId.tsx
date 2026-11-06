@@ -2,7 +2,6 @@ import { formatDateTime } from "@/lib/format";
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { ArrowLeft, Printer, ShieldCheck, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -189,21 +188,13 @@ function BonDeSortiePage() {
       {!isEmbed && (
         <div className="print:hidden flex items-center justify-between border-b p-4">
           <Button asChild variant="ghost" size="sm">
-            <Link to="/tournees">
-              <ArrowLeft className="h-4 w-4 mr-1" /> Retour
-            </Link>
+            <Link to="/tournees">Retour</Link>
           </Button>
           <div className="flex items-center gap-2">
             <span className="text-xs text-muted-foreground inline-flex items-center gap-1">
-              <ShieldCheck className="h-3.5 w-3.5" />
               Cohérence vérifiée avant impression
             </span>
             <Button variant="outline" size="sm" onClick={handlePrint} disabled={verifying}>
-              {verifying ? (
-                <AlertTriangle className="h-4 w-4 mr-2 animate-pulse" />
-              ) : (
-                <Printer className="h-4 w-4 mr-2" />
-              )}
               {verifying ? "Vérification…" : "Imprimer"}
             </Button>
           </div>
@@ -216,7 +207,6 @@ function BonDeSortiePage() {
           reference={t.reference}
           date={t.date_tournee ?? ""}
         />
-
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 text-xs">
           <div>
             <span className="text-muted-foreground">Responsable :</span>
@@ -245,7 +235,6 @@ function BonDeSortiePage() {
             )}
           </div>
         </div>
-
         <table className="w-full border-collapse text-xs table-zebra-orange table-print-borders">
           <thead>
             <tr className="bg-muted">
@@ -291,7 +280,6 @@ function BonDeSortiePage() {
             </tr>
           </tfoot>
         </table>
-
         <div className="grid grid-cols-3 gap-4 mt-4 text-xs">
           <div className="rounded border p-2 text-center">
             <div className="text-lg font-semibold">{totalColis}</div>

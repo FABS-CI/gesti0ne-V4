@@ -1,6 +1,5 @@
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, CheckCircle2, Package, Truck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -74,12 +73,14 @@ function ColisageDetailPage() {
       {/* En-tête */}
       <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
         <div className="flex items-center gap-3">
-          <Button aria-label="Retour" variant="ghost" size="icon" onClick={() => navigate({ to: "/colisage" })}>
-            <ArrowLeft className="h-5 w-5" />
+          <Button
+            aria-label="Retour"
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate({ to: "/colisage" })}
+          >
+            Retour
           </Button>
-          <div className="rounded-lg bg-primary/10 p-2">
-            <Package className="h-6 w-6 text-primary" />
-          </div>
           <div>
             <h1 className="ds-page-title">Colisage — {formatDocumentReference(bl.reference)}</h1>
             <p className="text-sm text-muted-foreground">{bl.client_nom ?? "—"}</p>
@@ -91,7 +92,6 @@ function ColisageDetailPage() {
           </Badge>
         )}
       </div>
-
       <ColisageActionButtons
         blReference={bl.reference}
         isSuperAdmin={isSuperAdmin}
@@ -114,16 +114,13 @@ function ColisageDetailPage() {
       {bl.statut === "colisage_termine" && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-success/40 bg-success/10 p-3 text-sm text-success print:hidden">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-5 w-5" />
             <span>
-              <strong>Colisage terminé</strong> — prochaine étape : créer une tournée et la
-              valider pour déclencher le suivi de livraison.
+              <strong>Colisage terminé</strong> — prochaine étape : créer une tournée et la valider
+              pour déclencher le suivi de livraison.
             </span>
           </div>
           <Button asChild size="sm" variant="outline">
-            <Link to="/tournees/nouvelle">
-              <Truck className="mr-2 h-4 w-4" /> Créer une tournée
-            </Link>
+            <Link to="/tournees/nouvelle">Créer une tournée</Link>
           </Button>
         </div>
       )}

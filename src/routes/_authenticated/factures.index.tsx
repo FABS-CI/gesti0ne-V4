@@ -4,7 +4,7 @@ import { ClientLink } from "@/components/common/ClientLink";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Download, FileDown, FileText, Search, RotateCcw, X, Package, SlidersHorizontal } from "lucide-react";
+import { X } from "lucide-react";
 import { ProductCoverThumb } from "@/components/produits/ProductCoverThumb";
 import { usePdfDownload } from "@/hooks/use-pdf-download";
 import {
@@ -90,8 +90,7 @@ function FacturesPage() {
   const PAGE_SIZE = 50;
 
   const advancedChips = describeFilters(advanced);
-  const hasActiveFilters =
-    !!q || statutFilter !== "all" || advancedChips.length > 0;
+  const hasActiveFilters = !!q || statutFilter !== "all" || advancedChips.length > 0;
   function resetAllFilters() {
     setSearch("");
     setStatutFilter("all");
@@ -218,7 +217,7 @@ function FacturesPage() {
         f.client_nom ?? "",
         formatFCFA(Number(f.montant_total), false),
         formatFCFA(Number(f.montant_paye), false),
-        formatFCFA((Number(f.montant_total) - Number(f.montant_paye)), false),
+        formatFCFA(Number(f.montant_total) - Number(f.montant_paye), false),
         STATUT_FACTURE_LABEL[f.statut]?.label ?? f.statut,
       ]),
       filtres,
@@ -233,15 +232,12 @@ function FacturesPage() {
         title="Factures"
         description="Consultation — les factures sont générées automatiquement à la validation d'une commande"
       />
-
       <FacturesKpis {...totals} />
-
       <div className="flex flex-wrap items-center gap-3 sticky top-0 z-20 rounded-lg border bg-card p-3">
         <div className="relative min-w-[200px] flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Rechercher une facture, un client…"
-            className="pl-9"
+
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -264,13 +260,13 @@ function FacturesPage() {
           onClick={() => setFiltersOpen((o) => !o)}
           aria-expanded={filtersOpen}
         >
-          <SlidersHorizontal className="mr-2 h-4 w-4" /> Filtres
+          Filtres
         </Button>
         <Button variant="outline" onClick={handleExport} disabled={!factures.length}>
-          <Download className="mr-2 h-4 w-4" /> Exporter
+          Exporter
         </Button>
         <Button variant="outline" onClick={handleExportPDF} disabled={!factures.length}>
-          <FileDown className="mr-2 h-4 w-4" /> PDF
+          PDF
         </Button>
       </div>
 
@@ -327,7 +323,7 @@ function FacturesPage() {
             </Badge>
           ))}
           <Button variant="ghost" size="sm" onClick={resetAllFilters}>
-            <RotateCcw className="mr-1 h-3 w-3" /> Réinitialiser
+            Réinitialiser
           </Button>
         </div>
       )}
@@ -347,7 +343,9 @@ function FacturesPage() {
                 <TableHead>Retour</TableHead>
                 <TableHead>FNE</TableHead>
                 <TableHead className="text-right">FNE actions</TableHead>
-                <TableHead className="text-right lg:sticky lg:right-0 lg:z-[1] lg:bg-card lg:shadow-[inset_1px_0_0_var(--border)]">Actions</TableHead>
+                <TableHead className="text-right lg:sticky lg:right-0 lg:z-[1] lg:bg-card lg:shadow-[inset_1px_0_0_var(--border)]">
+                  Actions
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -362,7 +360,6 @@ function FacturesPage() {
                   <TableCell colSpan={11} className="py-6">
                     {hasActiveFilters ? (
                       <EmptyState
-                        icon={FileText}
                         title="Aucune facture ne correspond aux filtres"
                         description="Ajuste tes critères ou réinitialise pour retrouver l'ensemble des factures de l'exercice."
                         onReset={resetAllFilters}
@@ -370,7 +367,6 @@ function FacturesPage() {
                     ) : (
                       <EmptyState
                         variant="rich"
-                        icon={FileText}
                         title="Aucune facture pour cet exercice"
                         description="Les factures sont générées automatiquement quand tu valides une commande. Crée d'abord une commande pour voir apparaître ta première facture ici."
                         hints={
@@ -382,7 +378,6 @@ function FacturesPage() {
                     )}
                   </TableCell>
                 </TableRow>
-
               ) : (
                 factures.map((f) => {
                   const statutMeta = STATUT_FACTURE_LABEL[f.statut];
@@ -396,8 +391,12 @@ function FacturesPage() {
                           {formatDocumentReference(f.reference)}
                         </div>
                       </TableCell>
-                      <TableCell className="whitespace-nowrap">{formatDate(f.date_facture)}</TableCell>
-                      <TableCell className="font-medium"><ClientLink clientId={f.client_id} nom={f.client_nom} /></TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {formatDate(f.date_facture)}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        <ClientLink clientId={f.client_id} nom={f.client_nom} />
+                      </TableCell>
                       <TableCell className="text-right">
                         {formatFCFA(Number(f.montant_total))}
                         {(() => {

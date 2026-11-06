@@ -15,7 +15,6 @@ import { useNotificationsRealtime } from "@/hooks/use-notifications-realtime";
 import { usePresenceBroadcast } from "@/hooks/use-presence-broadcast";
 import { useRealtimeBus } from "@/hooks/use-realtime-bus";
 import { useIdlePrefetch, type PrefetchTarget } from "@/hooks/use-idle-prefetch";
-import { ShieldAlert } from "lucide-react";
 import { ExerciceProvider } from "@/contexts/ExerciceContext";
 import { ExerciceReadOnlyBanner } from "./ExerciceReadOnlyBanner";
 import { SystemAlertsBanner } from "@/components/SystemAlertsBanner";
@@ -146,7 +145,6 @@ export function AppShell({ children }: { children: ReactNode }) {
 function AccessDenied() {
   return (
     <div className="mx-auto flex max-w-md flex-col items-center justify-center gap-3 py-20 text-center">
-      <ShieldAlert className="h-12 w-12 text-destructive" />
       <h1 className="ds-page-title">403 — Accès interdit</h1>
       <p className="text-sm text-muted-foreground">
         Vous n'avez pas l'autorisation d'accéder à cette section.

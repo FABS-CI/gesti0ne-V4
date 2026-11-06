@@ -1,7 +1,6 @@
 import { formatDateTime } from "@/lib/format";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Zap, RefreshCw, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -85,7 +84,6 @@ function SloPage() {
         <div className="flex gap-2">
           <Button variant="outline" size="sm" asChild>
             <a href="/docs/runbook-incidents.md" target="_blank" rel="noreferrer">
-              <ExternalLink className="w-4 h-4 mr-2" />
               Runbook
             </a>
           </Button>
@@ -97,7 +95,6 @@ function SloPage() {
               alertsQ.refetch();
             }}
           >
-            <RefreshCw className="w-4 h-4 mr-2" />
             Rafraîchir
           </Button>
         </div>
@@ -137,7 +134,7 @@ function SloPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Zap className="w-5 h-5" /> Top 10 requêtes lentes
+            Top 10 requêtes lentes
           </CardTitle>
         </CardHeader>
         <CardContent>

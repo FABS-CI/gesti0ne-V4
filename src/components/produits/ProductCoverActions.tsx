@@ -1,13 +1,9 @@
 import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { ImagePlus, RefreshCw, Trash2, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  type Produit,
-  deleteProductCover,
-  uploadProductCover,
-} from "@/lib/produits-api";
-import { friendlyError } from '@/lib/friendly-error';
+import { type Produit, deleteProductCover, uploadProductCover } from "@/lib/produits-api";
+import { friendlyError } from "@/lib/friendly-error";
 
 interface Props {
   produit: Produit;
@@ -62,13 +58,7 @@ export function ProductCoverActions({ produit, onChanged }: Props) {
         disabled={busy !== null}
         onClick={() => fileRef.current?.click()}
       >
-        {busy === "upload" ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        ) : hasCover ? (
-          <RefreshCw className="mr-2 h-4 w-4" />
-        ) : (
-          <ImagePlus className="mr-2 h-4 w-4" />
-        )}
+        {busy === "upload" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
         {hasCover ? "Remplacer l'image" : "Ajouter une image"}
       </Button>
       {hasCover && (
@@ -80,17 +70,11 @@ export function ProductCoverActions({ produit, onChanged }: Props) {
           onClick={handleDelete}
           className="text-destructive hover:text-destructive"
         >
-          {busy === "delete" ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Trash2 className="mr-2 h-4 w-4" />
-          )}
+          {busy === "delete" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
           Supprimer
         </Button>
       )}
-      <p className="text-xs text-muted-foreground">
-        JPG, PNG ou WEBP · 5 Mo max
-      </p>
+      <p className="text-xs text-muted-foreground">JPG, PNG ou WEBP · 5 Mo max</p>
       <input
         ref={fileRef}
         type="file"

@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Search, Truck } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -103,7 +102,6 @@ function LivraisonSuiviIndex() {
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center gap-3">
-        <Truck className="h-7 w-7 text-primary" />
         <div>
           <h1 className="ds-page-title">Suivi des livraisons</h1>
           <p className="text-sm text-muted-foreground">
@@ -122,12 +120,10 @@ function LivraisonSuiviIndex() {
       <div className="rounded-md border bg-card p-4 space-y-4">
         <div className="grid gap-3 md:grid-cols-4">
           <div className="relative md:col-span-2">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Réf, client, ville…"
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              className="pl-9"
             />
           </div>
           <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v as LivType | "all")}>

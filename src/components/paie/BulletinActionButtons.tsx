@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Ban, CheckCircle2, FileDown, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -91,8 +91,15 @@ export function BulletinActionButtons({
   return (
     <span className="inline-flex gap-1">
       {estValidable(statut) && (
-        <Button size={size} variant="outline" onClick={onValider} disabled={validating} title="Valider" aria-label="Valider">
-          {validating ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+        <Button
+          size={size}
+          variant="outline"
+          onClick={onValider}
+          disabled={validating}
+          title="Valider"
+          aria-label="Valider"
+        >
+          {validating ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
           {showLabels && <span className="ml-2">Valider</span>}
         </Button>
       )}
@@ -107,22 +114,27 @@ export function BulletinActionButtons({
           title="Annuler le bulletin"
           aria-label="Annuler le bulletin"
         >
-          <Ban className="h-4 w-4" />
           {showLabels && <span className="ml-2">Annuler</span>}
         </Button>
       )}
-      <Button size={size} variant="outline" onClick={onTelecharger} disabled={downloading} title="Télécharger" aria-label="Télécharger">
-        {downloading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+      <Button
+        size={size}
+        variant="outline"
+        onClick={onTelecharger}
+        disabled={downloading}
+        title="Télécharger"
+        aria-label="Télécharger"
+      >
+        {downloading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
         {showLabels && <span className="ml-2">{downloading ? "Génération…" : "Télécharger"}</span>}
       </Button>
-
       <Dialog open={annulation} onOpenChange={(o) => !o && setAnnulation(false)}>
         <DialogContent onClick={(e) => e.stopPropagation()}>
           <DialogHeader>
             <DialogTitle>Annuler le bulletin</DialogTitle>
             <DialogDescription>
-              Le bulletin reste consultable avec le statut « Annulé » et son écriture comptable
-              est contre-passée. La période peut ensuite être recalculée.
+              Le bulletin reste consultable avec le statut « Annulé » et son écriture comptable est
+              contre-passée. La période peut ensuite être recalculée.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">

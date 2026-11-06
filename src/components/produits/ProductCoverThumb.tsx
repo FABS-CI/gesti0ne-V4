@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { ImageOff } from "lucide-react";
 import { getCoverUrl, type Produit } from "@/lib/produits-api";
 import { cn } from "@/lib/utils";
 
@@ -56,7 +55,10 @@ export function ProductCoverThumb({
       return;
     }
     getCoverUrl(
-      { cover_path: produit?.cover_path ?? null, cover_thumb_path: produit?.cover_thumb_path ?? null },
+      {
+        cover_path: produit?.cover_path ?? null,
+        cover_thumb_path: produit?.cover_thumb_path ?? null,
+      },
       variant,
     )
       .then((u) => {
@@ -79,11 +81,7 @@ export function ProductCoverThumb({
   );
 
   if (!url || failed) {
-    return (
-      <div className={wrapperClass} aria-hidden={!produit?.titre}>
-        <ImageOff className="h-1/2 w-1/2 text-muted-foreground/60" />
-      </div>
-    );
+    return <div className={wrapperClass} aria-hidden={!produit?.titre} />;
   }
 
   return (
@@ -140,7 +138,9 @@ function computeCropStyle(img: HTMLImageElement): React.CSSProperties | null {
   }
   const isMargin = (x: number, y: number) => {
     const i = (y * cw + x) * 4;
-    const r = data[i], g = data[i + 1], b = data[i + 2];
+    const r = data[i],
+      g = data[i + 1],
+      b = data[i + 2];
     const max = Math.max(r, g, b);
     const min = Math.min(r, g, b);
     // Considère margeuniforme : quasi-noir OU quasi-blanc, et faiblement coloré.
@@ -156,7 +156,10 @@ function computeCropStyle(img: HTMLImageElement): React.CSSProperties | null {
     for (let y = 0; y < ch; y++) if (isMargin(x, y)) count++;
     return count / ch > 0.9;
   };
-  let top = 0, bottom = ch - 1, left = 0, right = cw - 1;
+  let top = 0,
+    bottom = ch - 1,
+    left = 0,
+    right = cw - 1;
   while (top < ch - 1 && rowIsMargin(top)) top++;
   while (bottom > top && rowIsMargin(bottom)) bottom--;
   while (left < cw - 1 && colIsMargin(left)) left++;
@@ -167,8 +170,8 @@ function computeCropStyle(img: HTMLImageElement): React.CSSProperties | null {
     return { transform: "scale(1.05)", objectPosition: "center" };
   }
   // Barycentre de la zone utile (0..1) → objectPosition en %.
-  const cx = ((left + right) / 2) / cw;
-  const cy = ((top + bottom) / 2) / ch;
+  const cx = (left + right) / 2 / cw;
+  const cy = (top + bottom) / 2 / ch;
   // Ratio holder = 3/4 (portrait). On veut que la zone utile remplisse le holder.
   const holderRatio = 3 / 4;
   const cropRatio = cropW / cropH;

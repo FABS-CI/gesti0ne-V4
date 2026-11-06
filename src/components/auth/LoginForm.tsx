@@ -1,4 +1,4 @@
-import { AlertCircle, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
@@ -40,18 +40,22 @@ export function LoginForm({
   authReady,
 }: Props) {
   const [caps, setCaps] = useState(false);
-  const checkCaps = (e: React.KeyboardEvent<HTMLInputElement>) => setCaps(e.getModifierState?.("CapsLock") ?? false);
+  const checkCaps = (e: React.KeyboardEvent<HTMLInputElement>) =>
+    setCaps(e.getModifierState?.("CapsLock") ?? false);
   return (
     <form className="space-y-4" onSubmit={onSubmit} action="javascript:void(0)" noValidate>
       {idleTimeout && (
         <div className={cn(alertCls, "border-warning/30 bg-warning/10 text-warning")}>
-          <AlertCircle className="h-4 w-4 shrink-0" />
           Vous avez été déconnecté automatiquement après 15 minutes d'inactivité.
         </div>
       )}
       {error && (
-        <div role="alert" tabIndex={-1} ref={(el) => el?.focus()} className={cn(alertCls, "border-destructive/30 bg-destructive/10 text-destructive")}>
-          <AlertCircle className="h-4 w-4 shrink-0" />
+        <div
+          role="alert"
+          tabIndex={-1}
+          ref={(el) => el?.focus()}
+          className={cn(alertCls, "border-destructive/30 bg-destructive/10 text-destructive")}
+        >
           {error}
         </div>
       )}
@@ -61,7 +65,6 @@ export function LoginForm({
           Adresse e-mail
         </label>
         <div className="relative">
-          <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             id="login-email"
             type="email"
@@ -78,18 +81,19 @@ export function LoginForm({
           />
         </div>
       </div>
-
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
           <label htmlFor="login-password" className="block text-sm font-medium text-foreground">
             Mot de passe
           </label>
-          <a href="/reset-password" className="text-xs text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm">
+          <a
+            href="/reset-password"
+            className="text-xs text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+          >
             Mot de passe oublié ?
           </a>
         </div>
         <div className="relative">
-          <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             id="login-password"
             type={showPwd ? "text" : "password"}
@@ -117,22 +121,24 @@ export function LoginForm({
           </button>
         </div>
         {caps && (
-          <p id="caps-warning" className="text-xs text-warning">Verr. Maj. activée</p>
+          <p id="caps-warning" className="text-xs text-warning">
+            Verr. Maj. activée
+          </p>
         )}
       </div>
-
       <div>
-      <label className="flex cursor-pointer select-none items-center gap-2 text-sm text-foreground">
-        <Checkbox
-          checked={remember}
-          onCheckedChange={(v) => setRemember(v === true)}
-          data-testid="login-remember"
-        />
-        Se souvenir de moi sur cet appareil
-      </label>
-      <p className="mt-1 pl-6 text-xs text-muted-foreground">À ne pas cocher sur un poste partagé.</p>
+        <label className="flex cursor-pointer select-none items-center gap-2 text-sm text-foreground">
+          <Checkbox
+            checked={remember}
+            onCheckedChange={(v) => setRemember(v === true)}
+            data-testid="login-remember"
+          />
+          Se souvenir de moi sur cet appareil
+        </label>
+        <p className="mt-1 pl-6 text-xs text-muted-foreground">
+          À ne pas cocher sur un poste partagé.
+        </p>
       </div>
-
       <Button
         type="submit"
         disabled={!authReady || submitting}

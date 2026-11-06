@@ -3,7 +3,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, ClipboardList } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -177,17 +176,13 @@ function InventaireDetailPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Button aria-label="Retour" asChild variant="ghost" size="icon">
-            <Link to="/inventaires">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
+          <Button aria-label="Retour" asChild variant="ghost" size="sm">
+            <Link to="/inventaires">Retour</Link>
           </Button>
-          <ClipboardList className="h-7 w-7 text-primary" />
           <div>
             <h1 className="ds-page-title">{inv.numero}</h1>
             <p className="text-sm text-muted-foreground capitalize">
-              Inventaire {inv.type_inventaire} ·{" "}
-              {formatDate(inv.date_inventaire)} ·{" "}
+              Inventaire {inv.type_inventaire} · {formatDate(inv.date_inventaire)} ·{" "}
               {inv.depots?.nom ?? "Tous dépôts"}
             </p>
           </div>
@@ -209,7 +204,6 @@ function InventaireDetailPage() {
           validating={validerMut.isPending}
         />
       </div>
-
       <InventaireKpis
         nbLignes={lignes.length}
         nbEcarts={editable ? totaux.nbEcarts : inv.nb_ecarts}
@@ -217,7 +211,6 @@ function InventaireDetailPage() {
         editable={editable}
         createdByNom={inv.created_by_nom ?? null}
       />
-
       <InventaireLignesTable
         ecartsLive={ecartsLive}
         editable={editable}

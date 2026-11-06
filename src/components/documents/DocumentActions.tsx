@@ -1,16 +1,6 @@
-import { friendlyError } from '@/lib/friendly-error';
+import { friendlyError } from "@/lib/friendly-error";
 import type { ComponentType, ReactNode } from "react";
-import {
-  Eye,
-  ScanEye,
-  FileDown,
-  Printer,
-  Mail,
-  Pencil,
-  CheckCircle2,
-  Repeat,
-  Loader2,
-} from "lucide-react";
+import { Eye, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
@@ -75,7 +65,6 @@ export function DocumentActions({
   onValidate,
   onTransform,
   transformLabel = "Transformer",
-  transformIcon: TransformIcon = Repeat,
   delete: del,
   loading,
   progress,
@@ -92,23 +81,23 @@ export function DocumentActions({
   return (
     <span className="inline-flex items-center justify-end gap-1 align-middle">
       {viewTo && (
-        <Button aria-label="Visualiser" asChild variant="ghost" size="icon" title="Visualiser">
-          <Link to={viewTo}>
-            <Eye className="h-4 w-4" />
-          </Link>
+        <Button aria-label="Visualiser" asChild variant="ghost" size="sm" title="Visualiser">
+          <Link to={viewTo}>Voir</Link>
         </Button>
       )}
-      <Button aria-label="Aperçu PDF"
+      <Button
+        aria-label="Aperçu PDF"
         variant="ghost"
-        size="icon"
+        size="sm"
         title="Aperçu PDF"
         onClick={() => safe(() => viewCached(cacheKey, buildBlob), "Erreur aperçu")}
       >
-        <ScanEye className="h-4 w-4" />
+        Aperçu PDF
       </Button>
-      <Button aria-label="Télécharger PDF"
+      <Button
+        aria-label="Télécharger PDF"
         variant="ghost"
-        size="icon"
+        size="sm"
         title="Télécharger PDF"
         disabled={loading}
         onClick={() =>
@@ -118,51 +107,53 @@ export function DocumentActions({
           }, "Erreur téléchargement")
         }
       >
-        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Télécharger"}
       </Button>
-      <Button aria-label="Imprimer"
+      <Button
+        aria-label="Imprimer"
         variant="ghost"
-        size="icon"
+        size="sm"
         title="Imprimer"
         onClick={() => safe(() => printCached(cacheKey, buildBlob), "Erreur impression")}
       >
-        <Printer className="h-4 w-4" />
+        Imprimer
       </Button>
-      <Button aria-label="Envoyer par email"
+      <Button
+        aria-label="Envoyer par email"
         variant="ghost"
-        size="icon"
+        size="sm"
         title="Envoyer par email"
         onClick={() => emailDoc({ subject: emailSubject, body: emailBody })}
       >
-        <Mail className="h-4 w-4" />
+        Email
       </Button>
       {onValidate && (
-        <Button aria-label="Valider"
+        <Button
+          aria-label="Valider"
           variant="ghost"
-          size="icon"
+          size="sm"
           title="Valider"
           onClick={onValidate}
           className="text-success hover:text-success"
         >
-          <CheckCircle2 className="h-4 w-4" />
+          Valider
         </Button>
       )}
       {editTo && (
-        <Button aria-label="Modifier" asChild variant="ghost" size="icon" title="Modifier">
-          <Link to={editTo}>
-            <Pencil className="h-4 w-4" />
-          </Link>
+        <Button aria-label="Modifier" asChild variant="ghost" size="sm" title="Modifier">
+          <Link to={editTo}>Modifier</Link>
         </Button>
       )}
       {onTransform && (
-        <Button aria-label={transformLabel}
+        <Button
+          aria-label={transformLabel}
           variant="ghost"
-          size="icon"
+          size="sm"
           title={transformLabel}
           onClick={onTransform}
           className="text-primary hover:text-primary/80"
         >
-          <TransformIcon className="h-4 w-4" />
+          {transformLabel}
         </Button>
       )}
       {extra}

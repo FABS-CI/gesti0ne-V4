@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { UserCog } from "lucide-react";
 import { ResourceManager, type ResourceConfig } from "@/components/crud/ResourceManager";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
@@ -7,9 +6,7 @@ const config: ResourceConfig = {
   table: "preparateurs_colisage",
   idField: "preparateur_id",
   title: "Préparateurs & Responsables de colisage",
-  subtitle:
-    "Liste libre des préparateurs et superviseurs (indépendante du registre des employés).",
-  icon: UserCog,
+  subtitle: "Liste libre des préparateurs et superviseurs (indépendante du registre des employés).",
   newLabel: "Nouveau préparateur",
   entityLabel: "le préparateur",
   csvName: "preparateurs_colisage",

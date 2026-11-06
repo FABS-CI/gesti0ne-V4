@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Calendar, Minus, User, Wallet } from "lucide-react";
+import { Minus } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { formatDate, formatFCFA } from "@/lib/format";
@@ -89,7 +89,8 @@ function BulletinDetailPage() {
   const st = STATUTS[bulletin.statut];
   // CMU salariée enregistrée : rubrique 470 (bulletins anciens : 776). Aucun montant supposé.
   const cmuSalarie =
-    lignes?.find((l) => l.numero_rubrique === "470" || l.numero_rubrique === "776")?.retenue ?? null;
+    lignes?.find((l) => l.numero_rubrique === "470" || l.numero_rubrique === "776")?.retenue ??
+    null;
 
   return (
     <div className="space-y-6">
@@ -100,7 +101,11 @@ function BulletinDetailPage() {
         crumbs={[{ label: "Paie", to: "/paie" }, { label: bulletin.periode }]}
         actions={
           <>
-            <BulletinActionButtons bulletinId={bulletin.bulletin_id} statut={bulletin.statut} showLabels />
+            <BulletinActionButtons
+              bulletinId={bulletin.bulletin_id}
+              statut={bulletin.statut}
+              showLabels
+            />
             {st && (
               <Badge style={{ backgroundColor: st.color }} className="text-white">
                 {st.label}
@@ -109,12 +114,11 @@ function BulletinDetailPage() {
           </>
         }
       />
-
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <User className="h-4 w-4" /> Employé
+              Employé
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">{bulletin.employe_nom}</CardContent>
@@ -122,7 +126,7 @@ function BulletinDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4" /> Période
+              Période
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">{bulletin.periode}</CardContent>
@@ -130,7 +134,7 @@ function BulletinDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Wallet className="h-4 w-4" /> Salaire brut
+              Salaire brut
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">{formatFCFA(bulletin.salaire_brut)}</CardContent>
@@ -166,16 +170,25 @@ function BulletinDetailPage() {
               </thead>
               <tbody>
                 {lignes.map((l) => (
-                  <tr key={l.ordre} className={`border-b ${l.bloc === "patronal" ? "text-muted-foreground" : ""}`}>
+                  <tr
+                    key={l.ordre}
+                    className={`border-b ${l.bloc === "patronal" ? "text-muted-foreground" : ""}`}
+                  >
                     <td className="py-1 pr-2">{l.numero_rubrique}</td>
                     <td className="py-1 pr-2">
                       {l.designation ?? l.libelle}
                       {l.bloc === "patronal" ? " (employeur)" : ""}
                     </td>
-                    <td className="py-1 pr-2 text-right">{l.base != null ? formatFCFA(l.base, false) : ""}</td>
+                    <td className="py-1 pr-2 text-right">
+                      {l.base != null ? formatFCFA(l.base, false) : ""}
+                    </td>
                     <td className="py-1 pr-2 text-right">{l.taux != null ? `${l.taux} %` : ""}</td>
-                    <td className="py-1 pr-2 text-right">{l.gain ? formatFCFA(l.gain, false) : ""}</td>
-                    <td className="py-1 text-right">{l.retenue ? formatFCFA(l.retenue, false) : ""}</td>
+                    <td className="py-1 pr-2 text-right">
+                      {l.gain ? formatFCFA(l.gain, false) : ""}
+                    </td>
+                    <td className="py-1 text-right">
+                      {l.retenue ? formatFCFA(l.retenue, false) : ""}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -219,12 +232,16 @@ function BulletinDetailPage() {
               Net à payer
             </span>
             <span className="text-right">
-              <span className="block text-[22px] font-bold tabular-nums" style={{ color: "#0B2540" }}>
+              <span
+                className="block text-[22px] font-bold tabular-nums"
+                style={{ color: "#0B2540" }}
+              >
                 {formatFCFA(bulletin.net_a_payer ?? bulletin.salaire_net)}
               </span>
               {bulletin.date_paiement && (
                 <span className="block text-[8px]" style={{ color: "#0B2540", opacity: 0.8 }}>
-                  Payé {bulletin.mode_paiement ? `par ${bulletin.mode_paiement.toLowerCase()} ` : ""}le{" "}
+                  Payé{" "}
+                  {bulletin.mode_paiement ? `par ${bulletin.mode_paiement.toLowerCase()} ` : ""}le{" "}
                   {dateEnLettres(bulletin.date_paiement)}
                 </span>
               )}

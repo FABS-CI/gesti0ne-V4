@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ScrollText } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useExerciceConsulteId } from "@/contexts/ExerciceContext";
@@ -37,9 +36,7 @@ function DeclarationsPage() {
     queryKey: ["bulletins_periodes", exerciceId],
     enabled: !!exerciceId,
     queryFn: async () => {
-      let query = supabase
-        .from("bulletins_paie")
-        .select("periode, date_fin");
+      let query = supabase.from("bulletins_paie").select("periode, date_fin");
       if (exerciceId) query = query.eq("exercice_id", exerciceId);
       const { data, error } = await query;
       if (error) throw error;
@@ -68,10 +65,7 @@ function DeclarationsPage() {
 
   const lignes = useMemo(() => computeLignes(bulletins), [bulletins]);
   const totaux = useMemo(() => computeTotaux(lignes), [lignes]);
-  const opts = useMemo(
-    () => buildDeclOptions(periode, lignes, totaux),
-    [periode, lignes, totaux],
-  );
+  const opts = useMemo(() => buildDeclOptions(periode, lignes, totaux), [periode, lignes, totaux]);
 
   const disabled = !periode || lignes.length === 0;
 
@@ -91,9 +85,6 @@ function DeclarationsPage() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg bg-primary/10">
-          <ScrollText className="h-6 w-6 text-primary" />
-        </div>
         <div>
           <h1 className="ds-page-title">Déclarations sociales & fiscales</h1>
           <p className="text-sm text-muted-foreground">
@@ -101,7 +92,6 @@ function DeclarationsPage() {
           </p>
         </div>
       </div>
-
       <DeclarationsToolbar
         periode={periode}
         onPeriodeChange={setPeriode}
@@ -113,9 +103,7 @@ function DeclarationsPage() {
         onPreview={previewPdf}
         onDownload={downloadPdf}
       />
-
       <DeclarationsTable periode={periode} isLoading={isLoading} lignes={lignes} totaux={totaux} />
-
       <DeclarationPreviewDialog preview={preview} onClose={closePreview} />
     </div>
   );

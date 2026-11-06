@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { Search, Plus, Download, FileDown, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
@@ -48,7 +48,20 @@ export type {
   ComputeDefaultsFn,
 } from "./resource-manager-types";
 
-const MOIS_FR = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+const MOIS_FR = [
+  "Janvier",
+  "Février",
+  "Mars",
+  "Avril",
+  "Mai",
+  "Juin",
+  "Juillet",
+  "Août",
+  "Septembre",
+  "Octobre",
+  "Novembre",
+  "Décembre",
+];
 
 export function ResourceManager({ config }: { config: ResourceConfig }) {
   const queryClient = useQueryClient();
@@ -111,7 +124,6 @@ export function ResourceManager({ config }: { config: ResourceConfig }) {
       window.history.replaceState({}, "", nextUrl.toString());
     }
   }, []);
-
 
   const advCols = {
     reference: config.advancedFilters?.columns?.reference ?? "reference",
@@ -346,10 +358,7 @@ export function ResourceManager({ config }: { config: ResourceConfig }) {
       c.type === "date" || /date|validite|échéance|echeance/i.test(c.name);
     const moneyCols = config.columns.filter((c) => c.type === "money");
     const montantTotal = moneyCols.length
-      ? rows.reduce(
-          (s, r) => s + moneyCols.reduce((a, c) => a + (Number(r[c.name]) || 0), 0),
-          0,
-        )
+      ? rows.reduce((s, r) => s + moneyCols.reduce((a, c) => a + (Number(r[c.name]) || 0), 0), 0)
       : null;
     exportListePDF({
       titre: config.pdfExport?.title ?? config.title,
@@ -378,34 +387,30 @@ export function ResourceManager({ config }: { config: ResourceConfig }) {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title">
-            {config.title}
-          </h1>
+          <h1 className="ds-page-title">{config.title}</h1>
           {config.subtitle && <p className="text-sm text-muted-foreground">{config.subtitle}</p>}
         </div>
         <div className="flex gap-2">
           {!config.hideCsvExport && (
             <Button variant="outline" onClick={handleExport} disabled={!rows.length}>
-              <Download className="mr-2 h-4 w-4" /> Exporter
+              Exporter
             </Button>
           )}
           <Button variant="outline" onClick={handleExportPDF} disabled={!rows.length}>
-            <FileDown className="mr-2 h-4 w-4" /> PDF
+            PDF
           </Button>
           {!config.readOnly && (
             <Button onClick={() => (config.newHref ? navigate({ to: config.newHref }) : openNew())}>
-              <Plus className="mr-2 h-4 w-4" /> {config.newLabel}
+              {config.newLabel}
             </Button>
           )}
         </div>
       </div>
-
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative max-w-sm flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Rechercher..."
-            className="pl-9"
+
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -470,7 +475,8 @@ export function ResourceManager({ config }: { config: ResourceConfig }) {
             label: `Statut : ${optionMeta(config.statusFilter.options, statutFilter)?.label ?? statutFilter}`,
             clear: () => setStatutFilter("all"),
           });
-        if (periodeActive) puces.push({ label: `Période : ${mois} ${annee}`, clear: () => setMois("all") });
+        if (periodeActive)
+          puces.push({ label: `Période : ${mois} ${annee}`, clear: () => setMois("all") });
         describeFilters(advanced, config.advancedFilters?.labels).forEach((label, i) => {
           const key = Object.keys(advanced)[i] as keyof AdvancedFilters | undefined;
           puces.push({

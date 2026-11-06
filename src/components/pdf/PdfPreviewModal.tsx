@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Loader2, Download, Printer } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { downloadBlob } from "@/lib/pdf/fabsTemplates";
 import { printBlob } from "@/lib/pdf/actions";
 import { PdfCanvasViewer } from "./PdfCanvasViewer";
@@ -73,10 +73,10 @@ export function PdfPreviewModal({ open, onOpenChange, title, filename, load }: P
                 disabled={!blob}
                 onClick={() => blob && downloadBlob(blob, filename)}
               >
-                <Download className="mr-2 h-4 w-4" /> Télécharger
+                Télécharger
               </Button>
               <Button size="sm" disabled={!blob} onClick={() => blob && printBlob(blob)}>
-                <Printer className="mr-2 h-4 w-4" /> Imprimer
+                Imprimer
               </Button>
             </div>
           </DialogTitle>

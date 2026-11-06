@@ -1,4 +1,3 @@
-import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -25,10 +24,8 @@ export function JournalFilters(p: Props) {
   return (
     <div className="flex flex-wrap items-end gap-3">
       <div className="relative min-w-[16rem] flex-1">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder="Rechercher (libellé, pièce, lettrage)..."
-          className="pl-9"
           value={p.search}
           onChange={(e) => p.onSearchChange(e.target.value)}
         />

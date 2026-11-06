@@ -1,10 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Download,
-  RefreshCw,
-  CheckCircle2,
-} from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 import { controleIntegriteCatalogue } from "@/lib/produits-api";
@@ -97,11 +92,9 @@ function IntegritePage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
-            <RefreshCw className={`mr-2 h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
             Relancer
           </Button>
           <Button onClick={exportReport} disabled={!data || data.problemes.length === 0}>
-            <Download className="mr-2 h-4 w-4" />
             Exporter
           </Button>
         </div>
@@ -140,7 +133,6 @@ function IntegritePage() {
             <CardContent>
               {data.problemes.length === 0 ? (
                 <div className="flex items-center gap-2 rounded-lg bg-success/10 p-4 text-success">
-                  <CheckCircle2 className="h-5 w-5" />
                   Tous les articles du catalogue sont conformes.
                 </div>
               ) : (
