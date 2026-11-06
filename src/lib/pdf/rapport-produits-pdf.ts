@@ -236,7 +236,7 @@ export async function exportRapportProduitsPdf(
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7.5);
     doc.setTextColor(110, 110, 110);
-    doc.text("EDITIONS FABS-CI - Rapport produits", MARGIN_X, pageH - FOOTER_H + 5);
+    doc.text("EDITIONS FABS-CI", MARGIN_X, pageH - FOOTER_H + 5);
     doc.text(`Page ${p} / ${total}`, pageW - MARGIN_X, pageH - FOOTER_H + 5, { align: "right" });
   }
 

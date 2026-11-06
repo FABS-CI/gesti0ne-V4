@@ -75,7 +75,7 @@ export class IncidentDocument extends BaseDocument {
       color: COLORS.grisClair,
       opacity: 0.6,
     });
-    this.page.drawText("FICHE D'INCIDENT DE STOCK", {
+    this.page.drawText("INFORMATIONS INCIDENT", {
       x: MARGINS.x + 10,
       y: y - 14,
       size: 8,
