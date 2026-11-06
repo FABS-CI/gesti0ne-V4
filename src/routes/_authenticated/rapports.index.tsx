@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { friendlyError } from '@/lib/friendly-error';
 import { useState } from "react";
-import { } from "lucide-react";
 import { toast } from "sonner";
 
 import { useExercice } from "@/contexts/ExerciceContext";
