@@ -426,3 +426,58 @@ svg.lucide:not([data-status-icon]):is(
 ) {
   color: inherit !important;
 }
+
+/* ── Navigation « verre dépoli » (barre mobile + accents du menu latéral) ── */
+:root {
+  --glass-nav-bg: rgb(15 23 42 / 0.88);
+  --glass-nav-border: rgb(255 255 255 / 0.1);
+  --glass-nav-glow: oklch(0.82 0.13 205);
+}
+
+.glass-nav {
+  border-radius: 1.5rem;
+  background: var(--glass-nav-bg);
+  border: 1px solid var(--glass-nav-border);
+  box-shadow: 0 10px 30px -8px rgb(2 6 23 / 0.55), inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .glass-nav {
+    background: color-mix(in oklab, var(--glass-nav-bg) 85%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: blur(14px) saturate(140%);
+  }
+}
+
+.glass-nav-indicator {
+  position: absolute;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  left: 0.25rem;
+  width: calc((100% - 0.5rem) / 5);
+  border-radius: 1rem;
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0.04));
+  opacity: 0;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), opacity 150ms ease-out;
+  pointer-events: none;
+}
+.glass-nav-indicator[data-visible="true"] {
+  opacity: 1;
+}
+/* Filet lumineux cyan en haut de l'onglet actif */
+.glass-nav-indicator::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 25%;
+  right: 25%;
+  height: 2px;
+  border-radius: 0 0 999px 999px;
+  background: var(--glass-nav-glow);
+  box-shadow: 0 0 10px 1px color-mix(in oklab, var(--glass-nav-glow) 70%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-nav-indicator {
+    transition: none;
+  }
+}
