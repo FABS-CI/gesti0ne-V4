@@ -54,7 +54,7 @@ export function AuditCharts({ days = 30 }: { days?: number }) {
               <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
               <Tooltip />
               <Area type="monotone" dataKey="info" stackId="1" stroke="var(--chart-2)" fill="var(--chart-2)" fillOpacity={0.4} />
-              <Area type="monotone" dataKey="warning" stackId="1" stroke="var(--warning, #F59E0B)" fill="var(--warning, #F59E0B)" fillOpacity={0.5} />
+              <Area type="monotone" dataKey="warning" stackId="1" stroke="var(--warning)" fill="var(--warning)" fillOpacity={0.5} />
               <Area type="monotone" dataKey="critical" stackId="1" stroke="var(--destructive)" fill="var(--destructive)" fillOpacity={0.6} />
             </AreaChart>
           </ResponsiveContainer>
