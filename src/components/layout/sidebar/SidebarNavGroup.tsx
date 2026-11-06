@@ -67,7 +67,7 @@ export function SidebarNavGroup({
               onClick={onExpand}
               aria-label={group.label}
               className={cn(
-                "relative mx-auto flex h-9 w-9 items-center justify-center rounded-md",
+                "relative mx-auto flex h-10 w-10 items-center justify-center rounded-md",
                 "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
                 isActive
                   ? "bg-sidebar-accent text-sidebar-accent-foreground"
@@ -77,10 +77,10 @@ export function SidebarNavGroup({
               {isActive && (
                 <span
                   aria-hidden
-                  className="absolute inset-y-2 -left-2.5 w-0.5 rounded-full bg-sidebar-primary"
+                  className="absolute inset-y-2 -left-2 w-0.5 rounded-full bg-sidebar-primary"
                 />
               )}
-              <Icon aria-hidden className="h-4 w-4" strokeWidth={1.75} />
+              <Icon aria-hidden className="h-5 w-5" strokeWidth={1.75} />
             </button>
           </TooltipTrigger>
           <TooltipContent side="right">{group.label}</TooltipContent>
