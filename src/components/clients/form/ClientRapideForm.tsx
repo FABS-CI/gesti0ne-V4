@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useBlocker, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { AlertTriangle, Loader2, ShoppingCart, UserPlus } from "lucide-react";
+import { AlertTriangle, Loader2, ShoppingCart, } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -134,8 +134,7 @@ export function ClientRapideForm() {
         className="mx-auto max-w-2xl space-y-6 pb-24"
       >
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <UserPlus className="h-6 w-6 text-primary" aria-hidden="true" />
+          <h1 className="ds-page-title">
             Nouveau client
           </h1>
           <p className="text-sm text-muted-foreground">

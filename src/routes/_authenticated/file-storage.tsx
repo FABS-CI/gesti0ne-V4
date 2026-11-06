@@ -2,7 +2,7 @@ import { formatDate } from "@/lib/format";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
-import { HardDrive, Upload, Download, Trash2, File as FileIcon } from "lucide-react";
+import { Upload, Download, Trash2, File as FileIcon } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -101,8 +101,8 @@ function FileStoragePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <HardDrive className="h-6 w-6 text-primary" /> Stockage de fichiers
+          <h1 className="ds-page-title">
+            Stockage de fichiers
           </h1>
           <p className="text-sm text-muted-foreground">
             Documents et pièces jointes de l'entreprise

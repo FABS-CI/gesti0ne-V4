@@ -1,7 +1,7 @@
 import { formatDate, formatTime } from "@/lib/format";
 import { getCurrentUser } from "@/lib/current-user";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { AlertCircle, ArrowLeft, FileDown, GitCompare, Inbox } from "lucide-react";
+import { AlertCircle, ArrowLeft, FileDown, Inbox } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { comparatifSearchSchema, type ComparatifSearch } from "@/lib/route-schemas";
@@ -157,8 +157,8 @@ function ComparatifPage() {
           </Link>
         </Button>
         <div className="flex-1">
-          <h1 className="ds-page-title flex items-center gap-2">
-            <GitCompare className="h-6 w-6 text-primary" /> Comparatif multi-exercices
+          <h1 className="ds-page-title">
+            Comparatif multi-exercices
           </h1>
           <p className="text-sm text-muted-foreground">
             Évolution du chiffre d'affaires, des encaissements et du résultat par exercice

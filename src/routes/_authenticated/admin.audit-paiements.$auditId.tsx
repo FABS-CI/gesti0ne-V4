@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, ShieldAlert, User as UserIcon, Calendar, FileText } from "lucide-react";
+import { ArrowLeft, User as UserIcon, Calendar, FileText } from "lucide-react";
 
 import { getPaiementAnnulationAudit, getPaiement } from "@/lib/paiements-api";
 import { formatDateTime, formatFCFA } from "@/lib/format";
@@ -68,8 +68,8 @@ function AuditPaiementDetailPage() {
           </Link>
         </Button>
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <ShieldAlert className="h-5 w-5 text-primary" /> Détail annulation
+          <h1 className="ds-page-title">
+            Détail annulation
           </h1>
           <p className="text-sm text-muted-foreground font-mono">{audit.id}</p>
         </div>

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AlertTriangle, ListTree, Loader2, Pencil, Plus, Search } from "lucide-react";
+import { AlertTriangle, Loader2, Pencil, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -158,8 +158,8 @@ function PlanComptablePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <ListTree className="h-6 w-6" /> Plan comptable
+          <h1 className="ds-page-title">
+            Plan comptable
           </h1>
           <p className="text-sm text-muted-foreground">
             Référentiel SYSCOHADA révisé : {comptes.filter((c) => c.dans_plan).length} comptes, dont{" "}

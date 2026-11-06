@@ -51,7 +51,6 @@ export type {
 const MOIS_FR = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 
 export function ResourceManager({ config }: { config: ResourceConfig }) {
-  const Icon = config.icon;
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
@@ -379,8 +378,8 @@ export function ResourceManager({ config }: { config: ResourceConfig }) {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <Icon className="h-6 w-6 text-primary" /> {config.title}
+          <h1 className="ds-page-title">
+            {config.title}
           </h1>
           {config.subtitle && <p className="text-sm text-muted-foreground">{config.subtitle}</p>}
         </div>

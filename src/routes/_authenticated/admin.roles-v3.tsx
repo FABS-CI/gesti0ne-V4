@@ -17,7 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
-import { Plus, RefreshCcw, Search, Shield, Trash2, Users, Copy } from "lucide-react";
+import { Plus, RefreshCcw, Search, Trash2, Users, Copy } from "lucide-react";
 import { ScopesTabV3 } from "@/components/roles-permissions/ScopesTabV3";
 import { AuditTabV3 } from "@/components/roles-permissions/AuditTabV3";
 
@@ -217,8 +217,8 @@ function RolesV3Page() {
     <div className="space-y-6 p-4 md:p-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <Shield className="h-6 w-6 text-primary" /> Sécurité — Moteur v3
+          <h1 className="ds-page-title">
+            Sécurité — Moteur v3
           </h1>
           <p className="text-sm text-muted-foreground">
             Rôles, matrice module × action et affectations utilisateurs (source de vérité des règles d'accès).
