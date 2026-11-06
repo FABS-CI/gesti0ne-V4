@@ -22,7 +22,7 @@ describe("charte des documents FABS-CI", () => {
     const dir = __dirname;
     const hexes = Object.values(CHARTE_HEX).filter((h) => h !== "#FFFFFF" && h !== "#000000");
     for (const f of readdirSync(dir)) {
-      if (!f.endsWith(".ts") || f.startsWith("charte-documents")) continue;
+      if (!f.endsWith(".ts") || f.startsWith("charte-documents") || f.endsWith(".test.ts") || f === "recap-themes.ts") continue; // recap-themes : catalogue des anciens thèmes réglables
       const src = readFileSync(join(dir, f), "utf8").toUpperCase();
       for (const h of hexes) expect(src.includes(h), `${f} contient ${h}`).toBe(false);
     }
