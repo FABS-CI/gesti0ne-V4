@@ -54,7 +54,8 @@ const ECRANS_NETTOYES = [
   "src/components/layout/sidebar/SidebarNavItem.tsx",
   // SidebarNavGroup : retiré le 06/11/2026 (refonte UI lot 1) — une icône par module,
   // nécessaire au menu réduit en rail ; voir le test dédié plus bas.
-  "src/components/layout/MobileBottomNav.tsx",
+  // MobileBottomNav : retiré le 06/11/2026 (barre mobile en verre dépoli) — une icône par
+  // onglet, voir le test dédié plus bas.
 ];
 
 const EMOJI = /\p{Extended_Pictographic}/u;
@@ -102,6 +103,22 @@ describe("menu latéral : une icône par module, aucune par page", () => {
     for (const m of src.matchAll(/<Icon\b[^>]*>/g)) {
       expect(m[0]).toMatch(/h-(4 w-4|5 w-5)/);
       expect(m[0]).toMatch(/strokeWidth=\{1\.75\}/);
+    }
+  });
+});
+
+describe("barre mobile : une icône par onglet, trait 1,75, sans emoji", () => {
+  const src = readFileSync("src/components/layout/MobileBottomNav.tsx", "utf8");
+  it("aucun emoji", () => {
+    expect(EMOJI.test(src)).toBe(false);
+  });
+  it("les icônes sont monochromes, trait 1,75, 20 px, masquées aux lecteurs d'écran", () => {
+    const icones = [...src.matchAll(/<(?:Icon|Menu)\b[^>]*>/g)];
+    expect(icones.length).toBeGreaterThan(0);
+    for (const m of icones) {
+      expect(m[0]).toMatch(/aria-hidden/);
+      expect(m[0]).toMatch(/strokeWidth=\{1\.75\}/);
+      expect(m[0]).toMatch(/h-5 w-5/);
     }
   });
 });

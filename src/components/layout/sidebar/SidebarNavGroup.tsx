@@ -77,7 +77,7 @@ export function SidebarNavGroup({
               {isActive && (
                 <span
                   aria-hidden
-                  className="absolute inset-y-2 -left-2 w-0.5 rounded-full bg-sidebar-primary"
+                  className="absolute inset-y-2 -left-2 w-0.5 rounded-full bg-[var(--glass-nav-glow)] shadow-[0_0_8px_0_var(--glass-nav-glow)]"
                 />
               )}
               <Icon aria-hidden className="h-5 w-5" strokeWidth={1.75} />

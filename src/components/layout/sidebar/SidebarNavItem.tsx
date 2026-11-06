@@ -32,7 +32,7 @@ export function SidebarNavItem({
         {active && (
           <span
             aria-hidden
-            className="absolute inset-y-1.5 -left-[9px] w-0.5 rounded-full bg-sidebar-primary"
+            className="absolute inset-y-1.5 -left-[9px] w-0.5 rounded-full bg-[var(--glass-nav-glow)] shadow-[0_0_8px_0_var(--glass-nav-glow)]"
           />
         )}
         <span className="truncate">{item.title}</span>
