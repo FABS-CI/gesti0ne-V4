@@ -99,8 +99,8 @@ function TransfertsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <ArrowRightLeft className="h-6 w-6 text-primary" /> Transferts inter-dépôts
+          <h1 className="ds-page-title">
+            Transferts inter-dépôts
           </h1>
           <p className="text-sm text-muted-foreground">Mouvements de stock entre dépôts</p>
         </div>

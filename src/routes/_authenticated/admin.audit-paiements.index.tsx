@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { ShieldAlert, Search } from "lucide-react";
+import { Search } from "lucide-react";
 
 import { listPaiementAnnulationsAudit } from "@/lib/paiements-api";
 import { formatDateTime, formatFCFA } from "@/lib/format";
@@ -39,8 +39,8 @@ function AuditPaiementsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="ds-page-title flex items-center gap-2">
-          <ShieldAlert className="h-6 w-6 text-primary" /> Journal d'audit — Annulations de paiement
+        <h1 className="ds-page-title">
+          Journal d'audit — Annulations de paiement
         </h1>
         <p className="text-sm text-muted-foreground">
           Historique complet des paiements annulés (qui, quand, raison). Accès réservé aux

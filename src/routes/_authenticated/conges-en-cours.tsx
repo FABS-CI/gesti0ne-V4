@@ -159,8 +159,8 @@ function CongesEnCoursPage() {
               </Link>
             </Button>
           </div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <Plane className="h-6 w-6 shrink-0 text-info" /> Employés en congé
+          <h1 className="ds-page-title">
+            Employés en congé
           </h1>
           <p className="text-sm text-muted-foreground">
             {sorted.length} employé(s) actuellement en congé approuvé

@@ -261,8 +261,8 @@ function MetricCard({
   return (
     <Card className={toneClass}>
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm flex items-center gap-2 text-muted-foreground">
-          {icon} {label}
+        <CardTitle className="text-sm text-muted-foreground" data-has-icon={icon ? "1" : "0"}>
+          {label}
         </CardTitle>
       </CardHeader>
       <CardContent>

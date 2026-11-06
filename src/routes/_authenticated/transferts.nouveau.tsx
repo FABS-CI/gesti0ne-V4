@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { ArrowRightLeft, Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { listDepots, createTransfert, getStockProduitDepot } from "@/lib/depots-api";
@@ -105,8 +105,8 @@ function NouveauTransfertPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="ds-page-title flex items-center gap-2">
-          <ArrowRightLeft className="h-6 w-6 text-primary" /> Nouveau transfert
+        <h1 className="ds-page-title">
+          Nouveau transfert
         </h1>
         <p className="text-sm text-muted-foreground">Créer un transfert inter-dépôts</p>
       </div>

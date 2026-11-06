@@ -10,16 +10,9 @@ type Props = {
 };
 
 export function ReportCard({ def, loading, onExport }: Props) {
-  const Icon = def.icon;
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center gap-3 space-y-0">
-        <div
-          className="flex h-10 w-10 items-center justify-center rounded-lg"
-          style={{ backgroundColor: `${def.color}1a`, color: def.color }}
-        >
-          <Icon className="h-5 w-5" />
-        </div>
+      <CardHeader className="space-y-0">
         <CardTitle className="text-base">{def.label}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">

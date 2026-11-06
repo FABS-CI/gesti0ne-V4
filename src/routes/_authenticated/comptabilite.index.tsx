@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { BookOpen, Download, Eye, FileText, Loader2, Plus } from "lucide-react";
+import { Download, Eye, FileText, Loader2, Plus } from "lucide-react";
 
 import { exportCsv } from "@/lib/export-csv";
 import { generateJournalComptablePDF, buildJournalFileName } from "@/lib/pdf/pdfGenerator";
@@ -227,8 +227,8 @@ function ComptabilitePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <BookOpen className="h-6 w-6 text-primary" /> Journal comptable
+          <h1 className="ds-page-title">
+            Journal comptable
           </h1>
           <p className="text-sm text-muted-foreground">
             Écritures générées automatiquement (ventes & encaissements)

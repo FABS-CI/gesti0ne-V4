@@ -2,7 +2,7 @@ import { formatDate, formatTime } from "@/lib/format";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Sliders } from "lucide-react";
+import { ArrowLeft, } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -142,8 +142,8 @@ function AjustementPage() {
           </Link>
         </Button>
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <Sliders className="h-6 w-6 text-success" /> Ajustement manuel de stock
+          <h1 className="ds-page-title">
+            Ajustement manuel de stock
           </h1>
           <p className="text-sm text-muted-foreground">
             {produit?.reference} · {produit?.titre}

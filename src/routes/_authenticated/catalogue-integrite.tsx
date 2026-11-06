@@ -44,14 +44,8 @@ function StatCard({
 }) {
   return (
     <Card>
-      <CardContent className="flex items-center gap-3 p-4">
-        <div
-          className="flex h-10 w-10 items-center justify-center rounded-lg"
-          style={{ background: `${color}1a`, color }}
-        >
-          {icon}
-        </div>
-        <div>
+      <CardContent className="p-4">
+        <div data-color={color} data-has-icon={icon ? "1" : "0"}>
           <p className="text-2xl font-bold">{value}</p>
           <p className="text-sm text-muted-foreground">{label}</p>
         </div>
@@ -97,8 +91,7 @@ function IntegritePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title flex items-center gap-2">
-            <ShieldCheck className="h-6 w-6 text-[#FF6200]" />
+          <h1 className="ds-page-title">
             Contrôle d'intégrité du catalogue
           </h1>
           <p className="text-sm text-muted-foreground">
