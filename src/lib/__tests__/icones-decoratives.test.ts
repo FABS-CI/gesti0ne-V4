@@ -98,9 +98,9 @@ describe("menu latéral : une icône par module, aucune par page", () => {
   it("aucune icône lucide décorative importée", () => {
     expect(iconesImportees(src).filter((n) => !ICONES_FONCTIONNELLES.has(n))).toEqual([]);
   });
-  it("les icônes de module sont monochromes, 16 px, trait 1,75", () => {
+  it("les icônes de module sont monochromes, trait 1,75 : 20 px dans le menu réduit, 16 px déplié", () => {
     for (const m of src.matchAll(/<Icon\b[^>]*>/g)) {
-      expect(m[0]).toMatch(/h-4 w-4/);
+      expect(m[0]).toMatch(/h-(4 w-4|5 w-5)/);
       expect(m[0]).toMatch(/strokeWidth=\{1\.75\}/);
     }
   });
