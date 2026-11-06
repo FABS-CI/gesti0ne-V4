@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Search } from "lucide-react";
 
 import { listPaiementAnnulationsAudit } from "@/lib/paiements-api";
 import { formatDateTime, formatFCFA } from "@/lib/format";
@@ -39,7 +38,7 @@ function AuditPaiementsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="ds-page-title">
+        <h1 className="ds-page-title flex items-center gap-2">
           Journal d'audit — Annulations de paiement
         </h1>
         <p className="text-sm text-muted-foreground">
@@ -58,17 +57,15 @@ function AuditPaiementsPage() {
       )}
 
       <div className="relative max-w-xs">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <input
           type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Rechercher raison ou notes…"
-          className="w-full rounded-md border bg-background pl-9 pr-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="w-full rounded-md border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label="Rechercher dans les annulations"
         />
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle>Annulations enregistrées ({data?.length ?? 0})</CardTitle>

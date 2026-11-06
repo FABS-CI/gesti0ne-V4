@@ -1,4 +1,3 @@
-import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -31,12 +30,10 @@ export function ProduitsFilters(p: Props) {
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={p.search}
           onChange={(e) => wrap(p.setSearch)(e.target.value)}
           placeholder="Rechercher…"
-          className="pl-9"
         />
       </div>
       <Select value={p.catFilter} onValueChange={wrap(p.setCatFilter)}>

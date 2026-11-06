@@ -1,19 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  ArrowLeft,
-  AlertCircle,
-  ShoppingCart,
-  FileText,
-  Wallet,
-  TrendingUp,
-  TrendingDown,
-  Scale,
-  Users,
-  Truck,
-  Package,
-} from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { formatFCFA, formatDate } from "@/lib/format";
@@ -126,7 +113,6 @@ function RapportExercicePage() {
     return (
       <div className="mx-auto max-w-xl space-y-4 py-10">
         <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
           <AlertTitle>Exercice introuvable</AlertTitle>
           <AlertDescription>
             L'identifiant d'exercice fourni ne correspond à aucun exercice existant.
@@ -144,21 +130,16 @@ function RapportExercicePage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Button aria-label="Retour" asChild variant="ghost" size="icon">
-          <Link to="/exercices">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
+        <Button aria-label="Retour" asChild variant="ghost" size="sm">
+          <Link to="/exercices">Retour</Link>
         </Button>
         <div className="flex-1">
-          <h1 className="ds-page-title">
-            Rapport d'exercice
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Rapport d'exercice</h1>
           <p className="text-sm text-muted-foreground">
             Synthèse ventes et finances pour un exercice donné
           </p>
         </div>
       </div>
-
       <Card>
         <CardContent className="flex flex-wrap items-end gap-3 p-4">
           <div className="flex-1 min-w-[220px]">
@@ -184,12 +165,10 @@ function RapportExercicePage() {
           )}
         </CardContent>
       </Card>
-
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Activité commerciale</h2>
         {ventesError ? (
           <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
             <AlertTitle>Données indisponibles</AlertTitle>
             <AlertDescription>
               {ventesError instanceof Error ? ventesError.message : "Erreur inattendue"}
@@ -205,81 +184,57 @@ function RapportExercicePage() {
               label="Commandes"
               value={formatFCFA(ventes.totalCommandes)}
               hint={`${ventes.nbCommandes} commande(s)`}
-              icon={ShoppingCart}
               color="#3B82F6"
             />
             <Kpi
               label="Factures émises"
               value={formatFCFA(ventes.totalFactures)}
               hint={`${ventes.nbFactures} facture(s)`}
-              icon={FileText}
               color="#8B5CF6"
             />
             <Kpi
               label="Encaissements"
               value={formatFCFA(ventes.totalPaiements)}
               hint={`${ventes.nbPaiements} paiement(s)`}
-              icon={Wallet}
               color="#10B981"
             />
             <Kpi
               label="Reste à encaisser"
               value={formatFCFA(ventes.resteAPayer)}
               hint="Factures - déjà payé"
-              icon={Users}
               color={ventes.resteAPayer > 0 ? "#EF4444" : "#10B981"}
             />
             <Kpi
               label="Achats fournisseurs"
               value={formatFCFA(ventes.totalAchats)}
               hint={`${ventes.nbAchats} achat(s)`}
-              icon={Package}
               color="#F97316"
             />
           </div>
         )}
       </section>
-
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Situation comptable</h2>
         {loadingCompta || !compta ? (
           <p className="text-sm text-muted-foreground">Chargement…</p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <Kpi
-              label="Produits (cl. 7)"
-              value={formatFCFA(compta.produits)}
-              icon={TrendingUp}
-              color="#10B981"
-            />
-            <Kpi
-              label="Charges (cl. 6)"
-              value={formatFCFA(compta.charges)}
-              icon={TrendingDown}
-              color="#EF4444"
-            />
+            <Kpi label="Produits (cl. 7)" value={formatFCFA(compta.produits)} color="#10B981" />
+            <Kpi label="Charges (cl. 6)" value={formatFCFA(compta.charges)} color="#EF4444" />
             <Kpi
               label="Résultat"
               value={formatFCFA(compta.resultat)}
-              icon={Scale}
               color={compta.resultat >= 0 ? "#10B981" : "#EF4444"}
             />
-            <Kpi
-              label="Trésorerie (cl. 5)"
-              value={formatFCFA(compta.tresorerie)}
-              icon={Wallet}
-              color="#F97316"
-            />
+            <Kpi label="Trésorerie (cl. 5)" value={formatFCFA(compta.tresorerie)} color="#F97316" />
             <Kpi
               label="Créances clients (411)"
               value={formatFCFA(compta.creancesClients)}
-              icon={Users}
               color="#3B82F6"
             />
             <Kpi
               label="Dettes fournisseurs (401)"
               value={formatFCFA(compta.dettesFournisseurs)}
-              icon={Truck}
               color="#8B5CF6"
             />
           </div>
@@ -293,20 +248,17 @@ function Kpi({
   label,
   value,
   hint,
-  icon: Icon,
   color,
 }: {
   label: string;
   value: string;
   hint?: string;
-  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   color: string;
 }) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">{label}</CardTitle>
-        <Icon className="h-5 w-5" style={{ color }} />
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold" style={{ color }}>

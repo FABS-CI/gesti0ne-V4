@@ -1,4 +1,3 @@
-import { CheckCircle2, Download, Lock, LockOpen, Printer, RotateCw, Trash2, XCircle } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -46,28 +45,14 @@ export function InventaireHeaderActions({
   return (
     <div className="flex gap-2">
       <Button variant="outline" onClick={onExport}>
-        <Download className="h-4 w-4 mr-2" />
         PDF
       </Button>
       <Button variant="outline" onClick={onImprimer}>
-        <Printer className="h-4 w-4 mr-2" />
         Imprimer
       </Button>
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button variant="outline">
-            {locked ? (
-              <>
-                <Lock className="h-4 w-4 mr-2 text-primary" />
-                Déverrouiller
-              </>
-            ) : (
-              <>
-                <LockOpen className="h-4 w-4 mr-2" />
-                Verrouiller
-              </>
-            )}
-          </Button>
+          <Button variant="outline">{locked ? <>Déverrouiller</> : <>Verrouiller</>}</Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -90,10 +75,7 @@ export function InventaireHeaderActions({
       </AlertDialog>
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button variant="destructive">
-            <Trash2 className="h-4 w-4 mr-2" />
-            Supprimer
-          </Button>
+          <Button variant="destructive">Supprimer</Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -112,10 +94,7 @@ export function InventaireHeaderActions({
         <>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="outline">
-                <XCircle className="h-4 w-4 mr-2" />
-                Annuler
-              </Button>
+              <Button variant="outline">Annuler</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
@@ -131,7 +110,6 @@ export function InventaireHeaderActions({
             </AlertDialogContent>
           </AlertDialog>
           <Button onClick={onValider} disabled={validating}>
-            <CheckCircle2 className="h-4 w-4 mr-2" />
             {validating ? "Validation…" : "Valider l'inventaire"}
           </Button>
         </>
@@ -139,10 +117,7 @@ export function InventaireHeaderActions({
       {!editable && canRegulariser && (
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button>
-              <RotateCw className="h-4 w-4 mr-2" />
-              Régulariser les écarts
-            </Button>
+            <Button>Régulariser les écarts</Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>

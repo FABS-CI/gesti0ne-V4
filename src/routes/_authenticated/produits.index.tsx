@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { friendlyError } from '@/lib/friendly-error';
+import { friendlyError } from "@/lib/friendly-error";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Download, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -139,8 +138,7 @@ function ProduitsPage() {
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
-  const hasActiveFilters =
-    !!q || catFilter !== "all" || !!niveau || actifFilter !== "true";
+  const hasActiveFilters = !!q || catFilter !== "all" || !!niveau || actifFilter !== "true";
   const resetAllFilters = () => {
     setSearch("");
     setCatFilter("all");
@@ -206,16 +204,11 @@ function ProduitsPage() {
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={handleExport}>
-              <Download className="mr-2 h-4 w-4" /> Export PDF
+              Export PDF
             </Button>
-            {canMutate && (
-              <Button onClick={openNew}>
-                <Plus className="mr-2 h-4 w-4" /> Nouveau produit
-              </Button>
-            )}
+            {canMutate && <Button onClick={openNew}>Nouveau produit</Button>}
           </div>
         </div>
-
         <ProduitsFilters
           search={search}
           setSearch={setSearch}
@@ -227,7 +220,6 @@ function ProduitsPage() {
           setActifFilter={setActifFilter}
           onAnyChange={() => setPage(1)}
         />
-
         <FilterBadges
           badges={
             [
@@ -251,7 +243,6 @@ function ProduitsPage() {
           }
           onResetAll={resetAllFilters}
         />
-
         <ProduitsTable
           items={items}
           isLoading={isLoading}
@@ -297,11 +288,8 @@ function ProduitsPage() {
           onSave={() => saveMutation.mutate()}
           saving={saveMutation.isPending}
           produit={editing}
-          onCoverChanged={() =>
-            queryClient.invalidateQueries({ queryKey: ["produits"] })
-          }
+          onCoverChanged={() => queryClient.invalidateQueries({ queryKey: ["produits"] })}
         />
-
         <ConfirmDeleteDialog
           open={!!toDelete}
           onOpenChange={(o) => !o && setToDelete(null)}

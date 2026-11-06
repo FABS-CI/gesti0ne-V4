@@ -1,7 +1,6 @@
 import { formatDateTime } from "@/lib/format";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ShieldCheck, AlertTriangle, RefreshCw, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -55,7 +54,6 @@ function StockAuditPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <ShieldCheck className="h-6 w-6 text-info" />
           <div>
             <h1 className="ds-page-title">Audit Stock &amp; Inventaire</h1>
             <p className="text-sm text-muted-foreground">
@@ -64,11 +62,8 @@ function StockAuditPage() {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => resumeQ.refetch()}
-          >
-            <RefreshCw className="mr-2 h-4 w-4" /> Relancer l'audit
+          <Button variant="outline" onClick={() => resumeQ.refetch()}>
+            Relancer l'audit
           </Button>
         </div>
       </div>
@@ -82,11 +77,6 @@ function StockAuditPage() {
         >
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              {go ? (
-                <CheckCircle2 className="h-5 w-5 text-success" />
-              ) : (
-                <AlertTriangle className="h-5 w-5 text-destructive" />
-              )}
               Verdict : {go ? "GO PRODUCTION" : "ANOMALIES DÉTECTÉES"}
             </CardTitle>
           </CardHeader>
@@ -95,11 +85,7 @@ function StockAuditPage() {
               <Kpi label="Produits" value={r.total_produits} />
               <Kpi label="Mouvements" value={r.total_mouvements} />
               <Kpi label="Écarts de stock" value={r.ecarts_stock} danger={r.ecarts_stock > 0} />
-              <Kpi
-                label="Stock négatif"
-                value={r.stock_negatif}
-                danger={r.stock_negatif > 0}
-              />
+              <Kpi label="Stock négatif" value={r.stock_negatif} danger={r.stock_negatif > 0} />
               <Kpi
                 label="Mouvements orphelins"
                 value={r.mouvements_orphelins_produit}
@@ -115,10 +101,7 @@ function StockAuditPage() {
                 value={r.mouvements_sans_utilisateur_90j}
                 danger={r.mouvements_sans_utilisateur_90j > 0}
               />
-              <Kpi
-                label="Généré le"
-                value={formatDateTime(r.generated_at)}
-              />
+              <Kpi label="Généré le" value={formatDateTime(r.generated_at)} />
             </div>
           </CardContent>
         </Card>
@@ -126,10 +109,9 @@ function StockAuditPage() {
 
       <Card>
         <CardContent className="p-6 text-sm text-muted-foreground">
-          Phase 2 : <code>stocks_depots</code> est désormais l'unique source
-          de vérité pour le stock. Il n'y a plus de « stock enregistré » à
-          comparer, donc plus de recalcul à effectuer — le stock affiché est
-          toujours calculé à partir des dépôts.
+          Phase 2 : <code>stocks_depots</code> est désormais l'unique source de vérité pour le
+          stock. Il n'y a plus de « stock enregistré » à comparer, donc plus de recalcul à effectuer
+          — le stock affiché est toujours calculé à partir des dépôts.
         </CardContent>
       </Card>
     </div>
@@ -148,10 +130,7 @@ function Kpi({
   return (
     <div className="rounded-lg border p-3">
       <div className="text-xs text-muted-foreground">{label}</div>
-      <div
-        className="mt-1 text-xl font-bold"
-        style={{ color: danger ? "#EF4444" : undefined }}
-      >
+      <div className="mt-1 text-xl font-bold" style={{ color: danger ? "#EF4444" : undefined }}>
         {value}
       </div>
     </div>

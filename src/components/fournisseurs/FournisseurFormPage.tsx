@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Save, Truck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,9 +58,7 @@ export function FournisseurFormPage({ existing }: { existing?: Fournisseur | nul
 
   const saveMutation = useMutation({
     mutationFn: () =>
-      isEdit
-        ? updateFournisseur(existing!.fournisseur_id, form)
-        : createFournisseur(form),
+      isEdit ? updateFournisseur(existing!.fournisseur_id, form) : createFournisseur(form),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["fournisseurs"] });
       toast.success(isEdit ? "Fournisseur modifié" : "Fournisseur créé");
@@ -85,12 +82,9 @@ export function FournisseurFormPage({ existing }: { existing?: Fournisseur | nul
   return (
     <div className="space-y-6 p-1">
       <div className="flex items-center gap-3">
-        <Button aria-label="Retour" asChild variant="ghost" size="icon">
-          <Link to="/fournisseurs">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
+        <Button aria-label="Retour" asChild variant="ghost" size="sm">
+          <Link to="/fournisseurs">Retour</Link>
         </Button>
-        <Truck className="h-6 w-6 text-primary" />
         <div>
           <h1 className="ds-page-title">
             {isEdit ? "Modifier le fournisseur" : "Nouveau fournisseur"}
@@ -179,13 +173,11 @@ export function FournisseurFormPage({ existing }: { existing?: Fournisseur | nul
           </div>
         </CardContent>
       </Card>
-
       <div className="flex justify-end gap-3">
         <Button variant="outline" asChild>
           <Link to="/fournisseurs">Annuler</Link>
         </Button>
         <Button onClick={submit} disabled={saveMutation.isPending}>
-          <Save className="mr-2 h-4 w-4" />
           {saveMutation.isPending ? "Enregistrement…" : "Enregistrer"}
         </Button>
       </div>

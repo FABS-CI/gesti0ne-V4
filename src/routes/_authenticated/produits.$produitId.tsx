@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { ProductCoverActions } from "@/components/produits/ProductCoverActions";
-import { ArrowLeft } from "lucide-react";
 import { buildProduitHistorique } from "@/lib/produits-360-api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -89,10 +88,8 @@ function ProduitDetailPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Button aria-label="Retour" asChild variant="ghost" size="icon">
-            <Link to="/produits">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
+          <Button aria-label="Retour" asChild variant="ghost" size="sm">
+            <Link to="/produits">Retour</Link>
           </Button>
           <div>
             <h1 className="ds-page-title">{produit.titre}</h1>
@@ -103,7 +100,6 @@ function ProduitDetailPage() {
         </div>
         <Badge variant="secondary">Consulter l'onglet Dépôts pour le stock</Badge>
       </div>
-
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
         <div className="flex flex-col items-center gap-3 sm:items-start">
           <ProductCoverHero produit={produit} />
@@ -127,8 +123,6 @@ function ProduitDetailPage() {
           />
         </div>
       </div>
-
-
       <Tabs defaultValue="infos">
         <TabsList>
           <TabsTrigger value="infos">Informations</TabsTrigger>
@@ -140,7 +134,6 @@ function ProduitDetailPage() {
           <TabsTrigger value="mouvements">Mouvements</TabsTrigger>
           <TabsTrigger value="historique">Historique</TabsTrigger>
         </TabsList>
-
         <TabsContent value="infos">
           <Card>
             <CardHeader>
@@ -166,11 +159,9 @@ function ProduitDetailPage() {
             </CardContent>
           </Card>
         </TabsContent>
-
         <TabsContent value="depots">
           <DepotsStockTab produitId={produitId} stocksDepots={stocksDepots} />
         </TabsContent>
-
         <TabsContent value="evolution">
           <Card>
             <CardHeader>
@@ -185,23 +176,18 @@ function ProduitDetailPage() {
             </CardContent>
           </Card>
         </TabsContent>
-
         <TabsContent value="ventes">
           <VentesTab ventes={ventes} />
         </TabsContent>
-
         <TabsContent value="mouvements">
           <MouvementsTab mouvements={mouvements} />
         </TabsContent>
-
         <TabsContent value="achats">
           <AchatsTab achats={achats} />
         </TabsContent>
-
         <TabsContent value="inventaires">
           <InventairesTab inventaires={inventaires} />
         </TabsContent>
-
         <TabsContent value="historique">
           <HistoriqueTab historique={historique} />
         </TabsContent>

@@ -2,7 +2,7 @@ import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { FileText, Receipt, Truck, RotateCcw, Search, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { formatDate, formatFCFA } from "@/lib/format";
@@ -10,10 +10,7 @@ import {
   generateUnifiedCommercialPDF,
   generateUnifiedStatementPDF,
 } from "@/lib/pdf/unified-generator";
-import {
-  fileNameFor,
-  type DocBase,
-} from "@/lib/pdf/fabsTemplates";
+import { fileNameFor, type DocBase } from "@/lib/pdf/fabsTemplates";
 import {
   loadFactureDocLignes,
   loadProformaDocLignes,
@@ -50,11 +47,11 @@ export const Route = createFileRoute("/_authenticated/centre-documents")({
 
 type DocKind = "factures" | "proformas" | "bons_livraison" | "bons_retour";
 
-const TABS: { key: DocKind; label: string; icon: typeof FileText; color: string }[] = [
-  { key: "factures", label: "Factures", icon: Receipt, color: "#3B82F6" },
-  { key: "proformas", label: "Proformas", icon: FileText, color: "#8B5CF6" },
-  { key: "bons_livraison", label: "Bons de livraison", icon: Truck, color: "#10B981" },
-  { key: "bons_retour", label: "Bons de retour", icon: RotateCcw, color: "#F97316" },
+const TABS: { key: DocKind; label: string; color: string }[] = [
+  { key: "factures", label: "Factures", color: "#3B82F6" },
+  { key: "proformas", label: "Proformas", color: "#8B5CF6" },
+  { key: "bons_livraison", label: "Bons de livraison", color: "#10B981" },
+  { key: "bons_retour", label: "Bons de retour", color: "#F97316" },
 ];
 
 type Row = {
@@ -128,15 +125,21 @@ async function fetchRows(kind: DocKind): Promise<Row[]> {
     .order("date_retour", { ascending: false })
     .limit(200);
   if (error) throw error;
-    return (data ?? []).flatMap((r) => r.bon_retour_id ? [{
-    id: r.bon_retour_id,
-    reference: r.reference ?? "—",
-    date: r.date_retour,
-    client: r.client_nom ?? "—",
-    montant: r.montant,
-    statut: r.statut,
-      version: r.updated_at ?? r.date_retour,
-    }] : []);
+  return (data ?? []).flatMap((r) =>
+    r.bon_retour_id
+      ? [
+          {
+            id: r.bon_retour_id,
+            reference: r.reference ?? "—",
+            date: r.date_retour,
+            client: r.client_nom ?? "—",
+            montant: r.montant,
+            statut: r.statut,
+            version: r.updated_at ?? r.date_retour,
+          },
+        ]
+      : [],
+  );
 }
 
 function buildDoc(row: Row): DocBase {
@@ -225,36 +228,28 @@ function CentreDocumentsPage() {
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="ds-page-title">
-          Centre de documents
-        </h1>
+        <h1 className="ds-page-title flex items-center gap-2">Centre de documents</h1>
         <p className="text-sm text-muted-foreground">
           Recherchez et téléchargez vos documents PDF (factures, proformas, BL, retours).
         </p>
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Documents émis</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="relative max-w-md">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Référence ou client…"
-              className="pl-8"
             />
           </div>
-
           <Tabs value={tab} onValueChange={(v) => setTab(v as DocKind)}>
             <TabsList>
               {TABS.map((t) => {
-                const Icon = t.icon;
                 return (
                   <TabsTrigger key={t.key} value={t.key} className="gap-2">
-                    <Icon className="h-4 w-4" style={{ color: t.color }} />
                     {t.label}
                   </TabsTrigger>
                 );
@@ -315,10 +310,10 @@ function DocList({ kind, search }: { kind: DocKind; search: string }) {
         <TableBody>
           {filtered.map((row) => (
             <TableRow key={row.id}>
-              <TableCell className="font-mono text-xs">{formatDocumentReference(row.reference)}</TableCell>
-              <TableCell>
-                {row.date ? formatDate(row.date) : "—"}
+              <TableCell className="font-mono text-xs">
+                {formatDocumentReference(row.reference)}
               </TableCell>
+              <TableCell>{row.date ? formatDate(row.date) : "—"}</TableCell>
               <TableCell>{row.client}</TableCell>
               <TableCell className="text-right">
                 {row.montant != null ? formatFCFA(row.montant) : "—"}

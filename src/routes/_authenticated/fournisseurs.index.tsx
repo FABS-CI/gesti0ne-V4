@@ -1,15 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Truck, Search, Plus, Download, Pencil, Trash2, Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 import { Can } from "@/components/rbac/Can";
 import { toast } from "sonner";
 
-import {
-  listFournisseurs,
-  deleteFournisseur,
-  type Fournisseur,
-} from "@/lib/fournisseurs-api";
+import { listFournisseurs, deleteFournisseur, type Fournisseur } from "@/lib/fournisseurs-api";
 import { exportCsv } from "@/lib/export-csv";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { useActifsExerciceIds } from "@/hooks/use-actifs-exercice";
@@ -88,7 +84,16 @@ function FournisseursPage() {
   function handleExport() {
     exportCsv(
       "fournisseurs.csv",
-      ["Référence", "Raison sociale", "Représentant", "Contact", "Email", "Téléphone", "Ville", "Statut"],
+      [
+        "Référence",
+        "Raison sociale",
+        "Représentant",
+        "Contact",
+        "Email",
+        "Téléphone",
+        "Ville",
+        "Statut",
+      ],
       fournisseurs.map((f) => [
         f.reference ?? "",
         f.raison_sociale,
@@ -124,31 +129,23 @@ function FournisseursPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title">
-            Fournisseurs
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Fournisseurs</h1>
           <p className="text-sm text-muted-foreground">Gestion des fournisseurs</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleExport} disabled={!fournisseurs.length}>
-            <Download className="mr-2 h-4 w-4" /> Exporter
+            Exporter
           </Button>
-          <Button onClick={openNew}>
-            <Plus className="mr-2 h-4 w-4" /> Nouveau fournisseur
-          </Button>
+          <Button onClick={openNew}>Nouveau fournisseur</Button>
         </div>
       </div>
-
       <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder="Rechercher..."
-          className="pl-9"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
-
       <div className="flex items-center gap-2">
         <Switch
           id="actifs-exercice-fs"
@@ -159,7 +156,6 @@ function FournisseursPage() {
           Actifs dans l'exercice
         </Label>
       </div>
-
       <FilterBadges
         badges={
           [
@@ -173,7 +169,6 @@ function FournisseursPage() {
         }
         onResetAll={resetAllFilters}
       />
-
       <div className="rounded-lg border">
         <ResponsiveTable stickyFirstCol>
           <Table>
@@ -202,7 +197,6 @@ function FournisseursPage() {
                   <TableCell colSpan={8} className="py-10 text-center">
                     <EmptyState
                       variant={hasActiveFilters ? "compact" : "rich"}
-                      icon={Truck}
                       title={
                         hasActiveFilters
                           ? "Aucun fournisseur ne correspond aux filtres appliqués."
@@ -217,7 +211,7 @@ function FournisseursPage() {
                       action={
                         !hasActiveFilters ? (
                           <Button size="sm" onClick={openNew}>
-                            <Plus className="mr-2 h-4 w-4" /> Nouveau fournisseur
+                            Nouveau fournisseur
                           </Button>
                         ) : undefined
                       }
@@ -245,31 +239,38 @@ function FournisseursPage() {
                         aria-label="Consulter"
                         title="Consulter"
                         variant="ghost"
-                        size="icon"
+                        size="sm"
                         asChild
                       >
                         <Link
                           to="/fournisseurs/$fournisseurId"
                           params={{ fournisseurId: f.fournisseur_id }}
                         >
-                          <Eye className="h-4 w-4" />
+                          Voir
                         </Link>
                       </Button>
-                      <Button aria-label="Modifier" title="Modifier" variant="ghost" size="icon" asChild>
+                      <Button
+                        aria-label="Modifier"
+                        title="Modifier"
+                        variant="ghost"
+                        size="sm"
+                        asChild
+                      >
                         <Link
                           to="/fournisseurs/$fournisseurId/modifier"
                           params={{ fournisseurId: f.fournisseur_id }}
                         >
-                          <Pencil className="h-4 w-4" />
+                          Modifier
                         </Link>
                       </Button>
                       <Can permission="fournisseurs.supprimer">
-                        <Button aria-label="Supprimer"
+                        <Button
+                          aria-label="Supprimer"
                           variant="ghost"
-                          size="icon"
+                          size="sm"
                           onClick={() => setToDelete(f)}
                         >
-                          <Trash2 className="h-4 w-4 text-destructive" />
+                          Supprimer
                         </Button>
                       </Can>
                     </TableCell>
@@ -280,7 +281,6 @@ function FournisseursPage() {
           </Table>
         </ResponsiveTable>
       </div>
-
       <ConfirmDeleteDialog
         open={!!toDelete}
         onOpenChange={(o) => !o && setToDelete(null)}

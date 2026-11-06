@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, ChevronRight, Home } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export type Crumb = { label: string; to?: string };
@@ -22,7 +22,6 @@ export function RhPageHeader({ title, subtitle, backTo, crumbs, actions }: Props
           className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground"
         >
           <Link to="/rh-dashboard" className="inline-flex items-center gap-1 hover:text-foreground">
-            <Home className="h-3 w-3" aria-hidden />
             <span>RH</span>
           </Link>
           {crumbs.map((c, i) => (
@@ -47,11 +46,11 @@ export function RhPageHeader({ title, subtitle, backTo, crumbs, actions }: Props
         <div className="flex min-w-0 items-center gap-3">
           <Button
             variant="ghost"
-            size="icon"
+            size="sm"
             aria-label="Retour"
             onClick={() => navigate({ to: backTo })}
           >
-            <ArrowLeft className="h-5 w-5" />
+            Retour
           </Button>
           <div className="min-w-0">
             <h1 className="ds-page-title truncate">{title}</h1>

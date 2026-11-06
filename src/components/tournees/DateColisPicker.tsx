@@ -1,7 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Info } from "lucide-react";
 import { checkDateColis, todayISO } from "@/lib/date-colis-warn";
 
 function shift(days: number): string {
@@ -81,11 +80,6 @@ export function DateColisPicker({ value, onChange, colisCount }: Props) {
                 : "border-muted bg-muted/40 text-muted-foreground")
           }
         >
-          {w.level === "error" || w.level === "warn" ? (
-            <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-          ) : (
-            <Info className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-          )}
           <span className="flex-1">
             {w.message}
             {suggested && (

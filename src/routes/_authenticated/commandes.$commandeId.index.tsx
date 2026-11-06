@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Ban, Calendar, FileDown, FileText, Loader2, Package, Pencil, Receipt, User } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { ProductCoverThumb } from "@/components/produits/ProductCoverThumb";
 import { generateUnifiedCommercialPDF } from "@/lib/pdf/unified-generator";
 import { fileNameFor } from "@/lib/pdf/fabsTemplates";
@@ -58,7 +58,6 @@ export const Route = createFileRoute("/_authenticated/commandes/$commandeId/")({
   notFoundComponent: RouteNotFound,
 });
 
-
 function frDate(d: string | null | undefined) {
   return d ? formatDate(d) : "—";
 }
@@ -90,7 +89,6 @@ function CommandeDetailPage() {
     },
     onError: (e) => toast.error(friendlyError(e, "Impossible d'annuler la commande")),
   });
-
 
   if (isLoading) return <Skeleton className="h-64 w-full" />;
   if (!commande)
@@ -163,33 +161,27 @@ function CommandeDetailPage() {
                             }
                           : null,
                       } as any,
-                    }
+                    },
                   )
                 }
               >
-                {st.loading ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <FileDown className="mr-2 h-4 w-4" />
-                )}
+                {st.loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 {st.loading ? "Génération…" : "Télécharger PDF"}
               </Button>
             );
           })()}
           {peutModifierCommande(commande.statut, hasPermission) && (
-              <Button asChild variant="default" size="sm">
-                <Link to="/commandes/$commandeId/modifier" params={{ commandeId }}>
-                  <Pencil className="mr-2 h-4 w-4" />
-                  Modifier la commande
-                </Link>
-              </Button>
-            )}
+            <Button asChild variant="default" size="sm">
+              <Link to="/commandes/$commandeId/modifier" params={{ commandeId }}>
+                Modifier la commande
+              </Link>
+            </Button>
+          )}
         </div>
         {canDemanderAnnulation &&
           commande.statut !== "annulee" &&
           commande.statut !== "annulation_en_attente" && (
             <Button variant="outline" size="sm" onClick={() => setAnnulOpen(true)}>
-              <Ban className="mr-2 h-4 w-4 text-destructive" />
               Annuler la commande
             </Button>
           )}
@@ -199,13 +191,11 @@ function CommandeDetailPage() {
           </Badge>
         )}
       </div>
-
-
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <User className="h-4 w-4" /> Client
+              Client
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">{commande.client_nom ?? "—"}</CardContent>
@@ -213,7 +203,7 @@ function CommandeDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4" /> Date
+              Date
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">{frDate(commande.date_commande)}</CardContent>
@@ -221,7 +211,7 @@ function CommandeDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <FileText className="h-4 w-4" /> Remise
+              Remise
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">
@@ -258,7 +248,7 @@ function CommandeDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Receipt className="h-4 w-4" /> Total
+              Total
             </CardTitle>
           </CardHeader>
           <CardContent className="text-lg font-bold text-primary">
@@ -266,7 +256,6 @@ function CommandeDetailPage() {
           </CardContent>
         </Card>
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle>Lignes de commande</CardTitle>
@@ -297,7 +286,8 @@ function CommandeDetailPage() {
                         produit={{
                           titre: l.designation,
                           cover_path: (l as any).produits?.cover_path || (l as any).cover_path,
-                          cover_thumb_path: (l as any).produits?.cover_thumb_path || (l as any).cover_thumb_path,
+                          cover_thumb_path:
+                            (l as any).produits?.cover_thumb_path || (l as any).cover_thumb_path,
                         }}
                         size="xs"
                       />

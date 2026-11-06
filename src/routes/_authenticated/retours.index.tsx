@@ -5,7 +5,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { RotateCcw, Plus, Search, Eye, XCircle, Download, FileDown, Trash2, X } from "lucide-react";
+import { Eye, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { exportPdf } from "@/lib/export-csv";
@@ -55,7 +55,6 @@ import { useUserRoles } from "@/hooks/use-user-roles";
 import { generateBonRetourPDF } from "@/lib/pdf/fabsTemplates";
 import { buildRetourDocBase } from "@/lib/pdf/retour-builder";
 import { downloadBlob } from "@/lib/pdf/fabsTemplates";
-
 
 import { authRouteHead } from "@/lib/route-head";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
@@ -144,7 +143,6 @@ function RetoursListPage() {
     }
   };
 
-
   const onExport = () => {
     const headers = [
       "Numéro",
@@ -182,23 +180,26 @@ function RetoursListPage() {
         actions={
           <>
             <Button variant="outline" onClick={onExport}>
-              <Download className="h-4 w-4 mr-2" />
               Exporter PDF
             </Button>
             <Can permission="retours.creer">
-              <Button onClick={() => navigate({ to: "/retours/nouveau", search: { clientId: undefined, type_retour: "physique" } as any })}>
-                <Plus className="h-4 w-4 mr-2" />
+              <Button
+                onClick={() =>
+                  navigate({
+                    to: "/retours/nouveau",
+                    search: { clientId: undefined, type_retour: "physique" } as any,
+                  })
+                }
+              >
                 Nouveau retour
               </Button>
             </Can>
           </>
         }
       />
-
       <div className="rounded-md border bg-card p-4 space-y-4">
         <div className="flex flex-wrap gap-3">
           <div className="relative flex-1 min-w-[260px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               value={q}
               onChange={(e) => {
@@ -206,7 +207,6 @@ function RetoursListPage() {
                 setPage(1);
               }}
               placeholder="Rechercher numéro, client, représentant, ville…"
-              className="pl-9"
             />
           </div>
           <Select
@@ -235,7 +235,15 @@ function RetoursListPage() {
             {q && (
               <Badge variant="secondary" className="gap-1">
                 Recherche : {q}
-                <button type="button" onClick={() => { setQ(""); setPage(1); }} className="ml-1 rounded-full hover:bg-muted" aria-label="Retirer la recherche">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQ("");
+                    setPage(1);
+                  }}
+                  className="ml-1 rounded-full hover:bg-muted"
+                  aria-label="Retirer la recherche"
+                >
                   <X className="h-3 w-3" />
                 </button>
               </Badge>
@@ -243,13 +251,21 @@ function RetoursListPage() {
             {statut !== "all" && (
               <Badge variant="secondary" className="gap-1">
                 Statut : {STATUT_RETOUR_LABEL[statut]?.label ?? statut}
-                <button type="button" onClick={() => { setStatut("all"); setPage(1); }} className="ml-1 rounded-full hover:bg-muted" aria-label="Retirer le statut">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStatut("all");
+                    setPage(1);
+                  }}
+                  className="ml-1 rounded-full hover:bg-muted"
+                  aria-label="Retirer le statut"
+                >
                   <X className="h-3 w-3" />
                 </button>
               </Badge>
             )}
             <Button variant="ghost" size="sm" onClick={resetFilters}>
-              <RotateCcw className="mr-1 h-3 w-3" /> Réinitialiser
+              Réinitialiser
             </Button>
           </div>
         )}
@@ -259,7 +275,6 @@ function RetoursListPage() {
         ) : retours.length === 0 ? (
           <EmptyState
             variant={hasActiveFilters ? "compact" : "rich"}
-            icon={RotateCcw}
             title={
               hasActiveFilters
                 ? "Aucun retour ne correspond aux filtres appliqués."
@@ -274,8 +289,16 @@ function RetoursListPage() {
             action={
               !hasActiveFilters ? (
                 <Can permission="retours.creer">
-                  <Button size="sm" onClick={() => navigate({ to: "/retours/nouveau", search: { clientId: undefined, type_retour: "physique" } as any })}>
-                    <Plus className="mr-2 h-4 w-4" /> Nouveau retour
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      navigate({
+                        to: "/retours/nouveau",
+                        search: { clientId: undefined, type_retour: "physique" } as any,
+                      })
+                    }
+                  >
+                    Nouveau retour
                   </Button>
                 </Can>
               ) : undefined
@@ -302,59 +325,76 @@ function RetoursListPage() {
                     {paginated.map((r) => {
                       const st = STATUT_RETOUR_LABEL[r.statut];
                       return (
-                    <TableRow key={r.retour_id} className="hover:bg-muted/30 transition-colors">
-                      <TableCell className="font-mono font-medium text-xs md:text-xs whitespace-nowrap">
-                        {r.numero || r.reference}
-                      </TableCell>
-                      <TableCell className="text-xs whitespace-nowrap">
-                        {formatDate(r.date_retour)}
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-medium text-sm leading-tight break-words max-w-[200px]">
-                          <ClientLink clientId={r.client_id} nom={r.etablissement || r.client_nom} />
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-sm truncate max-w-[120px]" title={r.representant_nom || ""}>
-                        {r.representant_nom || "—"}
-                      </TableCell>
-                      <TableCell className="text-sm truncate max-w-[100px]">{r.ville || "—"}</TableCell>
-                      <TableCell className="text-right font-semibold text-sm">{r.total_quantite || 0}</TableCell>
-                      <TableCell className="text-center">
-                        {st && (
-                          <Badge
-                            variant="outline"
-                            className="text-xs px-2 py-0 h-5 whitespace-nowrap inline-flex text-white border-none"
-                            style={{ backgroundColor: st.color }}
+                        <TableRow key={r.retour_id} className="hover:bg-muted/30 transition-colors">
+                          <TableCell className="font-mono font-medium text-xs md:text-xs whitespace-nowrap">
+                            {r.numero || r.reference}
+                          </TableCell>
+                          <TableCell className="text-xs whitespace-nowrap">
+                            {formatDate(r.date_retour)}
+                          </TableCell>
+                          <TableCell>
+                            <div className="font-medium text-sm leading-tight break-words max-w-[200px]">
+                              <ClientLink
+                                clientId={r.client_id}
+                                nom={r.etablissement || r.client_nom}
+                              />
+                            </div>
+                          </TableCell>
+                          <TableCell
+                            className="text-sm truncate max-w-[120px]"
+                            title={r.representant_nom || ""}
                           >
-                            {st.label}
-                          </Badge>
-                        )}
-                      </TableCell>
+                            {r.representant_nom || "—"}
+                          </TableCell>
+                          <TableCell className="text-sm truncate max-w-[100px]">
+                            {r.ville || "—"}
+                          </TableCell>
+                          <TableCell className="text-right font-semibold text-sm">
+                            {r.total_quantite || 0}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {st && (
+                              <Badge
+                                variant="outline"
+                                className="text-xs px-2 py-0 h-5 whitespace-nowrap inline-flex text-white border-none"
+                                style={{ backgroundColor: st.color }}
+                              >
+                                {st.label}
+                              </Badge>
+                            )}
+                          </TableCell>
                           <TableCell className="text-right">
                             <div className="flex justify-end gap-1">
-                              <Button aria-label="Consulter" asChild variant="ghost" size="icon" title="Consulter">
+                              <Button
+                                aria-label="Consulter"
+                                asChild
+                                variant="ghost"
+                                size="sm"
+                                title="Consulter"
+                              >
                                 <Link to="/retours/$retourId" params={{ retourId: r.retour_id }}>
-                                  <Eye className="h-4 w-4" />
+                                  Voir
                                 </Link>
                               </Button>
                               <Button
                                 aria-label="Télécharger le bon de retour"
                                 variant="ghost"
-                                size="icon"
+                                size="sm"
                                 title="Télécharger le bon de retour (PDF)"
                                 onClick={() => downloadPdf(r)}
                               >
-                                <FileDown className="h-4 w-4" />
+                                Télécharger
                               </Button>
                               {r.statut !== "annule" && (
                                 <Can permission="retours.annuler">
-                                  <Button aria-label="Annuler"
+                                  <Button
+                                    aria-label="Annuler"
                                     variant="ghost"
-                                    size="icon"
+                                    size="sm"
                                     title="Annuler"
                                     onClick={() => setToCancel(r)}
                                   >
-                                    <XCircle className="h-4 w-4 text-destructive" />
+                                    Annuler
                                   </Button>
                                 </Can>
                               )}
@@ -362,14 +402,14 @@ function RetoursListPage() {
                                 <Button
                                   aria-label="Supprimer définitivement"
                                   variant="ghost"
-                                  size="icon"
+                                  size="sm"
                                   title="Supprimer définitivement (Super Admin)"
                                   onClick={() => {
                                     setToDelete(r);
                                     setConfirmText("");
                                   }}
                                 >
-                                  <Trash2 className="h-4 w-4 text-destructive" />
+                                  Supprimer
                                 </Button>
                               )}
                             </div>
@@ -381,7 +421,6 @@ function RetoursListPage() {
                 </Table>
               </ResponsiveTable>
             </div>
-
             <div className="flex items-center justify-between text-sm">
               <p className="text-muted-foreground">
                 {retours.length} retour{retours.length > 1 ? "s" : ""}
@@ -411,7 +450,6 @@ function RetoursListPage() {
           </>
         )}
       </div>
-
       <AlertDialog open={!!toCancel} onOpenChange={(o) => !o && setToCancel(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -430,7 +468,6 @@ function RetoursListPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
       <AlertDialog
         open={!!toDelete}
         onOpenChange={(o) => {
@@ -451,14 +488,18 @@ function RetoursListPage() {
                   ! Action irréversible réservée aux Super Administrateurs.
                 </p>
                 <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
-                  <li>Si le retour est actif, ses effets seront d'abord inversés (stock ressorti, facture / solde client rétablis).</li>
+                  <li>
+                    Si le retour est actif, ses effets seront d'abord inversés (stock ressorti,
+                    facture / solde client rétablis).
+                  </li>
                   <li>Le retour et toutes ses lignes seront ensuite effacés.</li>
                   <li>Aucune restauration possible depuis l'interface.</li>
                   <li>L'opération est tracée dans le journal d'audit.</li>
                 </ul>
                 <div className="pt-1">
                   <p className="mb-1">
-                    Tapez <span className="font-mono font-semibold">SUPPRIMER</span> pour confirmer :
+                    Tapez <span className="font-mono font-semibold">SUPPRIMER</span> pour confirmer
+                    :
                   </p>
                   <Input
                     value={confirmText}
@@ -483,6 +524,5 @@ function RetoursListPage() {
         </AlertDialogContent>
       </AlertDialog>
     </div>
-
   );
 }

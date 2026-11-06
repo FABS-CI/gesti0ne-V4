@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { ShieldCheck, ShieldOff, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -58,10 +58,7 @@ export function CertificationCard({ reference }: { reference: string }) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between gap-2">
-          <span className="flex items-center gap-2">
-            <ShieldCheck className="h-5 w-5 text-primary" />
-            Certification numérique
-          </span>
+          <span className="flex items-center gap-2">Certification numérique</span>
           {active ? (
             <Badge variant={isCertificationActive(active.statut) ? "default" : "destructive"}>
               {isCertificationActive(active.statut) ? "ACTIVE" : active.statut}
@@ -119,7 +116,6 @@ export function CertificationCard({ reference }: { reference: string }) {
               disabled={!motif.trim() || revokeMut.isPending}
               onClick={() => revokeMut.mutate()}
             >
-              <ShieldOff className="mr-2 h-4 w-4" />
               Révoquer
             </Button>
           </div>

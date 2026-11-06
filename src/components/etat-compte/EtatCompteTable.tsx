@@ -1,5 +1,5 @@
 import { formatDocumentReference } from "@/lib/document-reference";
-import { FileDown, FileText, Loader2, Users, Eye, Wallet } from "lucide-react";
+import { Loader2, Eye } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { EmptyState } from "@/components/common/EmptyState";
 import { ClientLink } from "@/components/common/ClientLink";
@@ -25,7 +25,14 @@ type Props = {
   onHistorique?: (c: EtatCompteClient) => void;
 };
 
-export function EtatCompteTable({ clients, isLoading, busy, historiqueBusy, onPdf, onHistorique }: Props) {
+export function EtatCompteTable({
+  clients,
+  isLoading,
+  busy,
+  historiqueBusy,
+  onPdf,
+  onHistorique,
+}: Props) {
   const navigate = useNavigate();
   return (
     <div className="rounded-lg border">
@@ -51,7 +58,6 @@ export function EtatCompteTable({ clients, isLoading, busy, historiqueBusy, onPd
               <TableCell colSpan={5} className="py-6">
                 <EmptyState
                   variant="rich"
-                  icon={Users}
                   title="Aucun client à afficher"
                   description="Aucun client ne correspond à la recherche ou au filtre sélectionné."
                   className="border-none"
@@ -64,7 +70,9 @@ export function EtatCompteTable({ clients, isLoading, busy, historiqueBusy, onPd
               const depasse = solde > Number(c.plafond_credit) && Number(c.plafond_credit) > 0;
               return (
                 <TableRow key={c.client_id}>
-                  <TableCell className="font-mono text-xs">{formatDocumentReference(c.reference)}</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {formatDocumentReference(c.reference)}
+                  </TableCell>
                   <TableCell>
                     <ClientLink clientId={c.client_id} nom={c.nom} />
                   </TableCell>
@@ -94,7 +102,9 @@ export function EtatCompteTable({ clients, isLoading, busy, historiqueBusy, onPd
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => navigate({ to: "/clients/$clientId", params: { clientId: c.client_id } })}
+                        onClick={() =>
+                          navigate({ to: "/clients/$clientId", params: { clientId: c.client_id } })
+                        }
                         title="Consulter le solde"
                       >
                         <Eye className="h-3.5 w-3.5 mr-1.5" />
@@ -103,10 +113,11 @@ export function EtatCompteTable({ clients, isLoading, busy, historiqueBusy, onPd
                       <Button
                         size="sm"
                         variant="secondary"
-                        onClick={() => navigate({ to: "/paiements/nouveau", search: { clientId: c.client_id } })}
+                        onClick={() =>
+                          navigate({ to: "/paiements/nouveau", search: { clientId: c.client_id } })
+                        }
                         title="Imputer un paiement"
                       >
-                        <Wallet className="h-3.5 w-3.5 mr-1.5" />
                         Paiement
                       </Button>
                       <Button
@@ -118,9 +129,7 @@ export function EtatCompteTable({ clients, isLoading, busy, historiqueBusy, onPd
                       >
                         {busy === c.client_id ? (
                           <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
-                        ) : (
-                          <FileDown className="h-3.5 w-3.5 mr-1.5" />
-                        )}
+                        ) : null}
                         PDF
                       </Button>
                     </div>

@@ -1,14 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  ArrowLeft,
-  Send,
-  CheckCircle,
-  XCircle,
-  ScanEye,
-  Printer,
-  Download,
-} from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { generateBonTransfertPDF } from "@/lib/pdf/fabsTemplates";
@@ -160,9 +151,7 @@ function TransfertDetailPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <Button variant="ghost" size="sm" asChild className="mb-2 -ml-3">
-            <Link to="/transferts">
-              <ArrowLeft className="mr-2 h-4 w-4" /> Retour
-            </Link>
+            <Link to="/transferts">Retour</Link>
           </Button>
           <h1 className="ds-page-title flex items-center gap-2">
             <span className="font-mono">{transfert.numero}</span>
@@ -171,24 +160,24 @@ function TransfertDetailPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={handleView}>
-            <ScanEye className="mr-2 h-4 w-4" /> Aperçu
+            Aperçu
           </Button>
           <Button variant="outline" size="sm" onClick={handlePrint}>
-            <Printer className="mr-2 h-4 w-4" /> Imprimer
+            Imprimer
           </Button>
           <Button variant="outline" size="sm" onClick={handleDownload}>
-            <Download className="mr-2 h-4 w-4" /> Télécharger
+            Télécharger
           </Button>
           {transfert.statut === "brouillon" && (
             <>
               <Can permission="transferts.executer">
                 <Button onClick={() => expedier.mutate()} disabled={expedier.isPending}>
-                  <Send className="mr-2 h-4 w-4" /> Expédier
+                  Expédier
                 </Button>
               </Can>
               <Can permission="transferts.annuler">
                 <Button variant="outline" onClick={() => annuler.mutate()}>
-                  <XCircle className="mr-2 h-4 w-4" /> Annuler
+                  Annuler
                 </Button>
               </Can>
             </>
@@ -196,13 +185,12 @@ function TransfertDetailPage() {
           {transfert.statut === "expedie" && (
             <Can permission="transferts.receptionner">
               <Button onClick={() => receptionner.mutate()} disabled={receptionner.isPending}>
-                <CheckCircle className="mr-2 h-4 w-4" /> Réceptionner
+                Réceptionner
               </Button>
             </Can>
           )}
         </div>
       </div>
-
       <div className="grid gap-4 rounded-lg border p-4 sm:grid-cols-2">
         <Info label="Source" value={transfert.source?.nom ?? "—"} />
         <Info label="Destination" value={transfert.destination?.nom ?? "—"} />
@@ -227,7 +215,6 @@ function TransfertDetailPage() {
           </div>
         )}
       </div>
-
       <div className="rounded-lg border">
         <div className="p-4 font-semibold">Produits ({lignes.length})</div>
         <Table>
@@ -241,7 +228,9 @@ function TransfertDetailPage() {
           <TableBody>
             {lignes.map((l) => (
               <TableRow key={l.ligne_id}>
-                <TableCell className="font-mono text-sm select-all" title="Référence produit">{l.produits?.reference ?? "—"}</TableCell>
+                <TableCell className="font-mono text-sm select-all" title="Référence produit">
+                  {l.produits?.reference ?? "—"}
+                </TableCell>
                 <TableCell>{l.produits?.titre ?? "—"}</TableCell>
                 <TableCell className="text-right font-medium">{l.quantite}</TableCell>
               </TableRow>

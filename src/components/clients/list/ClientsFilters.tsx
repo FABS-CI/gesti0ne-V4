@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { Search, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -35,8 +34,7 @@ export function ClientsFilters(p: Props) {
   // Finance/Comptabilité. Les autres rôles opérationnels ne doivent pas
   // pouvoir masquer des clients avec cette option.
   const { isSuperAdmin, hasAny } = useUserRoles();
-  const canManageActifExercice =
-    isSuperAdmin || hasAny(["comptable", "directeur_general"]);
+  const canManageActifExercice = isSuperAdmin || hasAny(["comptable", "directeur_general"]);
   const wrap =
     <T,>(setter: (v: T) => void) =>
     (v: T) => {
@@ -47,12 +45,10 @@ export function ClientsFilters(p: Props) {
     <>
       <div className="flex flex-wrap items-center gap-3 sticky top-0 z-20 rounded-lg border bg-card p-3">
         <div className="relative min-w-[200px] flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={p.search}
             onChange={(e) => wrap(p.setSearch)(e.target.value)}
             placeholder="Rechercher un client…"
-            className="pl-9"
           />
         </div>
         <Select value={p.typeFilter} onValueChange={wrap(p.setTypeFilter)}>
@@ -83,7 +79,7 @@ export function ClientsFilters(p: Props) {
           onClick={p.onToggleFilters}
           aria-expanded={p.filtersOpen}
         >
-          <SlidersHorizontal className="mr-2 h-4 w-4" /> Filtres
+          Filtres
         </Button>
         {p.actions}
       </div>

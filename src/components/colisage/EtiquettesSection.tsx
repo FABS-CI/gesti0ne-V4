@@ -1,4 +1,4 @@
-import { Eye, ExternalLink, Printer, Download } from "lucide-react";
+import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EtiquetteCarton, type EtiquettePayload } from "@/components/colisage/EtiquetteCarton";
@@ -39,7 +39,8 @@ export function EtiquettesSection({ etiquettes, blReference }: EtiquettesSection
         <div>
           <CardTitle className="text-xl font-bold text-primary">Étiquettes générées</CardTitle>
           <p className="text-sm text-muted-foreground mt-1">
-            {etiquettes.length} étiquette{etiquettes.length > 1 ? 's' : ''} prête{etiquettes.length > 1 ? 's' : ''} pour l'impression
+            {etiquettes.length} étiquette{etiquettes.length > 1 ? "s" : ""} prête
+            {etiquettes.length > 1 ? "s" : ""} pour l'impression
           </p>
         </div>
         <div className="flex gap-2">
@@ -52,7 +53,7 @@ export function EtiquettesSection({ etiquettes, blReference }: EtiquettesSection
               void runAction(null, `Étiquettes ${blReference}`, "print");
             }}
           >
-            <Printer className="mr-2 h-4 w-4" /> Imprimer tout ({etiquettes.length})
+            Imprimer tout ({etiquettes.length})
           </Button>
           <Button
             variant="outline"
@@ -69,13 +70,15 @@ export function EtiquettesSection({ etiquettes, blReference }: EtiquettesSection
       <CardContent className="pt-6">
         <div className="grid gap-8 grid-cols-1 xl:grid-cols-2 print:grid-cols-1 print:gap-0">
           {etiquettes.map((e, i) => (
-            <div key={i} className="flex flex-col items-center gap-6 p-6 rounded-xl bg-muted/20 border-2 border-muted-foreground/10 hover:border-primary/40 transition-all shadow-sm">
+            <div
+              key={i}
+              className="flex flex-col items-center gap-6 p-6 rounded-xl bg-muted/20 border-2 border-muted-foreground/10 hover:border-primary/40 transition-all shadow-sm"
+            >
               <div className="w-full overflow-x-auto rounded-lg shadow-md border-2 bg-white p-6">
                 <div className="mx-auto" style={{ width: "148.5mm", minHeight: "148.5mm" }}>
                   <EtiquetteCarton data={e} />
                 </div>
               </div>
-              
               <div className="flex flex-wrap items-center justify-center gap-4 w-full pt-4 border-t-2 border-muted-foreground/10">
                 <Button
                   variant="default"
@@ -90,9 +93,8 @@ export function EtiquettesSection({ etiquettes, blReference }: EtiquettesSection
                     );
                   }}
                 >
-                  <Printer className="mr-2 h-5 w-5" /> Imprimer
+                  Imprimer
                 </Button>
-
                 <Button
                   variant="secondary"
                   size="default"
@@ -108,7 +110,6 @@ export function EtiquettesSection({ etiquettes, blReference }: EtiquettesSection
                 >
                   <Eye className="mr-2 h-5 w-5" /> Aperçu
                 </Button>
-
                 <Button
                   variant="outline"
                   size="default"
@@ -122,7 +123,7 @@ export function EtiquettesSection({ etiquettes, blReference }: EtiquettesSection
                     );
                   }}
                 >
-                  <Download className="mr-2 h-5 w-5" /> Télécharger
+                  Télécharger
                 </Button>
 
                 {e.colis_id && (
@@ -135,7 +136,7 @@ export function EtiquettesSection({ etiquettes, blReference }: EtiquettesSection
                       window.open(`/carton/${e.colis_id}`, "_blank");
                     }}
                   >
-                    <ExternalLink className="mr-2 h-5 w-5" /> Tracking
+                    Tracking
                   </Button>
                 )}
               </div>

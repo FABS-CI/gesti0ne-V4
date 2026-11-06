@@ -14,7 +14,6 @@ import {
 import { getClientHistorique } from "@/lib/crm-api";
 import { formatDate, formatFCFA } from "@/lib/format";
 import { exportCsv } from "@/lib/export-csv";
-import { Download } from "lucide-react";
 import { useExercice } from "@/contexts/ExerciceContext";
 
 export function ClientHistoriqueTab({ clientId }: { clientId: string }) {
@@ -100,18 +99,15 @@ export function ClientHistoriqueTab({ clientId }: { clientId: string }) {
         <Kpi
           label="Période d'activité"
           value={
-            stats.premiere
-              ? `${formatDate(stats.premiere)} → ${formatDate(stats.derniere!)}`
-              : "—"
+            stats.premiere ? `${formatDate(stats.premiere)} → ${formatDate(stats.derniere!)}` : "—"
           }
         />
       </div>
-
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-base">Lignes d'achat</CardTitle>
           <Button variant="outline" size="sm" onClick={handleExport} disabled={!data.length}>
-            <Download className="mr-2 h-4 w-4" /> Exporter
+            Exporter
           </Button>
         </CardHeader>
         <CardContent className="p-0">

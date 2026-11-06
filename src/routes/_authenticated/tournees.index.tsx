@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CheckCircle2, ClipboardList, Navigation, Receipt } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -130,7 +129,6 @@ function buildConfig(onCloturer: (tourneeId: string, ref: string) => void): Reso
     idField: "tournee_id",
     title: "Tournées logistiques",
     subtitle: "Journées de travail : véhicules, chauffeurs, livraisons, expéditions et coûts",
-    icon: Navigation,
     newLabel: "Nouvelle tournée",
     newHref: "/tournees/nouvelle",
     editHref: (row) => `/tournees/${(row as { tournee_id: string }).tournee_id}`,
@@ -142,7 +140,6 @@ function buildConfig(onCloturer: (tourneeId: string, ref: string) => void): Reso
     rowActions: [
       {
         label: "Bon de tournée",
-        icon: ClipboardList,
         onClick: (row) => {
           const id = row.tournee_id as string;
           viewCached(`bon-tournee-${id}`, () => generateBonTourneePDF(id), {
@@ -153,7 +150,6 @@ function buildConfig(onCloturer: (tourneeId: string, ref: string) => void): Reso
       },
       {
         label: "Bon de sortie",
-        icon: Receipt,
         onClick: (row) => {
           const id = row.tournee_id as string;
           viewCached(`bon-sortie-${id}`, () => generateBonSortiePDF(id), {
@@ -164,19 +160,19 @@ function buildConfig(onCloturer: (tourneeId: string, ref: string) => void): Reso
       },
       {
         label: "Valider",
-        icon: CheckCircle2,
         render: (row) => {
           if ((row as { statut?: string }).statut !== "en_cours") return null;
           const id = (row as { tournee_id: string }).tournee_id;
           const ref = ((row as { reference?: string }).reference ?? "") as string;
           return (
-            <Button aria-label="Valider la tournée"
+            <Button
+              aria-label="Valider la tournée"
               variant="ghost"
-              size="icon"
+              size="sm"
               title="Valider la tournée"
               onClick={() => onCloturer(id, ref)}
             >
-              <CheckCircle2 className="h-4 w-4 text-success" />
+              Valider
             </Button>
           );
         },
@@ -249,9 +245,12 @@ function TourneesPage() {
   const handleCloturer = async (tourneeId: string, ref: string) => {
     const tid = toast.loading(`Validation de la tournée ${ref}…`);
     try {
-      const { error } = await supabase.rpc("cloturer_tournee" as never, {
-        _tournee_id: tourneeId,
-      } as never);
+      const { error } = await supabase.rpc(
+        "cloturer_tournee" as never,
+        {
+          _tournee_id: tourneeId,
+        } as never,
+      );
       if (error) throw new Error(error.message);
       invalidatePdfByPrefix(`bon-tournee-${tourneeId}`);
       toast.success(`Tournée ${ref} validée`, {
@@ -263,7 +262,10 @@ function TourneesPage() {
       qc.invalidateQueries({ queryKey: ["livsuivi-commandes"] });
       qc.invalidateQueries({ queryKey: ["dashboard-logistique"] });
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "cause non précisée par le serveur. Réessayez dans un instant";
+      const msg =
+        e instanceof Error
+          ? e.message
+          : "cause non précisée par le serveur. Réessayez dans un instant";
       toast.error("Impossible de valider", { id: tid, description: msg });
     }
   };

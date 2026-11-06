@@ -3,7 +3,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Users, Download, KeyRound, ShieldAlert, FileSpreadsheet } from "lucide-react";
 import { toast } from "sonner";
 
 import { listUsersForProduction, generatePasswordResetLink } from "@/lib/users.functions";
@@ -129,7 +128,6 @@ function UtilisateursProductionPage() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-20 text-center">
-        <ShieldAlert className="h-10 w-10 text-destructive" />
         <h1 className="ds-page-title">Accès restreint</h1>
         <p className="max-w-md text-sm text-muted-foreground">
           {friendlyError(error, "Réservé au super administrateur.")}
@@ -142,7 +140,6 @@ function UtilisateursProductionPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Users className="h-6 w-6 text-warning" />
           <div>
             <h1 className="ds-page-title">Utilisateurs — Mise en production</h1>
             <p className="text-sm text-muted-foreground">
@@ -153,14 +150,13 @@ function UtilisateursProductionPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={exportPDF}>
-            <Download className="mr-2 h-4 w-4" /> PDF
+            PDF
           </Button>
           <Button variant="outline" size="sm" onClick={exportExcel}>
-            <FileSpreadsheet className="mr-2 h-4 w-4" /> Excel
+            Excel
           </Button>
         </div>
       </div>
-
       <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
         {Object.entries(stats.perRole).map(([r, n]) => (
           <div key={r} className="rounded-lg border bg-card p-3">
@@ -169,14 +165,12 @@ function UtilisateursProductionPage() {
           </div>
         ))}
       </div>
-
       <div className="rounded-md border bg-warning/10 p-3 text-xs text-warning">
         <strong>Sécurité :</strong> les mots de passe sont stockés chiffrés et ne peuvent jamais
         être affichés. Utilisez le bouton « Lien reset » pour générer un lien temporaire de
         réinitialisation à remettre à l'utilisateur — il devra définir son mot de passe à la
         première connexion.
       </div>
-
       <div className="rounded-lg border bg-card">
         <Table>
           <TableHeader>
@@ -245,7 +239,7 @@ function UtilisateursProductionPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <Button variant="ghost" size="sm" onClick={() => onGenLink(u)}>
-                      <KeyRound className="mr-1 h-3.5 w-3.5" /> Générer lien
+                      Générer lien
                     </Button>
                   </TableCell>
                 </TableRow>

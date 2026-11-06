@@ -3,16 +3,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import {
-  AlertTriangle,
-  ArrowLeft,
-  Calendar,
-  Printer,
-  Tag,
-  User,
-  Warehouse,
-  XCircle,
-} from "lucide-react";
 
 import {
   getIncident,
@@ -121,12 +111,9 @@ function IncidentDetailPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
         <div className="flex items-center gap-3">
-          <Button aria-label="Retour" asChild variant="ghost" size="icon">
-            <Link to="/incidents">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
+          <Button aria-label="Retour" asChild variant="ghost" size="sm">
+            <Link to="/incidents">Retour</Link>
           </Button>
-          <AlertTriangle className="h-6 w-6 text-warning" />
           <div>
             <h1 className="ds-page-title">Incident {incident.numero ?? incident.reference}</h1>
             <p className="text-sm text-muted-foreground">{typeLabel}</p>
@@ -148,21 +135,25 @@ function IncidentDetailPage() {
               })
             }
           >
-            <Printer className="h-4 w-4 mr-2" /> Imprimer PDF
+            Imprimer PDF
           </Button>
           {canCancel && incident.statut !== "annule" && (
-            <Button variant="outline" size="sm" disabled={cancelMut.isPending} onClick={() => setConfirmCancel(true)}>
-              <XCircle className="h-4 w-4 mr-2 text-destructive" /> Annuler l'incident
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={cancelMut.isPending}
+              onClick={() => setConfirmCancel(true)}
+            >
+              Annuler l'incident
             </Button>
           )}
         </div>
       </div>
-
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 print:hidden">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Tag className="h-4 w-4" /> Type
+              Type
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">{typeLabel}</CardContent>
@@ -170,7 +161,7 @@ function IncidentDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4" /> Date
+              Date
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">{frDate(incident.date_incident)}</CardContent>
@@ -178,7 +169,7 @@ function IncidentDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Warehouse className="h-4 w-4" /> Magasin
+              Magasin
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">{incident.depots?.nom ?? "—"}</CardContent>
@@ -186,7 +177,7 @@ function IncidentDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <User className="h-4 w-4" /> Responsable
+              Responsable
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">
@@ -212,7 +203,6 @@ function IncidentDetailPage() {
             </p>
           </div>
         </div>
-
         <div className="grid gap-4 sm:grid-cols-2 text-sm">
           <div>
             <p className="text-muted-foreground">Numéro</p>
@@ -251,7 +241,6 @@ function IncidentDetailPage() {
             </div>
           )}
         </div>
-
         <div className="pt-2">
           <h3 className="font-semibold mb-2">Produits concernés ({lignes.length})</h3>
           {lignes.length === 0 ? (
@@ -299,7 +288,6 @@ function IncidentDetailPage() {
           </div>
         </div>
       </div>
-
       <AlertDialog open={confirmCancel} onOpenChange={setConfirmCancel}>
         <AlertDialogContent>
           <AlertDialogHeader>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Eye, Download, Printer } from "lucide-react";
+import { Eye } from "lucide-react";
 import { PdfPreviewModal } from "./PdfPreviewModal";
 import {
   getOrCreatePdf,
@@ -54,10 +54,10 @@ export function PdfActions({
         title="Télécharger"
         onClick={async () => downloadBlob(await load(), filename)}
       >
-        <Download className="h-4 w-4" />
+        Télécharger
       </Button>
       <Button size="sm" variant="ghost" title="Imprimer" onClick={() => printCached(key, generate)}>
-        <Printer className="h-4 w-4" />
+        Imprimer
       </Button>
       <PdfPreviewModal
         open={open}

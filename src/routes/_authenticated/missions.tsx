@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MapPin } from "lucide-react";
 import { ResourceManager, type ResourceConfig } from "@/components/crud/ResourceManager";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
@@ -21,7 +20,6 @@ const config: ResourceConfig = {
   idField: "mission_id",
   title: "Missions",
   subtitle: "Missions et déplacements professionnels",
-  icon: MapPin,
   newLabel: "Nouvelle mission",
   entityLabel: "la mission",
   csvName: "missions",

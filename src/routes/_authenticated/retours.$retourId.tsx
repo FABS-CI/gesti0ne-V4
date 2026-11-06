@@ -3,20 +3,6 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import {
-  ArrowLeft,
-  User,
-  Package,
-  Calendar,
-  MapPin,
-  Phone,
-  Printer,
-  PackageCheck,
-  XCircle,
-  Calculator,
-  CheckCircle2,
-  Lock,
-} from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -74,14 +60,19 @@ export const Route = createFileRoute("/_authenticated/retours/$retourId")({
   component: RetourDetailPage,
   errorComponent: RouteError,
   notFoundComponent: RouteNotFound,
-  head: () => ({ meta: [
-    { title: "Bon de retour — GESTI0NE" },
-    { name: "description", content: "Détail du retour, facture d’origine, articles et remises." },
-    { property: "og:title", content: "Bon de retour — GESTI0NE" },
-    { property: "og:description", content: "Détail du retour, facture d’origine, articles et remises." },
-    { property: "og:type", content: "website" },
-    { name: "twitter:card", content: "summary" },
-  ] }),
+  head: () => ({
+    meta: [
+      { title: "Bon de retour — GESTI0NE" },
+      { name: "description", content: "Détail du retour, facture d’origine, articles et remises." },
+      { property: "og:title", content: "Bon de retour — GESTI0NE" },
+      {
+        property: "og:description",
+        content: "Détail du retour, facture d’origine, articles et remises.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
 });
 
 function frDate(d: string | null | undefined) {
@@ -110,8 +101,8 @@ function WorkflowTimeline({ statut }: { statut: string }) {
                 active
                   ? "bg-primary text-primary-foreground border-primary"
                   : done
-                  ? "bg-success/10 text-success border-success/40"
-                  : "bg-muted text-muted-foreground"
+                    ? "bg-success/10 text-success border-success/40"
+                    : "bg-muted text-muted-foreground"
               }`}
             >
               {s.label}
@@ -176,11 +167,13 @@ function RetourDetailPage() {
   const canReceptionner =
     retour.statut === "attente_reception" && (isSuperAdmin || has("retours.receptionner"));
   const canValiderCompta =
-    (retour.statut === "attente_validation_compta" || retour.statut === "receptionne") && (isSuperAdmin || has("retours.valider_compta"));
+    (retour.statut === "attente_validation_compta" || retour.statut === "receptionne") &&
+    (isSuperAdmin || has("retours.valider_compta"));
   const canRefuserMagasin =
     retour.statut === "attente_reception" && (isSuperAdmin || has("retours.refuser_magasin"));
   const canRefuserCompta =
-    (retour.statut === "attente_validation_compta" || retour.statut === "receptionne") && (isSuperAdmin || has("retours.refuser_compta"));
+    (retour.statut === "attente_validation_compta" || retour.statut === "receptionne") &&
+    (isSuperAdmin || has("retours.refuser_compta"));
   const canForcerCloture = isSuperAdmin && retour.statut !== "cloture";
 
   return (
@@ -202,23 +195,24 @@ function RetourDetailPage() {
             variant="outline"
             onClick={async () => {
               try {
-                const { generateBonRetourPDF, downloadBlob } = await import("@/lib/pdf/fabsTemplates");
+                const { generateBonRetourPDF, downloadBlob } =
+                  await import("@/lib/pdf/fabsTemplates");
                 const { buildRetourDocBase } = await import("@/lib/pdf/retour-builder");
-                
+
                 const data = await buildRetourDocBase(retour.retour_id);
                 const blob = await generateBonRetourPDF(data);
                 downloadBlob(blob, `bon-retour-${retour.numero || retour.reference}.pdf`);
               } catch (e) {
-                toast.error("Erreur lors de la génération du PDF", { description: friendlyError(e) });
+                toast.error("Erreur lors de la génération du PDF", {
+                  description: friendlyError(e),
+                });
               }
             }}
           >
-            <Printer className="h-4 w-4 mr-2" />
             Imprimer
           </Button>
         </div>
       </div>
-
       <Card>
         <CardContent className="py-4">
           <WorkflowTimeline statut={retour.statut} />
@@ -237,32 +231,23 @@ function RetourDetailPage() {
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2">
             {canReceptionner && (
-              <Button onClick={() => setReceptionOpen(true)}>
-                <PackageCheck className="h-4 w-4 mr-2" />
-                Réceptionner
-              </Button>
+              <Button onClick={() => setReceptionOpen(true)}>Réceptionner</Button>
             )}
             {canRefuserMagasin && (
               <Button variant="destructive" onClick={() => setRefusMagasinOpen(true)}>
-                <XCircle className="h-4 w-4 mr-2" />
                 Refuser (magasin)
               </Button>
             )}
             {canValiderCompta && (
-              <Button onClick={() => setValidationOpen(true)}>
-                <CheckCircle2 className="h-4 w-4 mr-2" />
-                Simuler & valider
-              </Button>
+              <Button onClick={() => setValidationOpen(true)}>Simuler & valider</Button>
             )}
             {canRefuserCompta && (
               <Button variant="destructive" onClick={() => setRefusComptaOpen(true)}>
-                <XCircle className="h-4 w-4 mr-2" />
                 Refuser (compta)
               </Button>
             )}
             {canForcerCloture && (
               <Button variant="outline" onClick={() => setClotureOpen(true)}>
-                <Lock className="h-4 w-4 mr-2" />
                 Forcer clôture
               </Button>
             )}
@@ -271,22 +256,14 @@ function RetourDetailPage() {
       )}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <InfoCard icon={<User className="h-4 w-4" />} title="Client">
-          {retour.etablissement ?? retour.client_nom ?? "—"}
-        </InfoCard>
-        <InfoCard icon={<User className="h-4 w-4" />} title="Représentant">
+        <InfoCard title="Client">{retour.etablissement ?? retour.client_nom ?? "—"}</InfoCard>
+        <InfoCard title="Représentant">
           {documentQ.data?.representant || retour.representant_nom || "—"}
         </InfoCard>
-        <InfoCard icon={<Phone className="h-4 w-4" />} title="Téléphone">
-          {retour.telephone ?? "—"}
-        </InfoCard>
-        <InfoCard icon={<MapPin className="h-4 w-4" />} title="Ville">
-          {retour.ville ?? "—"}
-        </InfoCard>
-        <InfoCard icon={<Calendar className="h-4 w-4" />} title="Date">
-          {frDate(retour.date_retour)}
-        </InfoCard>
-        <InfoCard icon={<Package className="h-4 w-4" />} title="Produits">
+        <InfoCard title="Téléphone">{retour.telephone ?? "—"}</InfoCard>
+        <InfoCard title="Ville">{retour.ville ?? "—"}</InfoCard>
+        <InfoCard title="Date">{frDate(retour.date_retour)}</InfoCard>
+        <InfoCard title="Produits">
           {retour.nb_produits} ({retour.total_quantite} unités)
         </InfoCard>
         <InfoCard title="Créé par">{retour.created_by_nom ?? "—"}</InfoCard>
@@ -322,15 +299,23 @@ function RetourDetailPage() {
         )}
       </div>
 
-      {documentQ.isError && <p role="alert" className="text-destructive">Les informations de la facture d’origine n’ont pas pu être chargées.</p>}
+      {documentQ.isError && (
+        <p role="alert" className="text-destructive">
+          Les informations de la facture d’origine n’ont pas pu être chargées.
+        </p>
+      )}
       {documentQ.data?.origin && (
         <section className="space-y-2 border-y py-4">
           <h2 className="font-semibold">Documents d’origine</h2>
-          {Object.entries(documentQ.data.origin).map(([type, source]) => source && (
-            <p key={type} className="text-sm">
-              {type === "fac" ? "Facture" : type === "cmd" ? "Commande" : "Bon de livraison"} : {retourOriginReference(source.ref)} · {frDate(source.date)}
-            </p>
-          ))}
+          {Object.entries(documentQ.data.origin).map(
+            ([type, source]) =>
+              source && (
+                <p key={type} className="text-sm">
+                  {type === "fac" ? "Facture" : type === "cmd" ? "Commande" : "Bon de livraison"} :{" "}
+                  {retourOriginReference(source.ref)} · {frDate(source.date)}
+                </p>
+              ),
+          )}
         </section>
       )}
 
@@ -362,23 +347,45 @@ function RetourDetailPage() {
                 {retour.lignes.map((l, i) => (
                   <TableRow key={l.ligne_id} className="text-sm">
                     <TableCell className="text-muted-foreground font-medium">{i + 1}</TableCell>
-                    <TableCell className="font-mono text-xs truncate max-w-[100px]" title={l.reference_produit || ""}>
+                    <TableCell
+                      className="font-mono text-xs truncate max-w-[100px]"
+                      title={l.reference_produit || ""}
+                    >
                       {l.reference_produit || "—"}
                     </TableCell>
                     <TableCell className="font-medium break-words max-w-[250px] py-3">
                       {l.designation}
                     </TableCell>
-                    <TableCell className="text-right font-semibold">{l.quantite_demandee ?? l.quantite}</TableCell>
-                    <TableCell className="text-right">{documentQ.data?.lignes?.[i]?.qteCommandee ?? "—"}</TableCell>
-                    <TableCell className="text-right whitespace-nowrap">{documentQ.data?.lignes?.[i] ? formatFCFA(documentQ.data.lignes[i].prixUnitaire ?? 0) : "—"}</TableCell>
-                    <TableCell className="text-right whitespace-nowrap">{documentQ.data?.lignes?.[i] ? `${Number((documentQ.data.lignes[i].remisePct ?? 0).toFixed(4))} %` : "—"}</TableCell>
-                    <TableCell className="text-right whitespace-nowrap">{documentQ.data?.lignes?.[i] ? formatFCFA(documentQ.data.lignes[i].montant ?? 0) : "—"}</TableCell>
+                    <TableCell className="text-right font-semibold">
+                      {l.quantite_demandee ?? l.quantite}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {documentQ.data?.lignes?.[i]?.qteCommandee ?? "—"}
+                    </TableCell>
+                    <TableCell className="text-right whitespace-nowrap">
+                      {documentQ.data?.lignes?.[i]
+                        ? formatFCFA(documentQ.data.lignes[i].prixUnitaire ?? 0)
+                        : "—"}
+                    </TableCell>
+                    <TableCell className="text-right whitespace-nowrap">
+                      {documentQ.data?.lignes?.[i]
+                        ? `${Number((documentQ.data.lignes[i].remisePct ?? 0).toFixed(4))} %`
+                        : "—"}
+                    </TableCell>
+                    <TableCell className="text-right whitespace-nowrap">
+                      {documentQ.data?.lignes?.[i]
+                        ? formatFCFA(documentQ.data.lignes[i].montant ?? 0)
+                        : "—"}
+                    </TableCell>
                     <TableCell className="text-right font-semibold text-primary">
                       {l.quantite_recue ?? "—"}
                     </TableCell>
                     <TableCell>
                       {l.etat_reception ? (
-                        <Badge variant="outline" className="text-xs px-1.5 py-0 capitalize font-normal">
+                        <Badge
+                          variant="outline"
+                          className="text-xs px-1.5 py-0 capitalize font-normal"
+                        >
                           {l.etat_reception.replace("_", " ")}
                         </Badge>
                       ) : (
@@ -395,9 +402,12 @@ function RetourDetailPage() {
           )}
         </CardContent>
       </Card>
-
       <div className="text-right space-y-1">
-        {(retour.remise_globale_pct ?? 0) > 0 && <p className="text-sm text-muted-foreground">Remise globale d’origine : {retour.remise_globale_pct} % (incluse)</p>}
+        {(retour.remise_globale_pct ?? 0) > 0 && (
+          <p className="text-sm text-muted-foreground">
+            Remise globale d’origine : {retour.remise_globale_pct} % (incluse)
+          </p>
+        )}
         <p className="font-semibold">Montant du retour : {formatFCFA(retour.montant)}</p>
       </div>
 
@@ -551,7 +561,9 @@ function ReceptionDialog({
                 <TableRow key={l.ligne_id}>
                   <TableCell>
                     <div className="font-medium">{l.designation}</div>
-                    <div className="text-xs text-muted-foreground">{l.reference_produit ?? "—"}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {l.reference_produit ?? "—"}
+                    </div>
                   </TableCell>
                   <TableCell className="text-right">
                     {Number(l.quantite_demandee ?? l.quantite)}
@@ -726,15 +738,15 @@ function ValidationComptaDialog({
       diminuer_solde: true,
       creer_avoir: true,
       preparer_remboursement: s.remboursement_possible !== false,
-      aucun_impact: true
+      aucun_impact: true,
     };
-    
+
     // Auto-sélection intelligente si non encore défini
     if (s.montant_total && !option) {
-       if (s.impact_solde && s.impact_solde > 0) setOption("diminuer_solde");
-       else setOption("creer_avoir");
+      if (s.impact_solde && s.impact_solde > 0) setOption("diminuer_solde");
+      else setOption("creer_avoir");
     }
-    
+
     return avail;
   }, [simulation, option]);
 
@@ -742,10 +754,7 @@ function ValidationComptaDialog({
     <Dialog open onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>
-            <Calculator className="inline h-5 w-5 mr-2" />
-            Simulation financière & validation
-          </DialogTitle>
+          <DialogTitle>Simulation financière & validation</DialogTitle>
         </DialogHeader>
 
         {isLoading ? (
@@ -776,7 +785,6 @@ function ValidationComptaDialog({
                 </div>
               )}
             </div>
-
             <div className="space-y-2">
               <Label>Option de traitement comptable *</Label>
               <Select value={option} onValueChange={(v) => setOption(v as ValidationComptaOption)}>
@@ -787,34 +795,44 @@ function ValidationComptaDialog({
                   <SelectItem value="diminuer_solde" disabled={!optionsAvailable.diminuer_solde}>
                     <div className="flex flex-col">
                       <span>Créditer le solde client</span>
-                      <span className="text-xs text-muted-foreground">Impacte directement la balance du compte</span>
+                      <span className="text-xs text-muted-foreground">
+                        Impacte directement la balance du compte
+                      </span>
                     </div>
                   </SelectItem>
                   <SelectItem value="creer_avoir" disabled={!optionsAvailable.creer_avoir}>
                     <div className="flex flex-col">
                       <span>Émettre un avoir financier</span>
-                      <span className="text-xs text-muted-foreground">Génère un document d'avoir utilisable plus tard</span>
+                      <span className="text-xs text-muted-foreground">
+                        Génère un document d'avoir utilisable plus tard
+                      </span>
                     </div>
                   </SelectItem>
-                  <SelectItem value="preparer_remboursement" disabled={!optionsAvailable.preparer_remboursement}>
+                  <SelectItem
+                    value="preparer_remboursement"
+                    disabled={!optionsAvailable.preparer_remboursement}
+                  >
                     <div className="flex flex-col">
                       <span>Remboursement direct</span>
-                      <span className="text-xs text-muted-foreground">Sortie de caisse ou virement bancaire</span>
+                      <span className="text-xs text-muted-foreground">
+                        Sortie de caisse ou virement bancaire
+                      </span>
                     </div>
                   </SelectItem>
                   <SelectItem value="aucun_impact" disabled={!optionsAvailable.aucun_impact}>
                     <div className="flex flex-col">
                       <span>Aucun impact financier</span>
-                      <span className="text-xs text-muted-foreground">Clôturer sans écriture comptable</span>
+                      <span className="text-xs text-muted-foreground">
+                        Clôturer sans écriture comptable
+                      </span>
                     </div>
                   </SelectItem>
                 </SelectContent>
               </Select>
               <p className="text-xs text-warning bg-warning/10 p-2 rounded border border-warning/40 mt-2">
-                 Cette action est irréversible et déclenchera les écritures comptables automatiques.
+                Cette action est irréversible et déclenchera les écritures comptables automatiques.
               </p>
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="com">Commentaire</Label>
               <Textarea

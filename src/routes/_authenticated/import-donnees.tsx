@@ -1,15 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
-import {
-  Upload,
-  Download,
-  FileSpreadsheet,
-  CheckCircle2,
-  AlertTriangle,
-  Loader2,
-  Database,
-} from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,7 +29,7 @@ import {
   type EntityKey,
 } from "@/lib/import-api";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
-import { friendlyError } from '@/lib/friendly-error';
+import { friendlyError } from "@/lib/friendly-error";
 
 export const Route = createFileRoute("/_authenticated/import-donnees")({
   component: ImportDonneesPage,
@@ -156,7 +148,6 @@ function ImportDonneesPage() {
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Database className="h-6 w-6 text-warning" />
           <div>
             <h1 className="ds-page-title">Import de données</h1>
             <p className="text-sm text-muted-foreground">
@@ -165,7 +156,6 @@ function ImportDonneesPage() {
           </div>
         </div>
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle>1. Choisir l'entité &amp; le fichier</CardTitle>
@@ -188,10 +178,10 @@ function ImportDonneesPage() {
               </Select>
             </div>
             <Button variant="outline" onClick={downloadTemplate} className="gap-2">
-              <Download className="h-4 w-4" /> Modèle CSV
+              Modèle CSV
             </Button>
             <Button onClick={() => inputRef.current?.click()} className="gap-2">
-              <Upload className="h-4 w-4" /> Choisir un CSV
+              Choisir un CSV
             </Button>
             <input
               ref={inputRef}
@@ -202,7 +192,7 @@ function ImportDonneesPage() {
             />
             {fileName && (
               <span className="flex items-center gap-2 text-sm text-muted-foreground">
-                <FileSpreadsheet className="h-4 w-4" /> {fileName}
+                {fileName}
                 <Button variant="ghost" size="sm" onClick={reset}>
                   Réinitialiser
                 </Button>
@@ -248,7 +238,6 @@ function ImportDonneesPage() {
             </div>
             {requiredUnmapped.length > 0 && (
               <p className="mt-4 flex items-center gap-2 text-sm text-warning">
-                <AlertTriangle className="h-4 w-4" />
                 Colonnes obligatoires non mappées : {requiredUnmapped.join(", ")}
               </p>
             )}
@@ -263,11 +252,11 @@ function ImportDonneesPage() {
               <span>3. Aperçu &amp; validation</span>
               <div className="flex items-center gap-2 text-sm font-normal">
                 <Badge variant="secondary" className="gap-1">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-success" /> {validCount} valides
+                  {validCount} valides
                 </Badge>
                 {errorCount > 0 && (
                   <Badge variant="destructive" className="gap-1">
-                    <AlertTriangle className="h-3.5 w-3.5" /> {errorCount} erreurs
+                    {errorCount} erreurs
                   </Badge>
                 )}
               </div>
@@ -293,7 +282,7 @@ function ImportDonneesPage() {
                       <TableCell>
                         {v.ok ? (
                           <Badge variant="outline" className="gap-1 text-success">
-                            <CheckCircle2 className="h-3 w-3" /> OK
+                            OK
                           </Badge>
                         ) : (
                           <Badge variant="destructive">Erreur</Badge>
@@ -307,7 +296,9 @@ function ImportDonneesPage() {
                           </TableCell>
                         );
                       })}
-                      <TableCell className="text-xs text-destructive">{v.errors.join(" · ")}</TableCell>
+                      <TableCell className="text-xs text-destructive">
+                        {v.errors.join(" · ")}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -328,11 +319,7 @@ function ImportDonneesPage() {
                 disabled={importing || validCount === 0 || requiredUnmapped.length > 0}
                 className="gap-2"
               >
-                {importing ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Upload className="h-4 w-4" />
-                )}
+                {importing ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                 Importer {validCount} ligne{validCount > 1 ? "s" : ""}
               </Button>
             </div>

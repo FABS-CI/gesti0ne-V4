@@ -1,4 +1,3 @@
-import { Copy } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,7 +18,7 @@ export function FecColonnesCard() {
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-base">Colonnes générées (18)</CardTitle>
         <Button size="sm" variant="outline" onClick={copyColumnsOrder}>
-          <Copy className="mr-2 h-3 w-3" /> Copier ordre colonnes
+          Copier ordre colonnes
         </Button>
       </CardHeader>
       <CardContent>

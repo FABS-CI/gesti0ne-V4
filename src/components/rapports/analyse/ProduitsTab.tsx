@@ -1,7 +1,6 @@
 import { formatNumber } from "@/lib/format";
 import { useEffect, useState, type KeyboardEvent, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Columns3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,7 +12,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { ResponsiveTable } from "@/components/layout/ResponsiveTable";
 import { TablePagination } from "@/components/layout/TablePagination";
 import { SkeletonTable } from "@/components/ui/skeletons";
@@ -68,9 +74,14 @@ function useSeuils(ids: string[]) {
     enabled: ids.length > 0,
     staleTime: 300_000,
     queryFn: async () => {
-      const { data, error } = await supabase.from("produits").select("produit_id, seuil_alerte").in("produit_id", ids);
+      const { data, error } = await supabase
+        .from("produits")
+        .select("produit_id, seuil_alerte")
+        .in("produit_id", ids);
       if (error) throw error;
-      return new Map((data ?? []).map((p) => [p.produit_id as string, Number(p.seuil_alerte ?? 0)]));
+      return new Map(
+        (data ?? []).map((p) => [p.produit_id as string, Number(p.seuil_alerte ?? 0)]),
+      );
     },
   });
 }
@@ -117,9 +128,12 @@ export function ProduitsTab(p: Props) {
         );
       case "niveau":
         return <span className="whitespace-nowrap text-sm">{r.niveau ?? "—"}</span>;
-      case "qte": return fmtN(r.qte_vendue);
-      case "ca": return <span className="font-medium">{formatFCFA(r.ca)}</span>;
-      case "encaisse": return formatFCFA(r.ca_encaisse ?? 0);
+      case "qte":
+        return fmtN(r.qte_vendue);
+      case "ca":
+        return <span className="font-medium">{formatFCFA(r.ca)}</span>;
+      case "encaisse":
+        return formatFCFA(r.ca_encaisse ?? 0);
       case "reste":
         return (
           <span className={cn((r.reste_a_encaisser ?? 0) > 0 && "text-warning")}>
@@ -130,7 +144,10 @@ export function ProduitsTab(p: Props) {
         return (
           <div className="flex min-w-[90px] items-center justify-end gap-2">
             <div className="h-1 w-12 rounded-full bg-muted" aria-hidden>
-              <div className="h-1 rounded-full bg-primary" style={{ width: `${(Number(r.pct_ca) / maxPct) * 100}%` }} />
+              <div
+                className="h-1 rounded-full bg-primary"
+                style={{ width: `${(Number(r.pct_ca) / maxPct) * 100}%` }}
+              />
             </div>
             {fmtPct(r.pct_ca)}
           </div>
@@ -143,15 +160,24 @@ export function ProduitsTab(p: Props) {
         ) : (
           fmtN(r.stock_actuel)
         );
-      case "pu": return formatFCFA(r.prix_unitaire);
-      case "qte_fact": return fmtN(r.qte_facturee);
-      case "nb_fact": return fmtN(r.nb_factures);
-      case "nb_clients": return fmtN(r.nb_clients);
-      case "remises": return formatFCFA(r.remises);
-      case "retours": return fmtN(r.qte_retournee);
-      case "stock_init": return fmtN(r.stock_initial);
-      case "stock_rest": return fmtN(r.stock_restant);
-      case "rang": return fmtN(r.rang);
+      case "pu":
+        return formatFCFA(r.prix_unitaire);
+      case "qte_fact":
+        return fmtN(r.qte_facturee);
+      case "nb_fact":
+        return fmtN(r.nb_factures);
+      case "nb_clients":
+        return fmtN(r.nb_clients);
+      case "remises":
+        return formatFCFA(r.remises);
+      case "retours":
+        return fmtN(r.qte_retournee);
+      case "stock_init":
+        return fmtN(r.stock_initial);
+      case "stock_rest":
+        return fmtN(r.stock_restant);
+      case "rang":
+        return fmtN(r.rang);
     }
   };
 
@@ -178,9 +204,18 @@ export function ProduitsTab(p: Props) {
         >
           {cell("produit", r)}
           <div className="grid grid-cols-3 gap-2 text-xs tabular-nums">
-            <div><div className="text-muted-foreground">CA</div>{formatFCFA(r.ca)}</div>
-            <div><div className="text-muted-foreground">Qté</div>{fmtN(r.qte_vendue)}</div>
-            <div><div className="text-muted-foreground">Stock</div>{cell("stock", r)}</div>
+            <div>
+              <div className="text-muted-foreground">CA</div>
+              {formatFCFA(r.ca)}
+            </div>
+            <div>
+              <div className="text-muted-foreground">Qté</div>
+              {fmtN(r.qte_vendue)}
+            </div>
+            <div>
+              <div className="text-muted-foreground">Stock</div>
+              {cell("stock", r)}
+            </div>
           </div>
         </li>
       ))}
@@ -193,19 +228,23 @@ export function ProduitsTab(p: Props) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm" className="hidden md:inline-flex">
-              <Columns3 className="h-4 w-4" strokeWidth={1.5} />
               Colonnes
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel className="text-xs text-muted-foreground">Colonnes supplémentaires</DropdownMenuLabel>
+            <DropdownMenuLabel className="text-xs text-muted-foreground">
+              Colonnes supplémentaires
+            </DropdownMenuLabel>
             {OPTIONAL_COLS.map(([c, l]) => (
               <DropdownMenuCheckboxItem
                 key={c}
                 checked={prefs.extra.includes(c)}
                 onSelect={(e) => e.preventDefault()}
                 onCheckedChange={(on) =>
-                  update({ ...prefs, extra: on ? [...prefs.extra, c] : prefs.extra.filter((x) => x !== c) })
+                  update({
+                    ...prefs,
+                    extra: on ? [...prefs.extra, c] : prefs.extra.filter((x) => x !== c),
+                  })
                 }
               >
                 {l}
@@ -215,7 +254,9 @@ export function ProduitsTab(p: Props) {
             <DropdownMenuLabel className="text-xs text-muted-foreground">Densité</DropdownMenuLabel>
             <DropdownMenuRadioGroup
               value={prefs.densite}
-              onValueChange={(v) => update({ ...prefs, densite: v === "compact" ? "compact" : "confortable" })}
+              onValueChange={(v) =>
+                update({ ...prefs, densite: v === "compact" ? "compact" : "confortable" })
+              }
             >
               <DropdownMenuRadioItem value="confortable">Confortable</DropdownMenuRadioItem>
               <DropdownMenuRadioItem value="compact">Compact</DropdownMenuRadioItem>
@@ -223,7 +264,6 @@ export function ProduitsTab(p: Props) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-
       <ResponsiveTable stickyFirstCol mobileCards={cards} className="max-h-[70vh] overflow-y-auto">
         <Table>
           <TableHeader>
@@ -236,10 +276,17 @@ export function ProduitsTab(p: Props) {
                   <TableHead
                     key={c}
                     aria-sort={active ? (p.sens === "asc" ? "ascending" : "descending") : undefined}
-                    className={cn("whitespace-nowrap text-xs", c !== "produit" && c !== "niveau" && "text-right")}
+                    className={cn(
+                      "whitespace-nowrap text-xs",
+                      c !== "produit" && c !== "niveau" && "text-right",
+                    )}
                   >
                     {key ? (
-                      <button type="button" onClick={() => p.onSort(key)} className="inline-flex items-center gap-1 hover:text-foreground">
+                      <button
+                        type="button"
+                        onClick={() => p.onSort(key)}
+                        className="inline-flex items-center gap-1 hover:text-foreground"
+                      >
                         {label}
                         <span aria-hidden className="text-muted-foreground">
                           {active ? (p.sens === "asc" ? "▲" : "▼") : ""}
@@ -271,12 +318,18 @@ export function ProduitsTab(p: Props) {
                   tabIndex={0}
                   onClick={() => p.onOpen(r)}
                   onKeyDown={(e) => moveFocus(e, () => p.onOpen(r))}
-                  className={cn(rowH, "cursor-pointer tabular-nums focus-visible:bg-muted focus-visible:outline-none")}
+                  className={cn(
+                    rowH,
+                    "cursor-pointer tabular-nums focus-visible:bg-muted focus-visible:outline-none",
+                  )}
                 >
                   {cols.map((c) => (
                     <TableCell
                       key={c}
-                      className={cn(prefs.densite === "compact" ? "py-1" : "py-2", c !== "produit" && c !== "niveau" && "whitespace-nowrap text-right")}
+                      className={cn(
+                        prefs.densite === "compact" ? "py-1" : "py-2",
+                        c !== "produit" && c !== "niveau" && "whitespace-nowrap text-right",
+                      )}
                     >
                       {cell(c, r)}
                     </TableCell>
@@ -287,7 +340,6 @@ export function ProduitsTab(p: Props) {
           </TableBody>
         </Table>
       </ResponsiveTable>
-
       <div className="border-t p-3">
         <TablePagination
           page={p.page}

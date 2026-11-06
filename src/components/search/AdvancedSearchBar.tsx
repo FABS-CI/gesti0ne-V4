@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Filter, X, RotateCcw } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -101,7 +101,6 @@ export function AdvancedSearchBar({
       >
         <PopoverTrigger asChild>
           <Button variant="outline" className="gap-2">
-            <Filter className="h-4 w-4" />
             Filtres avancés
             {activeCount > 0 && (
               <Badge variant="secondary" className="ml-1 h-5 px-1.5">
@@ -215,7 +214,7 @@ export function AdvancedSearchBar({
           </div>
           <div className="flex items-center justify-between gap-2 pt-1">
             <Button variant="ghost" size="sm" onClick={reset} className="gap-1">
-              <RotateCcw className="h-3.5 w-3.5" /> Réinitialiser
+              Réinitialiser
             </Button>
             <Button size="sm" onClick={apply}>
               Appliquer les filtres
@@ -264,7 +263,10 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
  * Construit un fragment lisible décrivant les filtres actifs — utilisé dans
  * l'en-tête des exports PDF pour rappeler les critères appliqués.
  */
-export function describeFilters(f: AdvancedFilters, labels?: Partial<Record<keyof AdvancedFilters, string>>): string[] {
+export function describeFilters(
+  f: AdvancedFilters,
+  labels?: Partial<Record<keyof AdvancedFilters, string>>,
+): string[] {
   const out: string[] = [];
   for (const k of Object.keys(f) as (keyof AdvancedFilters)[]) {
     const v = f[k];

@@ -1,4 +1,3 @@
-import { FileText } from "lucide-react";
 import type { ResourceConfig } from "@/components/crud/ResourceManager";
 
 const types = [
@@ -19,7 +18,6 @@ export const contratsConfig: ResourceConfig = {
   idField: "contrat_id",
   title: "Contrats",
   subtitle: "Contrats des employés",
-  icon: FileText,
   newLabel: "Nouveau contrat",
   entityLabel: "le contrat",
   csvName: "contrats",

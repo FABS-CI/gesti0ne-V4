@@ -1,6 +1,5 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Printer } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
@@ -116,21 +115,15 @@ function BLPage() {
       <div className="mx-auto max-w-4xl p-6 print:p-0">
         <div className="mb-4 flex items-center justify-between print:hidden">
           <Button variant="ghost" asChild>
-            <Link to="/tournees">
-              <ArrowLeft className="mr-2 h-4 w-4" /> Retour
-            </Link>
+            <Link to="/tournees">Retour</Link>
           </Button>
-          <Button onClick={() => window.print()}>
-            <Printer className="mr-2 h-4 w-4" /> Imprimer
-          </Button>
+          <Button onClick={() => window.print()}>Imprimer</Button>
         </div>
-
         <div className="rounded-lg border bg-card p-8 print:border-0 print:p-4">
           <div className="mb-6 text-center">
             <h1 className="ds-page-title">BON DE LIVRAISON — TOURNÉE</h1>
             <p className="mt-1 text-sm text-muted-foreground">N° {t.reference}</p>
           </div>
-
           <div className="mb-6 grid grid-cols-2 gap-4 text-sm">
             <Info label="Date" value={t.date_tournee ?? "—"} />
             <Info label="Statut" value={t.statut} />
@@ -139,7 +132,6 @@ function BLPage() {
             <Info label="Véhicule" value={vehicule} />
             <Info label="Clients" value={String(t.nb_clients)} />
           </div>
-
           <h2 className="mb-2 text-sm font-bold uppercase">Livraisons ({livraisons.length})</h2>
           <table className="mb-6 w-full border-collapse text-xs table-zebra-orange table-print-borders">
             <thead>
@@ -171,7 +163,6 @@ function BLPage() {
               )}
             </tbody>
           </table>
-
           <h2 className="mb-2 text-sm font-bold uppercase">Expéditions ({expeditions.length})</h2>
           <table className="mb-6 w-full border-collapse text-xs table-zebra-orange table-print-borders">
             <thead>
@@ -203,7 +194,6 @@ function BLPage() {
               )}
             </tbody>
           </table>
-
           <div className="mb-6 grid grid-cols-2 gap-4 text-sm">
             <Info label="Total colis" value={String(t.nb_colis)} />
             <Info label="Total cartons" value={String(t.nb_cartons)} />

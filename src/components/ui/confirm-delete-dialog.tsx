@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -72,13 +71,9 @@ export function ConfirmDeleteDialog({
     <Dialog open={open} onOpenChange={(o) => (!pending ? onOpenChange(o) : null)}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-destructive" />
-            {title}
-          </DialogTitle>
+          <DialogTitle className="flex items-center gap-2">{title}</DialogTitle>
           <DialogDescription>
-            Vous êtes sur le point de supprimer{" "}
-            <span className="font-semibold">{entityLabel}</span>
+            Vous êtes sur le point de supprimer <span className="font-semibold">{entityLabel}</span>
             {entityName ? (
               <>
                 {" "}
@@ -88,7 +83,6 @@ export function ConfirmDeleteDialog({
             .
           </DialogDescription>
         </DialogHeader>
-
         <div className="space-y-3 text-sm">
           <p className="text-destructive font-medium">{description}</p>
 
@@ -135,13 +129,8 @@ export function ConfirmDeleteDialog({
             </div>
           )}
         </div>
-
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={pending}
-          >
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={pending}>
             {cancelLabel}
           </Button>
           <Button

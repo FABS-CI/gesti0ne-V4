@@ -1,4 +1,4 @@
-import { Pin, X } from "lucide-react";
+import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSidebarAutoHide } from "@/hooks/use-sidebar-auto-hide";
 import fabsLogo from "@/assets/fabs-logo.png";
@@ -55,13 +55,7 @@ export function SidebarBrandHeader({ compact = false }: { compact?: boolean }) {
             "hover:bg-sidebar-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
             auto.pinned ? "text-sidebar-primary" : "text-sidebar-foreground/50",
           )}
-        >
-          <Pin
-            className="h-4 w-4 transition-transform duration-200"
-            strokeWidth={1.75}
-            style={{ transform: auto.pinned ? "rotate(0deg)" : "rotate(45deg)" }}
-          />
-        </button>
+        ></button>
       )}
     </SidebarHeader>
   );

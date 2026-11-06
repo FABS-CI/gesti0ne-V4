@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FileSignature, FileText, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ResourceManager, type ResourceConfig } from "@/components/crud/ResourceManager";
@@ -59,7 +58,6 @@ const config: ResourceConfig = {
   idField: "proforma_id",
   title: "Proformas",
   subtitle: "Proformas générées automatiquement à l'enregistrement d'une commande",
-  icon: FileSignature,
   newLabel: "Nouvelle proforma",
   readOnly: true,
   entityLabel: "la proforma",
@@ -105,7 +103,6 @@ const config: ResourceConfig = {
   rowActions: [
     {
       label: "Télécharger la proforma (PDF)",
-      icon: FileText,
       render: (row) => (
         <Button
           variant="outline"
@@ -116,19 +113,21 @@ const config: ResourceConfig = {
           onClick={async () => {
             try {
               const blob = await getOrCreatePdf(cacheKeyFor(row), () => buildProformaBlob(row));
-              downloadBlob(blob, fileNameFor(row.reference as string, row.client_nom as string | null));
+              downloadBlob(
+                blob,
+                fileNameFor(row.reference as string, row.client_nom as string | null),
+              );
             } catch (e) {
               toast.error(friendlyError(e, "Erreur PDF"));
             }
           }}
         >
-          <FileText className="mr-1 h-4 w-4" /> PF
+          PF
         </Button>
       ),
     },
     {
       label: "Supprimer définitivement",
-      icon: Trash2,
       render: (row) => (
         <SuperAdminDeleteButton
           entityLabel={`la proforma ${row.reference as string}`}

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { Loader2, UserPlus, Check } from "lucide-react";
+import { Loader2, Check } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -43,7 +43,7 @@ export function VenteRapideDialog({
   const [type, setType] = useState("autre");
   const [saving, setSaving] = useState(false);
 
-  const term = useDebouncedValue((nom.trim() || telephone.trim()), 300);
+  const term = useDebouncedValue(nom.trim() || telephone.trim(), 300);
   const { data, isFetching } = useQuery({
     queryKey: ["vente-rapide-clients", term],
     queryFn: () => listClients({ q: term, actif: true, pageSize: 6 }),
@@ -82,25 +82,48 @@ export function VenteRapideDialog({
         <DialogHeader>
           <DialogTitle>Vente rapide</DialogTitle>
           <DialogDescription>
-            Saisissez le client : s'il existe déjà, sélectionnez-le ; sinon créez-le, puis passez aux articles.
+            Saisissez le client : s'il existe déjà, sélectionnez-le ; sinon créez-le, puis passez
+            aux articles.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1 sm:col-span-2">
             <Label htmlFor="vr-nom">Nom du client</Label>
-            <Input id="vr-nom" autoFocus maxLength={200} value={nom} onChange={(e) => setNom(e.target.value)} />
+            <Input
+              id="vr-nom"
+              autoFocus
+              maxLength={200}
+              value={nom}
+              onChange={(e) => setNom(e.target.value)}
+            />
           </div>
           <div className="space-y-1">
             <Label htmlFor="vr-rep">Représentant</Label>
-            <Input id="vr-rep" maxLength={150} value={representant} onChange={(e) => setRepresentant(e.target.value)} />
+            <Input
+              id="vr-rep"
+              maxLength={150}
+              value={representant}
+              onChange={(e) => setRepresentant(e.target.value)}
+            />
           </div>
           <div className="space-y-1">
             <Label htmlFor="vr-ville">Ville</Label>
-            <Input id="vr-ville" maxLength={100} value={ville} onChange={(e) => setVille(e.target.value)} />
+            <Input
+              id="vr-ville"
+              maxLength={100}
+              value={ville}
+              onChange={(e) => setVille(e.target.value)}
+            />
           </div>
           <div className="space-y-1">
             <Label htmlFor="vr-tel">Numéro de téléphone</Label>
-            <Input id="vr-tel" type="tel" maxLength={30} value={telephone} onChange={(e) => setTelephone(e.target.value)} />
+            <Input
+              id="vr-tel"
+              type="tel"
+              maxLength={30}
+              value={telephone}
+              onChange={(e) => setTelephone(e.target.value)}
+            />
           </div>
           <div className="space-y-1">
             <Label>Type de client</Label>
@@ -118,23 +141,30 @@ export function VenteRapideDialog({
             </Select>
           </div>
         </div>
-
         <div className="space-y-2">
           <p className="text-xs font-medium uppercase text-muted-foreground">
-            Clients existants {isFetching && <Loader2 className="ml-1 inline h-3 w-3 animate-spin" />}
+            Clients existants{" "}
+            {isFetching && <Loader2 className="ml-1 inline h-3 w-3 animate-spin" />}
           </p>
           {term.length < 2 ? (
-            <p className="text-sm text-muted-foreground">Tapez au moins 2 caractères du nom ou du téléphone.</p>
+            <p className="text-sm text-muted-foreground">
+              Tapez au moins 2 caractères du nom ou du téléphone.
+            </p>
           ) : matches.length === 0 && !isFetching ? (
             <p className="text-sm text-muted-foreground">Aucun client correspondant.</p>
           ) : (
             <ul className="max-h-48 divide-y overflow-auto rounded-lg border">
               {matches.map((c) => (
-                <li key={c.client_id} className="flex items-center justify-between gap-2 p-2 text-sm">
+                <li
+                  key={c.client_id}
+                  className="flex items-center justify-between gap-2 p-2 text-sm"
+                >
                   <div className="min-w-0">
                     <p className="truncate font-medium">{c.nom}</p>
                     <p className="truncate text-xs text-muted-foreground">
-                      {[c.reference, c.representant, c.ville, c.telephone].filter(Boolean).join(" · ")}
+                      {[c.reference, c.representant, c.ville, c.telephone]
+                        .filter(Boolean)
+                        .join(" · ")}
                     </p>
                   </div>
                   <Button size="sm" variant="outline" onClick={() => go(c.client_id)}>
@@ -148,7 +178,7 @@ export function VenteRapideDialog({
 
         {canCreateClient && (
           <Button onClick={create} disabled={!nom.trim() || saving} className="w-full">
-            {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UserPlus className="mr-2 h-4 w-4" />}
+            {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             Créer ce nouveau client
           </Button>
         )}

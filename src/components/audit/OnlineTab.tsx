@@ -18,16 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Circle,
-  Download,
-  ChevronLeft,
-  ChevronRight,
-  Smartphone,
-  Monitor,
-  Tablet,
-  MapPin,
-} from "lucide-react";
+import { Circle, ChevronLeft, ChevronRight } from "lucide-react";
 import { ACTION_LABEL } from "@/lib/audit-helpers";
 
 export type ConnectedUser = {
@@ -85,8 +76,6 @@ const Row = React.memo(function Row({
   onSelectUser: (email: string) => void;
 }) {
   const ageMin = Math.max(0, Math.floor((nowTick - new Date(u.last).getTime()) / 60000));
-  const DeviceIcon =
-    u.device === "Mobile" ? Smartphone : u.device === "Tablette" ? Tablet : Monitor;
   const loc = [u.city, u.region, u.country].filter(Boolean).join(", ");
   const mapsHref =
     u.lat != null && u.lon != null
@@ -101,8 +90,7 @@ const Row = React.memo(function Row({
       ? "idle"
       : "online"
     : "offline";
-  const displayName =
-    [u.prenom, u.nom_complet].filter(Boolean).join(" ").trim() || u.email;
+  const displayName = [u.prenom, u.nom_complet].filter(Boolean).join(" ").trim() || u.email;
   return (
     <TableRow>
       <TableCell className="font-medium">
@@ -114,9 +102,7 @@ const Row = React.memo(function Row({
           {u.fonction ? ` · ${u.fonction}` : ""}
         </div>
         {u.connected_at && (
-          <div className="text-xs text-muted-foreground">
-            Depuis {formatTime(u.connected_at)}
-          </div>
+          <div className="text-xs text-muted-foreground">Depuis {formatTime(u.connected_at)}</div>
         )}
       </TableCell>
       <TableCell>
@@ -144,7 +130,6 @@ const Row = React.memo(function Row({
         <div className="font-mono">{u.ip ?? "—"}</div>
         {(loc || u.isp) && (
           <div className="mt-0.5 flex items-center gap-1 text-muted-foreground">
-            <MapPin className="h-3 w-3" />
             {mapsHref ? (
               <a href={mapsHref} target="_blank" rel="noreferrer" className="hover:underline">
                 {loc || "—"}
@@ -158,7 +143,6 @@ const Row = React.memo(function Row({
       </TableCell>
       <TableCell className="text-xs">
         <div className="flex items-center gap-1">
-          <DeviceIcon className="h-3.5 w-3.5" />
           <span>{u.device ?? "—"}</span>
         </div>
         <div className="text-muted-foreground">
@@ -226,10 +210,10 @@ export function OnlineTab(p: Props) {
           </SelectContent>
         </Select>
         <Button variant="outline" size="sm" onClick={p.onExportCsv}>
-          <Download className="mr-2 h-4 w-4" /> Exporter
+          Exporter
         </Button>
         <Button variant="outline" size="sm" onClick={p.onExportPDF} aria-label="Exporter PDF">
-          <Download className="mr-2 h-4 w-4" /> PDF
+          PDF
         </Button>
       </div>
       <Table>

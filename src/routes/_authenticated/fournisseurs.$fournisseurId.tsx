@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Building2, Mail, MapPin, Phone, User } from "lucide-react";
 
 import { getFournisseur, getFournisseurAchats } from "@/lib/fournisseurs-api";
 import { STATUT_ACHAT_LABEL, type Achat } from "@/lib/achats-api";
@@ -60,10 +59,8 @@ function FournisseurDetailPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Button aria-label="Retour" asChild variant="ghost" size="icon">
-            <Link to="/fournisseurs">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
+          <Button aria-label="Retour" asChild variant="ghost" size="sm">
+            <Link to="/fournisseurs">Retour</Link>
           </Button>
           <div>
             <h1 className="ds-page-title">{fournisseur.raison_sociale}</h1>
@@ -74,12 +71,11 @@ function FournisseurDetailPage() {
           {fournisseur.actif ? "Actif" : "Inactif"}
         </Badge>
       </div>
-
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <User className="h-4 w-4" /> Représentant
+              Représentant
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">{fournisseur.representant ?? "—"}</CardContent>
@@ -87,7 +83,7 @@ function FournisseurDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Phone className="h-4 w-4" /> Téléphone
+              Téléphone
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">{fournisseur.telephone ?? "—"}</CardContent>
@@ -95,7 +91,7 @@ function FournisseurDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Mail className="h-4 w-4" /> Email
+              Email
             </CardTitle>
           </CardHeader>
           <CardContent className="truncate font-medium">{fournisseur.email ?? "—"}</CardContent>
@@ -103,7 +99,7 @@ function FournisseurDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Building2 className="h-4 w-4" /> Total achats
+              Total achats
             </CardTitle>
           </CardHeader>
           <CardContent className="text-lg font-bold text-primary">
@@ -132,20 +128,16 @@ function FournisseurDetailPage() {
           <TabsTrigger value="infos">Informations</TabsTrigger>
           <TabsTrigger value="achats">Achats ({achats.length})</TabsTrigger>
         </TabsList>
-
         <TabsContent value="infos" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-sm">
-                <MapPin className="h-4 w-4" /> Adresse
-              </CardTitle>
+              <CardTitle className="flex items-center gap-2 text-sm">Adresse</CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground whitespace-pre-wrap">
               {fournisseur.adresse || "Non renseignée"}
             </CardContent>
           </Card>
         </TabsContent>
-
         <TabsContent value="achats">
           <Card>
             <CardHeader>

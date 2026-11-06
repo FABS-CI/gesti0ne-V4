@@ -1,7 +1,6 @@
 import { formatDateTime } from "@/lib/format";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Download, Search } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -81,15 +80,13 @@ export function FNELogsPanel() {
           <div className="flex flex-row items-center justify-between gap-2 flex-wrap">
             <CardTitle className="text-base">Historique des appels FNE</CardTitle>
             <Button variant="outline" size="sm" onClick={handleExportPdf}>
-              <Download className="h-4 w-4 mr-1" />
               Export PDF
             </Button>
           </div>
           <div className="flex flex-wrap gap-2 items-end">
             <div className="relative">
-              <Search className="h-4 w-4 absolute left-2 top-2.5 text-muted-foreground" />
               <Input
-                className="pl-8 w-56"
+                className="w-56"
                 placeholder="Recherche…"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}

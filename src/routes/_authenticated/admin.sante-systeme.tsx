@@ -13,10 +13,6 @@ import { toast } from "sonner";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import {
-  Activity, RefreshCw, AlertTriangle, CheckCircle2, XCircle, AlertCircle,
-  Database, HardDrive, Shield, ServerCog, FileText, PlayCircle,
-} from "lucide-react";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
 export const Route = createFileRoute("/_authenticated/admin/sante-systeme")({
@@ -355,10 +351,10 @@ function SanteSystemePage() {
         </div>
         <div className="flex flex-wrap gap-2">
           <Button onClick={refreshAll} variant="outline" size="sm">
-            <RefreshCw className="mr-2 h-4 w-4" /> Actualiser
+            Actualiser
           </Button>
           <Button onClick={() => testServices.mutate()} disabled={testing} variant="outline" size="sm">
-            <PlayCircle className="mr-2 h-4 w-4" /> Tester les services
+            Tester les services
           </Button>
         </div>
       </div>
@@ -378,7 +374,7 @@ function SanteSystemePage() {
       {/* Services + Perf */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
-          <CardHeader><CardTitle className="flex items-center gap-2"><ServerCog className="h-5 w-5" /> Services</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="flex items-center gap-2">Services</CardTitle></CardHeader>
           <CardContent>
             {services.isLoading ? <Skeleton className="h-24" /> : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -417,7 +413,7 @@ function SanteSystemePage() {
       {/* Activity + DB stats */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
-          <CardHeader><CardTitle className="flex items-center gap-2 text-base"><FileText className="h-5 w-5" /> Activité du jour</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="flex items-center gap-2 text-base">Activité du jour</CardTitle></CardHeader>
           <CardContent className="grid grid-cols-2 gap-3 text-sm">
             <Row label="Commandes créées" value={kpis.data?.cmdToday ?? "—"} />
             <Row label="Factures créées" value={kpis.data?.factToday ?? "—"} />
@@ -427,7 +423,7 @@ function SanteSystemePage() {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Database className="h-5 w-5" /> Base de données</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="flex items-center gap-2 text-base">Base de données</CardTitle></CardHeader>
           <CardContent className="grid grid-cols-2 gap-3 text-sm">
             <Row label="Clients" value={kpis.data?.clients ?? "—"} />
             <Row label="Produits" value={kpis.data?.produits ?? "—"} />
@@ -442,7 +438,7 @@ function SanteSystemePage() {
       {/* Sécurité + Sauvegardes + Intégrité */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card>
-          <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Shield className="h-5 w-5" /> Sécurité (24h)</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="flex items-center gap-2 text-base">Sécurité (24h)</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
             <Row label="Connexions échouées" value={kpis.data?.loginFailed24 ?? "—"} error={(kpis.data?.loginFailed24 ?? 0) > 10} />
             <Row label="Connexions réussies (aujourd'hui)" value={kpis.data?.connectionsToday ?? "—"} />
@@ -450,7 +446,7 @@ function SanteSystemePage() {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="flex items-center gap-2 text-base"><HardDrive className="h-5 w-5" /> Sauvegardes</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="flex items-center gap-2 text-base">Sauvegardes</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
             {backups.data?.list[0] ? (
               <>
@@ -468,7 +464,7 @@ function SanteSystemePage() {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="flex items-center gap-2 text-base"><AlertCircle className="h-5 w-5" /> Intégrité</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="flex items-center gap-2 text-base">Intégrité</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
             <Row
               label="Stocks négatifs"
@@ -484,7 +480,7 @@ function SanteSystemePage() {
 
       {/* Alertes */}
       <Card>
-        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><AlertTriangle className="h-5 w-5" /> Alertes récentes</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="flex items-center gap-2 text-base">Alertes récentes</CardTitle></CardHeader>
         <CardContent>
           {alerts.isLoading ? <Skeleton className="h-16" /> : (alerts.data?.length ?? 0) === 0 ? (
             <div className="text-sm text-muted-foreground">Aucune alerte active</div>
@@ -603,15 +599,14 @@ function computeOverall(m: {
 
 function OverallCard({ status }: { status: Overall }) {
   const cfg = {
-    excellent: { label: "Excellent", cls: "bg-success/10 border-success/40 text-success", icon: <CheckCircle2 className="h-6 w-6" /> },
-    attention: { label: "Attention", cls: "bg-warning/10 border-warning/40 text-warning", icon: <AlertCircle className="h-6 w-6" /> },
-    critique:  { label: "Critique", cls: "bg-destructive/10 border-destructive/40 text-destructive", icon: <XCircle className="h-6 w-6" /> },
+    excellent: { label: "Excellent", cls: "bg-success/10 border-success/40 text-success" },
+    attention: { label: "Attention", cls: "bg-warning/10 border-warning/40 text-warning" },
+    critique:  { label: "Critique", cls: "bg-destructive/10 border-destructive/40 text-destructive" },
   }[status];
   return (
     <Card className={`border-2 ${cfg.cls}`}>
       <CardContent className="pt-6">
         <div className="flex items-center gap-3">
-          {cfg.icon}
           <div>
             <div className="text-xs opacity-80">État général</div>
             <div className="text-2xl font-bold">{cfg.label}</div>

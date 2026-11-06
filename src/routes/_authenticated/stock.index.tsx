@@ -2,17 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import {
-  Boxes,
-  Search,
-  AlertTriangle,
-  Sliders,
-  Eye,
-  Download,
-  ArrowDown,
-  ArrowUp,
-  RefreshCw,
-} from "lucide-react";
+import { Eye, ArrowDown, ArrowUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -140,7 +130,6 @@ function StockPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Boxes className="h-6 w-6 text-success" />
           <div>
             <h1 className="ds-page-title">Stock</h1>
             <p className="text-sm text-muted-foreground">
@@ -149,10 +138,9 @@ function StockPage() {
           </div>
         </div>
         <Button variant="outline" onClick={exportData}>
-          <Download className="mr-2 h-4 w-4" /> Export PDF
+          Export PDF
         </Button>
       </div>
-
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
@@ -177,7 +165,7 @@ function StockPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <RefreshCw className="h-4 w-4 text-warning" /> Ajustements (30j)
+              Ajustements (30j)
             </CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-bold text-warning">
@@ -187,23 +175,19 @@ function StockPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <AlertTriangle className="h-4 w-4 text-destructive" /> Produits en alerte
+              Produits en alerte
             </CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-bold">{enAlerte}</CardContent>
         </Card>
       </div>
-
       <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder="Rechercher un produit…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-9"
         />
       </div>
-
       <div className="rounded-lg border bg-card">
         <ResponsiveTable stickyFirstCol>
           <Table>
@@ -262,7 +246,7 @@ function StockPage() {
                                 to="/stock/$produitId/mouvements"
                                 params={{ produitId: p.produit_id }}
                               >
-                                <Sliders className="mr-1 h-4 w-4" /> Ajustement manuel
+                                Ajustement manuel
                               </Link>
                             </Button>
                           )}

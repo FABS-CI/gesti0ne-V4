@@ -1,7 +1,6 @@
 import { useState } from "react";
 import type { UseMutationResult } from "@tanstack/react-query";
 import type { SupprimerColisageSummary } from "@/lib/colisage-api";
-import { Ban, Trash2, Unlock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -51,43 +50,44 @@ export function ColisageActionButtons({
     <div className="flex flex-wrap items-center justify-end gap-2 print:hidden">
       {annulable ? (
         <Can permission="colisage.annuler">
-        <AlertDialog open={openAnnul} onOpenChange={setOpenAnnul}>
-          <AlertDialogTrigger asChild>
-            <Button variant="outline" size="sm">
-              <Ban className="mr-2 h-4 w-4" /> Annuler le colisage
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Annuler le colisage {blReference} ?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Cette action passe le colisage au statut « Annulé » et supprime les cartons générés.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <div className="space-y-2">
-              <Label>Motif (optionnel)</Label>
-              <Textarea value={motifAnnul} onChange={(e) => setMotifAnnul(e.target.value)} />
-            </div>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Retour</AlertDialogCancel>
-              <Button
-                type="button"
-                disabled={annulerMut.isPending}
-                onClick={() => {
-                  annulerMut.mutate(motifAnnul.trim() || null, {
-                    onSuccess: () => {
-                      setMotifAnnul("");
-                      setOpenAnnul(false);
-                    },
-                    onError: () => setOpenAnnul(false),
-                  });
-                }}
-              >
-                {annulerMut.isPending ? "Annulation…" : "Confirmer l'annulation"}
+          <AlertDialog open={openAnnul} onOpenChange={setOpenAnnul}>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                Annuler le colisage
               </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Annuler le colisage {blReference} ?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Cette action passe le colisage au statut « Annulé » et supprime les cartons
+                  générés.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <div className="space-y-2">
+                <Label>Motif (optionnel)</Label>
+                <Textarea value={motifAnnul} onChange={(e) => setMotifAnnul(e.target.value)} />
+              </div>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Retour</AlertDialogCancel>
+                <Button
+                  type="button"
+                  disabled={annulerMut.isPending}
+                  onClick={() => {
+                    annulerMut.mutate(motifAnnul.trim() || null, {
+                      onSuccess: () => {
+                        setMotifAnnul("");
+                        setOpenAnnul(false);
+                      },
+                      onError: () => setOpenAnnul(false),
+                    });
+                  }}
+                >
+                  {annulerMut.isPending ? "Annulation…" : "Confirmer l'annulation"}
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </Can>
       ) : (
         <span className="text-xs text-muted-foreground">
@@ -98,7 +98,6 @@ export function ColisageActionButtons({
       {suppressible && (
         <Can permission="colisage.supprimer">
           <Button variant="destructive" size="sm" onClick={() => setOpenSuppr(true)}>
-            <Trash2 className="mr-2 h-4 w-4" />
             {isSuperAdmin ? "Supprimer définitivement" : "Supprimer le colisage"}
           </Button>
           <ConfirmDeleteDialog
@@ -137,52 +136,52 @@ export function ColisageActionButtons({
 
       {statut === "colisage_termine" && canDeverrouiller && (
         <Can permission="colisage.deverrouiller">
-        <AlertDialog open={openDever} onOpenChange={setOpenDever}>
-          <AlertDialogTrigger asChild>
-            <Button variant="secondary" size="sm">
-              <Unlock className="mr-2 h-4 w-4" /> Refaire le colisage
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Déverrouiller le colisage {blReference} ?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Cette opération est <strong>exceptionnelle</strong> et destinée uniquement à
-                corriger une erreur de préparation. Toutes les modifications seront historisées
-                (utilisateur, date, motif, anciennes et nouvelles valeurs). Le colisage sera
-                automatiquement reverrouillé après nouvelle validation.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <div className="space-y-2">
-              <Label>
-                Motif de modification <span className="text-destructive">*</span>
-              </Label>
-              <Textarea
-                value={motifDever}
-                onChange={(e) => setMotifDever(e.target.value)}
-                placeholder="Ex. : correction du nombre de cartons suite à une erreur de saisie"
-                required
-              />
-            </div>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Retour</AlertDialogCancel>
-              <Button
-                type="button"
-                disabled={deverMut.isPending || !motifDever.trim()}
-                onClick={() =>
-                  deverMut.mutate(motifDever.trim(), {
-                    onSuccess: () => {
-                      setMotifDever("");
-                      setOpenDever(false);
-                    },
-                  })
-                }
-              >
-                {deverMut.isPending ? "Déverrouillage…" : "Déverrouiller"}
+          <AlertDialog open={openDever} onOpenChange={setOpenDever}>
+            <AlertDialogTrigger asChild>
+              <Button variant="secondary" size="sm">
+                Refaire le colisage
               </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Déverrouiller le colisage {blReference} ?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Cette opération est <strong>exceptionnelle</strong> et destinée uniquement à
+                  corriger une erreur de préparation. Toutes les modifications seront historisées
+                  (utilisateur, date, motif, anciennes et nouvelles valeurs). Le colisage sera
+                  automatiquement reverrouillé après nouvelle validation.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <div className="space-y-2">
+                <Label>
+                  Motif de modification <span className="text-destructive">*</span>
+                </Label>
+                <Textarea
+                  value={motifDever}
+                  onChange={(e) => setMotifDever(e.target.value)}
+                  placeholder="Ex. : correction du nombre de cartons suite à une erreur de saisie"
+                  required
+                />
+              </div>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Retour</AlertDialogCancel>
+                <Button
+                  type="button"
+                  disabled={deverMut.isPending || !motifDever.trim()}
+                  onClick={() =>
+                    deverMut.mutate(motifDever.trim(), {
+                      onSuccess: () => {
+                        setMotifDever("");
+                        setOpenDever(false);
+                      },
+                    })
+                  }
+                >
+                  {deverMut.isPending ? "Déverrouillage…" : "Déverrouiller"}
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </Can>
       )}
     </div>

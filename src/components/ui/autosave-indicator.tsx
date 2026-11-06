@@ -1,4 +1,4 @@
-import { Check, CloudOff, Loader2, RotateCcw } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -21,10 +21,7 @@ export function AutosaveIndicator({
 }: Props) {
   return (
     <div
-      className={cn(
-        "flex items-center gap-2 text-xs text-muted-foreground",
-        className,
-      )}
+      className={cn("flex items-center gap-2 text-xs text-muted-foreground", className)}
       role="status"
       aria-live="polite"
     >
@@ -42,7 +39,6 @@ export function AutosaveIndicator({
       )}
       {status === "error" && (
         <>
-          <CloudOff className="h-3.5 w-3.5 text-destructive" />
           <span>Sauvegarde impossible</span>
         </>
       )}
@@ -55,7 +51,6 @@ export function AutosaveIndicator({
             className="h-6 px-2 text-xs"
             onClick={onRestore}
           >
-            <RotateCcw className="mr-1 h-3 w-3" />
             Restaurer le brouillon
           </Button>
           {onDiscard && (

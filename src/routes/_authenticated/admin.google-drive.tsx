@@ -1,9 +1,9 @@
 import { getCurrentUser } from "@/lib/current-user";
-import { friendlyError } from '@/lib/friendly-error';
+import { friendlyError } from "@/lib/friendly-error";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Cloud, Loader2, ShieldAlert, ShieldCheck, XCircle, Upload, RefreshCw } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -99,7 +99,7 @@ function GoogleDriveAdminPage() {
       <Card className="border-destructive/50">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-destructive">
-            <ShieldAlert className="h-5 w-5" /> Accès réservé aux super-administrateurs
+            Accès réservé aux super-administrateurs
           </CardTitle>
         </CardHeader>
       </Card>
@@ -109,16 +109,13 @@ function GoogleDriveAdminPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="ds-page-title">
-          Connecteur Google Drive
-        </h1>
+        <h1 className="ds-page-title flex items-center gap-2">Connecteur Google Drive</h1>
         <p className="text-sm text-muted-foreground">
           Administration → Connecteurs → Google Drive. Les identifiants sont gérés par Lovable Cloud
           (OAuth). Utilisez cette page pour valider la connexion et les permissions avant d'activer
           l'envoi automatique des sauvegardes.
         </p>
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle className="text-base">
@@ -128,19 +125,11 @@ function GoogleDriveAdminPage() {
         <CardContent className="space-y-4">
           <div className="flex flex-wrap gap-2">
             <Button onClick={runCheck} disabled={checking}>
-              {checking ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <RefreshCw className="mr-2 h-4 w-4" />
-              )}
+              {checking ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               Tester la connexion
             </Button>
             <Button variant="outline" onClick={runUpload} disabled={uploading || !result?.ok}>
-              {uploading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Upload className="mr-2 h-4 w-4" />
-              )}
+              {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               Test d'écriture (fichier temporaire)
             </Button>
           </div>
@@ -149,7 +138,7 @@ function GoogleDriveAdminPage() {
             (result.ok ? (
               <div className="space-y-3 rounded-md border border-success/40 bg-success/10 p-3 text-sm">
                 <div className="flex items-center gap-2 font-medium text-success">
-                  <ShieldCheck className="h-4 w-4" /> Connexion validée (HTTP {result.status})
+                  Connexion validée (HTTP {result.status})
                 </div>
                 <div className="grid gap-2 sm:grid-cols-2">
                   <div>
@@ -180,7 +169,7 @@ function GoogleDriveAdminPage() {
             ) : (
               <div className="space-y-2 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm">
                 <div className="flex items-center gap-2 font-medium text-destructive">
-                  <XCircle className="h-4 w-4" /> Échec (HTTP {result.status})
+                  Échec (HTTP {result.status})
                 </div>
                 <pre className="max-h-40 overflow-auto whitespace-pre-wrap text-xs text-muted-foreground">
                   {result.error}
@@ -192,7 +181,6 @@ function GoogleDriveAdminPage() {
             ))}
         </CardContent>
       </Card>
-
       <Card>
         <CardHeader>
           <CardTitle className="text-base">2. Activation</CardTitle>

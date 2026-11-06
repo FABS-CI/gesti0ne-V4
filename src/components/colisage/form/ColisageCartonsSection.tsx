@@ -1,4 +1,4 @@
-import { CheckCircle2, Minus, Plus, X } from "lucide-react";
+import { Minus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -71,7 +71,7 @@ export function ColisageCartonsSection({
           <h3 className="text-sm font-semibold">Répartition des articles</h3>
           {compositionValide ? (
             <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 text-xs font-semibold text-success">
-              <CheckCircle2 className="h-3 w-3" /> Répartition complète
+              Répartition complète
             </span>
           ) : (
             <span className="rounded-full bg-warning/10 px-2 py-0.5 text-xs font-semibold text-warning">
@@ -112,7 +112,15 @@ export function ColisageCartonsSection({
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <CardTitle className="text-base">Carton {ci + 1}</CardTitle>
             {cartons.length > 1 && (
-              <Button type="button" variant="ghost" size="sm" onClick={(e) => { e.preventDefault(); removeCarton(ci); }}>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  removeCarton(ci);
+                }}
+              >
                 <X className="mr-1 h-4 w-4" /> Retirer
               </Button>
             )}
@@ -165,13 +173,15 @@ export function ColisageCartonsSection({
                               const k = keyForLigne(l);
                               if (blStatut === "colisage_termine") return true;
                               const dispoTotal = (attendu.get(k) ?? 0) - (reparti.get(k) ?? 0);
-                              const dispoLigne = k === li.produit_id ? dispoTotal + currentQte : dispoTotal;
+                              const dispoLigne =
+                                k === li.produit_id ? dispoTotal + currentQte : dispoTotal;
                               return dispoLigne > 0;
                             })
                             .map((l) => {
                               const k = keyForLigne(l);
                               const dispoTotal = (attendu.get(k) ?? 0) - (reparti.get(k) ?? 0);
-                              const dispoAffiche = k === li.produit_id ? dispoTotal + currentQte : dispoTotal;
+                              const dispoAffiche =
+                                k === li.produit_id ? dispoTotal + currentQte : dispoTotal;
                               return (
                                 <SelectItem key={k} value={k}>
                                   {l.designation} — reste {dispoAffiche} / {l.quantite}
@@ -204,14 +214,18 @@ export function ColisageCartonsSection({
                         updateLigne(ci, lj, { quantite: String(Math.min(n, maxDispo)) });
                       }}
                     />
-                    <Button aria-label="Retirer"
+                    <Button
+                      aria-label="Retirer"
                       type="button"
                       variant="ghost"
-                      size="icon"
-                      onClick={(e) => { e.preventDefault(); removeLigne(ci, lj); }}
+                      size="sm"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        removeLigne(ci, lj);
+                      }}
                       disabled={c.lignes.length === 1}
                     >
-                      <Minus className="h-4 w-4" />
+                      Retirer
                     </Button>
                     {restant !== null && (
                       <div className="col-span-3 -mt-1 text-xs text-muted-foreground">
@@ -221,16 +235,32 @@ export function ColisageCartonsSection({
                   </div>
                 );
               })}
-              <Button type="button" variant="outline" size="sm" onClick={(e) => { e.preventDefault(); addLigne(ci); }}>
-                <Plus className="mr-1 h-4 w-4" /> Ajouter un article
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  addLigne(ci);
+                }}
+              >
+                Ajouter un article
               </Button>
             </div>
           </CardContent>
         </Card>
       ))}
       <div>
-        <Button type="button" variant="secondary" size="sm" onClick={(e) => { e.preventDefault(); addCarton(); }}>
-          <Plus className="mr-1 h-4 w-4" /> Ajouter un carton
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          onClick={(e) => {
+            e.preventDefault();
+            addCarton();
+          }}
+        >
+          Ajouter un carton
         </Button>
       </div>
     </div>

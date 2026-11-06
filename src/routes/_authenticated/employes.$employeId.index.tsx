@@ -1,17 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Briefcase,
-  Building2,
-  Calendar,
-  FileText,
-  Mail,
-  Pencil,
-  Phone,
-  Plane,
-  Wallet,
-  Wallet2,
-} from "lucide-react";
 
 import {
   getEmploye,
@@ -122,7 +110,7 @@ function EmployeDetailPage() {
                 params={{ employeId }}
                 title={`Modifier ${employe.nom_complet}`}
               >
-                <Pencil className="mr-2 h-4 w-4" /> Modifier
+                Modifier
               </Link>
             </Button>
             <Badge variant={employe.actif ? "secondary" : "destructive"}>
@@ -134,20 +122,15 @@ function EmployeDetailPage() {
 
       {/* KPIs */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Kpi icon={Briefcase} label="Poste" value={employe.poste ?? "—"} />
-        <Kpi icon={Building2} label="Département" value={employe.departement} />
-        <Kpi icon={Wallet} label="Salaire" value={formatFCFA(employe.salaire)} accent />
-        <Kpi icon={Calendar} label="Embauché le" value={frDate(employe.date_embauche)} />
-        <Kpi icon={Plane} label="Congés approuvés" value={String(congesApprouves)} />
-        <Kpi
-          icon={FileText}
-          label="Contrat actif"
-          value={contratActif ? contratActif.type : "—"}
-        />
-        <Kpi icon={Wallet2} label="Total payé" value={formatFCFA(totalPaye)} />
-        <Kpi icon={Mail} label="Email" value={employe.email ?? "—"} />
+        <Kpi label="Poste" value={employe.poste ?? "—"} />
+        <Kpi label="Département" value={employe.departement} />
+        <Kpi label="Salaire" value={formatFCFA(employe.salaire)} accent />
+        <Kpi label="Embauché le" value={frDate(employe.date_embauche)} />
+        <Kpi label="Congés approuvés" value={String(congesApprouves)} />
+        <Kpi label="Contrat actif" value={contratActif ? contratActif.type : "—"} />
+        <Kpi label="Total payé" value={formatFCFA(totalPaye)} />
+        <Kpi label="Email" value={employe.email ?? "—"} />
       </div>
-
       <Tabs defaultValue="infos" className="w-full">
         <TabsList>
           <TabsTrigger value="infos">Informations</TabsTrigger>
@@ -156,29 +139,19 @@ function EmployeDetailPage() {
           <TabsTrigger value="contrats">Contrats ({contrats.length})</TabsTrigger>
           <TabsTrigger value="paie">Paie ({bulletins.length})</TabsTrigger>
         </TabsList>
-
         <TabsContent value="infos">
           <Card>
             <CardHeader>
               <CardTitle>Coordonnées</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-3 text-sm sm:grid-cols-2">
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-muted-foreground" /> {employe.email ?? "—"}
-              </div>
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-muted-foreground" /> {employe.telephone ?? "—"}
-              </div>
-              <div className="flex items-center gap-2">
-                <Building2 className="h-4 w-4 text-muted-foreground" /> {employe.departement}
-              </div>
-              <div className="flex items-center gap-2">
-                <Briefcase className="h-4 w-4 text-muted-foreground" /> {employe.poste ?? "—"}
-              </div>
+              <div className="flex items-center gap-2">{employe.email ?? "—"}</div>
+              <div className="flex items-center gap-2">{employe.telephone ?? "—"}</div>
+              <div className="flex items-center gap-2">{employe.departement}</div>
+              <div className="flex items-center gap-2">{employe.poste ?? "—"}</div>
             </CardContent>
           </Card>
         </TabsContent>
-
         <TabsContent value="conges">
           <Card>
             <CardHeader>
@@ -201,7 +174,6 @@ function EmployeDetailPage() {
             </CardContent>
           </Card>
         </TabsContent>
-
         <TabsContent value="absences">
           <Card>
             <CardHeader>
@@ -224,7 +196,6 @@ function EmployeDetailPage() {
             </CardContent>
           </Card>
         </TabsContent>
-
         <TabsContent value="contrats">
           <Card>
             <CardHeader>
@@ -247,7 +218,6 @@ function EmployeDetailPage() {
             </CardContent>
           </Card>
         </TabsContent>
-
         <TabsContent value="paie">
           <Card>
             <CardHeader>
@@ -275,22 +245,12 @@ function EmployeDetailPage() {
   );
 }
 
-function Kpi({
-  icon: Icon,
-  label,
-  value,
-  accent,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  value: string;
-  accent?: boolean;
-}) {
+function Kpi({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Icon className="h-4 w-4" /> {label}
+          {label}
         </CardTitle>
       </CardHeader>
       <CardContent className={accent ? "text-lg font-bold text-primary" : "truncate font-medium"}>

@@ -1,4 +1,3 @@
-import { Crosshair, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -67,7 +66,6 @@ export function DepotFormDialog({
         <DialogHeader>
           <DialogTitle>{editing ? "Modifier le dépôt" : "Nouveau dépôt"}</DialogTitle>
         </DialogHeader>
-
         <section className="space-y-3">
           <h3 className="text-sm font-semibold text-muted-foreground">1. Informations générales</h3>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -133,7 +131,6 @@ export function DepotFormDialog({
             </div>
           </div>
         </section>
-
         <section className="space-y-3 border-t pt-4">
           <h3 className="text-sm font-semibold text-muted-foreground">2. Localisation</h3>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -181,13 +178,11 @@ export function DepotFormDialog({
             </div>
           </div>
         </section>
-
         <section className="space-y-3 border-t pt-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-muted-foreground">3. Géolocalisation GPS</h3>
             <div className="flex gap-2">
               <Button type="button" size="sm" variant="outline" onClick={captureGps}>
-                <Crosshair className="h-4 w-4 mr-2" />
                 Ma position
               </Button>
               {form.latitude && form.longitude && (
@@ -197,7 +192,6 @@ export function DepotFormDialog({
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <ExternalLink className="h-4 w-4 mr-2" />
                     Carte
                   </a>
                 </Button>
@@ -235,7 +229,6 @@ export function DepotFormDialog({
             </div>
           </div>
         </section>
-
         <section className="space-y-3 border-t pt-4">
           <h3 className="text-sm font-semibold text-muted-foreground">4. Responsable</h3>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -263,7 +256,6 @@ export function DepotFormDialog({
             </div>
           </div>
         </section>
-
         <section className="space-y-3 border-t pt-4">
           <div className="flex items-center gap-3">
             <Switch
@@ -282,7 +274,6 @@ export function DepotFormDialog({
             </div>
           )}
         </section>
-
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Annuler

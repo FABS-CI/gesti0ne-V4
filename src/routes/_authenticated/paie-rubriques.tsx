@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ListTree } from "lucide-react";
 import { ResourceManager } from "@/components/crud/ResourceManager";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
@@ -11,7 +10,6 @@ export const Route = createFileRoute("/_authenticated/paie-rubriques")({
         idField: "rubrique_id",
         title: "Rubriques Paie",
         subtitle: "Gains, retenues et charges patronales personnalisables",
-        icon: ListTree,
         newLabel: "Nouvelle rubrique",
         entityLabel: "la rubrique",
         csvName: "paie_rubriques",

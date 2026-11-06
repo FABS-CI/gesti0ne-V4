@@ -1,17 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import {
-  ArrowLeft,
-  Building2,
-  Calendar,
-  FileText,
-  Pencil,
-  Printer,
-  ScanEye,
-  Tag,
-  User,
-} from "lucide-react";
 import { toast } from "sonner";
 
 import { getAchat, getAchatLignes, STATUT_ACHAT_LABEL } from "@/lib/achats-api";
@@ -109,10 +98,8 @@ function AchatDetailPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
         <div className="flex items-center gap-3">
-          <Button aria-label="Retour" asChild variant="ghost" size="icon">
-            <Link to="/achats">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
+          <Button aria-label="Retour" asChild variant="ghost" size="sm">
+            <Link to="/achats">Retour</Link>
           </Button>
           <div>
             <h1 className="ds-page-title">Approvisionnement {achat.reference}</h1>
@@ -126,24 +113,23 @@ function AchatDetailPage() {
             </Badge>
           )}
           <Button variant="outline" size="sm" onClick={handleView}>
-            <ScanEye className="h-4 w-4 mr-2" /> Aperçu PDF
+            Aperçu PDF
           </Button>
           <Button variant="outline" size="sm" onClick={handlePrint}>
-            <Printer className="h-4 w-4 mr-2" /> Imprimer
+            Imprimer
           </Button>
           <Button asChild size="sm">
             <Link to="/achats/nouveau" search={{ edit: achatId }}>
-              <Pencil className="h-4 w-4 mr-2" /> Modifier
+              Modifier
             </Link>
           </Button>
         </div>
       </div>
-
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Tag className="h-4 w-4" /> Montant total
+              Montant total
             </CardTitle>
           </CardHeader>
           <CardContent className="text-lg font-bold text-primary">
@@ -153,7 +139,7 @@ function AchatDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Building2 className="h-4 w-4" /> Fournisseur
+              Fournisseur
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">
@@ -168,7 +154,7 @@ function AchatDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4" /> Date
+              Date
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">{frDate(achat.date_achat)}</CardContent>
@@ -176,7 +162,7 @@ function AchatDetailPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <User className="h-4 w-4" /> Enregistré par
+              Enregistré par
             </CardTitle>
           </CardHeader>
           <CardContent className="font-medium">
@@ -185,7 +171,6 @@ function AchatDetailPage() {
           </CardContent>
         </Card>
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Produits livrés ({lignes.length})</CardTitle>
@@ -211,7 +196,11 @@ function AchatDetailPage() {
                   <TableRow key={l.ligne_id}>
                     <TableCell className="py-1">
                       <ProductCoverThumb
-                        produit={l.produits ? { ...l, ...l.produits, titre: l.designation } : { ...l, titre: l.designation }}
+                        produit={
+                          l.produits
+                            ? { ...l, ...l.produits, titre: l.designation }
+                            : { ...l, titre: l.designation }
+                        }
                         size="xs"
                         className="shadow-sm"
                       />
@@ -225,9 +214,7 @@ function AchatDetailPage() {
                       {formatFCFA(Number(l.prix_unitaire))}
                     </TableCell>
                     <TableCell className="text-right">
-                      {Number(l.remise_pct ?? 0) > 0
-                        ? `${Number(l.remise_pct).toFixed(2)} %`
-                        : "—"}
+                      {Number(l.remise_pct ?? 0) > 0 ? `${Number(l.remise_pct).toFixed(2)} %` : "—"}
                     </TableCell>
                     <TableCell className="text-right font-semibold">
                       {formatFCFA(Number(l.total_ligne))}
@@ -254,9 +241,7 @@ function AchatDetailPage() {
       {achat.notes && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm">
-              <FileText className="inline h-4 w-4 mr-1" /> Observations
-            </CardTitle>
+            <CardTitle className="text-sm">Observations</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground whitespace-pre-wrap">
             {achat.notes}

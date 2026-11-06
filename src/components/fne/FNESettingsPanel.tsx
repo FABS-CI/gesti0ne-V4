@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Save, Wifi, FlaskConical, RotateCcw, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -158,7 +157,6 @@ export function FNESettingsPanel() {
           edit ? (
             <div className="flex gap-2">
               <Button size="sm" variant="outline" onClick={() => setDraft({})}>
-                <RotateCcw className="h-4 w-4 mr-1" />
                 Restaurer
               </Button>
               <Button
@@ -172,7 +170,6 @@ export function FNESettingsPanel() {
                 Annuler
               </Button>
               <Button size="sm" onClick={() => save.mutate()} disabled={save.isPending}>
-                <Save className="h-4 w-4 mr-1" />
                 Enregistrer
               </Button>
             </div>
@@ -183,13 +180,11 @@ export function FNESettingsPanel() {
           )
         ) : null}
       </div>
-
       <Tabs defaultValue="config">
         <TabsList>
           <TabsTrigger value="config">Configuration</TabsTrigger>
           <TabsTrigger value="tests">Tests API DGI</TabsTrigger>
         </TabsList>
-
         <TabsContent value="config" className="space-y-4">
           {SECTIONS.map((sec) => (
             <Card key={sec.title}>
@@ -228,11 +223,9 @@ export function FNESettingsPanel() {
             <CardContent className="pt-4">
               <div className="flex flex-wrap gap-2">
                 <Button variant="outline" size="sm" onClick={runPing}>
-                  <Wifi className="h-4 w-4 mr-1" />
                   Tester la connexion DGI
                 </Button>
                 <Button variant="outline" size="sm" onClick={runCertCheck}>
-                  <ShieldCheck className="h-4 w-4 mr-1" />
                   Vérifier le certificat
                 </Button>
               </div>
@@ -241,7 +234,6 @@ export function FNESettingsPanel() {
             </CardContent>
           </Card>
         </TabsContent>
-
         <TabsContent value="tests">
           <Card>
             <CardHeader>
@@ -257,10 +249,7 @@ export function FNESettingsPanel() {
                 {(["B2C", "B2B", "B2G"] as const).map((t) => (
                   <Card key={t}>
                     <CardContent className="pt-4 space-y-2">
-                      <div className="font-semibold flex items-center gap-2">
-                        <FlaskConical className="h-4 w-4" />
-                        Facture {t}
-                      </div>
+                      <div className="font-semibold flex items-center gap-2">Facture {t}</div>
                       <Button size="sm" className="w-full" onClick={() => runTest(t)}>
                         Lancer le test
                       </Button>

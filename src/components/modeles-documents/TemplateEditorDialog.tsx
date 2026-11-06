@@ -53,7 +53,6 @@ export function TemplateEditorDialog({
             {editingId ? "Modifier le modèle" : "Nouveau modèle de document"}
           </DialogTitle>
         </DialogHeader>
-
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-3">
             <div className="space-y-1">
@@ -147,7 +146,6 @@ export function TemplateEditorDialog({
               />
             </div>
           </div>
-
           <div className="space-y-2">
             <Label className="text-xs text-muted-foreground">Aperçu en direct</Label>
             <Apercu t={previewTemplate} />
@@ -156,7 +154,6 @@ export function TemplateEditorDialog({
             </Button>
           </div>
         </div>
-
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)} disabled={saving}>
             Annuler

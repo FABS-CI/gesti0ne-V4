@@ -2,7 +2,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { AlertTriangle, ArrowLeft, Plus, Save, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -190,12 +189,9 @@ function NouvelIncidentPage() {
   return (
     <div className="space-y-6 p-1">
       <div className="flex items-center gap-3">
-        <Button aria-label="Retour" asChild variant="ghost" size="icon">
-          <Link to="/incidents">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
+        <Button aria-label="Retour" asChild variant="ghost" size="sm">
+          <Link to="/incidents">Retour</Link>
         </Button>
-        <AlertTriangle className="h-6 w-6 text-warning" />
         <div>
           <h1 className="ds-page-title">Nouvel Incident de Stock</h1>
           <p className="text-sm text-muted-foreground">
@@ -203,7 +199,6 @@ function NouvelIncidentPage() {
           </p>
         </div>
       </div>
-
       <section className="rounded-md border bg-card p-5 space-y-4">
         <h2 className="text-lg font-semibold">1. Informations générales</h2>
         <div className="grid gap-4 md:grid-cols-2">
@@ -267,7 +262,6 @@ function NouvelIncidentPage() {
           </div>
         </div>
       </section>
-
       <section className="rounded-md border bg-card p-5 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">2. Produits concernés</h2>
@@ -277,11 +271,9 @@ function NouvelIncidentPage() {
             size="sm"
             onClick={() => setLignes((arr) => [...arr, emptyLigne()])}
           >
-            <Plus className="h-4 w-4 mr-2" />
             Ajouter une ligne
           </Button>
         </div>
-
         <Table>
           <TableHeader>
             <TableRow>
@@ -317,10 +309,11 @@ function NouvelIncidentPage() {
                     />
                   </TableCell>
                   <TableCell>
-                    <Button aria-label="Supprimer"
+                    <Button
+                      aria-label="Supprimer"
                       type="button"
                       variant="ghost"
-                      size="icon"
+                      size="sm"
                       onClick={() =>
                         setLignes((arr) =>
                           arr.length === 1 ? arr : arr.filter((_, idx) => idx !== i),
@@ -328,7 +321,7 @@ function NouvelIncidentPage() {
                       }
                       disabled={lignes.length === 1}
                     >
-                      <Trash2 className="h-4 w-4 text-destructive" />
+                      Supprimer
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -336,20 +329,17 @@ function NouvelIncidentPage() {
             })}
           </TableBody>
         </Table>
-
         <div className="flex justify-end gap-6 border-t pt-4 text-sm">
           <span className="text-muted-foreground">
             Quantité totale : <span className="font-semibold">{qteTotale}</span>
           </span>
         </div>
       </section>
-
       <div className="flex justify-end gap-3">
         <Button type="button" variant="outline" asChild>
           <Link to="/incidents">Annuler</Link>
         </Button>
         <Button onClick={submit} disabled={saveMutation.isPending}>
-          <Save className="h-4 w-4 mr-2" />
           {saveMutation.isPending ? "Enregistrement…" : "Enregistrer l'incident"}
         </Button>
       </div>

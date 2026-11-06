@@ -1,5 +1,3 @@
-import { AlertTriangle } from "lucide-react";
-
 export function IdleWarningModal({
   countdown,
   onExtend,
@@ -19,9 +17,6 @@ export function IdleWarningModal({
       aria-modal="true"
     >
       <div className="w-full max-w-md rounded-lg border bg-card p-6 text-center shadow-sm">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-warning/10">
-          <AlertTriangle className="h-7 w-7 text-warning" />
-        </div>
         <h2 className="text-lg font-bold text-foreground">Session sur le point d'expirer</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           Inactivité détectée. Déconnexion automatique dans :

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useNavigate } from "@tanstack/react-router";
-import { Loader2, Save, UserPlus, ArrowLeft } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import {
-  adminCreateUser,
-  adminUpdateUserProfile,
-} from "@/lib/users-admin.functions";
+import { adminCreateUser, adminUpdateUserProfile } from "@/lib/users-admin.functions";
 import { useRolesQuery } from "@/hooks/use-roles-permissions";
 import type { UserEditPayload } from "./UserFormDialog";
 import { friendlyError } from "@/lib/friendly-error";
@@ -97,8 +94,7 @@ export function UserForm({ editing }: Props) {
       }
       if (!form.email) throw new Error("Email requis");
       if (form.password.length < 8) throw new Error("Mot de passe : 8 caractères minimum");
-      if (form.password !== form.confirm)
-        throw new Error("Les mots de passe ne correspondent pas");
+      if (form.password !== form.confirm) throw new Error("Les mots de passe ne correspondent pas");
       return createFn({
         data: {
           email: form.email.trim().toLowerCase(),
@@ -124,13 +120,12 @@ export function UserForm({ editing }: Props) {
     <div className="container mx-auto max-w-4xl space-y-4 p-4 md:p-6">
       <div className="flex items-center justify-between">
         <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/utilisateurs" })}>
-          <ArrowLeft className="mr-2 h-4 w-4" /> Retour
+          Retour
         </Button>
       </div>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            {isEdit ? <Save className="h-5 w-5" /> : <UserPlus className="h-5 w-5" />}
             {isEdit ? "Modifier l'utilisateur" : "Nouvel utilisateur"}
           </CardTitle>
         </CardHeader>
@@ -193,9 +188,7 @@ export function UserForm({ editing }: Props) {
               />
             </div>
           </section>
-
           <Separator />
-
           <section className="space-y-3">
             <div>
               <h3 className="text-sm font-semibold">
@@ -218,9 +211,7 @@ export function UserForm({ editing }: Props) {
               />
             </div>
           </section>
-
           <Separator />
-
           <section className="space-y-3">
             <div>
               <h3 className="text-sm font-semibold">Rôles attribués</h3>
@@ -246,17 +237,12 @@ export function UserForm({ editing }: Props) {
               ))}
             </div>
           </section>
-
           <div className="flex justify-end gap-2 pt-2">
             <Button variant="outline" onClick={() => navigate({ to: "/utilisateurs" })}>
               Annuler
             </Button>
             <Button onClick={() => save.mutate()} disabled={save.isPending}>
-              {save.isPending ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Save className="mr-2 h-4 w-4" />
-              )}
+              {save.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               {isEdit ? "Enregistrer" : "Créer l'utilisateur"}
             </Button>
           </div>

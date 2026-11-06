@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Settings2 } from "lucide-react";
 import { ResourceManager } from "@/components/crud/ResourceManager";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
@@ -11,7 +10,6 @@ export const Route = createFileRoute("/_authenticated/paie-parametres")({
         idField: "parametre_id",
         title: "Paramètres Paie CI",
         subtitle: "Barèmes CNPS / CMU / ITS / IGR / CN — configurables",
-        icon: Settings2,
         newLabel: "Nouveau paramètre",
         entityLabel: "le paramètre",
         csvName: "paie_parametres",

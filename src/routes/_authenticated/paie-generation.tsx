@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, PlayCircle } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { listEmployes } from "@/lib/rh-api";
@@ -42,7 +42,10 @@ function GenerationPage() {
   const [enCours, setEnCours] = useState(false);
   const [resultats, setResultats] = useState<Record<string, Resultat>>({});
 
-  const { data: employes, isLoading } = useQuery({ queryKey: ["employes-list"], queryFn: () => listEmployes() });
+  const { data: employes, isLoading } = useQuery({
+    queryKey: ["employes-list"],
+    queryFn: () => listEmployes(),
+  });
   const actifs = useMemo(
     () =>
       (employes ?? []).filter((e) => {
@@ -72,12 +75,19 @@ function GenerationPage() {
     queryFn: async () => {
       const { debut, fin } = bornes(mois);
       const out: Record<string, string[]> = {};
-      await Promise.all(actifs.map(async (e) => {
-        const { data, error } = await supabase.rpc("paie_calculer_bulletin", {
-          p_employe_id: e.employe_id, p_date_debut: debut, p_date_fin: fin, p_saisie: {},
-        });
-        out[e.employe_id] = error ? [friendlyError(error)] : ((data as { anomalies?: string[] })?.anomalies ?? []);
-      }));
+      await Promise.all(
+        actifs.map(async (e) => {
+          const { data, error } = await supabase.rpc("paie_calculer_bulletin", {
+            p_employe_id: e.employe_id,
+            p_date_debut: debut,
+            p_date_fin: fin,
+            p_saisie: {},
+          });
+          out[e.employe_id] = error
+            ? [friendlyError(error)]
+            : ((data as { anomalies?: string[] })?.anomalies ?? []);
+        }),
+      );
       return out;
     },
   });
@@ -132,14 +142,23 @@ function GenerationPage() {
         <CardContent className="flex flex-wrap items-end gap-4 pt-6">
           <div className="space-y-1">
             <Label className="text-xs">Mois</Label>
-            <Input type="month" value={mois} onChange={(e) => { setMois(e.target.value); setResultats({}); setSelection(new Set()); }} />
+            <Input
+              type="month"
+              value={mois}
+              onChange={(e) => {
+                setMois(e.target.value);
+                setResultats({});
+                setSelection(new Set());
+              }}
+            />
           </div>
           <Button onClick={generer} disabled={enCours || selection.size === 0}>
-            {enCours ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <PlayCircle className="mr-2 h-4 w-4" />}
+            {enCours ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             Générer {selection.size || ""} bulletin(s)
           </Button>
           <p className="text-xs text-muted-foreground">
-            Salaire, sursalaire, ancienneté, parts, primes liées à une rubrique et absences viennent des fiches. Les employés avec une anomalie ne peuvent pas être cochés.
+            Salaire, sursalaire, ancienneté, parts, primes liées à une rubrique et absences viennent
+            des fiches. Les employés avec une anomalie ne peuvent pas être cochés.
           </p>
         </CardContent>
       </Card>
@@ -148,7 +167,9 @@ function GenerationPage() {
           {isLoading ? (
             <p className="text-sm text-muted-foreground">Chargement…</p>
           ) : actifs.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Aucun employé actif avec un salaire de base.</p>
+            <p className="text-sm text-muted-foreground">
+              Aucun employé actif avec un salaire de base.
+            </p>
           ) : (
             <table className="w-full text-sm">
               <thead className="text-left text-xs text-muted-foreground">
@@ -156,7 +177,9 @@ function GenerationPage() {
                   <th className="py-2 w-8">
                     <Checkbox
                       checked={toutCoche}
-                      onCheckedChange={(v) => setSelection(v ? new Set(disponibles.map((e) => e.employe_id)) : new Set())}
+                      onCheckedChange={(v) =>
+                        setSelection(v ? new Set(disponibles.map((e) => e.employe_id)) : new Set())
+                      }
                       aria-label="Tout sélectionner"
                     />
                   </th>
@@ -187,7 +210,11 @@ function GenerationPage() {
                       <td className="text-right">{Number(e.parts) || 1}</td>
                       <td className="pl-4">
                         {res?.ok && res.bulletinId ? (
-                          <Link to="/paie/$bulletinId" params={{ bulletinId: res.bulletinId }} className="text-primary underline">
+                          <Link
+                            to="/paie/$bulletinId"
+                            params={{ bulletinId: res.bulletinId }}
+                            className="text-primary underline"
+                          >
                             Généré — ouvrir
                           </Link>
                         ) : res ? (
@@ -195,7 +222,13 @@ function GenerationPage() {
                         ) : bloque(e.employe_id) ? (
                           <span className="text-destructive">
                             {anomalies![e.employe_id].join(" · ")} —{" "}
-                            <Link to="/employes/$employeId" params={{ employeId: e.employe_id }} className="underline">corriger la fiche</Link>
+                            <Link
+                              to="/employes/$employeId"
+                              params={{ employeId: e.employe_id }}
+                              className="underline"
+                            >
+                              corriger la fiche
+                            </Link>
                           </span>
                         ) : deja ? (
                           <span className="text-muted-foreground">Bulletin déjà existant</span>

@@ -1,7 +1,7 @@
 import { ClientLink } from "@/components/common/ClientLink";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { useState } from "react";
-import { Check, X, Clock } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,7 +44,6 @@ export function PaiementsEnAttenteCard({
       <Card>
         <CardHeader className="flex flex-row items-center justify-between gap-2">
           <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-warning" />
             Paiements en attente de validation
           </CardTitle>
           <Badge variant="outline">{paiements.length}</Badge>
@@ -71,11 +70,20 @@ export function PaiementsEnAttenteCard({
               <TableBody>
                 {paiements.map((p) => (
                   <TableRow key={p.paiement_id}>
-                    <TableCell className="font-medium">{formatDocumentReference(p.reference)}</TableCell>
+                    <TableCell className="font-medium">
+                      {formatDocumentReference(p.reference)}
+                    </TableCell>
                     <TableCell>{formatDate(p.date_paiement)}</TableCell>
-                    <TableCell><ClientLink clientId={(p as { client_id?: string | null }).client_id} nom={p.client_nom} /></TableCell>
+                    <TableCell>
+                      <ClientLink
+                        clientId={(p as { client_id?: string | null }).client_id}
+                        nom={p.client_nom}
+                      />
+                    </TableCell>
                     <TableCell>{MODE_PAIEMENT_LABEL[p.mode_paiement] ?? p.mode_paiement}</TableCell>
-                    <TableCell className="text-right font-medium">{formatFCFA(Number(p.montant))}</TableCell>
+                    <TableCell className="text-right font-medium">
+                      {formatFCFA(Number(p.montant))}
+                    </TableCell>
                     <TableCell className="text-right">
                       <Button
                         size="sm"
@@ -110,10 +118,7 @@ export function PaiementsEnAttenteCard({
         pending={rejeter.isPending}
         onConfirm={(motif) => {
           if (!toReject) return;
-          rejeter.mutate(
-            { id: toReject.id, motif },
-            { onSuccess: () => setToReject(null) },
-          );
+          rejeter.mutate({ id: toReject.id, motif }, { onSuccess: () => setToReject(null) });
         }}
       />
     </Can>

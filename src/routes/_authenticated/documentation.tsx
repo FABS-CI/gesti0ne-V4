@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { BookOpen, Search, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -103,9 +102,6 @@ function DocumentationPage() {
   return (
     <div className="container mx-auto max-w-5xl p-4 md:p-6 space-y-4">
       <header className="flex items-center gap-3">
-        <div className="rounded-lg bg-primary/10 p-2 text-primary">
-          <BookOpen className="h-6 w-6" />
-        </div>
         <div>
           <h1 className="ds-page-title">Documentation</h1>
           <p className="text-sm text-muted-foreground">
@@ -113,19 +109,16 @@ function DocumentationPage() {
           </p>
         </div>
       </header>
-
       <div className="relative">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           autoFocus
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Rechercher une procédure (ex: annuler paiement, transfert, inventaire, exercice clôturé)..."
-          className="pl-9 h-11 text-base"
+          className="h-11 text-base"
           aria-label="Rechercher dans la documentation"
         />
       </div>
-
       <div className="flex flex-wrap gap-2">
         <button
           type="button"
@@ -153,27 +146,23 @@ function DocumentationPage() {
           );
         })}
       </div>
-
       <p className="text-xs text-muted-foreground">
         {results.length} résultat{results.length > 1 ? "s" : ""}
         {query ? ` pour "${query}"` : ""}.
       </p>
-
       <div className="space-y-3">
         {results.map(({ sec }) => (
           <Card key={sec.id} className="hover:border-primary/40 transition">
             <CardContent className="p-4 space-y-2">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="secondary">{sec.module}</Badge>
-                <h2 className="text-base font-semibold">
-                  {highlight(sec.title, terms)}
-                </h2>
+                <h2 className="text-base font-semibold">{highlight(sec.title, terms)}</h2>
                 {sec.route && (
                   <Link
                     to={sec.route}
                     className="ml-auto inline-flex items-center gap-1 text-xs text-primary hover:underline"
                   >
-                    Ouvrir le module <ExternalLink className="h-3 w-3" />
+                    Ouvrir le module
                   </Link>
                 )}
               </div>
@@ -186,8 +175,7 @@ function DocumentationPage() {
         {results.length === 0 && (
           <Card>
             <CardContent className="p-8 text-center text-sm text-muted-foreground">
-              Aucun résultat. Essayez d'autres mots-clés (paiement, stock,
-              exercice, livraison...).
+              Aucun résultat. Essayez d'autres mots-clés (paiement, stock, exercice, livraison...).
             </CardContent>
           </Card>
         )}

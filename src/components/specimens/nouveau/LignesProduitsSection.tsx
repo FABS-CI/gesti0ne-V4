@@ -1,5 +1,4 @@
 import type { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
-import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -36,7 +35,6 @@ export function LignesProduitsSection({ form, fa, onProduitChange }: Props) {
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">3. Produits remis</h2>
         <Button type="button" variant="outline" size="sm" onClick={addLigne}>
-          <Plus className="h-4 w-4 mr-2" />
           Ajouter une ligne
         </Button>
       </div>
@@ -85,15 +83,23 @@ export function LignesProduitsSection({ form, fa, onProduitChange }: Props) {
                         {...form.register(`lignes.${i}.quantite`, { valueAsNumber: true })}
                         className="text-right w-24"
                         placeholder=""
-                        onFocus={(e) => { if (e.target.value === "0") e.target.value = ""; }}
+                        onFocus={(e) => {
+                          if (e.target.value === "0") e.target.value = "";
+                        }}
                       />
                       {err?.quantite && (
                         <p className="text-xs text-destructive mt-1">{err.quantite.message}</p>
                       )}
                     </TableCell>
                     <TableCell>
-                      <Button aria-label="Supprimer" type="button" variant="ghost" size="icon" onClick={() => remove(i)}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
+                      <Button
+                        aria-label="Supprimer"
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => remove(i)}
+                      >
+                        Supprimer
                       </Button>
                     </TableCell>
                   </TableRow>

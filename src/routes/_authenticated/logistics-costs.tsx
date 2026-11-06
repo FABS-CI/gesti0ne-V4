@@ -5,14 +5,7 @@ import { formatFCFA } from "@/lib/format";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import {
-  CheckCircle2,
-  Eye,
-  FileDown,
-  Filter,
-  Undo2,
-  XCircle,
-} from "lucide-react";
+import { Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { usePermissions } from "@/hooks/use-permissions";
 import { Button } from "@/components/ui/button";
@@ -52,7 +45,6 @@ function LogisticsCostsPage() {
   const qc = useQueryClient();
   const { has, isSuperAdmin } = usePermissions();
   const canCancel = isSuperAdmin || has("tournees.annuler_validation");
-
 
   const [f, setF] = useState({
     from: "",
@@ -205,18 +197,15 @@ function LogisticsCostsPage() {
     <div className="space-y-4 p-4">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="ds-page-title">
-            Coûts logistiques
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Coûts logistiques</h1>
           <p className="text-sm text-muted-foreground">
             Consultation, validation comptable et suivi des dépenses des tournées.
           </p>
         </div>
         <Button variant="outline" size="sm" onClick={exportPdf} disabled={!rows.length}>
-          <FileDown className="mr-2 h-4 w-4" /> Rapport PDF
+          Rapport PDF
         </Button>
       </div>
-
       <div className="grid gap-3 grid-cols-2 md:grid-cols-4">
         <Kpi label="Aujourd'hui" value={formatFCFA(kpis.tDay)} />
         <Kpi label="Semaine" value={formatFCFA(kpis.tWeek)} />
@@ -227,7 +216,6 @@ function LogisticsCostsPage() {
         <Kpi label="Moyenne / colis" value={formatFCFA(kpis.moyColis)} />
         <Kpi label="Moyenne / carton" value={formatFCFA(kpis.moyCarton)} />
       </div>
-
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm">Répartition des dépenses par catégorie</CardTitle>
@@ -248,12 +236,9 @@ function LogisticsCostsPage() {
           </div>
         </CardContent>
       </Card>
-
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm flex items-center gap-2">
-            <Filter className="h-4 w-4" /> Filtres
-          </CardTitle>
+          <CardTitle className="text-sm flex items-center gap-2">Filtres</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-3 grid-cols-2 md:grid-cols-4 lg:grid-cols-7">
           <div>
@@ -332,7 +317,6 @@ function LogisticsCostsPage() {
           </div>
         </CardContent>
       </Card>
-
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm">Tournées avec coûts ({rows.length})</CardTitle>
@@ -384,51 +368,67 @@ function LogisticsCostsPage() {
                       </td>
                       <td className="border p-2 text-right">
                         <div className="inline-flex gap-1">
-                          <Button aria-label="Voir la tournée" asChild variant="ghost" size="icon" title="Ouvrir le bon de tournée">
-                            <Link to="/bon-de-tournee/$tourneeId" params={{ tourneeId: r.tournee_id }}>
-                              <Eye className="h-4 w-4" />
+                          <Button
+                            aria-label="Voir la tournée"
+                            asChild
+                            variant="ghost"
+                            size="sm"
+                            title="Ouvrir le bon de tournée"
+                          >
+                            <Link
+                              to="/bon-de-tournee/$tourneeId"
+                              params={{ tourneeId: r.tournee_id }}
+                            >
+                              Voir
                             </Link>
                           </Button>
-
-                          <Button aria-label="Détail des coûts"
+                          <Button
+                            aria-label="Détail des coûts"
                             variant="ghost"
-                            size="icon"
+                            size="sm"
                             title="Détail des coûts"
                             onClick={() => setDetail(r)}
                           >
-                            <FileDown className="h-4 w-4" />
+                            Détail
                           </Button>
-                          {(r.validation_statut === "en_attente" || r.validation_statut === "brouillon") && (
+                          {(r.validation_statut === "en_attente" ||
+                            r.validation_statut === "brouillon") && (
                             <>
-                              <Button aria-label="Valider le décaissement"
+                              <Button
+                                aria-label="Valider le décaissement"
                                 variant="default"
                                 size="sm"
                                 title="Valider le décaissement"
                                 onClick={() => setValidating(r)}
                                 className="gap-1"
                               >
-                                <CheckCircle2 className="h-4 w-4" />
                                 Valider
                               </Button>
                               {(isSuperAdmin || has("tournees.valider_couts")) && (
-                                <Button aria-label="Refuser"
+                                <Button
+                                  aria-label="Refuser"
                                   variant="ghost"
-                                  size="icon"
+                                  size="sm"
                                   title="Refuser"
                                   onClick={() => setRefusing(r)}
                                 >
-                                  <XCircle className="h-4 w-4 text-destructive" />
+                                  Refuser
                                 </Button>
                               )}
                             </>
                           )}
                           {canCancel && r.validation_statut === "decaisse" && (
-                            <Button aria-label="Annuler la validation"
+                            <Button
+                              aria-label="Annuler la validation"
                               variant="ghost"
                               size="icon"
                               title="Annuler la validation"
                               onClick={async () => {
-                                if (!await askConfirm("Annuler la validation et supprimer l'écriture ?"))
+                                if (
+                                  !(await askConfirm(
+                                    "Annuler la validation et supprimer l'écriture ?",
+                                  ))
+                                )
                                   return;
                                 const { error } = await supabase.rpc("annuler_validation_tournee", {
                                   _tournee_id: r.tournee_id,
@@ -440,9 +440,7 @@ function LogisticsCostsPage() {
                                   qc.invalidateQueries({ queryKey: ["logistics-costs"] });
                                 }
                               }}
-                            >
-                              <Undo2 className="h-4 w-4" />
-                            </Button>
+                            ></Button>
                           )}
                         </div>
                       </td>
@@ -454,7 +452,6 @@ function LogisticsCostsPage() {
           </table>
         </CardContent>
       </Card>
-
       <ValidateDialog
         row={validating}
         onClose={() => setValidating(null)}

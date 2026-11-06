@@ -1,4 +1,3 @@
-import { UserX } from "lucide-react";
 import type { ResourceConfig } from "@/components/crud/ResourceManager";
 
 const types = [
@@ -19,7 +18,6 @@ export const absencesConfig: ResourceConfig = {
   idField: "absence_id",
   title: "Absences",
   subtitle: "Suivi des absences du personnel",
-  icon: UserX,
   newLabel: "Nouvelle absence",
   entityLabel: "l'absence",
   csvName: "absences",

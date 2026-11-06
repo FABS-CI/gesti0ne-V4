@@ -1,4 +1,3 @@
-import { Mail, MapPin, Phone, User } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Info } from "./shared";
 import { formatFCFA } from "@/lib/format";
@@ -20,36 +19,18 @@ export function ClientInfosTab({ client, typeLabel }: ClientInfosTabProps) {
           <CardTitle className="text-sm text-muted-foreground">Coordonnées</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 pt-2 sm:grid-cols-2 lg:grid-cols-3">
-          {client.ancien_nom && (
-            <Info icon={<User className="h-4 w-4" />} label="Ancien nom" value={client.ancien_nom} />
-          )}
-          <Info
-            icon={<User className="h-4 w-4" />}
-            label="Représentant"
-            value={client.representant}
-          />
-          <Info icon={<Phone className="h-4 w-4" />} label="Téléphone" value={client.telephone} />
-
-          <Info icon={<Mail className="h-4 w-4" />} label="Email" value={client.email} />
-          <Info icon={<MapPin className="h-4 w-4" />} label="Adresse" value={client.adresse} />
-          <Info icon={<MapPin className="h-4 w-4" />} label="Quartier" value={client.quartier} />
-          <Info
-            icon={<MapPin className="h-4 w-4" />}
-            label="Ville"
-            value={client.ville}
-            testId="readonly-ville"
-          />
-          <Info
-            icon={<MapPin className="h-4 w-4" />}
-            label="Commune"
-            value={client.commune}
-            testId="readonly-commune"
-          />
+          {client.ancien_nom && <Info label="Ancien nom" value={client.ancien_nom} />}
+          <Info label="Représentant" value={client.representant} />
+          <Info label="Téléphone" value={client.telephone} />
+          <Info label="Email" value={client.email} />
+          <Info label="Adresse" value={client.adresse} />
+          <Info label="Quartier" value={client.quartier} />
+          <Info label="Ville" value={client.ville} testId="readonly-ville" />
+          <Info label="Commune" value={client.commune} testId="readonly-commune" />
           <Info label="BP" value={client.bp} />
           <Info label="Pays" value={client.pays} />
         </CardContent>
       </Card>
-
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm text-muted-foreground">Fiscal & commercial</CardTitle>

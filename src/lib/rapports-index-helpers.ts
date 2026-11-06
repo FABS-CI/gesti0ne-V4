@@ -1,7 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { exportPdf } from "@/lib/export-csv";
 import { formatFCFA } from "@/lib/format";
-import type { LucideIcon } from "lucide-react";
 
 export type Col = { key: string; label: string; money?: boolean; date?: boolean };
 
@@ -11,7 +10,6 @@ export type ReportDef = {
   table: string;
   label: string;
   description: string;
-  icon: LucideIcon;
   color: string;
   columns: Col[];
   fetcher?: (exerciceId: string | null) => Promise<Record<string, unknown>[]>;

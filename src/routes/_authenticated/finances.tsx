@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Download, Plus, Search, } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -158,29 +157,21 @@ function FinancesPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title">
-            Finances
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">Finances</h1>
           <p className="text-sm text-muted-foreground">Suivi des recettes et dépenses</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleExport} disabled={!transactions.length}>
-            <Download className="mr-2 h-4 w-4" /> Exporter
+            Exporter
           </Button>
-          <Button onClick={openNew}>
-            <Plus className="mr-2 h-4 w-4" /> Nouvelle transaction
-          </Button>
+          <Button onClick={openNew}>Nouvelle transaction</Button>
         </div>
       </div>
-
       <FinancesKpis {...totals} />
-
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative max-w-sm flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Rechercher..."
-            className="pl-9"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -193,7 +184,6 @@ function FinancesPage() {
           </TabsList>
         </Tabs>
       </div>
-
       <TransactionsTable
         transactions={transactions}
         isLoading={isLoading}
@@ -201,7 +191,6 @@ function FinancesPage() {
         onDelete={(id) => deleteMutation.mutate(id)}
         onAnnuler={(id) => annulerMutation.mutate(id)}
       />
-
       <TransactionFormDialog
         open={open}
         onOpenChange={setOpen}

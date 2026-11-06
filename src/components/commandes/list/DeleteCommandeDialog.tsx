@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -45,16 +44,13 @@ export function DeleteCommandeDialog({
     : (commande?.reference ?? "");
 
   const canConfirm =
-    motif.trim().length > 0 &&
-    typed.trim() === (force ? "FORCER" : "SUPPRIMER") &&
-    !pending;
+    motif.trim().length > 0 && typed.trim() === (force ? "FORCER" : "SUPPRIMER") && !pending;
 
   return (
     <Dialog open={!!commande} onOpenChange={(o) => (!pending ? onOpenChange(o) : null)}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-destructive" />
             Supprimer définitivement cette commande ?
           </DialogTitle>
           <DialogDescription>
@@ -63,7 +59,6 @@ export function DeleteCommandeDialog({
             <span className="font-mono text-xs">{label}</span>.
           </DialogDescription>
         </DialogHeader>
-
         <div className="space-y-3 text-sm">
           <p className="text-destructive font-medium">
             {force
@@ -104,13 +99,10 @@ export function DeleteCommandeDialog({
               rows={2}
             />
           </div>
-
           <div className="space-y-1">
             <Label htmlFor="confirm-delete-typing">
               Pour confirmer, tapez{" "}
-              <span className="font-mono font-semibold">
-                {force ? "FORCER" : "SUPPRIMER"}
-              </span>
+              <span className="font-mono font-semibold">{force ? "FORCER" : "SUPPRIMER"}</span>
             </Label>
             <Input
               id="confirm-delete-typing"
@@ -120,7 +112,6 @@ export function DeleteCommandeDialog({
             />
           </div>
         </div>
-
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={pending}>
             Annuler
@@ -130,7 +121,11 @@ export function DeleteCommandeDialog({
             disabled={!canConfirm}
             onClick={() => onConfirm(motif.trim(), force)}
           >
-            {pending ? "Suppression…" : force ? "Forcer la suppression" : "Supprimer définitivement"}
+            {pending
+              ? "Suppression…"
+              : force
+                ? "Forcer la suppression"
+                : "Supprimer définitivement"}
           </Button>
         </DialogFooter>
       </DialogContent>

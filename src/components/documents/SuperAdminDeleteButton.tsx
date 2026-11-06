@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Trash2, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -56,8 +56,14 @@ export function SuperAdminDeleteButton({
 
   return (
     <>
-      <Button aria-label={title} variant="ghost" size="icon" title={title} onClick={() => setOpen(true)}>
-        <Trash2 className="h-4 w-4 text-destructive" />
+      <Button
+        aria-label={title}
+        variant="ghost"
+        size="sm"
+        title={title}
+        onClick={() => setOpen(true)}
+      >
+        Supprimer
       </Button>
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogContent>

@@ -2,13 +2,20 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Download, RotateCcw, Play, Plus, X } from "lucide-react";
+import { X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { askConfirm } from "@/components/common/GlobalConfirm";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 import { authRouteHead } from "@/lib/route-head";
@@ -48,13 +55,14 @@ async function chargerClients(): Promise<RenommageSource[]> {
   return out;
 }
 
-const STATUT_VARIANT: Record<RenommageStatut, "default" | "secondary" | "outline" | "destructive"> = {
-  renomme: "default",
-  doublon: "secondary",
-  manuel: "destructive",
-  verifier: "outline",
-  non_concerne: "outline",
-};
+const STATUT_VARIANT: Record<RenommageStatut, "default" | "secondary" | "outline" | "destructive"> =
+  {
+    renomme: "default",
+    doublon: "secondary",
+    manuel: "destructive",
+    verifier: "outline",
+    non_concerne: "outline",
+  };
 
 function RenommagePage() {
   const qc = useQueryClient();
@@ -68,7 +76,10 @@ function RenommagePage() {
   const exclQ = useQuery({
     queryKey: ["renommage", "exclusions"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("client_renommage_exclusions").select("reference").order("reference");
+      const { data, error } = await supabase
+        .from("client_renommage_exclusions")
+        .select("reference")
+        .order("reference");
       if (error) throw error;
       return data.map((d) => d.reference);
     },
@@ -113,7 +124,8 @@ function RenommagePage() {
     [clientsQ.data, exclQ.data],
   );
   const compteurs = compterStatuts(lignes);
-  const nomFinal = (l: RenommageLigne) => (edits[l.client_id]?.trim() || l.nouveau_nom || "").toUpperCase();
+  const nomFinal = (l: RenommageLigne) =>
+    (edits[l.client_id]?.trim() || l.nouveau_nom || "").toUpperCase();
   const aAppliquer = lignes.filter((l) => {
     const n = nomFinal(l);
     if (!n || n === l.nom_actuel.toUpperCase()) return false;
@@ -124,8 +136,8 @@ function RenommagePage() {
     if (filtre !== "all" && l.statut !== filtre) return false;
     if (!q) return true;
     const s = q.toUpperCase();
-    return [l.reference, l.ancien_nom, l.nom_actuel, l.representant, l.nouveau_nom ?? ""].some((v) =>
-      v.toUpperCase().includes(s),
+    return [l.reference, l.ancien_nom, l.nom_actuel, l.representant, l.nouveau_nom ?? ""].some(
+      (v) => v.toUpperCase().includes(s),
     );
   });
 
@@ -135,7 +147,11 @@ function RenommagePage() {
     mutationFn: async () => {
       const { data: lot, error } = await supabase.rpc("renommage_clients_ouvrir_lot");
       if (error) throw error;
-      const items = aAppliquer.map((l) => ({ client_id: l.client_id, nouveau_nom: nomFinal(l), type: l.type ?? "" }));
+      const items = aAppliquer.map((l) => ({
+        client_id: l.client_id,
+        nouveau_nom: nomFinal(l),
+        type: l.type ?? "",
+      }));
       for (let i = 0; i < items.length; i += BATCH) {
         const { error: e } = await supabase.rpc("renommage_clients_appliquer_lot", {
           _lot_id: lot as string,
@@ -143,12 +159,20 @@ function RenommagePage() {
         });
         if (e) throw e;
       }
-      const { data: res, error: e2 } = await supabase.rpc("renommage_clients_cloturer_lot", { _lot_id: lot as string });
+      const { data: res, error: e2 } = await supabase.rpc("renommage_clients_cloturer_lot", {
+        _lot_id: lot as string,
+      });
       if (e2) throw e2;
       const r = res as Record<string, number>;
       return {
-        nb_clients: r.nb_clients, nb_debiteurs: r.nb_debiteurs, total_impaye: Number(r.total_impaye),
-        avant: { nb_clients: r.nb_clients_avant, nb_debiteurs: r.nb_debiteurs_avant, total_impaye: Number(r.total_impaye_avant) },
+        nb_clients: r.nb_clients,
+        nb_debiteurs: r.nb_debiteurs,
+        total_impaye: Number(r.total_impaye),
+        avant: {
+          nb_clients: r.nb_clients_avant,
+          nb_debiteurs: r.nb_debiteurs_avant,
+          total_impaye: Number(r.total_impaye_avant),
+        },
       };
     },
     onSuccess: (r) => {
@@ -163,7 +187,9 @@ function RenommagePage() {
 
   const annuler = useMutation({
     mutationFn: async (lotId: string) => {
-      const { data, error } = await supabase.rpc("renommage_clients_annuler_lot", { _lot_id: lotId });
+      const { data, error } = await supabase.rpc("renommage_clients_annuler_lot", {
+        _lot_id: lotId,
+      });
       if (error) throw error;
       return data as number;
     },
@@ -185,7 +211,10 @@ function RenommagePage() {
     refresh();
   }
   async function retirerExclusion(ref: string) {
-    const { error } = await supabase.from("client_renommage_exclusions").delete().eq("reference", ref);
+    const { error } = await supabase
+      .from("client_renommage_exclusions")
+      .delete()
+      .eq("reference", ref);
     if (error) return toast.error(friendlyError(error, "Retrait impossible"));
     refresh();
   }
@@ -230,11 +259,10 @@ function RenommagePage() {
       <div>
         <h1 className="ds-page-title">Renommage des clients</h1>
         <p className="text-sm text-muted-foreground">
-          Les noms d'écoles et d'institutions deviennent « LIBRAIRIE » ou « PAPETERIE » suivi du représentant.
-          La référence, le solde et l'historique ne changent pas.
+          Les noms d'écoles et d'institutions deviennent « LIBRAIRIE » ou « PAPETERIE » suivi du
+          représentant. La référence, le solde et l'historique ne changent pas.
         </p>
       </div>
-
       <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {cartes.map(([label, n, s]) => (
           <button
@@ -248,13 +276,21 @@ function RenommagePage() {
           </button>
         ))}
       </div>
-
       <Card>
-        <CardHeader className="pb-2"><CardTitle className="text-sm">Contrôle</CardTitle></CardHeader>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm">Contrôle</CardTitle>
+        </CardHeader>
         <CardContent className="grid gap-2 text-sm sm:grid-cols-3">
-          <div>Clients : <b className="tabular-nums">{ctl?.nb_clients ?? "…"}</b></div>
-          <div>Clients débiteurs : <b className="tabular-nums">{ctl?.nb_debiteurs ?? "…"}</b></div>
-          <div>Total impayé : <b className="tabular-nums">{ctl ? formatFCFA(Number(ctl.total_impaye)) : "…"}</b></div>
+          <div>
+            Clients : <b className="tabular-nums">{ctl?.nb_clients ?? "…"}</b>
+          </div>
+          <div>
+            Clients débiteurs : <b className="tabular-nums">{ctl?.nb_debiteurs ?? "…"}</b>
+          </div>
+          <div>
+            Total impayé :{" "}
+            <b className="tabular-nums">{ctl ? formatFCFA(Number(ctl.total_impaye)) : "…"}</b>
+          </div>
           {resultat && (
             <div className="sm:col-span-3 rounded-md border p-3">
               <div className="font-medium mb-1">
@@ -271,16 +307,23 @@ function RenommagePage() {
           )}
         </CardContent>
       </Card>
-
       <div className="flex flex-wrap items-center gap-2">
-        <Input className="max-w-xs" placeholder="Rechercher (référence, nom, représentant)…" value={q} onChange={(e) => setQ(e.target.value)} />
-        <Button variant="outline" onClick={exporter}><Download className="mr-2 h-4 w-4" /> Export Excel</Button>
+        <Input
+          className="max-w-xs"
+          placeholder="Rechercher (référence, nom, représentant)…"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+        />
+        <Button variant="outline" onClick={exporter}>
+          {" "}
+          Export Excel
+        </Button>
         <Button onClick={lancer} disabled={!aAppliquer.length || appliquer.isPending}>
-          <Play className="mr-2 h-4 w-4" />
-          {appliquer.isPending ? "Application en cours…" : `Appliquer le renommage (${aAppliquer.length})`}
+          {appliquer.isPending
+            ? "Application en cours…"
+            : `Appliquer le renommage (${aAppliquer.length})`}
         </Button>
       </div>
-
       <Card>
         <CardContent className="p-0 overflow-x-auto">
           <Table>
@@ -295,7 +338,9 @@ function RenommagePage() {
             </TableHeader>
             <TableBody>
               {clientsQ.isLoading && (
-                <TableRow><TableCell colSpan={5}>Chargement…</TableCell></TableRow>
+                <TableRow>
+                  <TableCell colSpan={5}>Chargement…</TableCell>
+                </TableRow>
               )}
               {visibles.slice(0, 500).map((l) => (
                 <TableRow key={l.client_id}>
@@ -321,7 +366,9 @@ function RenommagePage() {
                   </TableCell>
                   <TableCell>
                     <Badge variant={STATUT_VARIANT[l.statut]}>{STATUT_LABEL[l.statut]}</Badge>
-                    {l.raison && <div className="text-xs text-muted-foreground mt-1">{l.raison}</div>}
+                    {l.raison && (
+                      <div className="text-xs text-muted-foreground mt-1">{l.raison}</div>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
@@ -329,41 +376,71 @@ function RenommagePage() {
           </Table>
           {visibles.length > 500 && (
             <p className="p-3 text-xs text-muted-foreground">
-              500 lignes affichées sur {visibles.length} : affinez avec la recherche ou un filtre. L'export Excel contient tout.
+              500 lignes affichées sur {visibles.length} : affinez avec la recherche ou un filtre.
+              L'export Excel contient tout.
             </p>
           )}
         </CardContent>
       </Card>
-
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm">Références à ne jamais renommer</CardTitle></CardHeader>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Références à ne jamais renommer</CardTitle>
+          </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex gap-2">
-              <Input placeholder="Ex. CL-COL-118" value={newExcl} onChange={(e) => setNewExcl(e.target.value)} onKeyDown={(e) => e.key === "Enter" && ajouterExclusion()} />
-              <Button variant="outline" onClick={ajouterExclusion}><Plus className="mr-2 h-4 w-4" /> Ajouter</Button>
+              <Input
+                placeholder="Ex. CL-COL-118"
+                value={newExcl}
+                onChange={(e) => setNewExcl(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && ajouterExclusion()}
+              />
+              <Button variant="outline" onClick={ajouterExclusion}>
+                {" "}
+                Ajouter
+              </Button>
             </div>
             <div className="flex flex-wrap gap-2">
               {(exclQ.data ?? []).map((r) => (
                 <Badge key={r} variant="secondary" className="gap-1 font-mono">
                   {r}
-                  <button type="button" aria-label={`Retirer ${r}`} onClick={() => retirerExclusion(r)}><X className="h-3 w-3" /></button>
+                  <button
+                    type="button"
+                    aria-label={`Retirer ${r}`}
+                    onClick={() => retirerExclusion(r)}
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
                 </Badge>
               ))}
-              {!exclQ.data?.length && <span className="text-sm text-muted-foreground">Aucune exclusion.</span>}
+              {!exclQ.data?.length && (
+                <span className="text-sm text-muted-foreground">Aucune exclusion.</span>
+              )}
             </div>
           </CardContent>
         </Card>
-
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm">Journal des renommages</CardTitle></CardHeader>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Journal des renommages</CardTitle>
+          </CardHeader>
           <CardContent className="space-y-2">
             {(lotsQ.data ?? []).map((lot) => (
               <div key={lot.lot_id} className="rounded-md border p-2 text-sm">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <button type="button" className="text-left" onClick={() => setLotOuvert(lotOuvert === lot.lot_id ? null : lot.lot_id)}>
-                    {formatDateTime(lot.created_at)} — {lot.created_by_email ?? "—"} — {lot.nb_renommes} client(s){" "}
-                    <Badge variant="outline">{lot.statut === "annule" ? "Annulé" : lot.statut === "applique" ? "Appliqué" : "Incomplet"}</Badge>
+                  <button
+                    type="button"
+                    className="text-left"
+                    onClick={() => setLotOuvert(lotOuvert === lot.lot_id ? null : lot.lot_id)}
+                  >
+                    {formatDateTime(lot.created_at)} — {lot.created_by_email ?? "—"} —{" "}
+                    {lot.nb_renommes} client(s){" "}
+                    <Badge variant="outline">
+                      {lot.statut === "annule"
+                        ? "Annulé"
+                        : lot.statut === "applique"
+                          ? "Appliqué"
+                          : "Incomplet"}
+                    </Badge>
                   </button>
                   {lot.statut !== "annule" && (
                     <Button
@@ -371,11 +448,18 @@ function RenommagePage() {
                       variant="outline"
                       disabled={annuler.isPending}
                       onClick={async () => {
-                        if (await askConfirm({ title: "Annuler le renommage ?", description: "Tous les anciens noms de ce lot seront restaurés, sur les fiches et sur les documents.", destructive: true }))
+                        if (
+                          await askConfirm({
+                            title: "Annuler le renommage ?",
+                            description:
+                              "Tous les anciens noms de ce lot seront restaurés, sur les fiches et sur les documents.",
+                            destructive: true,
+                          })
+                        )
                           annuler.mutate(lot.lot_id);
                       }}
                     >
-                      <RotateCcw className="mr-2 h-4 w-4" /> Annuler le renommage
+                      Annuler le renommage
                     </Button>
                   )}
                 </div>
@@ -383,14 +467,17 @@ function RenommagePage() {
                   <div className="mt-2 max-h-64 overflow-auto text-xs">
                     {(journalQ.data ?? []).map((j) => (
                       <div key={j.reference + j.created_at} className="border-t py-1">
-                        <span className="font-mono">{j.reference}</span> : {j.ancien_nom} → {j.nouveau_nom}
+                        <span className="font-mono">{j.reference}</span> : {j.ancien_nom} →{" "}
+                        {j.nouveau_nom}
                       </div>
                     ))}
                   </div>
                 )}
               </div>
             ))}
-            {!lotsQ.data?.length && <p className="text-sm text-muted-foreground">Aucun renommage pour l'instant.</p>}
+            {!lotsQ.data?.length && (
+              <p className="text-sm text-muted-foreground">Aucun renommage pour l'instant.</p>
+            )}
           </CardContent>
         </Card>
       </div>

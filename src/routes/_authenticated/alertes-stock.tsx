@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { AlertTriangle, Download, Warehouse } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -106,7 +105,6 @@ function AlertesStockPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <AlertTriangle className="h-7 w-7 text-destructive" />
           <div>
             <h1 className="ds-page-title">Alertes de stock par dépôt</h1>
             <p className="text-sm text-muted-foreground">
@@ -115,10 +113,9 @@ function AlertesStockPage() {
           </div>
         </div>
         <Button variant="outline" size="sm" onClick={onExport} disabled={!rows.length}>
-          <Download className="mr-2 h-4 w-4" /> Exporter
+          Exporter
         </Button>
       </div>
-
       <div className="grid gap-3 sm:grid-cols-3">
         {(["rupture", "critique", "bas"] as const).map((sev) => (
           <Card key={sev}>
@@ -133,7 +130,6 @@ function AlertesStockPage() {
           </Card>
         ))}
       </div>
-
       <div className="flex flex-wrap gap-3 rounded-md border bg-card p-4">
         <Input
           placeholder="Rechercher (référence, désignation)…"
@@ -172,16 +168,13 @@ function AlertesStockPage() {
           </SelectContent>
         </Select>
       </div>
-
       <div className="rounded-lg border bg-card">
         <ResponsiveTable stickyFirstCol>
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Sévérité</TableHead>
-                <TableHead>
-                  <Warehouse className="inline h-3.5 w-3.5 mr-1" /> Dépôt
-                </TableHead>
+                <TableHead>Dépôt</TableHead>
                 <TableHead>Référence</TableHead>
                 <TableHead>Désignation</TableHead>
                 <TableHead className="text-right">Quantité</TableHead>
@@ -199,7 +192,7 @@ function AlertesStockPage() {
               ) : rows.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
-                    Aucune alerte 
+                    Aucune alerte
                   </TableCell>
                 </TableRow>
               ) : (

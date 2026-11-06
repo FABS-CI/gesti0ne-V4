@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { BookOpen, ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -49,7 +49,6 @@ export function JournalTable({ isLoading, ecritures, expanded, onToggle }: Props
                 <TableCell colSpan={7} className="py-6">
                   <EmptyState
                     variant="rich"
-                    icon={BookOpen}
                     title="Aucune écriture comptable"
                     description="Les écritures générées par vos ventes, achats et paiements alimenteront automatiquement ce journal."
                     className="border-none"

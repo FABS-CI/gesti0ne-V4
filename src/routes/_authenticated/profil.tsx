@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Save, KeyRound, Camera } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAvatarUrl } from "@/hooks/use-avatar-url";
 
@@ -127,7 +127,6 @@ function Profil() {
         <h1 className="ds-page-title">Mon profil</h1>
         <p className="text-sm text-muted-foreground">Gérez vos informations personnelles</p>
       </div>
-
       <Card className="max-w-xl">
         <CardHeader>
           <CardTitle className="text-base">Informations</CardTitle>
@@ -143,11 +142,7 @@ function Profil() {
             <div>
               <input ref={fileRef} type="file" accept="image/*" hidden onChange={onFileChange} />
               <Button type="button" variant="outline" onClick={onPickFile} disabled={uploading}>
-                {uploading ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Camera className="mr-2 h-4 w-4" />
-                )}
+                {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 {profile?.avatar_url ? "Changer la photo" : "Ajouter une photo"}
               </Button>
               <p className="mt-1 text-xs text-muted-foreground">JPG/PNG, 5 Mo max.</p>
@@ -162,16 +157,11 @@ function Profil() {
             <Input id="nom" value={nom} onChange={(e) => setNom(e.target.value)} />
           </div>
           <Button onClick={saveProfile} disabled={saving}>
-            {saving ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="mr-2 h-4 w-4" />
-            )}
+            {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             Enregistrer
           </Button>
         </CardContent>
       </Card>
-
       <Card className="max-w-xl">
         <CardHeader>
           <CardTitle className="text-base">Sécurité</CardTitle>
@@ -188,11 +178,7 @@ function Profil() {
             />
           </div>
           <Button variant="outline" onClick={savePassword} disabled={pwdSaving}>
-            {pwdSaving ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <KeyRound className="mr-2 h-4 w-4" />
-            )}
+            {pwdSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             Enregistrer le mot de passe
           </Button>
         </CardContent>

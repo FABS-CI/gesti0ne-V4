@@ -1,7 +1,6 @@
 // Notes 3A, 3C, 3C BIS et 3D : tableaux de mouvements des immobilisations.
 
 import { useState } from "react";
-import { AlertTriangle } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -82,7 +81,6 @@ export function NotesImmobilisations({ tableaux }: { tableaux: NoteTableau[] }) 
         <ul className="space-y-1 text-xs">
           {t.hypotheses.map((h) => (
             <li key={h} className="flex gap-2 text-amber-700 dark:text-amber-400">
-              <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
               Hypothèse : {h}.
             </li>
           ))}

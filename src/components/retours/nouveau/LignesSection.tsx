@@ -1,5 +1,4 @@
 import type { UseFieldArrayReturn, UseFormReturn } from "react-hook-form";
-import { Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -53,7 +52,6 @@ export function LignesSection({ form, fa, onProduitChange }: Props) {
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">3. Produits retournés</h2>
         <Button type="button" variant="outline" size="sm" onClick={addLigne}>
-          <Plus className="h-4 w-4 mr-2" />
           Ajouter une ligne
         </Button>
       </div>
@@ -89,7 +87,9 @@ export function LignesSection({ form, fa, onProduitChange }: Props) {
                         value={form.watch(`lignes.${i}.produit_id`)}
                         onChange={(_id, produit) => {
                           if (form.getValues("facture_id") && !lignes[i]?.qte_disponible) {
-                            toast.warning("Attention : vous ajoutez un produit hors facture d'origine.");
+                            toast.warning(
+                              "Attention : vous ajoutez un produit hors facture d'origine.",
+                            );
                           }
                           onProduitChange(i, produit);
                         }}
@@ -181,8 +181,14 @@ export function LignesSection({ form, fa, onProduitChange }: Props) {
                       </Select>
                     </TableCell>
                     <TableCell>
-                      <Button aria-label="Supprimer" type="button" variant="ghost" size="icon" onClick={() => remove(i)}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
+                      <Button
+                        aria-label="Supprimer"
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => remove(i)}
+                      >
+                        Supprimer
                       </Button>
                     </TableCell>
                   </TableRow>

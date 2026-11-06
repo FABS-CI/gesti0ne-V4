@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowUpDown, Inbox } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -172,7 +172,6 @@ export function ComparatifTable({
               <TableRow>
                 <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
                   <div className="flex flex-col items-center gap-2">
-                    <Inbox className="h-6 w-6" />
                     <p>Aucun exercice sélectionné.</p>
                     <button
                       type="button"

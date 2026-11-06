@@ -1,17 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { friendlyError } from '@/lib/friendly-error';
+import { friendlyError } from "@/lib/friendly-error";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Download, FileSpreadsheet, FileText, Archive, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { usePermissions } from "@/hooks/use-permissions";
 
-import {
-  EXPORT_ENTITIES,
-  fetchExportRows,
-  exportXLSX,
-  type ExportEntity,
-} from "@/lib/export-api";
+import { EXPORT_ENTITIES, fetchExportRows, exportXLSX, type ExportEntity } from "@/lib/export-api";
 
 import { exportPdf } from "@/lib/export-csv";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -86,9 +81,6 @@ function ExportsPage() {
     }
   };
 
-
-
-
   const preview = rows.slice(0, 10);
 
   return (
@@ -99,7 +91,6 @@ function ExportsPage() {
           Téléchargez vos données au format PDF ou Excel, ou créez une sauvegarde complète.
         </p>
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Export par module</CardTitle>
@@ -137,42 +128,31 @@ function ExportsPage() {
                   }, "PDF")
                 }
               >
-                {busy === "PDF" ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <FileText className="h-4 w-4 mr-2" />
-                )}
+                {busy === "PDF" ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
                 PDF
               </Button>
               <Button
                 disabled={isLoading || rows.length === 0 || busy !== null}
                 onClick={() => handle(() => exportXLSX(entity, rows), "Excel")}
               >
-                {busy === "Excel" ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <FileSpreadsheet className="h-4 w-4 mr-2" />
-                )}
+                {busy === "Excel" ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
                 Excel
               </Button>
             </div>
           </div>
-
           <div className="flex items-center gap-2">
             <Badge variant="secondary">{isLoading ? "Chargement…" : `${rows.length} lignes`}</Badge>
             <span className="text-xs text-muted-foreground">
               Limite : 10 000 lignes par export.
             </span>
           </div>
-
           <PreviewTable entity={entity} rows={preview} loading={isLoading} />
         </CardContent>
       </Card>
-
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Archive className="h-4 w-4" /> Sauvegarde complète (module dédié)
+            Sauvegarde complète (module dédié)
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -182,12 +162,8 @@ function ExportsPage() {
             empreinte d'intégrité — se pilote depuis le module Sauvegarde.
           </p>
           <Button asChild>
-            <Link to="/backup">
-              <Archive className="h-4 w-4 mr-2" />
-              Ouvrir le module Sauvegarde
-            </Link>
+            <Link to="/backup">Ouvrir le module Sauvegarde</Link>
           </Button>
-
         </CardContent>
       </Card>
     </div>

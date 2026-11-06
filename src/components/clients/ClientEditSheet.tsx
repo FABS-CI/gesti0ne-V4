@@ -1,6 +1,6 @@
 import { cloneElement, isValidElement, useEffect, useId, useState, type ReactElement } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Save, X } from "lucide-react";
+import { X } from "lucide-react";
 import { toast } from "sonner";
 
 import { updateClient, type ClientInput, type Client } from "@/lib/clients-api";
@@ -65,7 +65,6 @@ function toForm(c: Client): ClientInput {
   };
 }
 
-
 export function ClientEditSheet({
   client,
   open,
@@ -100,7 +99,10 @@ export function ClientEditSheet({
       qc.invalidateQueries({ queryKey: ["clients"] });
       onOpenChange(false);
     },
-    onError: (e) => toast.error(`Échec : ${friendlyError(e, "cause non précisée par le serveur. Réessayez dans un instant")}`),
+    onError: (e) =>
+      toast.error(
+        `Échec : ${friendlyError(e, "cause non précisée par le serveur. Réessayez dans un instant")}`,
+      ),
   });
 
   const handleCancel = () => {
@@ -121,7 +123,6 @@ export function ClientEditSheet({
             {client.reference} · {client.nom}
           </SheetDescription>
         </SheetHeader>
-
         <div className="mt-6 space-y-6 pb-24">
           <Section title="Identité">
             <Field label="Nom *" className="sm:col-span-2">
@@ -148,7 +149,6 @@ export function ClientEditSheet({
               />
             </Field>
           </Section>
-
           <Section title="Coordonnées">
             <Field label="Téléphone">
               <Input
@@ -156,7 +156,6 @@ export function ClientEditSheet({
                 onChange={(e) => set("telephone", e.target.value)}
               />
             </Field>
-
             <Field label="Email">
               <Input
                 type="email"
@@ -194,7 +193,6 @@ export function ClientEditSheet({
               <Input value={form.pays ?? ""} onChange={(e) => set("pays", e.target.value)} />
             </Field>
           </Section>
-
           <Section title="Fiscal & commercial">
             <Field label="Catégorie">
               <Input
@@ -268,7 +266,6 @@ export function ClientEditSheet({
               />
             </Field>
           </Section>
-
           <Section title="Notes">
             <Field label="Notes internes" className="sm:col-span-2">
               <Textarea
@@ -279,7 +276,6 @@ export function ClientEditSheet({
             </Field>
           </Section>
         </div>
-
         <div className="fixed bottom-0 right-0 flex w-full gap-2 border-t bg-background p-4 sm:max-w-2xl">
           <Button
             variant="outline"
@@ -290,7 +286,7 @@ export function ClientEditSheet({
             <X className="mr-2 h-4 w-4" /> Annuler
           </Button>
           <Button className="flex-1" onClick={() => save.mutate()} disabled={save.isPending}>
-            <Save className="mr-2 h-4 w-4" /> {save.isPending ? "Enregistrement…" : "Enregistrer"}
+            {save.isPending ? "Enregistrement…" : "Enregistrer"}
           </Button>
         </div>
       </SheetContent>

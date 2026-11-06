@@ -1,20 +1,3 @@
-import {
-  Users,
-  ShoppingCart,
-  Package,
-  Wallet,
-  FileText,
-  CreditCard,
-  Truck,
-  UserCog,
-  Factory,
-  Warehouse,
-  ClipboardList,
-  FileSpreadsheet,
-  Receipt,
-  BookOpen,
-  Banknote,
-} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatFCFA } from "@/lib/format";
 import type { ReportDef, SummaryRow } from "./rapports-index-helpers";
@@ -23,7 +6,11 @@ import type { ReportDef, SummaryRow } from "./rapports-index-helpers";
 async function loadDepotNames(): Promise<Map<string, string>> {
   const { data } = await supabase.from("depots").select("depot_id, nom, code");
   const m = new Map<string, string>();
-  for (const d of (data ?? []) as Array<{ depot_id: string; nom: string | null; code: string | null }>) {
+  for (const d of (data ?? []) as Array<{
+    depot_id: string;
+    nom: string | null;
+    code: string | null;
+  }>) {
     m.set(d.depot_id, d.nom || d.code || d.depot_id.slice(0, 8));
   }
   return m;
@@ -77,7 +64,6 @@ export const REPORTS: ReportDef[] = [
     permission: "rapports.voir_ca",
     label: "Liste des Clients",
     description: "Annuaire clients groupé par ville",
-    icon: Users,
     color: "#3B82F6",
     columns: [
       { key: "nom", label: "Client" },
@@ -111,7 +97,10 @@ export const REPORTS: ReportDef[] = [
     },
     summary: (rows) => [
       { label: "Total solde dû", value: formatFCFA(sum(rows, "solde")) },
-      { label: "Clients débiteurs", value: String(rows.filter((r) => Number(r.solde ?? 0) > 0).length) },
+      {
+        label: "Clients débiteurs",
+        value: String(rows.filter((r) => Number(r.solde ?? 0) > 0).length),
+      },
     ],
   },
 
@@ -120,7 +109,6 @@ export const REPORTS: ReportDef[] = [
     permission: "rapports.voir_ca",
     label: "Commandes",
     description: "Toutes les commandes",
-    icon: ShoppingCart,
     color: "#F97316",
     columns: [
       { key: "reference", label: "Référence" },
@@ -145,7 +133,10 @@ export const REPORTS: ReportDef[] = [
     },
     summary: (rows) => [
       { label: "Total montant TTC", value: formatFCFA(sum(rows, "montant_total")) },
-      { label: "Commandes validées", value: String(countStatut(rows, ["validee", "validée", "valide"])) },
+      {
+        label: "Commandes validées",
+        value: String(countStatut(rows, ["validee", "validée", "valide"])),
+      },
       { label: "Commandes annulées", value: String(countStatut(rows, ["annulee", "annulée"])) },
     ],
   },
@@ -154,7 +145,6 @@ export const REPORTS: ReportDef[] = [
     table: "produits",
     label: "Produits",
     description: "Catalogue produits & stock",
-    icon: Package,
     color: "#10B981",
     columns: [
       { key: "reference", label: "Code Article" },
@@ -201,7 +191,6 @@ export const REPORTS: ReportDef[] = [
     permission: "rapports.voir_ca",
     label: "Comptabilité — Recettes et dépenses",
     description: "Recettes et dépenses",
-    icon: Wallet,
     color: "#8B5CF6",
     columns: [
       { key: "reference", label: "Réf." },
@@ -216,7 +205,9 @@ export const REPORTS: ReportDef[] = [
     fetcher: async (exerciceId) => {
       let q = supabase
         .from("transactions")
-        .select("reference, date_transaction, type, categorie, libelle, mode_paiement, montant, statut")
+        .select(
+          "reference, date_transaction, type, categorie, libelle, mode_paiement, montant, statut",
+        )
         .order("date_transaction", { ascending: false });
       if (exerciceId) q = q.eq("exercice_id", exerciceId);
       const { data, error } = await q;
@@ -246,7 +237,6 @@ export const REPORTS: ReportDef[] = [
     permission: "rapports.voir_ca",
     label: "Factures",
     description: "Facturation clients",
-    icon: FileText,
     color: "#EF4444",
     columns: [
       { key: "reference", label: "Référence" },
@@ -289,7 +279,6 @@ export const REPORTS: ReportDef[] = [
     permission: "rapports.voir_ca",
     label: "Paiements",
     description: "Encaissements",
-    icon: CreditCard,
     color: "#14B8A6",
     columns: [
       { key: "reference", label: "Référence" },
@@ -317,8 +306,7 @@ export const REPORTS: ReportDef[] = [
         mode_paiement: r.mode_paiement,
         statut: r.statut,
         montant: r.montant,
-        facture_reference:
-          (r.facture as { reference?: string } | null)?.reference ?? "",
+        facture_reference: (r.facture as { reference?: string } | null)?.reference ?? "",
       }));
     },
     summary: (rows) => {
@@ -340,7 +328,6 @@ export const REPORTS: ReportDef[] = [
     permission: "rapports.voir_ca",
     label: "Achats",
     description: "Bons de commande fournisseurs",
-    icon: Truck,
     color: "#F59E0B",
     columns: [
       { key: "reference", label: "Référence" },
@@ -371,7 +358,6 @@ export const REPORTS: ReportDef[] = [
     table: "employes",
     label: "Employés",
     description: "Registre du personnel",
-    icon: UserCog,
     color: "#6366F1",
     columns: [
       { key: "matricule", label: "Matricule" },
@@ -386,7 +372,9 @@ export const REPORTS: ReportDef[] = [
     fetcher: async () => {
       const { data, error } = await supabase
         .from("employes")
-        .select("matricule, nom_complet, poste, departement, telephone, email, date_embauche, actif")
+        .select(
+          "matricule, nom_complet, poste, departement, telephone, email, date_embauche, actif",
+        )
         .order("nom_complet", { ascending: true });
       if (error) throw error;
       return (data ?? []) as Record<string, unknown>[];
@@ -401,7 +389,6 @@ export const REPORTS: ReportDef[] = [
     table: "fournisseurs",
     label: "Fournisseurs",
     description: "Annuaire des fournisseurs",
-    icon: Factory,
     color: "#0EA5E9",
     columns: [
       { key: "raison_sociale", label: "Raison sociale" },
@@ -430,7 +417,6 @@ export const REPORTS: ReportDef[] = [
     permission: "rapports.voir_ca",
     label: "Devis / Proformas",
     description: "Devis et proformas émis",
-    icon: FileSpreadsheet,
     color: "#A855F7",
     columns: [
       { key: "reference", label: "Référence" },
@@ -459,16 +445,13 @@ export const REPORTS: ReportDef[] = [
       if (error) throw error;
       return (data ?? []) as Record<string, unknown>[];
     },
-    summary: (rows) => [
-      { label: "Montant total", value: formatFCFA(sum(rows, "montant_total")) },
-    ],
+    summary: (rows) => [{ label: "Montant total", value: formatFCFA(sum(rows, "montant_total")) }],
   },
 
   {
     table: "bons_livraison",
     label: "Bons de livraison",
     description: "BL émis",
-    icon: Truck,
     color: "#22C55E",
     columns: [
       { key: "reference", label: "Référence" },
@@ -493,7 +476,10 @@ export const REPORTS: ReportDef[] = [
     },
     summary: (rows) => [
       { label: "Total livré", value: formatFCFA(sum(rows, "montant")) },
-      { label: "BL livrés", value: String(countStatut(rows, ["livre", "livré", "livree", "livrée"])) },
+      {
+        label: "BL livrés",
+        value: String(countStatut(rows, ["livre", "livré", "livree", "livrée"])),
+      },
     ],
   },
 
@@ -501,7 +487,6 @@ export const REPORTS: ReportDef[] = [
     table: "stocks_depots",
     label: "Stocks",
     description: "Niveaux de stock par dépôt",
-    icon: Warehouse,
     color: "#0D9488",
     columns: [
       { key: "produit_reference", label: "Réf." },
@@ -519,12 +504,14 @@ export const REPORTS: ReportDef[] = [
         loadProduitInfos(),
       ]);
       if (error) throw error;
-      const rows = ((data ?? []) as Array<{
-        produit_id: string;
-        depot_id: string;
-        quantite: number | null;
-        seuil_alerte: number | null;
-      }>).map((r) => {
+      const rows = (
+        (data ?? []) as Array<{
+          produit_id: string;
+          depot_id: string;
+          quantite: number | null;
+          seuil_alerte: number | null;
+        }>
+      ).map((r) => {
         const p = prods.get(r.produit_id);
         const q = Number(r.quantite ?? 0);
         const s = Number(r.seuil_alerte ?? 0);
@@ -538,9 +525,10 @@ export const REPORTS: ReportDef[] = [
           alerte: q <= s ? "! Sous seuil" : "",
         } as Record<string, unknown>;
       });
-      rows.sort((a, b) =>
-        String(a.depot_nom).localeCompare(String(b.depot_nom)) ||
-        String(a.produit_titre).localeCompare(String(b.produit_titre)),
+      rows.sort(
+        (a, b) =>
+          String(a.depot_nom).localeCompare(String(b.depot_nom)) ||
+          String(a.produit_titre).localeCompare(String(b.produit_titre)),
       );
       return rows;
     },
@@ -558,7 +546,6 @@ export const REPORTS: ReportDef[] = [
     table: "inventaires",
     label: "Inventaires",
     description: "Inventaires physiques",
-    icon: ClipboardList,
     color: "#D97706",
     columns: [
       { key: "reference", label: "Référence" },
@@ -587,7 +574,10 @@ export const REPORTS: ReportDef[] = [
     },
     summary: (rows) => [
       { label: "Écart cumulé (unités)", value: String(sum(rows, "ecart_total")) },
-      { label: "Inventaires clôturés", value: String(countStatut(rows, ["cloture", "clôturé", "cloturee"])) },
+      {
+        label: "Inventaires clôturés",
+        value: String(countStatut(rows, ["cloture", "clôturé", "cloturee"])),
+      },
     ],
   },
 
@@ -596,7 +586,6 @@ export const REPORTS: ReportDef[] = [
     permission: "rapports.voir_ca",
     label: "État de compte clients",
     description: "Solde par client (factures)",
-    icon: Receipt,
     color: "#DC2626",
     columns: [
       { key: "client_nom", label: "Client" },
@@ -654,7 +643,6 @@ export const REPORTS: ReportDef[] = [
     permission: "rapports.voir_ca",
     label: "Comptabilité — Écritures comptables",
     description: "Écritures comptables",
-    icon: BookOpen,
     color: "#7C3AED",
     columns: [
       { key: "reference", label: "Référence" },
@@ -687,7 +675,6 @@ export const REPORTS: ReportDef[] = [
     permission: "rapports.voir_ca",
     label: "Bulletins de paie",
     description: "Bulletins RH",
-    icon: Banknote,
     color: "#EC4899",
     columns: [
       { key: "reference", label: "Référence" },

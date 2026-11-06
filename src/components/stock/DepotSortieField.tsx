@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Lock, Unlock, AlertTriangle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -74,14 +73,7 @@ export function DepotSortieField({ value, onChange, label = "Dépôt de sortie",
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
-        <Label className="flex items-center gap-1.5">
-          {label}
-          {locked ? (
-            <Lock className="h-3 w-3 text-muted-foreground" />
-          ) : (
-            <Unlock className="h-3 w-3 text-warning" />
-          )}
-        </Label>
+        <Label className="flex items-center gap-1.5">{label}</Label>
         {canOverride &&
           !disabled &&
           (unlocked || !isPrincipalSelected ? (
@@ -110,7 +102,6 @@ export function DepotSortieField({ value, onChange, label = "Dépôt de sortie",
             </Button>
           ))}
       </div>
-
       <Select
         value={value}
         onValueChange={(v) => onChange(v, unlocked ? motif || null : null)}
@@ -140,7 +131,6 @@ export function DepotSortieField({ value, onChange, label = "Dépôt de sortie",
 
       {unlocked && !isPrincipalSelected && selected && (
         <div className="flex items-start gap-2 rounded-md border border-warning/40 bg-warning/10 p-2 text-xs text-warning">
-          <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
           <div>
             <div className="font-medium">Déstockage exceptionnel — {selected.nom}</div>
             <div className="text-warning">Motif : {motif || "—"}</div>

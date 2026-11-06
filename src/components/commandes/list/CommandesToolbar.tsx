@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { VenteRapideDialog } from "@/components/commandes/VenteRapideDialog";
-import { Plus, Search, Download, FileDown, SlidersHorizontal, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -40,12 +39,10 @@ export function CommandesToolbar({
   return (
     <div className="flex flex-wrap items-center gap-3 sticky top-0 z-20 rounded-lg border bg-card p-3">
       <div className="relative min-w-[200px] flex-1">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder="Rechercher une commande, un client…"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-9"
         />
       </div>
       <Select value={statut} onValueChange={onStatutChange}>
@@ -66,14 +63,12 @@ export function CommandesToolbar({
           onClick={() => setVenteRapide(true)}
           className="h-10 bg-success px-5 font-bold text-success-foreground shadow-md ring-1 ring-success-foreground/25 hover:bg-success/90"
         >
-          <Zap className="mr-2 h-5 w-5" /> VENTE RAPIDE
+          VENTE RAPIDE
         </Button>
       )}
       {!readOnly && (
         <Button asChild className="bg-primary hover:bg-primary/90">
-          <Link to="/commandes/nouvelle">
-            <Plus className="mr-2 h-4 w-4" /> Nouvelle commande
-          </Link>
+          <Link to="/commandes/nouvelle">Nouvelle commande</Link>
         </Button>
       )}
       <Button
@@ -81,13 +76,13 @@ export function CommandesToolbar({
         onClick={onToggleFilters}
         aria-expanded={filtersOpen}
       >
-        <SlidersHorizontal className="mr-2 h-4 w-4" /> Filtres
+        Filtres
       </Button>
       <Button variant="outline" onClick={onExportCsv} disabled={!hasItems}>
-        <Download className="mr-2 h-4 w-4" /> Exporter
+        Exporter
       </Button>
       <Button variant="outline" onClick={onExportPdf} disabled={!hasItems}>
-        <FileDown className="mr-2 h-4 w-4" /> PDF
+        PDF
       </Button>
       {venteRapide && <VenteRapideDialog open={venteRapide} onOpenChange={setVenteRapide} />}
     </div>

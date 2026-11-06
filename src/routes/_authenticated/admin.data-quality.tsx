@@ -3,7 +3,6 @@ import { formatDate, formatFCFA } from "@/lib/format";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { AlertCircle, Users, Package, FileX, RefreshCw, Merge } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -134,7 +133,7 @@ function DataQualityPage() {
           </p>
         </div>
         <Button variant="outline" size="sm" onClick={refetchAll}>
-          <RefreshCw className="h-4 w-4 mr-2" /> Actualiser
+          Actualiser
         </Button>
       </div>
 
@@ -143,7 +142,6 @@ function DataQualityPage() {
         <Card>
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-sm text-muted-foreground">Doublons clients</CardTitle>
-            <Users className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold">{dupQ.data?.length ?? "—"}</p>
@@ -153,7 +151,6 @@ function DataQualityPage() {
         <Card>
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-sm text-muted-foreground">BL orphelins</CardTitle>
-            <FileX className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold">{orphanQ.data?.length ?? "—"}</p>
@@ -163,7 +160,6 @@ function DataQualityPage() {
         <Card>
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-sm text-muted-foreground">Écarts stock</CardTitle>
-            <Package className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold">{stockQ.data?.length ?? "—"}</p>
@@ -171,21 +167,17 @@ function DataQualityPage() {
           </CardContent>
         </Card>
       </div>
-
       <ReconciliationFinanceCard />
       <ReconciliationStockCard />
 
       {/* Doublons clients */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" /> Doublons clients
-          </CardTitle>
+          <CardTitle className="flex items-center gap-2">Doublons clients</CardTitle>
         </CardHeader>
         <CardContent>
           {!isSuperAdmin && (
             <div className="flex items-center gap-2 text-xs text-warning mb-3">
-              <AlertCircle className="h-4 w-4" />
               La fusion est réservée aux super-admins.
             </div>
           )}
@@ -208,7 +200,6 @@ function DataQualityPage() {
                   <TableCell className="text-xs text-muted-foreground">
                     {(d.noms ?? []).join(" • ")}
                   </TableCell>
-
                   <TableCell className="text-right">
                     <Button
                       size="sm"
@@ -216,7 +207,7 @@ function DataQualityPage() {
                       disabled={!isSuperAdmin}
                       onClick={() => openMerge(d)}
                     >
-                      <Merge className="h-3 w-3 mr-1" /> Fusionner
+                      Fusionner
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -236,9 +227,7 @@ function DataQualityPage() {
       {/* BL orphelins */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileX className="h-5 w-5" /> Bons de livraison sans commande
-          </CardTitle>
+          <CardTitle className="flex items-center gap-2">Bons de livraison sans commande</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -259,9 +248,7 @@ function DataQualityPage() {
                   <TableCell>
                     <Badge variant="outline">{o.statut}</Badge>
                   </TableCell>
-                  <TableCell className="text-right">
-                    {formatFCFA(o.montant)}
-                  </TableCell>
+                  <TableCell className="text-right">{formatFCFA(o.montant)}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">
                     {formatDate(o.cree_le)}
                   </TableCell>
@@ -283,7 +270,7 @@ function DataQualityPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Package className="h-5 w-5" /> Écarts stock théorique vs mouvements
+            Écarts stock théorique vs mouvements
           </CardTitle>
         </CardHeader>
         <CardContent>

@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Search, Download, FileDown, Bug } from "lucide-react";
 import { toast } from "sonner";
 
 import { formatDateTime, formatFCFA } from "@/lib/format";
@@ -27,7 +26,7 @@ import {
 import { EtatCompteDebugPanel } from "@/components/etat-compte/EtatCompteDebugPanel";
 import { EtatCompteTable } from "@/components/etat-compte/EtatCompteTable";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
-import { friendlyError } from '@/lib/friendly-error';
+import { friendlyError } from "@/lib/friendly-error";
 
 export const Route = createFileRoute("/_authenticated/etat-compte-clients")({
   component: EtatComptePage,
@@ -182,9 +181,7 @@ function EtatComptePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="ds-page-title">
-            États de compte clients
-          </h1>
+          <h1 className="ds-page-title flex items-center gap-2">États de compte clients</h1>
           <p className="text-sm text-muted-foreground">Soldes et créances clients</p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -194,7 +191,7 @@ function EtatComptePage() {
             onClick={() => setDebugOpen((v) => !v)}
             disabled={!clients.length}
           >
-            <Bug className="mr-2 h-4 w-4" /> {debugOpen ? "Masquer" : "Afficher"} debug
+            {debugOpen ? "Masquer" : "Afficher"} debug
           </Button>
           <Button
             variant="outline"
@@ -202,13 +199,13 @@ function EtatComptePage() {
             onClick={handleExportDebug}
             disabled={!clients.length}
           >
-            <FileDown className="mr-2 h-4 w-4" /> Exporter trace debug
+            Exporter trace debug
           </Button>
           <Button variant="outline" onClick={handleExport} disabled={!clients.length}>
-            <Download className="mr-2 h-4 w-4" /> Exporter
+            Exporter
           </Button>
           <Button variant="outline" onClick={handleExportPdf} disabled={!clients.length}>
-            <FileDown className="mr-2 h-4 w-4" /> Exporter PDF
+            Exporter PDF
           </Button>
         </div>
       </div>
@@ -242,13 +239,10 @@ function EtatComptePage() {
           </CardContent>
         </Card>
       </div>
-
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative max-w-sm flex-1 min-w-[220px]">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Rechercher un client..."
-            className="pl-9"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -267,7 +261,6 @@ function EtatComptePage() {
           </SelectContent>
         </Select>
       </div>
-
       <EtatCompteTable
         clients={clients}
         isLoading={isLoading}

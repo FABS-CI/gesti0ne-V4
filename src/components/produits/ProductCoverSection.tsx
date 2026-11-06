@@ -1,15 +1,11 @@
 import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { ImagePlus, RefreshCw, Trash2, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import {
-  type Produit,
-  deleteProductCover,
-  uploadProductCover,
-} from "@/lib/produits-api";
+import { type Produit, deleteProductCover, uploadProductCover } from "@/lib/produits-api";
 import { ProductCoverThumb } from "./ProductCoverThumb";
-import { friendlyError } from '@/lib/friendly-error';
+import { friendlyError } from "@/lib/friendly-error";
 
 interface Props {
   produit: Produit;
@@ -81,11 +77,7 @@ export function ProductCoverSection({ produit, onChanged }: Props) {
           >
             {busy === "upload" ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : hasCover ? (
-              <RefreshCw className="mr-2 h-4 w-4" />
-            ) : (
-              <ImagePlus className="mr-2 h-4 w-4" />
-            )}
+            ) : hasCover ? null : null}
             {hasCover ? "Remplacer l'image" : "Téléverser une image"}
           </Button>
           {hasCover && (
@@ -97,11 +89,7 @@ export function ProductCoverSection({ produit, onChanged }: Props) {
               onClick={handleDelete}
               className="text-destructive hover:text-destructive"
             >
-              {busy === "delete" ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Trash2 className="mr-2 h-4 w-4" />
-              )}
+              {busy === "delete" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               Supprimer
             </Button>
           )}

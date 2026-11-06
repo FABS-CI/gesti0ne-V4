@@ -2,7 +2,7 @@ import { formatDateTime } from "@/lib/format";
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, CheckCircle2, Loader2, Navigation, Plus, Save, Trash2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -310,7 +310,10 @@ function EditTourneePage() {
       qc.invalidateQueries({ queryKey: ["tournee-colis-dispo"] });
       invalidateColisage(qc);
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "cause non précisée par le serveur. Réessayez dans un instant";
+      const msg =
+        e instanceof Error
+          ? e.message
+          : "cause non précisée par le serveur. Réessayez dans un instant";
       toast.error("Impossible d'enregistrer", { description: msg });
     } finally {
       setSaving(false);
@@ -320,10 +323,13 @@ function EditTourneePage() {
   const doDelete = async (motif: string | null) => {
     setDeleting(true);
     try {
-      const { data, error } = await supabase.rpc("supprimer_tournee" as never, {
-        _tournee_id: tourneeId,
-        _motif: motif ?? "",
-      } as never);
+      const { data, error } = await supabase.rpc(
+        "supprimer_tournee" as never,
+        {
+          _tournee_id: tourneeId,
+          _motif: motif ?? "",
+        } as never,
+      );
       if (error) throw error;
       const s = data as {
         colis_detaches?: number;
@@ -359,7 +365,10 @@ function EditTourneePage() {
       invalidateColisage(qc);
       navigate({ to: "/tournees" });
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "cause non précisée par le serveur. Réessayez dans un instant";
+      const msg =
+        e instanceof Error
+          ? e.message
+          : "cause non précisée par le serveur. Réessayez dans un instant";
       toast.error("Impossible de supprimer", { description: msg });
     } finally {
       setDeleting(false);
@@ -382,9 +391,12 @@ function EditTourneePage() {
         return;
       }
 
-      const { data: updated, error } = await supabase.rpc("cloturer_tournee" as never, {
-        _tournee_id: tourneeId,
-      } as never);
+      const { data: updated, error } = await supabase.rpc(
+        "cloturer_tournee" as never,
+        {
+          _tournee_id: tourneeId,
+        } as never,
+      );
       if (error) {
         const parts = [
           error.message,
@@ -450,10 +462,9 @@ function EditTourneePage() {
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/tournees" })}>
-            <ArrowLeft className="h-4 w-4 mr-1.5" /> Retour
+            Retour
           </Button>
           <div className="flex items-center gap-2">
-            <Navigation className="h-5 w-5 text-primary" />
             <div>
               <h1 className="ds-page-title">
                 Tournée <span className="font-mono text-primary">{form.reference}</span>
@@ -489,17 +500,17 @@ function EditTourneePage() {
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="outline" size="sm" disabled={closing}>
-                  <CheckCircle2 className="h-4 w-4 mr-1.5" /> Clôturer
+                  Clôturer
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Clôturer la tournée ?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Le statut passera à « Terminée ». La clôture n'est autorisée que si la
-                    tournée est validée (statut « En cours »), que les informations obligatoires
-                    (chauffeur, véhicule, date, dépôt) sont renseignées, et que toutes les
-                    livraisons prévues ont été finalisées (livrée, expédiée, retirée ou annulée).
+                    Le statut passera à « Terminée ». La clôture n'est autorisée que si la tournée
+                    est validée (statut « En cours »), que les informations obligatoires (chauffeur,
+                    véhicule, date, dépôt) sont renseignées, et que toutes les livraisons prévues
+                    ont été finalisées (livrée, expédiée, retirée ou annulée).
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -516,7 +527,7 @@ function EditTourneePage() {
               onClick={() => setOpenDelete(true)}
               disabled={deleting}
             >
-              <Trash2 className="h-4 w-4 mr-1.5" /> Supprimer
+              Supprimer
             </Button>
           </Can>
           <ConfirmDeleteDialog
@@ -539,16 +550,11 @@ function EditTourneePage() {
             onConfirm={(motif) => void doDelete(motif)}
           />
           <Button onClick={save} disabled={saving}>
-            {saving ? (
-              <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
-            ) : (
-              <Save className="h-4 w-4 mr-1.5" />
-            )}
+            {saving ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : null}
             Enregistrer
           </Button>
         </div>
       </div>
-
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
         <div className="xl:col-span-2 space-y-4">
           <Card>
@@ -572,16 +578,13 @@ function EditTourneePage() {
               />
             </CardContent>
           </Card>
-
           <Card>
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between gap-2">
                 <CardTitle className="text-sm flex items-center gap-2">
                   Ajouter des colis prêts non affectés
                   <Badge variant="secondary">{dispoFiltered.length}</Badge>
-                  {toAdd.size > 0 && (
-                    <Badge className="bg-success">+{toAdd.size} à ajouter</Badge>
-                  )}
+                  {toAdd.size > 0 && <Badge className="bg-success">+{toAdd.size} à ajouter</Badge>}
                 </CardTitle>
                 <div className="flex items-center gap-2">
                   <Input
@@ -608,12 +611,10 @@ function EditTourneePage() {
                 selected={toAdd}
                 onToggle={toggleAdd}
                 emptyLabel="Aucun colis prêt disponible."
-                actionIcon={<Plus className="h-3.5 w-3.5" />}
               />
             </CardContent>
           </Card>
         </div>
-
         <div className="space-y-4">
           <Card>
             <CardHeader className="pb-2">
@@ -625,7 +626,6 @@ function EditTourneePage() {
               <Stat label="Clients" value={totals.nb_clients} />
             </CardContent>
           </Card>
-
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">Journal d'événements</CardTitle>
@@ -640,9 +640,7 @@ function EditTourneePage() {
                   label={form.cloture_mode === "auto" ? "Clôture auto" : "Clôture manuelle"}
                   value={
                     <>
-                      {form.cloture_at
-                        ? formatDateTime(form.cloture_at)
-                        : "date inconnue"}
+                      {form.cloture_at ? formatDateTime(form.cloture_at) : "date inconnue"}
                       <div className="text-xs text-muted-foreground">
                         {form.cloture_mode === "auto"
                           ? "Système — tous les colis livrés"
@@ -657,7 +655,6 @@ function EditTourneePage() {
               )}
             </CardContent>
           </Card>
-
           <TourneeInfoCard form={form} setField={setField} vehicules={vehQ.data ?? []} />
           <TourneeCoutsCard
             form={form}

@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Loader2, RefreshCcw } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 type AuditRow = {
   id: string;
@@ -30,18 +30,23 @@ export function AuditTabV3() {
     setLoading(true);
     const { data, error } = await supabase.rpc("rbac3_audit_list", { _limit: 300 });
     setLoading(false);
-    if (error) { toast.error(friendlyError(error)); return; }
+    if (error) {
+      toast.error(friendlyError(error));
+      return;
+    }
     setRows((data ?? []) as AuditRow[]);
   }, []);
 
-  useEffect(() => { void reload(); }, [reload]);
+  useEffect(() => {
+    void reload();
+  }, [reload]);
 
   return (
     <Card className="p-4">
       <div className="mb-3 flex items-center justify-between gap-2">
         <Badge variant="secondary">{rows.length} événements</Badge>
         <Button variant="outline" size="sm" onClick={() => void reload()} disabled={loading}>
-          <RefreshCcw className="mr-2 h-4 w-4" /> Actualiser
+          Actualiser
         </Button>
       </div>
 
@@ -50,7 +55,9 @@ export function AuditTabV3() {
           <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </div>
       ) : rows.length === 0 ? (
-        <p className="py-8 text-center text-sm text-muted-foreground">Aucun événement enregistré.</p>
+        <p className="py-8 text-center text-sm text-muted-foreground">
+          Aucun événement enregistré.
+        </p>
       ) : (
         <ScrollArea className="h-[62vh]">
           <table className="w-full text-sm table-zebra-orange table-print-borders">
@@ -70,10 +77,14 @@ export function AuditTabV3() {
                     {formatDateTime(r.created_at)}
                   </td>
                   <td className="py-2 text-xs">{r.acteur_email ?? "—"}</td>
-                  <td className="py-2"><Badge variant="outline">{r.action}</Badge></td>
+                  <td className="py-2">
+                    <Badge variant="outline">{r.action}</Badge>
+                  </td>
                   <td className="py-2 text-xs">
                     {r.role_code ?? r.cible_type ?? "—"}
-                    {r.perm_code ? <span className="text-muted-foreground"> · {r.perm_code}</span> : null}
+                    {r.perm_code ? (
+                      <span className="text-muted-foreground"> · {r.perm_code}</span>
+                    ) : null}
                   </td>
                   <td className="max-w-[320px] truncate py-2 text-xs text-muted-foreground">
                     {r.nouvelle_valeur ? JSON.stringify(r.nouvelle_valeur) : "—"}

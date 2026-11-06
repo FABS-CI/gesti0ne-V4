@@ -1,5 +1,4 @@
 import { memo, useEffect, useState } from "react";
-import { ImageOff, ZoomIn } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { getCoverUrl, type Produit } from "@/lib/produits-api";
 import { cn } from "@/lib/utils";
@@ -32,7 +31,9 @@ export const ProductCoverHero = memo(function ProductCoverHero({ produit, classN
       .then((u) => {
         if (cancelled) return;
         if (!u) return setThumbUrl(null);
-        const bust = produit.cover_updated_at ? `&v=${encodeURIComponent(produit.cover_updated_at)}` : "";
+        const bust = produit.cover_updated_at
+          ? `&v=${encodeURIComponent(produit.cover_updated_at)}`
+          : "";
         setThumbUrl(u + bust);
       })
       .catch(() => !cancelled && setThumbUrl(null));
@@ -57,7 +58,6 @@ export const ProductCoverHero = memo(function ProductCoverHero({ produit, classN
     <div className={cn("flex justify-center sm:justify-start", className)}>
       {!hasCover || failed || !thumbUrl ? (
         <div className="flex h-48 w-36 items-center justify-center rounded-lg border bg-muted sm:h-56 sm:w-44">
-          <ImageOff className="h-10 w-10 text-muted-foreground/60" aria-hidden />
           <span className="sr-only">Aucune couverture</span>
         </div>
       ) : (
@@ -77,9 +77,6 @@ export const ProductCoverHero = memo(function ProductCoverHero({ produit, classN
                 className="h-full w-full object-cover"
                 onError={() => setFailed(true)}
               />
-              <span className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition group-hover:bg-black/30 group-hover:opacity-100">
-                <ZoomIn className="h-8 w-8 text-white" aria-hidden />
-              </span>
             </button>
           </DialogTrigger>
           <DialogContent className="max-w-3xl p-2 sm:p-4">

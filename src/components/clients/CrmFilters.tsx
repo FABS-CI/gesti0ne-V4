@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Filter, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,10 +39,7 @@ export function CrmFiltersPanel({ value, onChange }: Props) {
     return n;
   }, [value]);
 
-  const toggleIn = (
-    key: "produits" | "niveaux" | "categories" | "types" | "villes",
-    v: string,
-  ) => {
+  const toggleIn = (key: "produits" | "niveaux" | "categories" | "types" | "villes", v: string) => {
     const arr = value[key] ?? [];
     const next = arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
     onChange({ ...value, [key]: next.length ? next : undefined });
@@ -53,7 +50,6 @@ export function CrmFiltersPanel({ value, onChange }: Props) {
       <Popover>
         <PopoverTrigger asChild>
           <Button variant="outline" size="sm">
-            <Filter className="mr-2 h-4 w-4" />
             Filtres commerciaux
             {activeCount > 0 && (
               <Badge className="ml-2 h-5 min-w-5 rounded-full px-1.5">{activeCount}</Badge>
