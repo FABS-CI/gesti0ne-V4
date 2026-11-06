@@ -166,7 +166,7 @@ export async function exportPdf(
   // uniquement sur la dernière page, pagination continue sur toutes les pages.
   const total = doc.getNumberOfPages();
   doc.setPage(1);
-  drawHeader(doc, options?.pageTitle || titre, t);
+  drawHeader(doc, options?.pageTitle || titre, t, { titleInBody: Boolean(options?.pageTitle) });
   // Pied de page complet (adresse, banques, signature) uniquement
   // sur la dernière page ; les pages intermédiaires restent épurées.
   doc.setPage(total);
