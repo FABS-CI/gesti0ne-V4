@@ -203,8 +203,7 @@ function LivraisonSuiviIndex() {
 
 function StatCard({ label, value, icon }: { label: string; value: number; icon: React.ReactNode }) {
   return (
-    <div className="rounded-md border bg-card p-4 flex items-center gap-4">
-      <div className="p-2 rounded-md bg-primary/10 text-primary">{icon}</div>
+    <div className="rounded-md border bg-card p-4" data-has-icon={icon ? "1" : "0"}>
       <div>
         <div className="text-xs text-muted-foreground">{label}</div>
         <div className="text-2xl font-bold">{value}</div>

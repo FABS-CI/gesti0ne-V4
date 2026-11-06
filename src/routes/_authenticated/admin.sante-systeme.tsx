@@ -635,7 +635,7 @@ function StatCard({ icon, label, value, tone }: { icon?: React.ReactNode; label:
   return (
     <Card>
       <CardContent className="pt-6">
-        <div className="flex items-center gap-2 text-muted-foreground text-sm">{icon} {label}</div>
+        <div className="text-muted-foreground text-sm" data-has-icon={icon ? "1" : "0"}>{label}</div>
         <div className={`mt-2 text-3xl font-bold ${color}`}>{value}</div>
       </CardContent>
     </Card>

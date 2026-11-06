@@ -44,14 +44,8 @@ function StatCard({
 }) {
   return (
     <Card>
-      <CardContent className="flex items-center gap-3 p-4">
-        <div
-          className="flex h-10 w-10 items-center justify-center rounded-lg"
-          style={{ background: `${color}1a`, color }}
-        >
-          {icon}
-        </div>
-        <div>
+      <CardContent className="p-4">
+        <div data-color={color} data-has-icon={icon ? "1" : "0"}>
           <p className="text-2xl font-bold">{value}</p>
           <p className="text-sm text-muted-foreground">{label}</p>
         </div>

@@ -304,10 +304,9 @@ function Kpi(props: {
       className="group rounded-xl border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-accent/40"
     >
       <div className="flex items-start gap-3">
-        <span className={`rounded-lg p-2 ${TONE[props.tone]}`}>{props.icon}</span>
         <div className="min-w-0 flex-1">
           <p className="text-xs text-muted-foreground">{props.label}</p>
-          <p className="text-2xl font-bold tabular-nums">{props.value}</p>
+          <p className={`text-2xl font-bold tabular-nums ${props.value > 0 ? TONE[props.tone].split(" ")[0] : ""}`}>{props.value}</p>
           {props.sub && <p className="truncate text-xs text-muted-foreground">{props.sub}</p>}
         </div>
         <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
