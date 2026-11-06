@@ -27,8 +27,8 @@ export function CAAreaChart({ data }: { data: CAPoint[] }) {
             <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-        <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={12} />
+        <CartesianGrid vertical={false} stroke="var(--border)" />
+        <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={12} tickLine={false} axisLine={false} />
         <YAxis
           stroke="var(--muted-foreground)"
           fontSize={12}
@@ -54,14 +54,14 @@ export function CommandesBarChart({ data }: { data: CAPoint[] }) {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-        <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={12} />
-        <YAxis stroke="var(--muted-foreground)" fontSize={12} allowDecimals={false} />
+        <CartesianGrid vertical={false} stroke="var(--border)" />
+        <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={12} tickLine={false} axisLine={false} />
+        <YAxis stroke="var(--muted-foreground)" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
         <Tooltip />
         <Bar
           dataKey="nb"
           name="Commandes"
-          fill="var(--info)"
+          fill="var(--chart-2)"
           radius={[3, 3, 0, 0]}
           animationDuration={800}
           animationEasing="ease-out"

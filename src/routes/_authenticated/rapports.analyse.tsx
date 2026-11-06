@@ -94,7 +94,7 @@ function RapportsAnalysePage() {
   };
 
   return (
-    <div className="theme-dashboard space-y-5">
+    <div className="space-y-5">
       <div>
         <h1 className="ds-page-title">Analyse des ventes & produits</h1>
         <p className="text-sm text-muted-foreground">

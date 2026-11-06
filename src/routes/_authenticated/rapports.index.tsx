@@ -44,7 +44,7 @@ function RapportsPage() {
   }
 
   return (
-    <div className="theme-dashboard space-y-6">
+    <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="ds-page-title flex items-center gap-2">
