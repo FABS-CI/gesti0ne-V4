@@ -26,6 +26,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { FilterBadges, type FilterBadge } from "@/components/common/FilterBadges";
 import { ProduitsFilters } from "@/components/produits/list/ProduitsFilters";
+import { ListCard, ListPageHeader } from "@/components/common/list/ListParts";
 import { ProduitsTable } from "@/components/produits/list/ProduitsTable";
 import { ProduitFormDialog } from "@/components/produits/list/ProduitFormDialog";
 import { RenderProfiler } from "@/hooks/use-render-profiler";
@@ -199,12 +200,12 @@ function ProduitsPage() {
   return (
     <RenderProfiler id="page:produits">
       <div className="space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h1 className="ds-page-title">Produits</h1>
-            <p className="text-sm text-muted-foreground">{total} produit(s)</p>
-          </div>
-          <div className="flex gap-2">
+        <ListPageHeader
+          overline="Stock"
+          title="Produits"
+          description={`${total} produit(s)`}
+          actions={
+          <>
             <Button variant="outline" onClick={handleExport}>
               <Download className="mr-2 h-4 w-4" /> Export PDF
             </Button>
@@ -213,9 +214,12 @@ function ProduitsPage() {
                 <Plus className="mr-2 h-4 w-4" /> Nouveau produit
               </Button>
             )}
-          </div>
-        </div>
+          </>
+          }
+        />
 
+        <ListCard>
+        <div className="space-y-3 border-b p-4">
         <ProduitsFilters
           search={search}
           setSearch={setSearch}
@@ -251,6 +255,7 @@ function ProduitsPage() {
           }
           onResetAll={resetAllFilters}
         />
+        </div>
 
         <ProduitsTable
           items={items}
@@ -265,7 +270,7 @@ function ProduitsPage() {
         />
 
         {total > PAGE_SIZE && (
-          <div className="flex items-center justify-end gap-2">
+          <div className="flex items-center justify-end gap-2 border-t px-4 py-3">
             <span className="text-sm text-muted-foreground">
               Page {page} / {totalPages}
             </span>
@@ -287,6 +292,7 @@ function ProduitsPage() {
             </Button>
           </div>
         )}
+        </ListCard>
 
         <ProduitFormDialog
           open={dialogOpen}
