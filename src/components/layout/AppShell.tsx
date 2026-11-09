@@ -94,14 +94,13 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <ExerciceProvider>
-      <SidebarAutoHideProvider>
-      <AutoHideSidebarProvider>
+      <SidebarProvider open onOpenChange={keepDesktopSidebarOpen}>
         <MobileSwipeGestures />
         <AndroidBackButtonHandler />
         <div className="flex min-h-dvh w-full">
-          <AutoHideSidebarSlot>
+          <div className="app-shell-sidebar" aria-expanded="true">
             <AppSidebar />
-          </AutoHideSidebarSlot>
+          </div>
           <div className="flex min-w-0 flex-1 flex-col">
             <header className="app-shell-header sticky top-0 z-30 flex h-14 items-center gap-2 border-b bg-card px-3 pt-[var(--safe-area-top)] sm:px-4">
               <SidebarTrigger className="h-9 w-9 shrink-0 rounded-md text-muted-foreground hover:bg-accent hover:text-foreground" aria-label="Réduire ou développer le menu" />

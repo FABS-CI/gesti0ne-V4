@@ -17,13 +17,18 @@ export function SidebarNavItem({
   active: boolean;
   activeText?: string;
 }) {
+  const { isMobile, setOpenMobile } = useSidebar();
+
   return (
     <li>
       <Link
         to={item.url}
         aria-current={active ? "page" : undefined}
+        onClick={() => {
+          if (isMobile) setOpenMobile(false);
+        }}
         className={cn(
-          "sidebar-nav-item relative flex min-h-9 items-center rounded-md px-3 text-sm lg:min-h-8",
+          "sidebar-nav-item relative flex min-h-9 items-center rounded-lg px-3 py-2 text-[13px] leading-4",
           "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
           active
             ? "bg-sidebar-accent font-medium text-sidebar-accent-foreground"

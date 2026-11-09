@@ -41,52 +41,14 @@ export function SidebarNavGroup({
   isActive,
   currentPath,
   onToggle,
-  compact = false,
-  onExpand,
 }: {
   group: Group;
   isOpen: boolean;
   isActive: boolean;
   currentPath: string;
   onToggle: () => void;
-  /** Menu réduit en rail : seule l'icône du module est affichée. */
-  compact?: boolean;
-  /** Rail : déploie le menu et ouvre ce module. */
-  onExpand?: () => void;
 }) {
   const Icon = group.groupIcon;
-
-  if (compact) {
-    return (
-      <li>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              type="button"
-              onClick={onExpand}
-              aria-label={group.label}
-              className={cn(
-                "relative mx-auto flex h-9 w-9 items-center justify-center rounded-md",
-                "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
-                isActive
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
-              )}
-            >
-              {isActive && (
-                <span
-                  aria-hidden
-                  className="absolute inset-y-2 -left-2.5 w-0.5 rounded-full bg-sidebar-primary"
-                />
-              )}
-              <Icon aria-hidden className="h-4 w-4" strokeWidth={1.75} />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="right">{group.label}</TooltipContent>
-        </Tooltip>
-      </li>
-    );
-  }
 
   return (
     <li>
