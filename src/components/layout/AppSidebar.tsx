@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import { Fragment, memo, useEffect, useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { Sidebar, SidebarContent, useSidebar } from "@/components/ui/sidebar";
 import { useSidebarAutoHide } from "@/hooks/use-sidebar-auto-hide";
@@ -8,6 +8,15 @@ import { SidebarNavGroup } from "./sidebar/SidebarNavGroup";
 import { useVisibleGroups } from "./sidebar/use-visible-groups";
 
 const STORAGE_KEY = "fabs.sidebar.open";
+
+/** Rubriques visuelles du menu (n'affectent ni les routes ni les droits). */
+const RUBRIQUE: Record<string, string> = {
+  "Tableau de bord": "Pilotage",
+  Notifications: "Gestion",
+  Administration: "Gestion",
+  "Mon compte": "Gestion",
+};
+const rubriqueOf = (label: string) => RUBRIQUE[label] ?? "Activité";
 
 /**
  * Le menu affiché en rail étroit (icônes de module seules) quand il est réduit
@@ -73,9 +82,21 @@ function AppSidebarImpl() {
       >
         <nav aria-label="Navigation principale">
           <ul className={compact ? "space-y-1" : "space-y-0.5"}>
-            {visibleGroups.map((g) => (
+            {visibleGroups.map((g, idx) => {
+              const rubrique = rubriqueOf(g.label);
+              const showRubrique =
+                !compact && (idx === 0 || rubriqueOf(visibleGroups[idx - 1].label) !== rubrique);
+              return (
+              <Fragment key={g.label}>
+              {showRubrique && (
+                <li
+                  aria-hidden
+                  className="px-3 pb-1 pt-4 text-[11px] font-medium uppercase tracking-wide text-sidebar-foreground/50 first:pt-1"
+                >
+                  {rubrique}
+                </li>
+              )}
               <SidebarNavGroup
-                key={g.label}
                 group={g}
                 compact={compact}
                 isOpen={openGroup === g.label}
@@ -84,7 +105,9 @@ function AppSidebarImpl() {
                 onToggle={() => toggle(g.label)}
                 onExpand={() => expandTo(g.label)}
               />
-            ))}
+              </Fragment>
+              );
+            })}
           </ul>
         </nav>
       </SidebarContent>
