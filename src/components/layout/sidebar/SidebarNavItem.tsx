@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import type { Group, Item } from "./nav-data";
 
 /**
- * Lien de navigation de second niveau (sans icône : l'icône est portée par le module).
+ * Lien de navigation de second niveau avec l'icône métier de sa page.
  * État actif : fond légèrement relevé + filet bleu électrique de 2 px posé sur le
  * trait vertical du groupe — la signature visuelle de l'élément courant.
  */
@@ -18,6 +18,7 @@ export function SidebarNavItem({
   activeText?: string;
 }) {
   const { isMobile, setOpenMobile } = useSidebar();
+  const Icon = item.icon;
 
   return (
     <li>
@@ -41,7 +42,10 @@ export function SidebarNavItem({
             className="absolute inset-y-1.5 -left-[9px] w-0.5 rounded-full bg-sidebar-primary"
           />
         )}
-        <span className="whitespace-normal">{item.title}</span>
+        <span className="flex min-w-0 items-center gap-2.5">
+          <Icon aria-hidden className="h-3.5 w-3.5 shrink-0 opacity-75" strokeWidth={1.75} />
+          <span className="whitespace-normal">{item.title}</span>
+        </span>
       </Link>
     </li>
   );
