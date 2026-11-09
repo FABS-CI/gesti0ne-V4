@@ -380,6 +380,9 @@ a[href*="lovable.dev"][target="_blank"],
   .sidebar-brand-footer {
     border-radius: 0 0 24px 24px;
   }
+  .app-sidebar-panel [data-sidebar="content"] {
+    overflow-y: auto;
+  }
   .sidebar-search-button {
     background: color-mix(in oklch, var(--card) 38%, transparent);
   }
