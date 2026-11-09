@@ -87,6 +87,8 @@ export type ResourceConfig = {
   idField: string;
   title: string;
   subtitle?: string;
+  /** Petit surtitre gris au-dessus du titre (ex. « Ventes »). */
+  overline?: string;
   icon: LucideIcon;
   newLabel: string;
   entityLabel: string;

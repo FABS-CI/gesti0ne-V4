@@ -58,6 +58,7 @@ const config: ResourceConfig = {
   table: "proformas",
   idField: "proforma_id",
   title: "Proformas",
+  overline: "Ventes",
   subtitle: "Proformas générées automatiquement à l'enregistrement d'une commande",
   icon: FileSignature,
   newLabel: "Nouvelle proforma",
