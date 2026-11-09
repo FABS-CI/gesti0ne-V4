@@ -22,7 +22,7 @@ import { ResponsiveTable } from "@/components/layout/ResponsiveTable";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 import { useExercice } from "@/contexts/ExerciceContext";
 import { getBalance } from "@/lib/compta-api";
-import { formatFCFA } from "@/lib/format";
+import { formatFCFA, formatPercent } from "@/lib/format";
 import {
   anneePrecedente,
   libelleMois,
@@ -48,8 +48,7 @@ export const Route = createFileRoute("/_authenticated/rapports-comptables")({
   notFoundComponent: RouteNotFound,
 });
 
-const fmtPct = (v: number | null) =>
-  v === null ? "—" : `${v.toLocaleString("fr-FR", { maximumFractionDigits: 1, minimumFractionDigits: 1 })} %`;
+const fmtPct = (v: number | null) => formatPercent(v);
 
 function Variation({ v, inverse = false }: { v: number | null; inverse?: boolean }) {
   if (v === null) return <span className="text-muted-foreground">—</span>;

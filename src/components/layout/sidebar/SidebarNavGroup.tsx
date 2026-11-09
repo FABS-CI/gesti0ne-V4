@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import type { Group, Item } from "./nav-data";
 import { SidebarNavItem } from "./SidebarNavItem";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 type Section = { name: string | null; items: Item[] };
 
@@ -42,52 +41,14 @@ export function SidebarNavGroup({
   isActive,
   currentPath,
   onToggle,
-  compact = false,
-  onExpand,
 }: {
   group: Group;
   isOpen: boolean;
   isActive: boolean;
   currentPath: string;
   onToggle: () => void;
-  /** Menu réduit en rail : seule l'icône du module est affichée. */
-  compact?: boolean;
-  /** Rail : déploie le menu et ouvre ce module. */
-  onExpand?: () => void;
 }) {
   const Icon = group.groupIcon;
-
-  if (compact) {
-    return (
-      <li>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              type="button"
-              onClick={onExpand}
-              aria-label={group.label}
-              className={cn(
-                "relative mx-auto flex h-9 w-9 items-center justify-center rounded-md",
-                "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
-                isActive
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
-              )}
-            >
-              {isActive && (
-                <span
-                  aria-hidden
-                  className="absolute inset-y-2 -left-2.5 w-0.5 rounded-full bg-sidebar-primary"
-                />
-              )}
-              <Icon aria-hidden className="h-4 w-4" strokeWidth={1.75} />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="right">{group.label}</TooltipContent>
-        </Tooltip>
-      </li>
-    );
-  }
 
   return (
     <li>
@@ -96,23 +57,25 @@ export function SidebarNavGroup({
         onClick={onToggle}
         aria-expanded={isOpen}
         className={cn(
-          "flex min-h-9 w-full items-center justify-between gap-2 rounded-md px-3 text-left text-sm font-medium",
+          "flex min-h-11 w-full items-center justify-between gap-2 rounded-xl px-2.5 py-2 text-left text-sm font-medium",
           "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
           isActive
-            ? "text-sidebar-accent-foreground"
-            : "text-sidebar-foreground/75 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
+            ? "bg-sidebar-accent/60 text-sidebar-accent-foreground"
+            : "text-sidebar-foreground/75 hover:bg-sidebar-accent/45 hover:text-sidebar-foreground",
         )}
       >
         <span className="flex min-w-0 items-center gap-3">
-          <Icon
-            aria-hidden
-            strokeWidth={1.75}
+          <span
             className={cn(
-              "h-4 w-4 shrink-0",
-              isActive ? "text-sidebar-primary" : "text-sidebar-foreground/50",
+              "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border",
+              isActive
+                ? "border-sidebar-primary/40 bg-sidebar-accent text-sidebar-primary"
+                : "border-sidebar-border/70 bg-sidebar-accent/35 text-sidebar-foreground/60",
             )}
-          />
-          <span className="truncate">{group.label}</span>
+          >
+            <Icon aria-hidden strokeWidth={1.75} className="h-4 w-4" />
+          </span>
+          <span className="whitespace-normal leading-4">{group.label}</span>
         </span>
         <ChevronDown
           aria-hidden
@@ -124,7 +87,7 @@ export function SidebarNavGroup({
         />
       </button>
       <Collapse open={isOpen}>
-        <ul className="mb-2 mt-0.5 ml-5 space-y-0.5 border-l border-sidebar-border pl-2">
+        <ul className="mb-2 ml-[1.45rem] mt-1 space-y-0.5 border-l border-sidebar-border/80 pl-2.5">
           <NavSections group={group} currentPath={currentPath} parentOpen={isOpen} />
         </ul>
       </Collapse>
@@ -222,9 +185,9 @@ function SubSection({
         onClick={toggle}
         aria-expanded={open}
         className={cn(
-          "flex min-h-8 w-full items-center gap-1.5 rounded-md px-2 text-left text-xs font-medium",
-          "transition-colors hover:text-sidebar-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
-          containsActive ? "text-sidebar-foreground" : "text-sidebar-foreground/50",
+          "flex min-h-9 w-full items-center gap-1.5 rounded-lg px-2 py-1.5 text-left text-xs font-medium",
+          "transition-colors hover:bg-sidebar-accent/35 hover:text-sidebar-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+          containsActive ? "text-sidebar-foreground" : "text-sidebar-foreground/55",
         )}
       >
         {open ? (

@@ -1,36 +1,26 @@
-import { Pin, X } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useSidebarAutoHide } from "@/hooks/use-sidebar-auto-hide";
+import { X } from "lucide-react";
 import fabsLogo from "@/assets/fabs-logo.png";
 import { SidebarFooter, SidebarHeader, useSidebar } from "@/components/ui/sidebar";
 
-export function SidebarBrandHeader({ compact = false }: { compact?: boolean }) {
+export function SidebarBrandHeader() {
   const { isMobile, setOpenMobile } = useSidebar();
-  const auto = useSidebarAutoHide();
   return (
-    <SidebarHeader
-      className={cn(
-        "relative flex h-14 shrink-0 justify-center border-b border-sidebar-border bg-sidebar",
-        compact ? "items-center px-2" : "px-4",
-      )}
-    >
-      <div className={cn("flex items-center gap-3", !compact && "pr-10")}>
+    <SidebarHeader className="sidebar-brand-header relative flex h-16 shrink-0 justify-center border-b border-sidebar-border px-4">
+      <div className="flex items-center gap-3 pr-10">
         <img
           src={fabsLogo}
           alt="Logo Éditions FABS-CI"
-          width={32}
-          height={32}
+          width={36}
+          height={36}
           decoding="async"
-          className="h-8 w-8 shrink-0 rounded-md bg-white object-contain p-1"
+          className="sidebar-brand-logo h-9 w-9 shrink-0 rounded-lg object-contain p-1"
         />
-        {!compact && (
-          <div className="min-w-0 leading-tight">
-            <p className="truncate text-sm font-semibold text-sidebar-accent-foreground">
-              Éditions FABS-CI
-            </p>
-            <p className="truncate text-xs text-sidebar-foreground/60">GESTI-one</p>
-          </div>
-        )}
+        <div className="min-w-0 leading-tight">
+          <p className="truncate text-sm font-semibold text-sidebar-accent-foreground">
+            Éditions FABS-CI
+          </p>
+          <p className="truncate text-xs text-sidebar-foreground/60">GESTI-one</p>
+        </div>
       </div>
 
       {isMobile && (
@@ -43,35 +33,13 @@ export function SidebarBrandHeader({ compact = false }: { compact?: boolean }) {
           <X className="h-5 w-5" strokeWidth={1.75} />
         </button>
       )}
-      {!isMobile && !compact && auto?.enabled && (
-        <button
-          type="button"
-          aria-label={auto.pinned ? "Désépingler le menu" : "Épingler le menu"}
-          aria-pressed={auto.pinned}
-          title={auto.pinned ? "Désépingler le menu" : "Épingler le menu"}
-          onClick={auto.togglePinned}
-          className={cn(
-            "absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-md transition-colors",
-            "hover:bg-sidebar-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
-            auto.pinned ? "text-sidebar-primary" : "text-sidebar-foreground/50",
-          )}
-        >
-          <Pin
-            className="h-4 w-4 transition-transform duration-200"
-            strokeWidth={1.75}
-            style={{ transform: auto.pinned ? "rotate(0deg)" : "rotate(45deg)" }}
-          />
-        </button>
-      )}
     </SidebarHeader>
   );
 }
 
-/** Signature ÉDITIONS FABS-CI en pied de menu (masquée en rail). */
-export function SidebarBrandFooter({ compact = false }: { compact?: boolean }) {
-  if (compact) return null;
+export function SidebarBrandFooter() {
   return (
-    <SidebarFooter className="border-t border-sidebar-border bg-sidebar px-4 py-3">
+    <SidebarFooter className="sidebar-brand-footer border-t border-sidebar-border px-4 py-3">
       <p className="text-[11px] leading-4 text-sidebar-foreground/55">
         « Les livres sont des fenêtres par lesquelles on regarde le monde »
       </p>

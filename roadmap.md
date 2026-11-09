@@ -1,5 +1,10 @@
 # Audit ERP — module par module
 
+## Glassy Sidebar V7 — demande du 9 novembre 2026
+- [x] Intégrer le panneau vitré développé en permanence sur ordinateur, avec icônes et noms de modules
+- [x] Conserver les sous-menus, le filtrage des permissions, le profil, la déconnexion et le tiroir mobile
+- [ ] Contrôler compilation, tests de navigation et parcours connectés desktop/mobile ; compilation et 79 tests validés, session de test à identifier
+
 ## Titres PDF uniques — demande du 6 novembre 2026
 - [ ] Auditer les générateurs partagés et spécifiques de tous les modules
 - [ ] Supprimer uniquement les titres principaux dupliqués ; conserver identité, sous-titres, tableaux, filtres et montants
