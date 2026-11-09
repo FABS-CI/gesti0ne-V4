@@ -1,3 +1,4 @@
+import { ListCard, ListPageHeader } from "@/components/common/list/ListParts";
 import { askConfirm } from "@/components/common/GlobalConfirm";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
@@ -179,14 +180,12 @@ function EmployesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-        <div className="min-w-0">
-          <h1 className="ds-page-title">
-            Employés
-          </h1>
-          <p className="text-sm text-muted-foreground">Gestion du personnel</p>
-        </div>
-        <div className="flex flex-wrap gap-2">
+      <ListPageHeader
+        overline="Ressources humaines"
+        title="Employés"
+        description="Gestion du personnel"
+        actions={
+        <>
           <Button variant="outline" onClick={handleExport} disabled={!employes.length}>
             <Download className="mr-2 h-4 w-4" /> Exporter
           </Button>
@@ -203,9 +202,12 @@ function EmployesPage() {
           <Button onClick={() => navigate({ to: "/employes/nouveau" })}>
             <Plus className="mr-2 h-4 w-4" /> Nouvel employé
           </Button>
-        </div>
-      </div>
+        </>
+        }
+      />
 
+      <ListCard>
+      <div className="border-b p-4">
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
@@ -215,8 +217,9 @@ function EmployesPage() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
+      </div>
 
-      <div className="rounded-lg border">
+      <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -332,6 +335,7 @@ function EmployesPage() {
           </TableBody>
         </Table>
       </div>
+      </ListCard>
 
       <ConfirmDeleteDialog
         open={!!toDelete}
