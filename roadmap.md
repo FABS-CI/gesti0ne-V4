@@ -150,4 +150,4 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [ ] Lot 3 : tableau de bord
 - [ ] Lot 4 : vérification module par module (connexion de l'aperçu nécessaire)
 
-- [ ] Menu : proposer 4 styles avec aperçus, appliquer celui choisi (attente du choix)
+- [x] Menu : ancien menu sombre rétabli à la demande
