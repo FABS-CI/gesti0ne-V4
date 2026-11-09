@@ -1,3 +1,4 @@
+import { ListCard, ListPageHeader, ListStatusTabs } from "@/components/common/list/ListParts";
 import { ClientLink } from "@/components/common/ClientLink";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -223,14 +224,12 @@ function PaiementsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="ds-page-title">
-            Paiements
-          </h1>
-          <p className="text-sm text-muted-foreground">Encaissements et règlements clients</p>
-        </div>
-        <div className="flex gap-2">
+      <ListPageHeader
+        overline="Ventes"
+        title="Paiements"
+        description="Encaissements et règlements clients"
+        actions={
+        <>
           <Button variant="outline" onClick={handleExport} disabled={!paiements.length}>
             <Download className="mr-2 h-4 w-4" /> Exporter
           </Button>
@@ -239,8 +238,9 @@ function PaiementsPage() {
               <Plus className="mr-2 h-4 w-4" /> Nouveau paiement
             </Link>
           </Button>
-        </div>
-      </div>
+        </>
+        }
+      />
 
       <div className="flex flex-wrap items-end gap-2 rounded-lg border bg-card p-3">
         <div className="space-y-1">
@@ -300,6 +300,13 @@ function PaiementsPage() {
 
       <PaiementsEnAttenteCard exerciceId={exerciceId} from={applied.from} to={applied.to} />
 
+      <ListCard>
+      <ListStatusTabs
+        tabs={[{ value: "all", label: "Tous" }, ...STATUTS_PAIEMENT.map((s) => ({ value: s.value, label: s.label }))]}
+        value={statutFilter}
+        onChange={setStatutFilter}
+      />
+      <div className="space-y-3 border-b p-4">
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative max-w-sm flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -371,8 +378,9 @@ function PaiementsPage() {
           </Button>
         </div>
       )}
+      </div>
 
-      <div className="rounded-lg border">
+      <div>
         <ResponsiveTable stickyFirstCol>
           <Table>
             <TableHeader>
@@ -533,6 +541,7 @@ function PaiementsPage() {
           </Table>
         </ResponsiveTable>
       </div>
+      </ListCard>
 
       <AlertDialog
         open={deleteTarget !== null}
