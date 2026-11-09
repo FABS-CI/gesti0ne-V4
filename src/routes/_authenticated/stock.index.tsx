@@ -3,15 +3,10 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
-  Boxes,
   Search,
-  AlertTriangle,
   Sliders,
   Eye,
   Download,
-  ArrowDown,
-  ArrowUp,
-  RefreshCw,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
