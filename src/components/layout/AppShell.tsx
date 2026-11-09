@@ -136,8 +136,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <PerfOverlay />
           </Suspense>
         )}
-      </AutoHideSidebarProvider>
-      </SidebarAutoHideProvider>
+      </SidebarProvider>
     </ExerciceProvider>
   );
 }

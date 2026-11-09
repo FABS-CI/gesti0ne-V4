@@ -33,35 +33,13 @@ export function SidebarBrandHeader() {
           <X className="h-5 w-5" strokeWidth={1.75} />
         </button>
       )}
-      {!isMobile && !compact && auto?.enabled && (
-        <button
-          type="button"
-          aria-label={auto.pinned ? "Désépingler le menu" : "Épingler le menu"}
-          aria-pressed={auto.pinned}
-          title={auto.pinned ? "Désépingler le menu" : "Épingler le menu"}
-          onClick={auto.togglePinned}
-          className={cn(
-            "absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-md transition-colors",
-            "hover:bg-sidebar-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
-            auto.pinned ? "text-sidebar-primary" : "text-sidebar-foreground/50",
-          )}
-        >
-          <Pin
-            className="h-4 w-4 transition-transform duration-200"
-            strokeWidth={1.75}
-            style={{ transform: auto.pinned ? "rotate(0deg)" : "rotate(45deg)" }}
-          />
-        </button>
-      )}
     </SidebarHeader>
   );
 }
 
-/** Signature ÉDITIONS FABS-CI en pied de menu (masquée en rail). */
-export function SidebarBrandFooter({ compact = false }: { compact?: boolean }) {
-  if (compact) return null;
+export function SidebarBrandFooter() {
   return (
-    <SidebarFooter className="border-t border-sidebar-border bg-sidebar px-4 py-3">
+    <SidebarFooter className="sidebar-brand-footer border-t border-sidebar-border px-4 py-3">
       <p className="text-[11px] leading-4 text-sidebar-foreground/55">
         « Les livres sont des fenêtres par lesquelles on regarde le monde »
       </p>

@@ -41,7 +41,7 @@ export function SidebarNavItem({
             className="absolute inset-y-1.5 -left-[9px] w-0.5 rounded-full bg-sidebar-primary"
           />
         )}
-        <span className="truncate">{item.title}</span>
+        <span className="whitespace-normal">{item.title}</span>
       </Link>
     </li>
   );
