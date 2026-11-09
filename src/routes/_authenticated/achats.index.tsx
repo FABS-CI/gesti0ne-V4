@@ -47,6 +47,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ListCard, ListPageHeader } from "@/components/common/list/ListParts";
 import { ResponsiveTable } from "@/components/layout/ResponsiveTable";
 import {
   Select,
@@ -235,14 +236,12 @@ function ApprovisionnementsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="ds-page-title">
-            Approvisionnements
-          </h1>
-          <p className="text-sm text-muted-foreground">Entrées de stock depuis les fournisseurs</p>
-        </div>
-        <div className="flex gap-2">
+      <ListPageHeader
+        overline="Achats"
+        title="Approvisionnements"
+        description="Entrées de stock depuis les fournisseurs"
+        actions={
+        <>
           <Button variant="outline" onClick={handleExport} disabled={!filtered.length}>
             <Download className="mr-2 h-4 w-4" /> Exporter
           </Button>
@@ -253,9 +252,12 @@ function ApprovisionnementsPage() {
               </Link>
             </Button>
           )}
-        </div>
-      </div>
+        </>
+        }
+      />
 
+      <ListCard>
+      <div className="space-y-3 border-b p-4">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <div className="relative lg:col-span-2">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -367,9 +369,9 @@ function ApprovisionnementsPage() {
         ]}
         onResetAll={resetAllFilters}
       />
+      </div>
 
-
-      <div className="rounded-lg border">
+      <div>
         <ResponsiveTable stickyFirstCol>
           <Table>
             <TableHeader>
@@ -534,7 +536,7 @@ function ApprovisionnementsPage() {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-end gap-2 text-sm">
+        <div className="flex items-center justify-end gap-2 border-t px-4 py-3 text-sm">
           <Button
             variant="outline"
             size="sm"
@@ -556,6 +558,7 @@ function ApprovisionnementsPage() {
           </Button>
         </div>
       )}
+      </ListCard>
 
       <ConfirmDeleteDialog
         open={!!toDelete}
