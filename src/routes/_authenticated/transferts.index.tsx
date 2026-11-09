@@ -1,3 +1,4 @@
+import { ListCard, ListPageHeader } from "@/components/common/list/ListParts";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -97,21 +98,21 @@ function TransfertsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="ds-page-title">
-            Transferts inter-dépôts
-          </h1>
-          <p className="text-sm text-muted-foreground">Mouvements de stock entre dépôts</p>
-        </div>
+      <ListPageHeader
+        overline="Stock"
+        title="Transferts inter-dépôts"
+        description="Mouvements de stock entre dépôts"
+        actions={
         <Button asChild>
           <Link to="/transferts/nouveau">
             <Plus className="mr-2 h-4 w-4" /> Nouveau transfert
           </Link>
         </Button>
-      </div>
+        }
+      />
 
-      <div className="flex gap-3">
+      <ListCard>
+      <div className="flex gap-3 border-b p-4">
         <Select value={statut} onValueChange={setStatut}>
           <SelectTrigger className="w-48">
             <SelectValue />
@@ -126,7 +127,7 @@ function TransfertsPage() {
         </Select>
       </div>
 
-      <div className="rounded-lg border">
+      <div>
         <ResponsiveTable stickyFirstCol>
           <Table>
             <TableHeader>
@@ -233,6 +234,7 @@ function TransfertsPage() {
           </Table>
         </ResponsiveTable>
       </div>
+      </ListCard>
       {confirmDialog}
     </div>
   );

@@ -1,3 +1,4 @@
+import { ListCard, ListPageHeader } from "@/components/common/list/ListParts";
 import { formatDate } from "@/lib/format";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { ClientLink } from "@/components/common/ClientLink";
@@ -124,24 +125,22 @@ function ColisageListPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="rounded-lg bg-primary/10 p-2">
-          <Package className="h-6 w-6 text-primary" />
-        </div>
-        <div className="flex-1">
-          <h1 className="ds-page-title">Colisage</h1>
-          <p className="text-sm text-muted-foreground">
-            Préparation des cartons à partir des bons de livraison
-          </p>
-        </div>
+      <ListPageHeader
+        overline="Logistique"
+        title="Colisage"
+        description="Préparation des cartons à partir des bons de livraison"
+        actions={
         <Button asChild variant="outline" size="sm">
           <Link to="/tournees/nouvelle" search={{ preselect: "all" }}>
             <Navigation className="h-4 w-4 mr-1.5" /> Créer une tournée
           </Link>
         </Button>
-      </div>
+        }
+      />
 
-      <Card className="p-4">
+      <ListCard>
+      <div className="space-y-3 border-b p-4">
+      <div>
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[240px]">
             <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -167,7 +166,7 @@ function ColisageListPage() {
             </SelectContent>
           </Select>
         </div>
-      </Card>
+      </div>
 
       <FilterBadges
         badges={[
@@ -180,8 +179,9 @@ function ColisageListPage() {
         ]}
         onResetAll={resetAllFilters}
       />
+      </div>
 
-      <Card>
+      <div>
         {isLoading ? (
           <div className="p-4 space-y-2">
             <Skeleton className="h-10 w-full" />
@@ -275,7 +275,8 @@ function ColisageListPage() {
             </Table>
           </ResponsiveTable>
         )}
-      </Card>
+      </div>
+      </ListCard>
     </div>
   );
 }
