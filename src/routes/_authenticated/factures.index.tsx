@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/common/PageHeader";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { ClientLink } from "@/components/common/ClientLink";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Download, FileDown, FileText, Search, RotateCcw, X, Package, SlidersHorizontal } from "lucide-react";
@@ -51,6 +51,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FacturesKpis } from "@/components/factures/list/FacturesKpis";
+import { StatusPill } from "@/components/common/StatusPill";
+import { RowActionsMenu } from "@/components/common/list/RowActionsMenu";
+import {
+  ListCard,
+  ListFilterBar,
+  ListPageHeader,
+  ListPagination,
+  ListSkeletonRows,
+  ListStatusTabs,
+} from "@/components/common/list/ListParts";
+import { FACTURE_STATUT_TONE } from "@/lib/statut-tone";
+import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { FneStatusBadge } from "@/components/factures/list/FneStatusBadge";
 import { FacturePdfActions } from "@/components/factures/list/FacturePdfActions";
 import { SkeletonTable, SkeletonKpiRow } from "@/components/ui/skeletons";
@@ -129,6 +147,63 @@ function FacturesPage() {
   const factures = pageData?.items ?? [];
   const totalCount = pageData?.totalCount ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+
+  const today = new Date().toISOString().slice(0, 10);
+
+  // Nombre de factures par statut, avec les mêmes filtres (onglets).
+  const advParams = {
+    reference: advanced.reference,
+    client: advanced.client,
+    telephone: advanced.telephone,
+    commercial: advanced.commercial,
+    ville: advanced.ville,
+    commande: advanced.commande,
+    dateDu: advanced.dateDu,
+    dateAu: advanced.dateAu,
+    montantMin: advanced.montantMin,
+    montantMax: advanced.montantMax,
+  };
+  const { data: statutCounts } = useQuery({
+    queryKey: ["factures-statut-counts", exerciceId, q, advanced],
+    enabled: !!exerciceId,
+    staleTime: 30_000,
+    queryFn: async () => {
+      const keys = ["all", ...STATUTS_FACTURE.map((s) => s.value)];
+      const res = await Promise.all(
+        keys.map((k) =>
+          listFacturesPaginated({
+            q,
+            statut: k === "all" ? undefined : k,
+            exerciceId,
+            adv: advParams,
+            page: 1,
+            pageSize: 1,
+          }),
+        ),
+      );
+      return Object.fromEntries(keys.map((k, i) => [k, res[i].totalCount])) as Record<string, number>;
+    },
+  });
+
+  // Reste dû des factures dont l'échéance est dépassée (exercice consulté).
+  const { data: retardTotal = 0 } = useQuery({
+    queryKey: ["factures-retard-total", exerciceId, today],
+    enabled: !!exerciceId,
+    staleTime: 60_000,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("factures")
+        .select("montant_total, montant_paye")
+        .eq("exercice_id", exerciceId!)
+        .lt("date_echeance", today)
+        .in("statut", ["impayee", "partielle"]);
+      if (error) throw error;
+      return (data ?? []).reduce(
+        (a, r) => a + Math.max(0, Number(r.montant_total ?? 0) - Number(r.montant_paye ?? 0)),
+        0,
+      );
+    },
+  });
 
   const factureIds = factures.map((f) => f.facture_id);
   const { data: fneMap = {} } = useQuery({
@@ -228,136 +303,132 @@ function FacturesPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        className="mb-0"
+      <ListPageHeader
+        overline="Ventes"
         title="Factures"
-        description="Consultation — les factures sont générées automatiquement à la validation d'une commande"
+        description="Les factures sont générées automatiquement à la validation d'une commande"
+        actions={
+          <>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" disabled={!factures.length}>
+                  Exporter
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onSelect={handleExport}>
+                  <Download className="mr-2 h-4 w-4" /> Excel / CSV
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={handleExportPDF}>
+                  <FileDown className="mr-2 h-4 w-4" /> PDF
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button asChild>
+              <Link to="/commandes/nouvelle">Nouvelle facture</Link>
+            </Button>
+          </>
+        }
       />
 
-      <FacturesKpis {...totals} />
+      <FacturesKpis {...totals} retard={retardTotal} />
 
-      <div className="flex flex-wrap items-center gap-3 sticky top-0 z-20 rounded-lg border bg-card p-3">
-        <div className="relative min-w-[200px] flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Rechercher une facture, un client…"
-            className="pl-9"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-        <Select value={statutFilter} onValueChange={setStatutFilter}>
-          <SelectTrigger className="w-44">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Tous les statuts</SelectItem>
-            {STATUTS_FACTURE.map((s) => (
-              <SelectItem key={s.value} value={s.value}>
-                {s.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Button
-          variant={filtersOpen ? "secondary" : "outline"}
-          onClick={() => setFiltersOpen((o) => !o)}
-          aria-expanded={filtersOpen}
-        >
-          <SlidersHorizontal className="mr-2 h-4 w-4" /> Filtres
-        </Button>
-        <Button variant="outline" onClick={handleExport} disabled={!factures.length}>
-          <Download className="mr-2 h-4 w-4" /> Exporter
-        </Button>
-        <Button variant="outline" onClick={handleExportPDF} disabled={!factures.length}>
-          <FileDown className="mr-2 h-4 w-4" /> PDF
-        </Button>
-      </div>
-
-      {filtersOpen && (
-        <div className="rounded-lg border bg-card p-3">
-          <AdvancedSearchBar
-            fields={[
-              "reference",
-              "commande",
-              "client",
-              "telephone",
-              "commercial",
-              "ville",
-              "dates",
-              "montants",
-            ]}
-            value={advanced}
-            onChange={setAdvanced}
-          />
-        </div>
-      )}
-
-      {hasActiveFilters && (
-        <div className="flex flex-wrap items-center gap-2">
-          {q && (
-            <Badge variant="secondary" className="gap-1">
-              Recherche : {q}
-              <button
-                type="button"
-                onClick={() => setSearch("")}
-                className="ml-1 rounded-full hover:bg-muted"
-                aria-label="Retirer le filtre de recherche"
-              >
-                <X className="h-3 w-3" />
-              </button>
-            </Badge>
-          )}
-          {statutFilter !== "all" && (
-            <Badge variant="secondary" className="gap-1">
-              Statut : {STATUT_FACTURE_LABEL[statutFilter]?.label ?? statutFilter}
-              <button
-                type="button"
-                onClick={() => setStatutFilter("all")}
-                className="ml-1 rounded-full hover:bg-muted"
-                aria-label="Retirer le filtre de statut"
-              >
-                <X className="h-3 w-3" />
-              </button>
-            </Badge>
-          )}
-          {advancedChips.map((c) => (
-            <Badge key={c} variant="secondary">
-              {c}
-            </Badge>
-          ))}
-          <Button variant="ghost" size="sm" onClick={resetAllFilters}>
-            <RotateCcw className="mr-1 h-3 w-3" /> Réinitialiser
+      <ListCard>
+        <ListStatusTabs
+          value={statutFilter}
+          onChange={setStatutFilter}
+          tabs={[
+            { value: "all", label: "Toutes", count: statutCounts?.all },
+            ...STATUTS_FACTURE.map((s) => ({
+              value: s.value,
+              label: s.label,
+              count: statutCounts?.[s.value],
+            })),
+          ]}
+        />
+        <ListFilterBar>
+          <div className="relative min-w-[220px] flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="N° de facture ou client"
+              className="pl-9"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <Button
+            variant={filtersOpen ? "secondary" : "outline"}
+            onClick={() => setFiltersOpen((o) => !o)}
+            aria-expanded={filtersOpen}
+          >
+            <SlidersHorizontal className="mr-2 h-4 w-4" /> Client, période, représentant
           </Button>
-        </div>
-      )}
+          {hasActiveFilters && (
+            <Button variant="ghost" onClick={resetAllFilters}>
+              <RotateCcw className="mr-1 h-3.5 w-3.5" /> Réinitialiser
+            </Button>
+          )}
+        </ListFilterBar>
 
-      <div className="rounded-lg border">
-        <ResponsiveTable stickyFirstCol>
+        {filtersOpen && (
+          <div className="border-b px-4 py-3">
+            <AdvancedSearchBar
+              fields={[
+                "reference",
+                "commande",
+                "client",
+                "telephone",
+                "commercial",
+                "ville",
+                "dates",
+                "montants",
+              ]}
+              value={advanced}
+              onChange={setAdvanced}
+            />
+          </div>
+        )}
+
+        {advancedChips.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 border-b px-4 py-2">
+            {advancedChips.map((c) => (
+              <Badge key={c} variant="secondary">
+                {c}
+              </Badge>
+            ))}
+            <button
+              type="button"
+              onClick={() => setAdvanced({})}
+              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+              aria-label="Retirer les filtres avancés"
+            >
+              <X className="h-3 w-3" /> Retirer
+            </button>
+          </div>
+        )}
+
+        {isLoading ? (
+          <ListSkeletonRows rows={10} />
+        ) : (
+        <ResponsiveTable>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Référence</TableHead>
+                <TableHead>N° facture</TableHead>
                 <TableHead>Date</TableHead>
+                <TableHead>Échéance</TableHead>
                 <TableHead>Client</TableHead>
                 <TableHead className="text-right">Total</TableHead>
                 <TableHead className="text-right">Payé</TableHead>
-                <TableHead className="text-right">Reste</TableHead>
+                <TableHead className="text-right">Reste dû</TableHead>
                 <TableHead>Statut</TableHead>
                 <TableHead>Retour</TableHead>
                 <TableHead>FNE</TableHead>
-                <TableHead className="text-right">FNE actions</TableHead>
-                <TableHead className="text-right lg:sticky lg:right-0 lg:z-[1] lg:bg-card lg:shadow-[inset_1px_0_0_var(--border)]">Actions</TableHead>
+                <TableHead className="w-12"><span className="sr-only">Actions</span></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={11} className="p-4">
-                    <SkeletonTable rows={8} cols={7} />
-                  </TableCell>
-                </TableRow>
-              ) : factures.length === 0 ? (
+              {factures.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={11} className="py-6">
                     {hasActiveFilters ? (
@@ -368,17 +439,15 @@ function FacturesPage() {
                         onReset={resetAllFilters}
                       />
                     ) : (
-                      <EmptyState
-                        variant="rich"
-                        icon={FileText}
-                        title="Aucune facture pour cet exercice"
-                        description="Les factures sont générées automatiquement quand tu valides une commande. Crée d'abord une commande pour voir apparaître ta première facture ici."
-                        hints={
-                          <span className="rounded-full border bg-card px-2.5 py-1 text-xs text-muted-foreground">
-                            Cycle · Commande → Bon de livraison → Facture → Paiement
-                          </span>
-                        }
-                      />
+                      <div className="flex flex-col items-center gap-3 py-10 text-center">
+                        <p className="font-medium">Aucune facture pour cet exercice</p>
+                        <p className="max-w-md text-sm text-muted-foreground">
+                          Les factures sont générées automatiquement à la validation d'une commande.
+                        </p>
+                        <Button asChild>
+                          <Link to="/commandes/nouvelle">Nouvelle facture</Link>
+                        </Button>
+                      </div>
                     )}
                   </TableCell>
                 </TableRow>
@@ -388,17 +457,34 @@ function FacturesPage() {
                   const statutMeta = STATUT_FACTURE_LABEL[f.statut];
                   const reste = Number(f.montant_total) - Number(f.montant_paye);
                   const fneInfo = fneMap[f.facture_id];
+                  const enRetard =
+                    !!f.date_echeance &&
+                    f.date_echeance < today &&
+                    reste > 0 &&
+                    f.statut !== "annulee" &&
+                    f.statut !== "avoir";
                   return (
                     <TableRow key={f.facture_id}>
-                      <TableCell className="font-mono text-xs">
-                        <div className="flex items-center gap-2">
-                          <ProductCoverThumb produit={null} size="xs" />
+                      <TableCell className="whitespace-nowrap">
+                        <Link
+                          to="/factures/$factureId"
+                          params={{ factureId: f.facture_id }}
+                          className="ds-ref font-semibold text-foreground hover:underline"
+                        >
                           {formatDocumentReference(f.reference)}
-                        </div>
+                        </Link>
                       </TableCell>
-                      <TableCell className="whitespace-nowrap">{formatDate(f.date_facture)}</TableCell>
+                      <TableCell className="whitespace-nowrap text-muted-foreground">{formatDate(f.date_facture)}</TableCell>
+                      <TableCell
+                        className={cn(
+                          "whitespace-nowrap",
+                          enRetard ? "font-medium text-destructive" : "text-muted-foreground",
+                        )}
+                      >
+                        {f.date_echeance ? formatDate(f.date_echeance) : "—"}
+                      </TableCell>
                       <TableCell className="font-medium"><ClientLink clientId={f.client_id} nom={f.client_nom} /></TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="whitespace-nowrap text-right tabular-nums">
                         {formatFCFA(Number(f.montant_total))}
                         {(() => {
                           const t = (f as any).type_frais_transport as string | null;
@@ -411,19 +497,21 @@ function FacturesPage() {
                           );
                         })()}
                       </TableCell>
-                      <TableCell className="whitespace-nowrap text-right text-success">
+                      <TableCell className="whitespace-nowrap text-right tabular-nums">
                         {formatFCFA(Number(f.montant_paye))}
                       </TableCell>
-                      <TableCell className="whitespace-nowrap text-right font-semibold text-destructive">
+                      <TableCell
+                        className={cn(
+                          "whitespace-nowrap text-right tabular-nums",
+                          reste === 0 ? "text-muted-foreground/60" : "font-semibold",
+                        )}
+                      >
                         {formatFCFA(reste)}
                       </TableCell>
                       <TableCell>
-                        <Badge
-                          variant="outline"
-                          style={{ color: statutMeta?.color, borderColor: statutMeta?.color }}
-                        >
+                        <StatusPill tone={FACTURE_STATUT_TONE[f.statut] ?? "neutral"}>
                           {statutMeta?.label ?? f.statut}
-                        </Badge>
+                        </StatusPill>
                       </TableCell>
                       <TableCell>
                         {(() => {
@@ -431,9 +519,8 @@ function FacturesPage() {
                           const resume = computeRetourResume(Number(f.montant_total), rs);
                           const meta = RETOUR_STATUS_META[resume.status];
                           return (
-                            <Badge
-                              variant="outline"
-                              style={{ color: meta.color, borderColor: meta.color }}
+                            <span
+                              className="whitespace-nowrap text-xs text-muted-foreground"
                               title={
                                 resume.retours.length
                                   ? `${resume.retours.length} retour(s) — ${formatFCFA(resume.totalMontantRetour)}`
@@ -441,7 +528,7 @@ function FacturesPage() {
                               }
                             >
                               {meta.label}
-                            </Badge>
+                            </span>
                           );
                         })()}
                       </TableCell>
@@ -449,19 +536,25 @@ function FacturesPage() {
                         <FneStatusBadge info={fneInfo} />
                       </TableCell>
                       <TableCell className="text-right">
-                        <FneRowActions
-                          facture={{
-                            facture_id: f.facture_id,
-                            reference: f.reference,
-                            client_nom: f.client_nom,
-                            montant_total: Number(f.montant_total),
-                            date_facture: f.date_facture,
-                          }}
-                          fneStatut={(fneInfo?.statut as FNEStatus | undefined) ?? null}
-                        />
-                      </TableCell>
-                      <TableCell className="text-right lg:sticky lg:right-0 lg:z-[1] lg:bg-card lg:shadow-[inset_1px_0_0_var(--border)]">
-                        <FacturePdfActions facture={f} pdfState={pdf.getState(f.facture_id)} />
+                        <RowActionsMenu label={`Actions ${f.reference}`}>
+                          <div className="flex flex-col items-stretch gap-2">
+                            <p className="ds-caption">Documents</p>
+                            <FacturePdfActions facture={f} pdfState={pdf.getState(f.facture_id)} />
+                            <p className="ds-caption mt-1">Facture normalisée (FNE)</p>
+                            <div className="flex justify-end">
+                              <FneRowActions
+                                facture={{
+                                  facture_id: f.facture_id,
+                                  reference: f.reference,
+                                  client_nom: f.client_nom,
+                                  montant_total: Number(f.montant_total),
+                                  date_facture: f.date_facture,
+                                }}
+                                fneStatut={(fneInfo?.statut as FNEStatus | undefined) ?? null}
+                              />
+                            </div>
+                          </div>
+                        </RowActionsMenu>
                       </TableCell>
                     </TableRow>
                   );
@@ -470,35 +563,16 @@ function FacturesPage() {
             </TableBody>
           </Table>
         </ResponsiveTable>
-        {totalCount > 0 && (
-          <div className="flex items-center justify-between border-t px-4 py-3 text-sm text-muted-foreground">
-            <span>
-              {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, totalCount)} sur {totalCount}
-            </span>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={page <= 1 || isLoading}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-              >
-                Précédent
-              </Button>
-              <span className="px-2 py-1">
-                Page {page} / {totalPages}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={page >= totalPages || isLoading}
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              >
-                Suivant
-              </Button>
-            </div>
-          </div>
         )}
-      </div>
+        <ListPagination
+          page={page}
+          pageSize={PAGE_SIZE}
+          total={totalCount}
+          noun="factures"
+          onPage={setPage}
+          disabled={isLoading}
+        />
+      </ListCard>
     </div>
   );
 }
