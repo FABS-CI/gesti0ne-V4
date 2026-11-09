@@ -483,7 +483,7 @@ function FacturesPage() {
                       >
                         {f.date_echeance ? formatDate(f.date_echeance) : "—"}
                       </TableCell>
-                      <TableCell className="font-medium"><ClientLink clientId={f.client_id} nom={f.client_nom} /></TableCell>
+                      <TableCell className="min-w-[200px] font-medium"><ClientLink clientId={f.client_id} nom={f.client_nom} /></TableCell>
                       <TableCell className="whitespace-nowrap text-right tabular-nums">
                         {formatFCFA(Number(f.montant_total))}
                         {(() => {

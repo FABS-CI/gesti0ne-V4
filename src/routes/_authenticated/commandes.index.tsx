@@ -145,7 +145,7 @@ function CommandesPage() {
   return (
     <RenderProfiler id="page:commandes">
       <div className="space-y-6">
-        <PageHeader title="Ventes & Commandes" description="Pilotez le cycle de vente complet" className="mb-0" />
+        <PageHeader overline="Ventes" title="Ventes & Commandes" description="Pilotez le cycle de vente complet" className="mb-0" />
 
         <CommandesToolbar
           search={search}

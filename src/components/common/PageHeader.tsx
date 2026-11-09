@@ -8,6 +8,8 @@ export type PageCrumb = { label: string; to?: string };
 type Props = {
   /** Titre unique de la page (seul <h1>). */
   title: ReactNode;
+  /** Petit surtitre gris au-dessus du titre (ex. « Ventes »). */
+  overline?: string;
   description?: ReactNode;
   breadcrumbs?: PageCrumb[];
   badge?: ReactNode;
@@ -17,7 +19,7 @@ type Props = {
   className?: string;
 };
 
-export function PageHeader({ title, description, breadcrumbs, badge, actions, backTo, className }: Props) {
+export function PageHeader({ title, overline, description, breadcrumbs, badge, actions, backTo, className }: Props) {
   return (
     <header className={cn("mb-4 space-y-2 border-b border-border pb-3", className)}>
       {breadcrumbs && breadcrumbs.length > 0 && (
@@ -46,6 +48,7 @@ export function PageHeader({ title, description, breadcrumbs, badge, actions, ba
             </Link>
           )}
           <div className="min-w-0">
+            {overline && <p className="ds-overline mb-1">{overline}</p>}
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="ds-page-title truncate text-foreground">{title}</h1>
               {badge}
