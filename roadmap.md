@@ -4,7 +4,8 @@
 - [x] Intégrer le panneau vitré développé en permanence sur ordinateur, avec icônes et noms de modules
 - [x] Conserver les sous-menus, le filtrage des permissions, le profil, la déconnexion et le tiroir mobile
 - [ ] Contrôler compilation, tests de navigation et parcours connectés desktop/mobile ; compilation et tests validés, 69 liens ouverts sans erreur, derniers indicateurs de parcours à confirmer
-- [ ] Analyser la vidéo de référence envoyée à 09:09 et ajuster le rendu si nécessaire
+- [x] Analyser la vidéo de référence envoyée à 09:09 : panneau flottant arrondi et icônes de chaque lien intégrés
+- [ ] Appliquer le prompt de 09:18 : verre clair/sombre, rail avec bulles de sous-pages, recherche, exercice et carte utilisateur ; conserver routes et RBAC
 
 ## Titres PDF uniques — demande du 6 novembre 2026
 - [ ] Auditer les générateurs partagés et spécifiques de tous les modules
