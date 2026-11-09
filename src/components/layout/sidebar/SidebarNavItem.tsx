@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import type { Group, Item } from "./nav-data";
 
 /**
- * Lien de navigation de second niveau (sans icône : l'icône est portée par le module).
+ * Lien de navigation de second niveau avec l'icône métier de sa page.
  * État actif : fond légèrement relevé + filet bleu électrique de 2 px posé sur le
  * trait vertical du groupe — la signature visuelle de l'élément courant.
  */
