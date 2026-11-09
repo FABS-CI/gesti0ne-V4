@@ -86,7 +86,7 @@ function TopbarImpl() {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="flex h-9 items-center gap-2 rounded-md px-1 sm:px-2">
+            <Button data-user-account-trigger variant="ghost" className="flex h-9 items-center gap-2 rounded-md px-1 sm:px-2">
               <Avatar className="h-7 w-7">
                 {avatarUrl ? <AvatarImage src={avatarUrl} alt={label} /> : null}
                 <AvatarFallback className="bg-sidebar text-xs font-medium text-sidebar-foreground">

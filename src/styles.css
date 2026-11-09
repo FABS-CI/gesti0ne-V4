@@ -339,6 +339,16 @@ a[href*="lovable.dev"][target="_blank"],
 
 /* Sur ordinateur, le panneau V7 flotte comme dans la référence vidéo. */
 @media (min-width: 1024px) {
+  .app-sidebar-panel,
+  .sidebar-glass-popover {
+    --sidebar-foreground: var(--foreground);
+    --sidebar-accent-foreground: var(--foreground);
+    --sidebar-primary: var(--primary);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: color-mix(in oklch, var(--primary) 10%, transparent);
+    --sidebar-border: color-mix(in oklch, var(--foreground) 14%, transparent);
+    --sidebar-ring: var(--ring);
+  }
   .app-sidebar-panel {
     border-right: 0;
     background: transparent;
@@ -349,16 +359,53 @@ a[href*="lovable.dev"][target="_blank"],
     width: calc(100% - 24px);
     height: calc(100svh - 24px);
     margin: 12px;
-    overflow: hidden;
-    border: 1px solid color-mix(in oklch, var(--sidebar-border) 82%, transparent);
+    overflow: visible;
+    border: 1px solid color-mix(in oklch, var(--card) 72%, transparent);
     border-radius: 24px;
-    background: color-mix(in oklch, var(--sidebar) 92%, transparent);
-    box-shadow: 0 18px 48px -28px color-mix(in oklch, var(--sidebar-foreground) 58%, transparent);
-    backdrop-filter: blur(22px) saturate(125%);
+    background: color-mix(in oklch, var(--card) 62%, transparent);
+    box-shadow: 0 22px 54px -24px color-mix(in oklch, var(--foreground) 30%, transparent);
+    backdrop-filter: blur(20px) saturate(160%);
+  }
+  .dark .app-sidebar-panel [data-sidebar="sidebar"] {
+    border-color: color-mix(in oklch, var(--sidebar-border) 76%, transparent);
+    background: color-mix(in oklch, var(--sidebar) 84%, transparent);
   }
   .sidebar-brand-header,
   .sidebar-brand-footer {
     background: transparent;
+  }
+  .sidebar-brand-header {
+    border-radius: 24px 24px 0 0;
+  }
+  .sidebar-brand-footer {
+    border-radius: 0 0 24px 24px;
+  }
+  .sidebar-search-button {
+    background: color-mix(in oklch, var(--card) 38%, transparent);
+  }
+  .sidebar-glass-popover {
+    border-color: color-mix(in oklch, var(--card) 72%, transparent);
+    border-radius: 18px;
+    background: color-mix(in oklch, var(--card) 78%, transparent);
+    box-shadow: 0 18px 46px -20px color-mix(in oklch, var(--foreground) 32%, transparent);
+    backdrop-filter: blur(20px) saturate(160%);
+  }
+  .dark .sidebar-glass-popover {
+    border-color: color-mix(in oklch, var(--sidebar-border) 76%, transparent);
+    background: color-mix(in oklch, var(--sidebar) 92%, transparent);
+  }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  @media (min-width: 1024px) {
+    .app-sidebar-panel [data-sidebar="sidebar"],
+    .sidebar-glass-popover {
+      background: var(--card);
+    }
+    .dark .app-sidebar-panel [data-sidebar="sidebar"],
+    .dark .sidebar-glass-popover {
+      background: var(--sidebar);
+    }
   }
 }
 
