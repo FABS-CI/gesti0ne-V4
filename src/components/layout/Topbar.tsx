@@ -40,6 +40,13 @@ function initials(value: string) {
 function TopbarImpl() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const openAccountMenu = () => setAccountMenuOpen(true);
+    window.addEventListener("fabs:open-account-menu", openAccountMenu);
+    return () => window.removeEventListener("fabs:open-account-menu", openAccountMenu);
+  }, []);
 
   const label = user?.user_metadata?.nom_complet || user?.email || "Utilisateur";
 
