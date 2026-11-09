@@ -24,6 +24,7 @@ import {
 } from "@/lib/clients-index-helpers";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ListCard, ListPageHeader } from "@/components/common/list/ListParts";
 import { ClientsFilters } from "@/components/clients/list/ClientsFilters";
 import { ClientsTable } from "@/components/clients/list/ClientsTable";
 import { RenderProfiler } from "@/hooks/use-render-profiler";
@@ -204,13 +205,10 @@ function ClientsPage() {
   return (
     <RenderProfiler id="page:clients">
       <div className="space-y-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-          <div className="min-w-0">
-            <h1 className="ds-page-title truncate">Clients</h1>
-            <p className="text-sm text-muted-foreground">{total} client(s)</p>
-          </div>
-        </div>
+        <ListPageHeader overline="Ventes" title="Clients" description={`${total} client(s)`} />
 
+        <ListCard>
+        <div className="space-y-3 border-b p-4">
         <ClientsFilters
           search={search}
           setSearch={setSearch}
@@ -265,6 +263,7 @@ function ClientsPage() {
             }}
           />
         )}
+        </div>
 
         <ClientsTable
           items={items}
@@ -276,7 +275,7 @@ function ClientsPage() {
         />
 
         {total > PAGE_SIZE && (
-          <div className="flex items-center justify-end gap-2">
+          <div className="flex items-center justify-end gap-2 border-t px-4 py-3">
             <span className="text-sm text-muted-foreground">
               Page {page} / {totalPages}
             </span>
@@ -298,6 +297,7 @@ function ClientsPage() {
             </Button>
           </div>
         )}
+        </ListCard>
 
         <ConfirmDeleteDialog
           open={!!toDelete}
