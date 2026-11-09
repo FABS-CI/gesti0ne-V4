@@ -91,7 +91,7 @@ function TopbarImpl() {
           <NotificationsBell />
         </Suspense>
 
-        <DropdownMenu>
+        <DropdownMenu open={accountMenuOpen} onOpenChange={setAccountMenuOpen}>
           <DropdownMenuTrigger asChild>
             <Button data-user-account-trigger variant="ghost" className="flex h-9 items-center gap-2 rounded-md px-1 sm:px-2">
               <Avatar className="h-7 w-7">
