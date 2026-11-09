@@ -1,3 +1,4 @@
+import { ListCard, ListPageHeader } from "@/components/common/list/ListParts";
 import { askConfirm } from "@/components/common/GlobalConfirm";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
@@ -161,17 +162,12 @@ function InventairesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <ClipboardList className="h-7 w-7 text-primary" />
-          <div>
-            <h1 className="ds-page-title">Inventaires</h1>
-            <p className="text-sm text-muted-foreground">
-              Comptages physiques et rapports d'inventaire par dépôt
-            </p>
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-2">
+      <ListPageHeader
+        overline="Stock"
+        title="Inventaires"
+        description="Comptages physiques et rapports d'inventaire par dépôt"
+        actions={
+        <>
           <Can permission="inventaires.creer">
           <Dialog open={theoriqueOpen} onOpenChange={setTheoriqueOpen}>
             <DialogTrigger asChild>
@@ -228,10 +224,12 @@ function InventairesPage() {
             </Link>
           </Button>
           </Can>
-        </div>
-      </div>
+        </>
+        }
+      />
 
-      <div className="rounded-md border bg-card p-4 flex flex-wrap gap-3">
+      <ListCard>
+      <div className="border-b p-4 flex flex-wrap gap-3">
         <Input
           placeholder="Rechercher (numéro, dépôt)…"
           value={q}
@@ -266,6 +264,7 @@ function InventairesPage() {
         </Select>
       </div>
 
+      <div className="px-4 pt-3 empty:hidden">
       <FilterBadges
         badges={[
           ...(q ? [{ key: "q", label: `Recherche : ${q}`, onClear: () => setQ("") } as FilterBadge] : []),
@@ -274,8 +273,9 @@ function InventairesPage() {
         ]}
         onResetAll={resetAllFilters}
       />
+      </div>
 
-      <div className="rounded-md border bg-card">
+      <div>
         <ResponsiveTable stickyFirstCol>
           <Table>
             <TableHeader>
@@ -413,6 +413,7 @@ function InventairesPage() {
           </Table>
         </ResponsiveTable>
       </div>
+      </ListCard>
     </div>
   );
 }
