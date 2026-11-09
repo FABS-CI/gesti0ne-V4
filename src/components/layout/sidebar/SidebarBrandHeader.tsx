@@ -133,7 +133,7 @@ export function SidebarBrandFooter({ compact = false }: { compact?: boolean }) {
   const displayName = profile?.nom_complet || label;
 
   const openExistingAccountMenu = () => {
-    document.querySelector<HTMLButtonElement>("[data-user-account-trigger]")?.click();
+    window.dispatchEvent(new Event("fabs:open-account-menu"));
   };
 
   return (
