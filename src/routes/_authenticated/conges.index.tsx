@@ -18,6 +18,7 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ListCard, ListPageHeader } from "@/components/common/list/ListParts";
 import {
   Table,
   TableBody,
@@ -227,7 +228,7 @@ function CongesListPage() {
             )}
           </TableBody>
         </Table>
-      </div>
+      </ListCard>
       {confirmDialog}
     </div>
   );
