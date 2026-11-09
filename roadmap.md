@@ -3,9 +3,9 @@
 ## Glassy Sidebar V7 — demande du 9 novembre 2026
 - [x] Intégrer le panneau vitré développé en permanence sur ordinateur, avec icônes et noms de modules
 - [x] Conserver les sous-menus, le filtrage des permissions, le profil, la déconnexion et le tiroir mobile
-- [ ] Contrôler compilation, tests de navigation et parcours connectés desktop/mobile ; compilation et tests validés, 69 liens ouverts sans erreur, derniers indicateurs de parcours à confirmer
+- [x] Contrôler compilation, navigation et parcours connectés desktop/mobile : 69 liens, rail, bulles, clavier, recherche, compte, profil et déconnexion ; aucune erreur console/réseau, 694 tests réussis
 - [x] Analyser la vidéo de référence envoyée à 09:09 : panneau flottant arrondi et icônes de chaque lien intégrés
-- [ ] Appliquer le prompt de 09:18 : verre clair/sombre, rail avec bulles de sous-pages, recherche, exercice et carte utilisateur ; conserver routes et RBAC
+- [x] Appliquer le prompt de 09:18 : verre clair/sombre, rail avec bulles de sous-pages, recherche, exercice et carte utilisateur ; routes et RBAC conservés
 
 ## Titres PDF uniques — demande du 6 novembre 2026
 - [ ] Auditer les générateurs partagés et spécifiques de tous les modules
