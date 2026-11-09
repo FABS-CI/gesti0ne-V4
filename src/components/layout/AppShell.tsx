@@ -51,6 +51,8 @@ function usePerfOverlayEnabled() {
   return enabled;
 }
 
+const keepDesktopSidebarOpen = () => undefined;
+
 export function AppShell({ children }: { children: ReactNode }) {
   const { showWarning, countdown, extendSession, handleLogout } = useIdleTimeout();
   const { user } = useAuth();

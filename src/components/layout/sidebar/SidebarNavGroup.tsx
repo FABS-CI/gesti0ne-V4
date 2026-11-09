@@ -87,7 +87,7 @@ export function SidebarNavGroup({
         />
       </button>
       <Collapse open={isOpen}>
-        <ul className="mb-2 mt-0.5 ml-5 space-y-0.5 border-l border-sidebar-border pl-2">
+        <ul className="mb-2 ml-[1.45rem] mt-1 space-y-0.5 border-l border-sidebar-border/80 pl-2.5">
           <NavSections group={group} currentPath={currentPath} parentOpen={isOpen} />
         </ul>
       </Collapse>
