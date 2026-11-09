@@ -1,6 +1,7 @@
 # Audit ERP — module par module
 
 ## Glassy Sidebar V7 — demande du 9 novembre 2026
+- [x] Affichage V7 signalé invisible à 09:46 : contrôle connecté conforme en clair, sombre, rail et tiroir mobile, sans erreur ; capture remise et rechargement conseillé, aucune régression de code reproduite
 - [x] Intégrer le panneau vitré développé en permanence sur ordinateur, avec icônes et noms de modules
 - [x] Conserver les sous-menus, le filtrage des permissions, le profil, la déconnexion et le tiroir mobile
 - [x] Contrôler compilation, navigation et parcours connectés desktop/mobile : 69 liens, rail, bulles, clavier, recherche, compte, profil et déconnexion ; aucune erreur console/réseau, 694 tests réussis
