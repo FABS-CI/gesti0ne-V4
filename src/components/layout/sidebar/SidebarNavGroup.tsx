@@ -1,9 +1,9 @@
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { cn } from "@/lib/utils";
 import type { Group, Item } from "./nav-data";
 import { SidebarNavItem } from "./SidebarNavItem";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 type Section = { name: string | null; items: Item[] };
 
@@ -50,51 +50,41 @@ export function SidebarNavGroup({
   isActive: boolean;
   currentPath: string;
   onToggle: () => void;
+  /** Menu réduit en rail : seule l'icône du module est affichée. */
   compact?: boolean;
+  /** Rail : déploie le menu et ouvre ce module. */
   onExpand?: () => void;
 }) {
   const Icon = group.groupIcon;
 
   if (compact) {
     return (
-      <li className="relative">
-        <HoverCard openDelay={120} closeDelay={180}>
-          <HoverCardTrigger asChild>
+      <li>
+        <Tooltip>
+          <TooltipTrigger asChild>
             <button
               type="button"
               onClick={onExpand}
-              aria-label={`${group.label} — développer le module`}
+              aria-label={group.label}
               className={cn(
-                "relative mx-auto flex h-10 w-10 items-center justify-center rounded-xl border transition-transform duration-200 hover:scale-[1.08]",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+                "relative mx-auto flex h-9 w-9 items-center justify-center rounded-md",
+                "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
                 isActive
-                  ? "border-sidebar-primary bg-sidebar-primary text-sidebar-primary-foreground"
-                  : "border-sidebar-border/70 bg-sidebar-accent/45 text-sidebar-foreground/65 hover:bg-sidebar-accent",
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
               )}
             >
               {isActive && (
                 <span
                   aria-hidden
-                  className="absolute -left-3 h-1.5 w-1.5 rounded-full bg-sidebar-primary"
+                  className="absolute inset-y-2 -left-2.5 w-0.5 rounded-full bg-sidebar-primary"
                 />
               )}
               <Icon aria-hidden className="h-4 w-4" strokeWidth={1.75} />
             </button>
-          </HoverCardTrigger>
-          <HoverCardContent
-            side="right"
-            align="start"
-            sideOffset={12}
-            className="sidebar-glass-popover max-h-[70vh] w-72 overflow-y-auto p-2"
-          >
-            <p className="px-2 pb-2 pt-1 text-xs font-semibold uppercase tracking-wide text-sidebar-foreground/55">
-              {group.label}
-            </p>
-            <ul className="space-y-0.5">
-              <RailSections group={group} currentPath={currentPath} />
-            </ul>
-          </HoverCardContent>
-        </HoverCard>
+          </TooltipTrigger>
+          <TooltipContent side="right">{group.label}</TooltipContent>
+        </Tooltip>
       </li>
     );
   }
@@ -106,25 +96,23 @@ export function SidebarNavGroup({
         onClick={onToggle}
         aria-expanded={isOpen}
         className={cn(
-          "flex min-h-11 w-full items-center justify-between gap-2 rounded-xl px-2.5 py-2 text-left text-sm font-medium",
+          "flex min-h-9 w-full items-center justify-between gap-2 rounded-md px-3 text-left text-sm font-medium",
           "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
           isActive
-            ? "bg-sidebar-accent/60 text-sidebar-accent-foreground"
-            : "text-sidebar-foreground/75 hover:bg-sidebar-accent/45 hover:text-sidebar-foreground",
+            ? "text-sidebar-accent-foreground"
+            : "text-sidebar-foreground/75 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
         )}
       >
         <span className="flex min-w-0 items-center gap-3">
-          <span
+          <Icon
+            aria-hidden
+            strokeWidth={1.75}
             className={cn(
-              "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border",
-              isActive
-                ? "border-sidebar-primary/40 bg-sidebar-accent text-sidebar-primary"
-                : "border-sidebar-border/70 bg-sidebar-accent/35 text-sidebar-foreground/60",
+              "h-4 w-4 shrink-0",
+              isActive ? "text-sidebar-primary" : "text-sidebar-foreground/50",
             )}
-          >
-            <Icon aria-hidden strokeWidth={1.75} className="h-4 w-4" />
-          </span>
-          <span className="whitespace-normal leading-4">{group.label}</span>
+          />
+          <span className="truncate">{group.label}</span>
         </span>
         <ChevronDown
           aria-hidden
@@ -136,38 +124,11 @@ export function SidebarNavGroup({
         />
       </button>
       <Collapse open={isOpen}>
-        <ul className="mb-2 ml-[1.45rem] mt-1 space-y-0.5 border-l border-sidebar-border/80 pl-2.5">
+        <ul className="mb-2 mt-0.5 ml-5 space-y-0.5 border-l border-sidebar-border pl-2">
           <NavSections group={group} currentPath={currentPath} parentOpen={isOpen} />
         </ul>
       </Collapse>
     </li>
-  );
-}
-
-function RailSections({ group, currentPath }: { group: Group; currentPath: string }) {
-  const sections = useMemo(() => groupBySection(group.items), [group.items]);
-  return (
-    <>
-      {sections.map((section) => (
-        <li key={section.name ?? "__flat__"}>
-          {section.name && (
-            <p className="px-3 pb-1 pt-2 text-[11px] font-medium text-sidebar-foreground/50">
-              {section.name}
-            </p>
-          )}
-          <ul className="space-y-0.5">
-            {section.items.map((item) => (
-              <SidebarNavItem
-                key={item.title}
-                item={item}
-                group={group}
-                active={!!item.ready && currentPath === item.url}
-              />
-            ))}
-          </ul>
-        </li>
-      ))}
-    </>
   );
 }
 
@@ -261,9 +222,9 @@ function SubSection({
         onClick={toggle}
         aria-expanded={open}
         className={cn(
-          "flex min-h-9 w-full items-center gap-1.5 rounded-lg px-2 py-1.5 text-left text-xs font-medium",
-          "transition-colors hover:bg-sidebar-accent/35 hover:text-sidebar-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
-          containsActive ? "text-sidebar-foreground" : "text-sidebar-foreground/55",
+          "flex min-h-8 w-full items-center gap-1.5 rounded-md px-2 text-left text-xs font-medium",
+          "transition-colors hover:text-sidebar-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+          containsActive ? "text-sidebar-foreground" : "text-sidebar-foreground/50",
         )}
       >
         {open ? (

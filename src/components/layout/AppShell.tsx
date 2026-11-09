@@ -21,7 +21,7 @@ import { ExerciceReadOnlyBanner } from "./ExerciceReadOnlyBanner";
 import { SystemAlertsBanner } from "@/components/SystemAlertsBanner";
 import { useAndroidBackButton } from "@/hooks/use-android-back-button";
 import { useMobileKeyboard } from "@/hooks/use-mobile-keyboard";
-
+import { SidebarAutoHideProvider, useSidebarAutoHide } from "@/hooks/use-sidebar-auto-hide";
 
 // Overlay de diagnostic perf : ~200 lignes + interception fetch/XHR.
 // Ne charge le chunk que si le toggle est activé, sinon 0 coût runtime.
@@ -94,16 +94,17 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <ExerciceProvider>
-      <SidebarProvider>
+      <SidebarAutoHideProvider>
+      <AutoHideSidebarProvider>
         <MobileSwipeGestures />
         <AndroidBackButtonHandler />
         <div className="flex min-h-dvh w-full">
-          <div className="app-shell-sidebar">
+          <AutoHideSidebarSlot>
             <AppSidebar />
-          </div>
+          </AutoHideSidebarSlot>
           <div className="flex min-w-0 flex-1 flex-col">
             <header className="app-shell-header sticky top-0 z-30 flex h-14 items-center gap-2 border-b bg-card px-3 pt-[var(--safe-area-top)] sm:px-4">
-              <SidebarTrigger className="h-9 w-9 shrink-0 rounded-md text-muted-foreground hover:bg-accent hover:text-foreground lg:hidden" aria-label="Ouvrir ou fermer le menu" />
+              <SidebarTrigger className="h-9 w-9 shrink-0 rounded-md text-muted-foreground hover:bg-accent hover:text-foreground" aria-label="Réduire ou développer le menu" />
               <Topbar />
             </header>
             <div className="app-shell-banner">
@@ -136,7 +137,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             <PerfOverlay />
           </Suspense>
         )}
-      </SidebarProvider>
+      </AutoHideSidebarProvider>
+      </SidebarAutoHideProvider>
     </ExerciceProvider>
   );
 }
@@ -198,3 +200,30 @@ function AndroidBackButtonHandler() {
   return null;
 }
 
+/** Desktop souris : le sidebar suit l'état « épinglé » ; sinon comportement d'origine. */
+function AutoHideSidebarProvider({ children }: { children: ReactNode }) {
+  const auto = useSidebarAutoHide();
+  if (auto?.enabled) {
+    return (
+      <SidebarProvider open={auto.pinned} onOpenChange={auto.setPinned}>
+        {children}
+      </SidebarProvider>
+    );
+  }
+  return <SidebarProvider>{children}</SidebarProvider>;
+}
+
+function AutoHideSidebarSlot({ children }: { children: ReactNode }) {
+  const auto = useSidebarAutoHide();
+  const hoverOpen = !!auto?.enabled && !auto.pinned && auto.hoverOpen;
+  const expanded = !auto?.enabled || auto.pinned || auto.hoverOpen;
+  return (
+    <div
+      className="app-shell-sidebar"
+      data-hover-open={hoverOpen ? "true" : "false"}
+      aria-expanded={expanded}
+    >
+      {children}
+    </div>
+  );
+}

@@ -238,7 +238,6 @@ export function GlobalSearch() {
     <>
       <button
         type="button"
-        data-global-search-trigger
         onClick={() => setOpen(true)}
         className="flex h-9 w-full max-w-xl items-center gap-2 rounded-md border border-input bg-background px-3 text-sm text-muted-foreground transition-colors hover:border-foreground/25 hover:bg-muted/50"
       >

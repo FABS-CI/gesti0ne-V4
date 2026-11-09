@@ -1,4 +1,4 @@
-import { lazy, memo, Suspense, useEffect, useState } from "react";
+import { lazy, memo, Suspense } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { LogOut, RefreshCw, UserCircle } from "lucide-react";
@@ -40,13 +40,6 @@ function initials(value: string) {
 function TopbarImpl() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const openAccountMenu = () => setAccountMenuOpen(true);
-    window.addEventListener("fabs:open-account-menu", openAccountMenu);
-    return () => window.removeEventListener("fabs:open-account-menu", openAccountMenu);
-  }, []);
 
   const label = user?.user_metadata?.nom_complet || user?.email || "Utilisateur";
 
@@ -91,9 +84,9 @@ function TopbarImpl() {
           <NotificationsBell />
         </Suspense>
 
-        <DropdownMenu open={accountMenuOpen} onOpenChange={setAccountMenuOpen}>
+        <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button data-user-account-trigger variant="ghost" className="flex h-9 items-center gap-2 rounded-md px-1 sm:px-2">
+            <Button variant="ghost" className="flex h-9 items-center gap-2 rounded-md px-1 sm:px-2">
               <Avatar className="h-7 w-7">
                 {avatarUrl ? <AvatarImage src={avatarUrl} alt={label} /> : null}
                 <AvatarFallback className="bg-sidebar text-xs font-medium text-sidebar-foreground">
