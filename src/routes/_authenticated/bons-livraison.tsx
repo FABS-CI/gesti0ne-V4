@@ -1,5 +1,5 @@
 import { formatDate } from "@/lib/format";
-import { PageHeader } from "@/components/common/PageHeader";
+import { ListCard, ListFilterBar, ListPageHeader } from "@/components/common/list/ListParts";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
@@ -96,8 +96,8 @@ function BonsLivraisonListPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        className="mb-0"
+      <ListPageHeader
+        overline="Logistique"
         title="Bons de livraison"
         description="Consultation — les BL sont générés automatiquement à la validation d'une commande"
         actions={
@@ -111,8 +111,8 @@ function BonsLivraisonListPage() {
         }
       />
 
-      <Card className="p-4">
-        <div className="flex flex-wrap items-center gap-3">
+      <ListCard>
+        <ListFilterBar>
           <div className="relative flex-1 min-w-[240px]">
             <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -135,11 +135,10 @@ function BonsLivraisonListPage() {
               ))}
             </SelectContent>
           </Select>
-        </div>
-      </Card>
+        </ListFilterBar>
 
       {hasActiveFilters && (
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 border-b px-4 py-2">
           {q && (
             <Badge variant="secondary" className="gap-1">
               Recherche : {q}
@@ -162,7 +161,6 @@ function BonsLivraisonListPage() {
         </div>
       )}
 
-      <Card>
         {isLoading ? (
           <div className="p-4 space-y-2">
             <Skeleton className="h-10 w-full" />
@@ -238,7 +236,7 @@ function BonsLivraisonListPage() {
             </Table>
           </ResponsiveTable>
         )}
-      </Card>
+      </ListCard>
     </div>
   );
 }
