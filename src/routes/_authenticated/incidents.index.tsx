@@ -1,3 +1,4 @@
+import { ListCard, ListPageHeader } from "@/components/common/list/ListParts";
 import { formatDate } from "@/lib/format";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
@@ -129,17 +130,11 @@ function IncidentsPage() {
 
   return (
     <div className="space-y-6 p-1">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <AlertTriangle className="h-7 w-7 text-warning" />
-          <div>
-            <h1 className="ds-page-title">Incidents de Stock</h1>
-            <p className="text-sm text-muted-foreground">
-              Pertes, détériorations, obsolescences et autres sorties exceptionnelles
-            </p>
-          </div>
-        </div>
-        {canManage && (
+      <ListPageHeader
+        overline="Stock"
+        title="Incidents de stock"
+        description="Pertes, détériorations, obsolescences et autres sorties exceptionnelles"
+        actions={canManage ? (
           <div className="flex gap-2">
             <Button
               variant="outline"
@@ -177,10 +172,11 @@ function IncidentsPage() {
               Nouvel Incident
             </Button>
           </div>
-        )}
-      </div>
+        ) : undefined}
+      />
 
-      <div className="flex flex-wrap items-center gap-2 rounded-md border bg-card p-3">
+      <ListCard>
+      <div className="flex flex-wrap items-center gap-2 border-b p-3">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -254,6 +250,7 @@ function IncidentsPage() {
         </Select>
       </div>
 
+      <div className="px-3 pt-3 empty:hidden">
       <FilterBadges
         badges={[
           ...(q ? [{ key: "q", label: `Recherche : ${q}`, onClear: () => { setQ(""); setPage(1); } } as FilterBadge] : []),
@@ -269,8 +266,9 @@ function IncidentsPage() {
         ]}
         onResetAll={resetAllFilters}
       />
+      </div>
 
-      <div className="rounded-md border bg-card">
+      <div>
         <ResponsiveTable stickyFirstCol>
           <Table>
             <TableHeader>
@@ -389,7 +387,7 @@ function IncidentsPage() {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between text-sm">
+        <div className="flex items-center justify-between border-t px-4 py-3 text-sm">
           <p className="text-muted-foreground">
             Page {page} / {totalPages} — {incidents.length} incident(s)
           </p>
@@ -413,6 +411,7 @@ function IncidentsPage() {
           </div>
         </div>
       )}
+      </ListCard>
 
       <AlertDialog open={cancelId !== null} onOpenChange={(o) => !o && setCancelId(null)}>
         <AlertDialogContent>
