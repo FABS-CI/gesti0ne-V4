@@ -1,22 +1,30 @@
 import { memo, useEffect, useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { Sidebar, SidebarContent, useSidebar } from "@/components/ui/sidebar";
+import { useSidebarAutoHide } from "@/hooks/use-sidebar-auto-hide";
 import { cn } from "@/lib/utils";
-import {
-  SidebarBrandFooter,
-  SidebarBrandHeader,
-  SidebarGlobalSearchButton,
-} from "./sidebar/SidebarBrandHeader";
+import { SidebarBrandFooter, SidebarBrandHeader } from "./sidebar/SidebarBrandHeader";
 import { SidebarNavGroup } from "./sidebar/SidebarNavGroup";
 import { useVisibleGroups } from "./sidebar/use-visible-groups";
 
 const STORAGE_KEY = "fabs.sidebar.open";
 
+/**
+ * Le menu affiché en rail étroit (icônes de module seules) quand il est réduit
+ * sur ordinateur et qu'il n'est pas déployé au survol.
+ */
+function useSidebarCompact() {
+  const { isMobile, state } = useSidebar();
+  const auto = useSidebarAutoHide();
+  const hoverOpen = !!auto?.enabled && auto.hoverOpen;
+  return !isMobile && state === "collapsed" && !hoverOpen;
+}
+
 function AppSidebarImpl() {
   const currentPath = useRouterState({ select: (s) => s.location.pathname });
   const visibleGroups = useVisibleGroups();
-  const { isMobile, state, setOpen } = useSidebar();
-  const compact = !isMobile && state === "collapsed";
+  const { setOpen } = useSidebar();
+  const compact = useSidebarCompact();
 
   const activeGroupLabel =
     visibleGroups.find((g) => g.items.some((i) => i.ready && currentPath === i.url))?.label ?? null;
@@ -49,6 +57,7 @@ function AppSidebarImpl() {
     });
   };
 
+  /** Depuis le rail : déploie le menu sur le module choisi. */
   const expandTo = (label: string) => {
     setOpenGroup(label);
     remember(label);
@@ -58,10 +67,12 @@ function AppSidebarImpl() {
   return (
     <Sidebar collapsible="icon" className="app-sidebar-panel">
       <SidebarBrandHeader compact={compact} />
-      <SidebarGlobalSearchButton compact={compact} />
-      <SidebarContent className={cn("custom-scrollbar py-3", compact ? "px-2" : "px-3")}>
+      <SidebarContent
+        className={cn("custom-scrollbar py-3", compact ? "px-2" : "px-3")}
+        style={{ background: "var(--sidebar)", borderRight: "1px solid var(--sidebar-border)" }}
+      >
         <nav aria-label="Navigation principale">
-          <ul className={compact ? "space-y-2" : "space-y-1"}>
+          <ul className={compact ? "space-y-1" : "space-y-0.5"}>
             {visibleGroups.map((g) => (
               <SidebarNavGroup
                 key={g.label}

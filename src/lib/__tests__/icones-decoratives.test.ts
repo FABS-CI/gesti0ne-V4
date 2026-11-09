@@ -51,6 +51,7 @@ const ECRANS_NETTOYES = [
   "src/routes/_authenticated/dashboard-logistique.tsx",
   "src/routes/_authenticated/clients.dashboard.tsx",
   "src/components/security/SecurityDashboard.tsx",
+  "src/components/layout/sidebar/SidebarNavItem.tsx",
   // SidebarNavGroup : retiré le 06/11/2026 (refonte UI lot 1) — une icône par module,
   // nécessaire au menu réduit en rail ; voir le test dédié plus bas.
   "src/components/layout/MobileBottomNav.tsx",
@@ -88,12 +89,11 @@ describe("écrans sans icônes décoratives", () => {
   }
 });
 
-describe("menu latéral V7 : icônes de navigation pour les modules et leurs pages", () => {
+describe("menu latéral : une icône par module, aucune par page", () => {
   const src = readFileSync("src/components/layout/sidebar/SidebarNavGroup.tsx", "utf8");
-  const itemSrc = readFileSync("src/components/layout/sidebar/SidebarNavItem.tsx", "utf8");
-  it("les icônes viennent des données de navigation", () => {
+  it("les icônes viennent uniquement de group.groupIcon", () => {
+    expect(src).not.toMatch(/item\.icon/);
     expect(src).toMatch(/group\.groupIcon/);
-    expect(itemSrc).toMatch(/item\.icon/);
   });
   it("aucune icône lucide décorative importée", () => {
     expect(iconesImportees(src).filter((n) => !ICONES_FONCTIONNELLES.has(n))).toEqual([]);
