@@ -30,6 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ListCard, ListPageHeader } from "@/components/common/list/ListParts";
 import { ResponsiveTable } from "@/components/layout/ResponsiveTable";
 import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog";
 
@@ -122,24 +123,26 @@ function FournisseursPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="ds-page-title">
-            Fournisseurs
-          </h1>
-          <p className="text-sm text-muted-foreground">Gestion des fournisseurs</p>
-        </div>
-        <div className="flex gap-2">
+      <ListPageHeader
+        overline="Achats"
+        title="Fournisseurs"
+        description="Gestion des fournisseurs"
+        actions={
+        <>
           <Button variant="outline" onClick={handleExport} disabled={!fournisseurs.length}>
             <Download className="mr-2 h-4 w-4" /> Exporter
           </Button>
           <Button onClick={openNew}>
             <Plus className="mr-2 h-4 w-4" /> Nouveau fournisseur
           </Button>
-        </div>
-      </div>
+        </>
+        }
+      />
 
-      <div className="relative max-w-sm">
+      <ListCard>
+      <div className="space-y-3 border-b p-4">
+      <div className="flex flex-wrap items-center gap-4">
+      <div className="relative max-w-sm flex-1">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder="Rechercher..."
@@ -159,6 +162,7 @@ function FournisseursPage() {
           Actifs dans l'exercice
         </Label>
       </div>
+      </div>
 
       <FilterBadges
         badges={
@@ -173,8 +177,9 @@ function FournisseursPage() {
         }
         onResetAll={resetAllFilters}
       />
+      </div>
 
-      <div className="rounded-lg border">
+      <div>
         <ResponsiveTable stickyFirstCol>
           <Table>
             <TableHeader>
@@ -280,6 +285,7 @@ function FournisseursPage() {
           </Table>
         </ResponsiveTable>
       </div>
+      </ListCard>
 
       <ConfirmDeleteDialog
         open={!!toDelete}
