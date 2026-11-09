@@ -34,6 +34,7 @@ import {
   type Row,
 } from "./resource-manager-types";
 import { ResourceTable } from "./ResourceTable";
+import { ListCard, ListPageHeader } from "@/components/common/list/ListParts";
 import { ResourceFormDialog } from "./ResourceFormDialog";
 import { friendlyError } from "@/lib/friendly-error";
 
@@ -376,14 +377,12 @@ export function ResourceManager({ config }: { config: ResourceConfig }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="ds-page-title">
-            {config.title}
-          </h1>
-          {config.subtitle && <p className="text-sm text-muted-foreground">{config.subtitle}</p>}
-        </div>
-        <div className="flex gap-2">
+      <ListPageHeader
+        overline={config.overline ?? "Gestion"}
+        title={config.title}
+        description={config.subtitle}
+        actions={
+        <>
           {!config.hideCsvExport && (
             <Button variant="outline" onClick={handleExport} disabled={!rows.length}>
               <Download className="mr-2 h-4 w-4" /> Exporter
@@ -397,9 +396,12 @@ export function ResourceManager({ config }: { config: ResourceConfig }) {
               <Plus className="mr-2 h-4 w-4" /> {config.newLabel}
             </Button>
           )}
-        </div>
-      </div>
+        </>
+        }
+      />
 
+      <ListCard>
+      <div className="space-y-3 border-b p-4">
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative max-w-sm flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -452,7 +454,7 @@ export function ResourceManager({ config }: { config: ResourceConfig }) {
       </div>
 
       {config.advancedFilters && (
-        <div className="rounded-lg border bg-card p-3">
+        <div>
           <AdvancedSearchBar
             fields={config.advancedFilters.fields}
             labels={config.advancedFilters.labels}
@@ -511,6 +513,7 @@ export function ResourceManager({ config }: { config: ResourceConfig }) {
           </div>
         );
       })()}
+      </div>
 
       <ResourceTable
         config={config}
@@ -519,6 +522,7 @@ export function ResourceManager({ config }: { config: ResourceConfig }) {
         onEdit={openEdit}
         onDelete={(id) => deleteMutation.mutate(id)}
       />
+      </ListCard>
 
       {!(config.newHref && config.editHref) && (
         <ResourceFormDialog
