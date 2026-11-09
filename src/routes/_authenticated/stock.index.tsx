@@ -34,6 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ListCard, ListPageHeader } from "@/components/common/list/ListParts";
 import { ResponsiveTable } from "@/components/layout/ResponsiveTable";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
@@ -138,26 +139,22 @@ function StockPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <Boxes className="h-6 w-6 text-success" />
-          <div>
-            <h1 className="ds-page-title">Stock</h1>
-            <p className="text-sm text-muted-foreground">
-              {produits.length} produit(s) · {enAlerte} en alerte
-            </p>
-          </div>
-        </div>
-        <Button variant="outline" onClick={exportData}>
-          <Download className="mr-2 h-4 w-4" /> Export PDF
-        </Button>
-      </div>
+      <ListPageHeader
+        overline="Stock"
+        title="Stock"
+        description={`${produits.length} produit(s) · ${enAlerte} en alerte`}
+        actions={
+          <Button variant="outline" onClick={exportData}>
+            <Download className="mr-2 h-4 w-4" /> Export PDF
+          </Button>
+        }
+      />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <ArrowDown className="h-4 w-4 text-success" /> Entrées (30j)
+              Entrées (30j)
             </CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-bold text-success">
@@ -167,7 +164,7 @@ function StockPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <ArrowUp className="h-4 w-4 text-destructive" /> Sorties (30j)
+              Sorties (30j)
             </CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-bold text-destructive">
@@ -177,7 +174,7 @@ function StockPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <RefreshCw className="h-4 w-4 text-warning" /> Ajustements (30j)
+              Ajustements (30j)
             </CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-bold text-warning">
@@ -187,13 +184,15 @@ function StockPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <AlertTriangle className="h-4 w-4 text-destructive" /> Produits en alerte
+              Produits en alerte
             </CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-bold">{enAlerte}</CardContent>
         </Card>
       </div>
 
+      <ListCard>
+      <div className="border-b p-4">
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
@@ -203,8 +202,9 @@ function StockPage() {
           className="pl-9"
         />
       </div>
+      </div>
 
-      <div className="rounded-lg border bg-card">
+      <div>
         <ResponsiveTable stickyFirstCol>
           <Table>
             <TableHeader>
@@ -281,6 +281,7 @@ function StockPage() {
           </Table>
         </ResponsiveTable>
       </div>
+      </ListCard>
     </div>
   );
 }
