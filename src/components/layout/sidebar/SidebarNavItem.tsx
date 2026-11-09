@@ -42,7 +42,10 @@ export function SidebarNavItem({
             className="absolute inset-y-1.5 -left-[9px] w-0.5 rounded-full bg-sidebar-primary"
           />
         )}
-        <span className="whitespace-normal">{item.title}</span>
+        <span className="flex min-w-0 items-center gap-2.5">
+          <Icon aria-hidden className="h-3.5 w-3.5 shrink-0 opacity-75" strokeWidth={1.75} />
+          <span className="whitespace-normal">{item.title}</span>
+        </span>
       </Link>
     </li>
   );

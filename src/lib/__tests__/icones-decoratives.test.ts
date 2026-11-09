@@ -88,11 +88,12 @@ describe("écrans sans icônes décoratives", () => {
   }
 });
 
-describe("menu latéral : une icône par module, aucune par page", () => {
+describe("menu latéral V7 : icônes de navigation pour les modules et leurs pages", () => {
   const src = readFileSync("src/components/layout/sidebar/SidebarNavGroup.tsx", "utf8");
-  it("les icônes viennent uniquement de group.groupIcon", () => {
-    expect(src).not.toMatch(/item\.icon/);
+  const itemSrc = readFileSync("src/components/layout/sidebar/SidebarNavItem.tsx", "utf8");
+  it("les icônes viennent des données de navigation", () => {
     expect(src).toMatch(/group\.groupIcon/);
+    expect(itemSrc).toMatch(/item\.icon/);
   });
   it("aucune icône lucide décorative importée", () => {
     expect(iconesImportees(src).filter((n) => !ICONES_FONCTIONNELLES.has(n))).toEqual([]);
