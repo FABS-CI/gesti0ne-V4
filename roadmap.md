@@ -1,5 +1,13 @@
 # Audit ERP — module par module
 
+## Style sobre premium — demande du 9 novembre 2026
+- [x] Réglages globaux : couleurs chaudes, bleu pétrole, Inter, arrondis, ombres légères, pastille de statut
+- [x] Menu : rubriques Pilotage / Activité / Gestion, module actif bleu pétrole plein
+- [x] Tableau de bord : en-tête, cartes de chiffres, graphique, « À traiter », dernières factures, meilleurs clients
+- [x] Liste des factures : résumé 4 cases, onglets, filtres, tableau, menu ⋯, pagination
+- [x] Style des tableaux appliqué à toutes les listes (en-tête, lignes, survol)
+- [ ] Onglets de statut, barre de filtres et pastilles sur proformas, commandes, paiements, clients, produits/stock, fournisseurs, achats — à faire écran par écran
+
 ## Glassy Sidebar V7 — demande du 9 novembre 2026
 - [x] Affichage V7 signalé invisible à 09:46 : contrôle connecté conforme en clair, sombre, rail et tiroir mobile, sans erreur ; capture remise et rechargement conseillé, aucune régression de code reproduite
 - [x] Intégrer le panneau vitré développé en permanence sur ordinateur, avec icônes et noms de modules
