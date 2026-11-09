@@ -94,7 +94,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <ExerciceProvider>
-      <SidebarProvider open onOpenChange={keepDesktopSidebarOpen}>
+      <SidebarProvider>
         <MobileSwipeGestures />
         <AndroidBackButtonHandler />
         <div className="flex min-h-dvh w-full">
