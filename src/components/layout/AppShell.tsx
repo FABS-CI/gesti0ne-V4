@@ -51,8 +51,6 @@ function usePerfOverlayEnabled() {
   return enabled;
 }
 
-const keepDesktopSidebarOpen = () => undefined;
-
 export function AppShell({ children }: { children: ReactNode }) {
   const { showWarning, countdown, extendSession, handleLogout } = useIdleTimeout();
   const { user } = useAuth();
@@ -96,11 +94,11 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <ExerciceProvider>
-      <SidebarProvider open onOpenChange={keepDesktopSidebarOpen}>
+      <SidebarProvider>
         <MobileSwipeGestures />
         <AndroidBackButtonHandler />
         <div className="flex min-h-dvh w-full">
-          <div className="app-shell-sidebar" aria-expanded="true">
+          <div className="app-shell-sidebar">
             <AppSidebar />
           </div>
           <div className="flex min-w-0 flex-1 flex-col">
