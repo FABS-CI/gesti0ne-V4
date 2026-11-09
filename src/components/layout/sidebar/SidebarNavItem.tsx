@@ -18,6 +18,7 @@ export function SidebarNavItem({
   activeText?: string;
 }) {
   const { isMobile, setOpenMobile } = useSidebar();
+  const Icon = item.icon;
 
   return (
     <li>

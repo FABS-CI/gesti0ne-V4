@@ -197,7 +197,7 @@
 
   :root {
     --header-height: 3.5rem;
-    --sidebar-width: 17rem;
+    --sidebar-width: 18rem;
     --safe-area-top: env(safe-area-inset-top, 0px);
     --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   }
