@@ -5,6 +5,7 @@ import { Package, Search, Truck } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
+import { ListCard, ListPageHeader } from "@/components/common/list/ListParts";
 import {
   Select,
   SelectContent,
@@ -102,16 +103,11 @@ function LivraisonSuiviIndex() {
 
   return (
     <div className="space-y-6 p-6">
-      <div className="flex items-center gap-3">
-        <Truck className="h-7 w-7 text-primary" />
-        <div>
-          <h1 className="ds-page-title">Suivi des livraisons</h1>
-          <p className="text-sm text-muted-foreground">
-            Pilotage temps réel des livraisons — responsable logistique
-          </p>
-        </div>
-        <div className="ml-auto" />
-      </div>
+      <ListPageHeader
+        overline="Logistique"
+        title="Suivi des livraisons"
+        description="Pilotage temps réel des livraisons — responsable logistique"
+      />
 
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard label="Total commandes" value={stats.total} icon={<Package />} />
@@ -119,7 +115,8 @@ function LivraisonSuiviIndex() {
         <StatCard label="Terminées" value={stats.livrees} icon={<Truck />} />
       </div>
 
-      <div className="rounded-md border bg-card p-4 space-y-4">
+      <ListCard>
+        <div className="space-y-3 border-b px-4 py-3">
         <div className="grid gap-3 md:grid-cols-4">
           <div className="relative md:col-span-2">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -165,9 +162,10 @@ function LivraisonSuiviIndex() {
             className="font-mono"
           />
         </div>
+        </div>
 
         <LivraisonsTable rows={paginated} isLoading={isLoading} onAdvance={setTarget} />
-        <div className="flex items-center justify-end gap-2 pt-2 text-xs text-muted-foreground">
+        <div className="flex items-center justify-end gap-2 border-t px-4 py-3 text-xs text-muted-foreground">
           <span>Lignes par page</span>
           <Select
             value={String(pageSize)}
@@ -190,7 +188,7 @@ function LivraisonSuiviIndex() {
             {paginated.length} / {filtered.length}
           </span>
         </div>
-      </div>
+      </ListCard>
 
       <AvancerEtapeDialog
         target={target}

@@ -19,6 +19,7 @@ import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { EMPTY_DEPOT } from "@/lib/depots-helpers";
 
 import { Button } from "@/components/ui/button";
+import { INNER_FRAME_RESET, ListCard, ListPageHeader } from "@/components/common/list/ListParts";
 import { DepotsFilters } from "@/components/depots/DepotsFilters";
 import { DepotsTable } from "@/components/depots/DepotsTable";
 import { DepotFormDialog } from "@/components/depots/DepotFormDialog";
@@ -146,18 +147,19 @@ function DepotsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="ds-page-title">
-            Dépôts
-          </h1>
-          <p className="text-sm text-muted-foreground">Gestion des entrepôts</p>
-        </div>
-        <Button onClick={openNew}>
-          <Plus className="mr-2 h-4 w-4" /> Nouveau dépôt
-        </Button>
-      </div>
+      <ListPageHeader
+        overline="Stock"
+        title="Dépôts"
+        description="Gestion des entrepôts"
+        actions={
+          <Button onClick={openNew}>
+            <Plus className="mr-2 h-4 w-4" /> Nouveau dépôt
+          </Button>
+        }
+      />
 
+      <ListCard className={INNER_FRAME_RESET}>
+        <div className="border-b px-4 py-3">
       <DepotsFilters
         search={search}
         onSearchChange={(v) => {
@@ -169,6 +171,7 @@ function DepotsPage() {
         statutFilter={statutFilter}
         onStatutFilterChange={setStatutFilter}
       />
+        </div>
 
       <DepotsTable
         isLoading={isLoading}
@@ -198,7 +201,7 @@ function DepotsPage() {
       />
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-end gap-2 text-sm">
+        <div className="flex items-center justify-end gap-2 border-t px-4 py-3 text-sm">
           <Button
             variant="outline"
             size="sm"
@@ -220,6 +223,7 @@ function DepotsPage() {
           </Button>
         </div>
       )}
+      </ListCard>
 
       <DepotFormDialog
         open={open}

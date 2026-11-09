@@ -18,6 +18,7 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ListCard, ListPageHeader } from "@/components/common/list/ListParts";
 import {
   Table,
   TableBody,
@@ -77,14 +78,12 @@ function CongesListPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="ds-page-title">
-            Congés
-          </h1>
-          <p className="text-sm text-muted-foreground">Demandes et validations de congés</p>
-        </div>
-        <div className="flex gap-2">
+      <ListPageHeader
+        overline="Ressources humaines"
+        title="Congés"
+        description="Demandes et validations de congés"
+        actions={
+        <>
           <Select value={statutFilter} onValueChange={setStatutFilter}>
             <SelectTrigger className="w-44">
               <SelectValue />
@@ -101,10 +100,11 @@ function CongesListPage() {
           <Button onClick={() => navigate({ to: "/conges/nouveau" })}>
             <Plus className="mr-2 h-4 w-4" /> Nouvelle demande
           </Button>
-        </div>
-      </div>
+        </>
+        }
+      />
 
-      <div className="rounded-lg border">
+      <ListCard>
         <Table>
           <TableHeader>
             <TableRow>
@@ -228,7 +228,7 @@ function CongesListPage() {
             )}
           </TableBody>
         </Table>
-      </div>
+      </ListCard>
       {confirmDialog}
     </div>
   );

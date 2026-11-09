@@ -14,6 +14,7 @@ import {
 } from "@/lib/comptabilite-helpers";
 
 import { Button } from "@/components/ui/button";
+import { INNER_FRAME_RESET, ListCard, ListPageHeader } from "@/components/common/list/ListParts";
 import { JournalFilters } from "@/components/comptabilite/JournalFilters";
 import { JournalKpis } from "@/components/comptabilite/JournalKpis";
 import { JournalTable } from "@/components/comptabilite/JournalTable";
@@ -225,16 +226,12 @@ function ComptabilitePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="ds-page-title">
-            Journal comptable
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Écritures générées automatiquement (ventes & encaissements)
-          </p>
-        </div>
-        <div className="flex gap-2">
+      <ListPageHeader
+        overline="Comptabilité"
+        title="Journal comptable"
+        description="Écritures générées automatiquement (ventes & encaissements)"
+        actions={
+        <>
           <Button asChild>
             <Link to="/comptabilite/nouvelle">
               <Plus className="mr-2 h-4 w-4" /> Nouvelle écriture
@@ -258,8 +255,9 @@ function ComptabilitePage() {
           <Button onClick={handleExportPdf} disabled={!ecritures.length}>
             <FileText className="mr-2 h-4 w-4" /> PDF
           </Button>
-        </div>
-      </div>
+        </>
+        }
+      />
 
       {filterError && (
         <div className="rounded-md border border-warning/50 bg-warning/10 px-4 py-2 text-sm text-warning">
@@ -275,6 +273,8 @@ function ComptabilitePage() {
 
       <JournalKpis totalDebit={totalDebit} totalCredit={totalCredit} />
 
+      <ListCard className={INNER_FRAME_RESET}>
+        <div className="border-b px-4 py-3">
       <JournalFilters
         search={search}
         onSearchChange={setSearch}
@@ -287,6 +287,7 @@ function ComptabilitePage() {
         lettrage={lettrage}
         onLettrageChange={setLettrage}
       />
+        </div>
 
       <JournalTable
         isLoading={isLoading}
@@ -294,6 +295,7 @@ function ComptabilitePage() {
         expanded={expanded}
         onToggle={(id) => setExpanded((cur) => (cur === id ? null : id))}
       />
+      </ListCard>
 
       <JournalPreviewDialog
         url={previewUrl}

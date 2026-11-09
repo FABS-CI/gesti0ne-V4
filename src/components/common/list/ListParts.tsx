@@ -157,3 +157,7 @@ export function ListSkeletonRows({ rows = 8 }: { rows?: number }) {
     </div>
   );
 }
+
+/** Retire le cadre propre d'un tableau enfant direct placé dans une ListCard. */
+export const INNER_FRAME_RESET =
+  "[&>.rounded-lg.border]:rounded-none [&>.rounded-lg.border]:border-0";
