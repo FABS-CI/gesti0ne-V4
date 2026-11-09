@@ -1,5 +1,6 @@
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { cn } from "@/lib/utils";
 import type { Group, Item } from "./nav-data";
 import { SidebarNavItem } from "./SidebarNavItem";
@@ -41,14 +42,62 @@ export function SidebarNavGroup({
   isActive,
   currentPath,
   onToggle,
+  compact = false,
+  onExpand,
 }: {
   group: Group;
   isOpen: boolean;
   isActive: boolean;
   currentPath: string;
   onToggle: () => void;
+  compact?: boolean;
+  onExpand?: () => void;
 }) {
   const Icon = group.groupIcon;
+
+  if (compact) {
+    return (
+      <li className="relative">
+        <HoverCard openDelay={120} closeDelay={180}>
+          <HoverCardTrigger asChild>
+            <button
+              type="button"
+              onClick={onExpand}
+              aria-label={`${group.label} — développer le module`}
+              className={cn(
+                "relative mx-auto flex h-10 w-10 items-center justify-center rounded-xl border transition-transform duration-200 hover:scale-[1.08]",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+                isActive
+                  ? "border-sidebar-primary bg-sidebar-primary text-sidebar-primary-foreground"
+                  : "border-sidebar-border/70 bg-sidebar-accent/45 text-sidebar-foreground/65 hover:bg-sidebar-accent",
+              )}
+            >
+              {isActive && (
+                <span
+                  aria-hidden
+                  className="absolute -left-3 h-1.5 w-1.5 rounded-full bg-sidebar-primary"
+                />
+              )}
+              <Icon aria-hidden className="h-4 w-4" strokeWidth={1.75} />
+            </button>
+          </HoverCardTrigger>
+          <HoverCardContent
+            side="right"
+            align="start"
+            sideOffset={12}
+            className="sidebar-glass-popover max-h-[70vh] w-72 overflow-y-auto p-2"
+          >
+            <p className="px-2 pb-2 pt-1 text-xs font-semibold uppercase tracking-wide text-sidebar-foreground/55">
+              {group.label}
+            </p>
+            <ul className="space-y-0.5">
+              <RailSections group={group} currentPath={currentPath} />
+            </ul>
+          </HoverCardContent>
+        </HoverCard>
+      </li>
+    );
+  }
 
   return (
     <li>
@@ -92,6 +141,33 @@ export function SidebarNavGroup({
         </ul>
       </Collapse>
     </li>
+  );
+}
+
+function RailSections({ group, currentPath }: { group: Group; currentPath: string }) {
+  const sections = useMemo(() => groupBySection(group.items), [group.items]);
+  return (
+    <>
+      {sections.map((section) => (
+        <li key={section.name ?? "__flat__"}>
+          {section.name && (
+            <p className="px-3 pb-1 pt-2 text-[11px] font-medium text-sidebar-foreground/50">
+              {section.name}
+            </p>
+          )}
+          <ul className="space-y-0.5">
+            {section.items.map((item) => (
+              <SidebarNavItem
+                key={item.title}
+                item={item}
+                group={group}
+                active={!!item.ready && currentPath === item.url}
+              />
+            ))}
+          </ul>
+        </li>
+      ))}
+    </>
   );
 }
 

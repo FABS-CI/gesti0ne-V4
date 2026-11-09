@@ -1,7 +1,12 @@
 import { memo, useEffect, useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
-import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
-import { SidebarBrandFooter, SidebarBrandHeader } from "./sidebar/SidebarBrandHeader";
+import { Sidebar, SidebarContent, useSidebar } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
+import {
+  SidebarBrandFooter,
+  SidebarBrandHeader,
+  SidebarGlobalSearchButton,
+} from "./sidebar/SidebarBrandHeader";
 import { SidebarNavGroup } from "./sidebar/SidebarNavGroup";
 import { useVisibleGroups } from "./sidebar/use-visible-groups";
 
@@ -10,6 +15,8 @@ const STORAGE_KEY = "fabs.sidebar.open";
 function AppSidebarImpl() {
   const currentPath = useRouterState({ select: (s) => s.location.pathname });
   const visibleGroups = useVisibleGroups();
+  const { isMobile, state, setOpen } = useSidebar();
+  const compact = !isMobile && state === "collapsed";
 
   const activeGroupLabel =
     visibleGroups.find((g) => g.items.some((i) => i.ready && currentPath === i.url))?.label ?? null;
@@ -42,26 +49,35 @@ function AppSidebarImpl() {
     });
   };
 
+  const expandTo = (label: string) => {
+    setOpenGroup(label);
+    remember(label);
+    setOpen(true);
+  };
+
   return (
     <Sidebar collapsible="icon" className="app-sidebar-panel">
-      <SidebarBrandHeader />
-      <SidebarContent className="custom-scrollbar px-3 py-4">
+      <SidebarBrandHeader compact={compact} />
+      <SidebarGlobalSearchButton compact={compact} />
+      <SidebarContent className={cn("custom-scrollbar py-3", compact ? "px-2" : "px-3")}>
         <nav aria-label="Navigation principale">
-          <ul className="space-y-1">
+          <ul className={compact ? "space-y-2" : "space-y-1"}>
             {visibleGroups.map((g) => (
               <SidebarNavGroup
                 key={g.label}
                 group={g}
+                compact={compact}
                 isOpen={openGroup === g.label}
                 isActive={g.label === activeGroupLabel}
                 currentPath={currentPath}
                 onToggle={() => toggle(g.label)}
+                onExpand={() => expandTo(g.label)}
               />
             ))}
           </ul>
         </nav>
       </SidebarContent>
-      <SidebarBrandFooter />
+      <SidebarBrandFooter compact={compact} />
     </Sidebar>
   );
 }
