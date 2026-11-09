@@ -171,9 +171,23 @@ function formatDateTime() {
 /**
  * En-tête commun à TOUS les PDF jsPDF (rapports, exports, journal, dashboard…).
  * Il reprend le modèle officiel FABS : logo à gauche, identité société,
- * date/heure + titre à droite, puis séparateur gris.
+ * date/heure à droite, puis un seul titre centré au-dessus du séparateur.
  */
-export function drawHeader(doc: jsPDF, titre: string, t: PdfTemplate = getActiveTemplate()) {
+const HEADER_PAGES = new WeakMap<jsPDF, Set<number>>();
+
+export function drawHeader(
+  doc: jsPDF,
+  titre: string,
+  t: PdfTemplate = getActiveTemplate(),
+  options: { titleInBody?: boolean } = {},
+) {
+  // Plusieurs tableaux peuvent rappeler le chrome sur la même page.
+  // Ne jamais superposer une deuxième identité ou un deuxième titre.
+  const pageNumber = doc.getCurrentPageInfo().pageNumber;
+  const drawnPages = HEADER_PAGES.get(doc) ?? new Set<number>();
+  if (drawnPages.has(pageNumber)) return;
+  drawnPages.add(pageNumber);
+  HEADER_PAGES.set(doc, drawnPages);
   const pageW = doc.internal.pageSize.getWidth();
   const { date, time } = formatDateTime();
   const right = pageW - HEADER.right;
@@ -217,12 +231,17 @@ export function drawHeader(doc: jsPDF, titre: string, t: PdfTemplate = getActive
   doc.text(time, right, HEADER.top + 5, { align: "right" });
 
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
+  doc.setFontSize(14);
   doc.setTextColor(...titleColor);
-  if (!isListeProduits) {
-    doc.text(sanitizePdfText(titre), right, HEADER.top + 19, {
-      align: "right",
-      maxWidth: pageW * 0.42,
+  if (titre && !options.titleInBody) {
+    const title = sanitizePdfText(titre);
+    const maxWidth = pageW - HEADER.left - HEADER.right;
+    while (doc.getTextWidth(title) > maxWidth && doc.getFontSize() > 8) {
+      doc.setFontSize(doc.getFontSize() - 0.5);
+    }
+    doc.text(title, pageW / 2, HEADER.separatorY - 2.5, {
+      align: "center",
+      maxWidth,
     });
   }
 

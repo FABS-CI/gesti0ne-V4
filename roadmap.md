@@ -1,5 +1,10 @@
 # Audit ERP — module par module
 
+## Titres PDF uniques — demande du 6 novembre 2026
+- [ ] Auditer les générateurs partagés et spécifiques de tous les modules
+- [ ] Supprimer uniquement les titres principaux dupliqués ; conserver identité, sous-titres, tableaux, filtres et montants
+- [ ] Générer plusieurs PDF, contrôler leur pagination et livrer le bilan avec les limites de vérification
+
 ## Bon de retour — demande du 5 novembre 2026
 - [x] Vérifier RET-261104-001 et ses données d’origine en lecture seule : 500 facturés, 100 retournés, remise globale 25 %, montant enregistré 225 000
 - [x] Corriger références affichées, représentant et remises sans modifier l’historique ; origine reprise lors de la sélection de facture
