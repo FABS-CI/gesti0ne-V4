@@ -22,7 +22,7 @@ import { ResponsiveTable } from "@/components/layout/ResponsiveTable";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 import { useExercice } from "@/contexts/ExerciceContext";
 import { getBalance } from "@/lib/compta-api";
-import { formatFCFA } from "@/lib/format";
+import { formatFCFA, formatPercent } from "@/lib/format";
 import {
   anneePrecedente,
   libelleMois,
