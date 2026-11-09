@@ -200,30 +200,3 @@ function AndroidBackButtonHandler() {
   return null;
 }
 
-/** Desktop souris : le sidebar suit l'état « épinglé » ; sinon comportement d'origine. */
-function AutoHideSidebarProvider({ children }: { children: ReactNode }) {
-  const auto = useSidebarAutoHide();
-  if (auto?.enabled) {
-    return (
-      <SidebarProvider open={auto.pinned} onOpenChange={auto.setPinned}>
-        {children}
-      </SidebarProvider>
-    );
-  }
-  return <SidebarProvider>{children}</SidebarProvider>;
-}
-
-function AutoHideSidebarSlot({ children }: { children: ReactNode }) {
-  const auto = useSidebarAutoHide();
-  const hoverOpen = !!auto?.enabled && !auto.pinned && auto.hoverOpen;
-  const expanded = !auto?.enabled || auto.pinned || auto.hoverOpen;
-  return (
-    <div
-      className="app-shell-sidebar"
-      data-hover-open={hoverOpen ? "true" : "false"}
-      aria-expanded={expanded}
-    >
-      {children}
-    </div>
-  );
-}
