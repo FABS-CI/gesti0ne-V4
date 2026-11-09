@@ -1,6 +1,4 @@
-import { Pin, X } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useSidebarAutoHide } from "@/hooks/use-sidebar-auto-hide";
+import { X } from "lucide-react";
 import fabsLogo from "@/assets/fabs-logo.png";
 import { SidebarFooter, SidebarHeader, useSidebar } from "@/components/ui/sidebar";
 

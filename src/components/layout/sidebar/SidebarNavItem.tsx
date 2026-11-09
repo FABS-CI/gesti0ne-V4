@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import type { Group, Item } from "./nav-data";
 

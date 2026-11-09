@@ -21,7 +21,7 @@ import { ExerciceReadOnlyBanner } from "./ExerciceReadOnlyBanner";
 import { SystemAlertsBanner } from "@/components/SystemAlertsBanner";
 import { useAndroidBackButton } from "@/hooks/use-android-back-button";
 import { useMobileKeyboard } from "@/hooks/use-mobile-keyboard";
-import { SidebarAutoHideProvider, useSidebarAutoHide } from "@/hooks/use-sidebar-auto-hide";
+
 
 // Overlay de diagnostic perf : ~200 lignes + interception fetch/XHR.
 // Ne charge le chunk que si le toggle est activé, sinon 0 coût runtime.

@@ -1,8 +1,6 @@
 import { memo, useEffect, useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
-import { Sidebar, SidebarContent, useSidebar } from "@/components/ui/sidebar";
-import { useSidebarAutoHide } from "@/hooks/use-sidebar-auto-hide";
-import { cn } from "@/lib/utils";
+import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
 import { SidebarBrandFooter, SidebarBrandHeader } from "./sidebar/SidebarBrandHeader";
 import { SidebarNavGroup } from "./sidebar/SidebarNavGroup";
 import { useVisibleGroups } from "./sidebar/use-visible-groups";

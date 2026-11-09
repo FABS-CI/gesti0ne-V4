@@ -308,16 +308,33 @@ a[href*="lovable.dev"][target="_blank"],
   }
 }
 
-/* Sidebar rétractable au survol (voir use-sidebar-auto-hide) */
+/* Glassy Sidebar V7 — panneau fixe, monochrome et sans dégradé. */
 .app-shell-sidebar .group.peer > div {
   transition-duration: 250ms;
   transition-timing-function: ease-out;
 }
-.app-shell-sidebar[data-hover-open="true"] .app-sidebar-panel {
-  left: 0 !important;
-  width: var(--sidebar-width) !important;
-  z-index: 40;
-  box-shadow: 8px 0 24px -12px rgb(0 0 0 / 0.3);
+.app-sidebar-panel {
+  border-right: 1px solid color-mix(in oklch, var(--sidebar-border) 82%, transparent);
+  background: color-mix(in oklch, var(--sidebar) 94%, transparent);
+  box-shadow: 8px 0 32px -24px color-mix(in oklch, var(--sidebar-foreground) 55%, transparent);
+  backdrop-filter: blur(18px) saturate(125%);
+}
+.app-sidebar-panel [data-sidebar="sidebar"] {
+  background: transparent;
+}
+.sidebar-brand-header,
+.sidebar-brand-footer {
+  background: color-mix(in oklch, var(--sidebar) 76%, transparent);
+}
+.sidebar-brand-logo {
+  background: var(--card);
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--sidebar-border) 72%, transparent);
+}
+.app-sidebar-panel .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--sidebar-border);
+}
+.app-sidebar-panel .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--sidebar-primary);
 }
 
 /* ------------------------------------------------------------------

@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import type { Group, Item } from "./nav-data";
 import { SidebarNavItem } from "./SidebarNavItem";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 type Section = { name: string | null; items: Item[] };
 
