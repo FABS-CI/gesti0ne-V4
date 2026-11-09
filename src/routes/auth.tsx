@@ -319,7 +319,15 @@ function AuthPage() {
 
       </div>
       <footer className="relative mt-6 space-y-1 text-center text-xs text-muted-foreground">
-        <p>Besoin d'aide ? Contactez votre administrateur</p>
+        <p>
+          Besoin d'aide ?{" "}
+          <a
+            href="mailto:edition693fabs@gmail.com?subject=Assistance%20ERP%20GESTI-one"
+            className="rounded-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            Contactez votre administrateur
+          </a>
+        </p>
         <p>Version {APP_VERSION} · © 2026 Éditions FABS-CI</p>
       </footer>
     </div>
