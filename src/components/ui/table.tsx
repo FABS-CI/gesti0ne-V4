@@ -37,7 +37,7 @@ const TableHeader = React.forwardRef<
   <thead
     ref={ref}
     className={cn(
-      "sticky top-0 z-10 bg-muted",
+      "sticky top-0 z-10 bg-surface-subtle",
       "[&_tr]:border-b [&_tr]:border-border/60",
       "h-11", // Largeur fixe cohérente pour les headers
       className,
@@ -54,8 +54,7 @@ const TableBody = React.forwardRef<
   <tbody
     ref={ref}
     className={cn(
-      "divide-y divide-border/40",
-      "[&_tr:nth-child(even)]:bg-muted/40 [&_tr:last-child]:border-0",
+      "[&_tr:last-child]:border-0",
       className,
     )}
     {...props}
@@ -83,7 +82,7 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
     <tr
       ref={ref}
       className={cn(
-        "border-b border-border/40 transition-colors hover:bg-muted/50 data-[state=selected]:bg-primary/5",
+        "border-b border-border transition-colors hover:bg-surface-subtle data-[state=selected]:bg-primary/5",
         className,
       )}
       {...props}
@@ -99,7 +98,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      "h-10 px-3 text-left align-middle text-xs font-semibold text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+      "h-10 px-3 text-left align-middle text-xs font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
       className,
     )}
     {...props}
@@ -114,7 +113,7 @@ const TableCell = React.forwardRef<
   <td
     ref={ref}
     className={cn(
-      "h-10 px-3 py-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+      "h-[52px] px-3 py-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
       className,
     )}
     {...props}

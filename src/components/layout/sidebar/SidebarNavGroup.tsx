@@ -70,7 +70,7 @@ export function SidebarNavGroup({
                 "relative mx-auto flex h-9 w-9 items-center justify-center rounded-md",
                 "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
                 isActive
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground"
                   : "text-sidebar-foreground/60 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
               )}
             >
@@ -99,7 +99,7 @@ export function SidebarNavGroup({
           "flex min-h-9 w-full items-center justify-between gap-2 rounded-md px-3 text-left text-sm font-medium",
           "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
           isActive
-            ? "text-sidebar-accent-foreground"
+            ? "bg-sidebar-primary text-sidebar-primary-foreground"
             : "text-sidebar-foreground/75 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
         )}
       >
@@ -109,7 +109,7 @@ export function SidebarNavGroup({
             strokeWidth={1.75}
             className={cn(
               "h-4 w-4 shrink-0",
-              isActive ? "text-sidebar-primary" : "text-sidebar-foreground/50",
+              isActive ? "text-sidebar-primary-foreground" : "text-sidebar-foreground/50",
             )}
           />
           <span className="truncate">{group.label}</span>
@@ -118,7 +118,8 @@ export function SidebarNavGroup({
           aria-hidden
           strokeWidth={1.75}
           className={cn(
-            "h-4 w-4 shrink-0 text-sidebar-foreground/40 transition-transform duration-200",
+            "h-4 w-4 shrink-0 transition-transform duration-200",
+            isActive ? "text-sidebar-primary-foreground/80" : "text-sidebar-foreground/40",
             isOpen && "rotate-180",
           )}
         />

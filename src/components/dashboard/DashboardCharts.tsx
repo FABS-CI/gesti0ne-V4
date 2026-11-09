@@ -50,6 +50,28 @@ export function CAAreaChart({ data }: { data: CAPoint[] }) {
   );
 }
 
+/** Facturé par mois : barres arrondies en haut, quadrillage léger. */
+export function CABarChart({ data }: { data: CAPoint[] }) {
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <BarChart data={data} barCategoryGap="30%">
+        <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="2 4" />
+        <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={12} tickLine={false} axisLine={false} />
+        <YAxis
+          stroke="var(--muted-foreground)"
+          fontSize={12}
+          tickLine={false}
+          axisLine={false}
+          width={56}
+          tickFormatter={(v) => formatFCFACompact(v)}
+        />
+        <Tooltip cursor={{ fill: "var(--surface-subtle)" }} formatter={(v: number) => formatFCFA(v)} />
+        <Bar dataKey="ca" name="Facturé" fill="var(--primary)" radius={[6, 6, 0, 0]} maxBarSize={36} animationDuration={800} />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
 export function CommandesBarChart({ data }: { data: CAPoint[] }) {
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -61,8 +83,8 @@ export function CommandesBarChart({ data }: { data: CAPoint[] }) {
         <Bar
           dataKey="nb"
           name="Commandes"
-          fill="var(--chart-2)"
-          radius={[3, 3, 0, 0]}
+          fill="var(--chart-soft)"
+          radius={[6, 6, 0, 0]}
           animationDuration={800}
           animationEasing="ease-out"
         />

@@ -16,6 +16,7 @@ import { DashboardKpis } from "@/components/dashboard/DashboardKpis";
 import { DashboardChartsSection } from "@/components/dashboard/DashboardChartsSection";
 import { MesRaccourcisCard } from "@/components/dashboard/MesRaccourcisCard";
 import { DashboardQuickActions } from "@/components/dashboard/DashboardQuickActions";
+import { DashboardRecent } from "@/components/dashboard/DashboardRecent";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
 // Chargés à la demande : PDF/PNG export (html-to-image, jspdf) et sections
@@ -95,22 +96,7 @@ function Dashboard() {
     (data?.recettes ?? 0) > 0 ||
     (data?.depenses ?? 0) > 0;
 
-  const pilotage = (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <Link
-        to="/pilotage"
-        className="flex items-center justify-between gap-3 rounded-md border bg-card px-4 py-2.5 text-sm transition-colors hover:bg-muted/60"
-      >
-        <span className="flex items-center gap-2">
-          <span>
-            <span className="font-medium">Centre de pilotage</span>
-            <span className="text-muted-foreground"> — ce qu'il faut traiter aujourd'hui</span>
-          </span>
-        </span>
-      </Link>
-      <MesRaccourcisCard />
-    </div>
-  );
+  const pilotage = <MesRaccourcisCard />;
 
   return (
     <div className="dash-anim space-y-4 overflow-x-hidden bg-background text-foreground">
@@ -128,10 +114,13 @@ function Dashboard() {
         {isLoading ? (
           <div className="space-y-6">
             <SkeletonKpiRow count={4} />
-            <Skeleton className="h-72 w-full rounded-xl" />
-            <div className="grid gap-4 lg:grid-cols-2">
-              <Skeleton className="h-64 w-full rounded-xl" />
-              <Skeleton className="h-64 w-full rounded-xl" />
+            <div className="grid gap-4 lg:grid-cols-3">
+              <Skeleton className="h-80 w-full rounded-[14px] lg:col-span-2" />
+              <Skeleton className="h-80 w-full rounded-[14px]" />
+            </div>
+            <div className="grid gap-4 lg:grid-cols-3">
+              <Skeleton className="h-64 w-full rounded-[14px] lg:col-span-2" />
+              <Skeleton className="h-64 w-full rounded-[14px]" />
             </div>
           </div>
         ) : !hasData ? (
@@ -160,13 +149,18 @@ function Dashboard() {
           <>
             <DashboardKpis data={data} canSeeCA={canSeeCA} />
             <div className="mt-4">{pilotage}</div>
-            <DashboardChartsSection
-              ref={chartsRef}
-              data={data}
-              canSeeCA={canSeeCA}
-              periode={periode}
-            />
-            <Suspense fallback={<Skeleton className="h-40 w-full rounded-xl" />}>
+            <div className="mt-4">
+              <DashboardChartsSection
+                ref={chartsRef}
+                data={data}
+                canSeeCA={canSeeCA}
+                periode={periode}
+              />
+            </div>
+            <div className="mt-4">
+              <DashboardRecent exerciceId={exerciceId} periode={periode} canSeeCA={canSeeCA} />
+            </div>
+            <Suspense fallback={<Skeleton className="mt-4 h-40 w-full rounded-[14px]" />}>
               <DashboardModulesNav data={data} />
             </Suspense>
             <Suspense fallback={<Skeleton className="h-40 w-full rounded-xl" />}>

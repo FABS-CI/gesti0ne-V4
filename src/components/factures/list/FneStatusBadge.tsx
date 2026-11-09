@@ -1,41 +1,22 @@
 import { Link as RLink } from "@tanstack/react-router";
-import { Shield, ShieldAlert, ShieldCheck, ShieldQuestion } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { StatusPill, type StatusTone } from "@/components/common/StatusPill";
 
 type FneInfo = { statut: string; fne_id: string; code_dgi: string | null };
 
+const FNE: Record<string, { tone: StatusTone; label: string }> = {
+  accepted: { tone: "success", label: "Certifiée" },
+  pending: { tone: "warning", label: "En attente" },
+  submitted: { tone: "info", label: "En cours" },
+};
+
 export function FneStatusBadge({ info }: { info: FneInfo | undefined }) {
   if (!info) {
-    return (
-      <Badge variant="outline" className="gap-1 text-muted-foreground">
-        <ShieldQuestion className="h-3 w-3" />
-        Non envoyée
-      </Badge>
-    );
+    return <StatusPill tone="neutral">Non envoyée</StatusPill>;
   }
+  const meta = FNE[info.statut] ?? { tone: "danger" as const, label: "Rejetée" };
   return (
     <RLink to="/fne-detail/$factureId" params={{ factureId: info.fne_id }} className="inline-flex">
-      {info.statut === "accepted" ? (
-        <Badge style={{ backgroundColor: "#10B981", color: "#fff" }} className="gap-1">
-          <ShieldCheck className="h-3 w-3" />
-          Certifiée
-        </Badge>
-      ) : info.statut === "pending" ? (
-        <Badge style={{ backgroundColor: "#F59E0B", color: "#fff" }} className="gap-1">
-          <Shield className="h-3 w-3" />
-          En attente
-        </Badge>
-      ) : info.statut === "submitted" ? (
-        <Badge style={{ backgroundColor: "#3B82F6", color: "#fff" }} className="gap-1">
-          <Shield className="h-3 w-3" />
-          En cours
-        </Badge>
-      ) : (
-        <Badge variant="destructive" className="gap-1">
-          <ShieldAlert className="h-3 w-3" />
-          Rejetée
-        </Badge>
-      )}
+      <StatusPill tone={meta.tone}>{meta.label}</StatusPill>
     </RLink>
   );
 }

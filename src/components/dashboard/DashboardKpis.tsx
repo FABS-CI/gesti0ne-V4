@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { Check } from "lucide-react";
 import type { ReactNode } from "react";
 import { formatFCFA, formatFCFACompact } from "@/lib/format";
 import { AnimatedNumber } from "@/components/dashboard/AnimatedNumber";
+import { StatusPill } from "@/components/common/StatusPill";
 import type { DashboardOverview } from "@/hooks/use-dashboard-overview";
 
 interface Props {
@@ -11,71 +11,84 @@ interface Props {
 }
 
 type To =
-  "/clients" | "/commandes" | "/paiements" | "/factures" | "/stock" | "/tournees" | "/comptabilite";
+  | "/clients"
+  | "/commandes"
+  | "/paiements"
+  | "/factures"
+  | "/stock"
+  | "/tournees"
+  | "/comptabilite";
 
-function Money({ value, className = "" }: { value: number; className?: string }) {
+function Money({ value }: { value: number }) {
   return (
-    <span className={`tabular-nums ${className}`} title={formatFCFA(value)}>
+    <span title={formatFCFA(value)}>
       <AnimatedNumber value={value} format={formatFCFACompact} />
       <span className="ml-1 text-xs font-normal text-muted-foreground">FCFA</span>
     </span>
   );
 }
 
-function Cell({
+/** Mini-courbe SVG (uniquement si un historique réel existe). */
+function Sparkline({ values }: { values: number[] }) {
+  if (values.length < 2 || values.every((v) => v === 0)) return null;
+  const max = Math.max(...values);
+  const min = Math.min(...values);
+  const span = max - min || 1;
+  const w = 100;
+  const h = 28;
+  const pts = values
+    .map((v, i) => `${(i / (values.length - 1)) * w},${h - 2 - ((v - min) / span) * (h - 4)}`)
+    .join(" ");
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" className="mt-3 h-7 w-full" aria-hidden>
+      <polyline points={pts} fill="none" stroke="var(--primary)" strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    </svg>
+  );
+}
+
+function Evolution({ current, previous, label }: { current: number; previous: number; label: string }) {
+  if (!previous) return null;
+  const pct = ((current - previous) / Math.abs(previous)) * 100;
+  const up = pct >= 0;
+  return (
+    <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+      <StatusPill tone={up ? "success" : "danger"} dot={false}>
+        {up ? "▲" : "▼"} {Math.abs(pct).toFixed(1).replace(".", ",")} %
+      </StatusPill>
+      <span>{label}</span>
+    </div>
+  );
+}
+
+function Kpi({
   to,
   label,
   children,
   sub,
-  big = false,
+  footer,
 }: {
   to: To;
   label: string;
   children: ReactNode;
   sub?: ReactNode;
-  big?: boolean;
+  footer?: ReactNode;
 }) {
   return (
     <Link
       to={to}
-      className="block min-w-0 px-4 py-4 transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+      className="dash-lift block min-w-0 rounded-[14px] border bg-card p-5 shadow-[var(--shadow-card)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
-      <div className="flex items-center gap-2">
-        <p className="truncate text-xs font-medium text-muted-foreground">{label}</p>
-      </div>
-      <div className={`mt-1 font-medium tabular-nums ${big ? "text-2xl" : "text-xl"}`}>
+      <p className="ds-label truncate">{label}</p>
+      <div className="mt-2 truncate text-[26px] font-semibold leading-tight tracking-tight tabular-nums text-foreground">
         {children}
       </div>
-      {sub ? <div className="mt-1 text-xs text-muted-foreground">{sub}</div> : null}
+      {sub ? <div className="mt-2 text-xs text-muted-foreground">{sub}</div> : null}
+      {footer}
     </Link>
   );
 }
 
-function Zone({ title, children, cols }: { title: string; children: ReactNode; cols: string }) {
-  return (
-    <section className="min-w-0 overflow-hidden rounded-lg border bg-card">
-      <h2 className="border-b px-4 py-2.5 text-sm font-medium text-foreground">
-        {title}
-      </h2>
-      <div className={`grid divide-y sm:divide-y-0 ${cols}`}>{children}</div>
-    </section>
-  );
-}
-
-function CountOrCheck({ n, tone }: { n: number; tone: "destructive" | "warning" }) {
-  if (n === 0)
-    return (
-      <span className="inline-flex items-center gap-1 text-sm font-medium text-success">
-        <Check className="h-4 w-4" aria-hidden /> Aucun
-      </span>
-    );
-  return (
-    <AnimatedNumber
-      value={n}
-      className={tone === "destructive" ? "text-destructive" : "text-warning"}
-    />
-  );
-}
+const GRID = "dash-stagger grid gap-4 sm:grid-cols-2 xl:grid-cols-4";
 
 export function DashboardKpis({ data, canSeeCA }: Props) {
   const facture = data?.montantFacture ?? 0;
@@ -84,20 +97,30 @@ export function DashboardKpis({ data, canSeeCA }: Props) {
   const clients = data?.clientsTotal ?? 0;
   const actifs = data?.clientsActifs ?? 0;
   const pctActifs = clients > 0 ? Math.round((actifs / clients) * 100) : 0;
-  const retards = data?.nbRetards ?? 0;
-  const solde = data?.solde ?? 0;
+  const mensuel = (data?.caMensuel ?? []).map((m) => m.ca);
+  const last = mensuel.at(-1) ?? 0;
+  const prev = mensuel.at(-2) ?? 0;
 
   return (
-    <div className="dash-stagger space-y-4">
+    <div className="space-y-4">
       {canSeeCA && (
-        <Zone title="Performance" cols="sm:grid-cols-2 lg:grid-cols-4 sm:divide-x">
-          <Cell to="/paiements" label="Chiffre d'affaires encaissé" big>
+        <div className={GRID}>
+          <Kpi
+            to="/paiements"
+            label="Chiffre d'affaires encaissé"
+            footer={
+              <>
+                <Evolution current={last} previous={prev} label="ce mois vs mois précédent" />
+                <Sparkline values={mensuel} />
+              </>
+            }
+          >
             <Money value={data?.caTotal ?? 0} />
-          </Cell>
-          <Cell to="/factures" label="Montant facturé">
+          </Kpi>
+          <Kpi to="/factures" label="Montant facturé">
             <Money value={facture} />
-          </Cell>
-          <Cell
+          </Kpi>
+          <Kpi
             to="/factures"
             label="Reste à encaisser"
             sub={
@@ -107,12 +130,12 @@ export function DashboardKpis({ data, canSeeCA }: Props) {
             }
           >
             <Money value={reste} />
-          </Cell>
-          <Cell
+          </Kpi>
+          <Kpi
             to="/paiements"
             label="Taux d'encaissement"
-            sub={
-              <span className="block h-1 w-full overflow-hidden rounded-full bg-muted">
+            footer={
+              <span className="mt-3 block h-1 w-full overflow-hidden rounded-full bg-muted">
                 <span className="dash-bar block h-full bg-primary" style={{ width: `${taux}%` }} />
               </span>
             }
@@ -122,63 +145,39 @@ export function DashboardKpis({ data, canSeeCA }: Props) {
               decimals={1}
               format={(n) => `${n.toFixed(1).replace(".", ",")} %`}
             />
-          </Cell>
-        </Zone>
+          </Kpi>
+        </div>
       )}
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Zone
-          title="À traiter"
-          cols={canSeeCA ? "sm:grid-cols-3 sm:divide-x" : "sm:grid-cols-2 sm:divide-x"}
-        >
-          <Cell
-            to="/factures"
-            label="Factures en retard"
-            sub={
-              canSeeCA && retards > 0 ? (
-                <Money value={data?.montantRetard ?? 0} className="text-destructive" />
-              ) : undefined
-            }
-          >
-            <CountOrCheck n={retards} tone="destructive" />
-          </Cell>
-          <Cell to="/stock" label="Stock bas">
-            <CountOrCheck n={data?.nbStockBas ?? 0} tone="warning" />
-          </Cell>
-          {canSeeCA && (
-            <Cell to="/clients" label="Encours clients">
-              <Money value={data?.soldeTotal ?? 0} />
-            </Cell>
-          )}
-        </Zone>
-        <Zone title="Activité" cols="sm:grid-cols-3 sm:divide-x">
-          <Cell to="/clients" label="Clients" sub={`${actifs} actifs · ${pctActifs} %`}>
-            <AnimatedNumber value={clients} />
-          </Cell>
-          <Cell to="/commandes" label="Commandes">
-            <AnimatedNumber value={data?.nbCommandes ?? 0} />
-          </Cell>
-          <Cell to="/tournees" label="Frais de tournée">
-            <Money value={data?.fraisTournees ?? 0} />
-          </Cell>
-        </Zone>
+      <div className={GRID}>
+        <Kpi to="/clients" label="Clients" sub={`${actifs} actifs · ${pctActifs} %`}>
+          <AnimatedNumber value={clients} />
+        </Kpi>
+        <Kpi to="/commandes" label="Commandes">
+          <AnimatedNumber value={data?.nbCommandes ?? 0} />
+        </Kpi>
+        {canSeeCA && (
+          <Kpi to="/clients" label="Encours clients">
+            <Money value={data?.soldeTotal ?? 0} />
+          </Kpi>
+        )}
+        <Kpi to="/tournees" label="Frais de tournée">
+          <Money value={data?.fraisTournees ?? 0} />
+        </Kpi>
       </div>
 
       {canSeeCA && (
-        <Zone title="Trésorerie" cols="sm:grid-cols-3 sm:divide-x">
-          <Cell to="/comptabilite" label="Recettes">
+        <div className="dash-stagger grid gap-4 sm:grid-cols-3">
+          <Kpi to="/comptabilite" label="Recettes">
             <Money value={data?.recettes ?? 0} />
-          </Cell>
-          <Cell to="/comptabilite" label="Dépenses">
+          </Kpi>
+          <Kpi to="/comptabilite" label="Dépenses">
             <Money value={data?.depenses ?? 0} />
-          </Cell>
-          <Cell to="/comptabilite" label="Solde">
-            <Money
-              value={solde}
-              className={solde > 0 ? "text-success" : solde < 0 ? "text-destructive" : ""}
-            />
-          </Cell>
-        </Zone>
+          </Kpi>
+          <Kpi to="/comptabilite" label="Solde de trésorerie">
+            <Money value={data?.solde ?? 0} />
+          </Kpi>
+        </div>
       )}
     </div>
   );

@@ -168,6 +168,17 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="fr">
       <head>
+        {import.meta.env.DEV ? (
+          // Aperçu de développement uniquement : certains morceaux partagés sont
+          // évalués avant l'initialisation du rechargement à chaud ; ce garde-fou
+          // évite l'écran blanc « can't detect preamble ». Absent en production.
+          <script
+            dangerouslySetInnerHTML={{
+              __html:
+                "window.$RefreshReg$=window.$RefreshReg$||function(){};window.$RefreshSig$=window.$RefreshSig$||function(){return function(t){return t}};",
+            }}
+          />
+        ) : null}
         <HeadContent />
       </head>
       <body>
