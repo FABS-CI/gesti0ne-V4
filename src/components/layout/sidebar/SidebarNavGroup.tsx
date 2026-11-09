@@ -185,9 +185,9 @@ function SubSection({
         onClick={toggle}
         aria-expanded={open}
         className={cn(
-          "flex min-h-8 w-full items-center gap-1.5 rounded-md px-2 text-left text-xs font-medium",
-          "transition-colors hover:text-sidebar-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
-          containsActive ? "text-sidebar-foreground" : "text-sidebar-foreground/50",
+          "flex min-h-9 w-full items-center gap-1.5 rounded-lg px-2 py-1.5 text-left text-xs font-medium",
+          "transition-colors hover:bg-sidebar-accent/35 hover:text-sidebar-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+          containsActive ? "text-sidebar-foreground" : "text-sidebar-foreground/55",
         )}
       >
         {open ? (
