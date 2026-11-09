@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/common/PageHeader";
+import { ListCard, ListStatusTabs } from "@/components/common/list/ListParts";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
@@ -145,7 +146,7 @@ function CommandesPage() {
   return (
     <RenderProfiler id="page:commandes">
       <div className="space-y-6">
-        <PageHeader overline="Ventes" title="Ventes & Commandes" description="Pilotez le cycle de vente complet" className="mb-0" />
+        <PageHeader overline="Ventes" title="Commandes" description="Pilotez le cycle de vente complet" className="mb-0" />
 
         <CommandesToolbar
           search={search}
@@ -163,6 +164,13 @@ function CommandesPage() {
         <CommandesCycleSteps />
         <CommandesKpis kpis={kpis} />
 
+        <ListCard>
+        <ListStatusTabs
+          tabs={[{ value: "all", label: "Toutes" }, ...STATUTS_COMMANDE.map((s) => ({ value: s.value, label: s.label }))]}
+          value={statut}
+          onChange={setStatut}
+        />
+        <div className="space-y-3 p-4 empty:hidden">
         <FilterBadges
           badges={
             [
@@ -197,7 +205,7 @@ function CommandesPage() {
         />
 
         {(filtersOpen || hasAdvanced) && (
-        <div className="rounded-xl border bg-card p-3 shadow-sm">
+        <div>
           <AdvancedSearchBar
             fields={[
               "reference",
@@ -213,6 +221,7 @@ function CommandesPage() {
           />
         </div>
         )}
+        </div>
 
         <CommandesTable
           items={items}
@@ -235,6 +244,7 @@ function CommandesPage() {
           total={total}
           onPageChange={setPage}
         />
+        </ListCard>
 
         <DeleteCommandeDialog
           commande={commandeToDelete}
