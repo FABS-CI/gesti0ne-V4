@@ -5,9 +5,9 @@ import { AlertTriangle, Loader2, Pencil, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
+import { StatusPill } from "@/components/common/StatusPill";
+import { ListCard, ListFilterBar, ListPageHeader } from "@/components/common/list/ListParts";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -156,22 +156,18 @@ function PlanComptablePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="ds-page-title">
-            Plan comptable
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Référentiel SYSCOHADA révisé : {comptes.filter((c) => c.dans_plan).length} comptes, dont{" "}
-            {comptes.filter((c) => c.nb_lignes > 0).length} mouvementés
-          </p>
-        </div>
-        {peutCreer && (
-          <Button size="sm" onClick={() => ouvrir()}>
-            <Plus className="mr-2 h-4 w-4" /> Nouveau compte
-          </Button>
-        )}
-      </div>
+      <ListPageHeader
+        overline="Comptabilité"
+        title="Plan comptable"
+        description={`Référentiel SYSCOHADA révisé : ${comptes.filter((c) => c.dans_plan).length} comptes, dont ${comptes.filter((c) => c.nb_lignes > 0).length} mouvementés`}
+        actions={
+          peutCreer ? (
+            <Button size="sm" onClick={() => ouvrir()}>
+              <Plus className="mr-2 h-4 w-4" /> Nouveau compte
+            </Button>
+          ) : null
+        }
+      />
 
       {absents.length > 0 && (
         <Alert variant="destructive">
@@ -199,8 +195,9 @@ function PlanComptablePage() {
         </Alert>
       )}
 
-      <Card>
-        <CardContent className="flex flex-wrap items-end gap-3 p-4">
+      <ListCard>
+        <ListFilterBar>
+          <div className="flex w-full flex-wrap items-end gap-3">
           <div className="min-w-[220px] flex-1">
             <Label htmlFor="recherche-compte">Recherche</Label>
             <div className="relative">
@@ -244,11 +241,8 @@ function PlanComptablePage() {
               </SelectContent>
             </Select>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-0">
+          </div>
+        </ListFilterBar>
           {q.error ? (
             <p className="p-4 text-sm text-destructive">
               {friendlyError(q.error, "Plan comptable indisponible")}
@@ -314,9 +308,9 @@ function PlanComptablePage() {
                           </TableCell>
                           <TableCell>
                             {!c.dans_plan ? (
-                              <Badge variant="destructive">Absent du plan</Badge>
+                              <StatusPill tone="danger">Absent du plan</StatusPill>
                             ) : !c.actif ? (
-                              <Badge variant="outline">Désactivé</Badge>
+                              <StatusPill tone="neutral">Désactivé</StatusPill>
                             ) : null}
                           </TableCell>
                           <TableCell>
@@ -339,8 +333,7 @@ function PlanComptablePage() {
               </Table>
             </ResponsiveTable>
           )}
-        </CardContent>
-      </Card>
+      </ListCard>
 
       <Dialog open={!!edition} onOpenChange={(o) => !o && setEdition(null)}>
         <DialogContent>
