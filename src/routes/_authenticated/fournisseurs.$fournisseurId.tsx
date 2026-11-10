@@ -7,8 +7,9 @@ import { STATUT_ACHAT_LABEL, type Achat } from "@/lib/achats-api";
 import { formatDate, formatFCFA } from "@/lib/format";
 import { useReportANouveau } from "@/hooks/use-report-a-nouveau";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { StatusPill } from "@/components/common/StatusPill";
+import { toneForStatut } from "@/lib/statut-tone";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -66,13 +67,14 @@ function FournisseurDetailPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="ds-page-title">{fournisseur.raison_sociale}</h1>
+            <p className="ds-overline">Achats</p>
+            <h1 className="ds-page-title mt-1">{fournisseur.raison_sociale}</h1>
             <p className="text-sm text-muted-foreground">{fournisseur.ville ?? "—"}</p>
           </div>
         </div>
-        <Badge variant={fournisseur.actif ? "secondary" : "destructive"}>
+        <StatusPill tone={fournisseur.actif ? "success" : "neutral"}>
           {fournisseur.actif ? "Actif" : "Inactif"}
-        </Badge>
+        </StatusPill>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -179,9 +181,7 @@ function FournisseurDetailPage() {
                           <TableCell>{frDate(a.date_achat)}</TableCell>
                           <TableCell>
                             {st && (
-                              <Badge style={{ backgroundColor: st.color }} className="text-white">
-                                {st.label}
-                              </Badge>
+                              <StatusPill tone={toneForStatut(a.statut)}>{st.label}</StatusPill>
                             )}
                           </TableCell>
                           <TableCell className="text-right font-medium">

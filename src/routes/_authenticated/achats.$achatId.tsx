@@ -21,7 +21,8 @@ import { buildAchatPdfData } from "@/lib/pdf/achat-pdf-data";
 import { printCached, viewCached } from "@/lib/pdf/actions";
 import { pdfCacheKey } from "@/lib/pdf/pdfCache";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { StatusPill } from "@/components/common/StatusPill";
+import { toneForStatut } from "@/lib/statut-tone";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -115,15 +116,14 @@ function AchatDetailPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="ds-page-title">Approvisionnement {achat.reference}</h1>
+            <p className="ds-overline">Achats</p>
+            <h1 className="ds-page-title mt-1">Approvisionnement {achat.reference}</h1>
             <p className="text-sm text-muted-foreground">{achat.libelle}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           {st && (
-            <Badge style={{ backgroundColor: st.color }} className="text-white">
-              {st.label}
-            </Badge>
+            <StatusPill tone={toneForStatut(achat.statut)}>{st.label}</StatusPill>
           )}
           <Button variant="outline" size="sm" onClick={handleView}>
             <ScanEye className="h-4 w-4 mr-2" /> Aperçu PDF
