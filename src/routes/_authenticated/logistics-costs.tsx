@@ -342,23 +342,23 @@ function LogisticsCostsPage() {
           <table className="w-full border-collapse text-xs">
             <thead>
               <tr className="bg-muted/40 text-left">
-                <th className="border p-2">Tournée</th>
-                <th className="border p-2">Date</th>
-                <th className="border p-2">Chauffeur</th>
-                <th className="border p-2">Véhicule</th>
-                <th className="border p-2">Type</th>
-                <th className="border p-2 text-right">Clients</th>
-                <th className="border p-2 text-right">Colis</th>
-                <th className="border p-2 text-right">Cartons</th>
-                <th className="border p-2 text-right">Total FCFA</th>
-                <th className="border p-2">Statut</th>
-                <th className="border p-2 text-right">Actions</th>
+                <th className="border-b px-3 py-2.5">Tournée</th>
+                <th className="border-b px-3 py-2.5">Date</th>
+                <th className="border-b px-3 py-2.5">Chauffeur</th>
+                <th className="border-b px-3 py-2.5">Véhicule</th>
+                <th className="border-b px-3 py-2.5">Type</th>
+                <th className="border-b px-3 py-2.5 text-right">Clients</th>
+                <th className="border-b px-3 py-2.5 text-right">Colis</th>
+                <th className="border-b px-3 py-2.5 text-right">Cartons</th>
+                <th className="border-b px-3 py-2.5 text-right">Total FCFA</th>
+                <th className="border-b px-3 py-2.5">Statut</th>
+                <th className="border-b px-3 py-2.5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
               {rows.length === 0 ? (
                 <tr>
-                  <td colSpan={11} className="border p-4 text-center text-muted-foreground">
+                  <td colSpan={11} className="p-6 text-center text-muted-foreground">
                     {listQ.isLoading ? "Chargement…" : "Aucun coût enregistré."}
                   </td>
                 </tr>
@@ -367,23 +367,23 @@ function LogisticsCostsPage() {
                   const meta = statutMeta(r.validation_statut);
                   return (
                     <tr key={r.tournee_id} className="hover:bg-muted/20">
-                      <td className="border p-2 font-mono">{r.reference}</td>
-                      <td className="border p-2">{r.date_tournee ?? "—"}</td>
-                      <td className="border p-2">{r.chauffeur_nom ?? "—"}</td>
-                      <td className="border p-2">{r.vehicules?.immatriculation ?? "—"}</td>
-                      <td className="border p-2 capitalize">{r.type_tournee ?? "—"}</td>
-                      <td className="border p-2 text-right tabular-nums">{r.nb_clients}</td>
-                      <td className="border p-2 text-right tabular-nums">{r.nb_colis}</td>
-                      <td className="border p-2 text-right tabular-nums">{r.nb_cartons}</td>
-                      <td className="border p-2 text-right tabular-nums font-semibold">
+                      <td className="border-b px-3 py-2.5 font-mono">{r.reference}</td>
+                      <td className="border-b px-3 py-2.5">{r.date_tournee ?? "—"}</td>
+                      <td className="border-b px-3 py-2.5">{r.chauffeur_nom ?? "—"}</td>
+                      <td className="border-b px-3 py-2.5">{r.vehicules?.immatriculation ?? "—"}</td>
+                      <td className="border-b px-3 py-2.5 capitalize">{r.type_tournee ?? "—"}</td>
+                      <td className="border-b px-3 py-2.5 text-right tabular-nums">{r.nb_clients}</td>
+                      <td className="border-b px-3 py-2.5 text-right tabular-nums">{r.nb_colis}</td>
+                      <td className="border-b px-3 py-2.5 text-right tabular-nums">{r.nb_cartons}</td>
+                      <td className="border-b px-3 py-2.5 text-right tabular-nums font-semibold">
                         {formatFCFA(Math.round(Number(r.cout_total ?? 0)), false)}
                       </td>
-                      <td className="border p-2">
+                      <td className="border-b px-3 py-2.5">
                         <Badge variant="outline" className={`text-${meta.color}-700`}>
                           {meta.label}
                         </Badge>
                       </td>
-                      <td className="border p-2 text-right">
+                      <td className="border-b px-3 py-2.5 text-right">
                         <div className="inline-flex gap-1">
                           <Button aria-label="Voir la tournée" asChild variant="ghost" size="icon" title="Ouvrir le bon de tournée">
                             <Link to="/bon-de-tournee/$tourneeId" params={{ tourneeId: r.tournee_id }}>
