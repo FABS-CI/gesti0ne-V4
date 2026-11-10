@@ -8,7 +8,8 @@ import type { LigneStockee } from "@/lib/paie/bulletin-pdf-data";
 import { BulletinActionButtons } from "@/components/paie/BulletinActionButtons";
 import { dateEnLettres } from "@/lib/pdf/bulletinPaieCI";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { StatusPill } from "@/components/common/StatusPill";
+import { toneForStatut } from "@/lib/statut-tone";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RhPageHeader } from "@/components/rh/RhPageHeader";
@@ -102,9 +103,7 @@ function BulletinDetailPage() {
           <>
             <BulletinActionButtons bulletinId={bulletin.bulletin_id} statut={bulletin.statut} showLabels />
             {st && (
-              <Badge style={{ backgroundColor: st.color }} className="text-white">
-                {st.label}
-              </Badge>
+              <StatusPill tone={toneForStatut(bulletin.statut)}>{st.label}</StatusPill>
             )}
           </>
         }

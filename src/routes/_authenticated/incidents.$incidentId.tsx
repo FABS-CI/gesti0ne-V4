@@ -22,7 +22,8 @@ import {
   STATUT_INCIDENT_LABEL,
 } from "@/lib/incidents-api";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { StatusPill } from "@/components/common/StatusPill";
+import { toneForStatut } from "@/lib/statut-tone";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -128,15 +129,14 @@ function IncidentDetailPage() {
           </Button>
           <AlertTriangle className="h-6 w-6 text-warning" />
           <div>
-            <h1 className="ds-page-title">Incident {incident.numero ?? incident.reference}</h1>
+            <p className="ds-overline">Logistique</p>
+            <h1 className="ds-page-title mt-1">Incident {incident.numero ?? incident.reference}</h1>
             <p className="text-sm text-muted-foreground">{typeLabel}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           {st && (
-            <Badge style={{ backgroundColor: st.color }} className="text-white">
-              {st.label}
-            </Badge>
+            <StatusPill tone={toneForStatut(incident.statut)}>{st.label}</StatusPill>
           )}
           <Button
             variant="outline"
