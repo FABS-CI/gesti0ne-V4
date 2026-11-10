@@ -141,13 +141,9 @@ function SanteSystemePage() {
         .select("backup_id, created_at, taille_octets, statut, duree_ms")
         .order("created_at", { ascending: false })
         .limit(5);
-      const { data: sched } = await supabase
-        .from("backup_schedules")
-        .select("schedule_id, next_run_at, frequence, active")
-        .eq("active", true)
-        .order("next_run_at", { ascending: true })
-        .limit(1);
-      return { list: data ?? [], next: sched?.[0] ?? null };
+      // Même source que la page Sauvegardes : la tâche planifiée réelle (toutes les 3 h).
+      const { data: nextRun } = await supabase.rpc("get_next_backup_run");
+      return { list: data ?? [], next: nextRun ? { next_run_at: nextRun as string } : null };
     },
   });
 
