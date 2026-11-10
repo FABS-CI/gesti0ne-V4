@@ -8,6 +8,7 @@ import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 const historiqueConfig = {
   ...bulletinsConfig,
   title: "Historique des paies",
+  overline: "Ressources humaines",
   subtitle: "Tous les bulletins enregistrés",
   icon: History,
   newHref: undefined,

@@ -20,6 +20,7 @@ const config: ResourceConfig = {
   table: "missions",
   idField: "mission_id",
   title: "Missions",
+  overline: "Logistique",
   subtitle: "Missions et déplacements professionnels",
   icon: MapPin,
   newLabel: "Nouvelle mission",

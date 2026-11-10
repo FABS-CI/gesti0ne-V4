@@ -7,6 +7,7 @@ const config: ResourceConfig = {
   table: "preparateurs_colisage",
   idField: "preparateur_id",
   title: "Préparateurs & Responsables de colisage",
+  overline: "Logistique",
   subtitle:
     "Liste libre des préparateurs et superviseurs (indépendante du registre des employés).",
   icon: UserCog,
