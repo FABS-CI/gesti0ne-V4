@@ -9,6 +9,7 @@ import { useReportANouveau } from "@/hooks/use-report-a-nouveau";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusPill } from "@/components/common/StatusPill";
+import { toneForStatut } from "@/lib/statut-tone";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
