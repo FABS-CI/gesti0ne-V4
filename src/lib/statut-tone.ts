@@ -16,6 +16,8 @@ export function toneForStatut(statut: string | null | undefined): StatusTone {
   if (/(expir)/.test(s)) return "neutral";
   if (/(resili|résili)/.test(s)) return "danger";
   if (/(inactif|non_pay|impay)/.test(s)) return s.includes("inactif") ? "neutral" : "danger";
+  if (/(resolu|résolu|regularis|régularis)/.test(s)) return "success";
+  if (/(ouvert|declar|déclar)/.test(s)) return "warning";
   if (/(pay|valid|livr|actif|accept|termin|recu|reçu|confirm|soldé|solde)/.test(s)) return "success";
   if (/(partiel|attente|cours|prepar|prépar|envoy|brouillon)/.test(s)) {
     return s.includes("brouillon") ? "neutral" : "warning";
