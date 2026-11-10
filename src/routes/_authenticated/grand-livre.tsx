@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Download, FileDown } from "lucide-react";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { ListCard, ListFilterBar, ListPageHeader } from "@/components/common/list/ListParts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -75,82 +75,81 @@ function GrandLivrePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="ds-page-title">
-            Grand livre
-          </h1>
-          <p className="text-sm text-muted-foreground">Détail des écritures par compte</p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              exportCsv(
-                "grand-livre",
-                [
-                  "Compte",
-                  "Libellé compte",
-                  "Date",
-                  "Journal",
-                  "Réf.",
-                  "Libellé",
-                  "Débit",
-                  "Crédit",
-                  "Solde",
-                ],
-                filtered.map((l) => [
-                  l.compte,
-                  l.compte_libelle,
-                  l.date_ecriture,
-                  l.journal,
-                  l.reference,
-                  l.libelle,
-                  l.debit,
-                  l.credit,
-                  l.solde,
-                ]),
-                {
-                  pageTitle: "GRAND LIVRE",
-                  summary: (() => {
-                    const td = filtered.reduce((s, l) => s + Number(l.debit || 0), 0);
-                    const tc = filtered.reduce((s, l) => s + Number(l.credit || 0), 0);
-                    return [
-                      { label: "Nombre d'écritures", value: String(filtered.length) },
-                      {
-                        label: "Comptes distincts",
-                        value: String(new Set(filtered.map((l) => l.compte)).size),
-                      },
-                      { label: "Total débit", value: formatFCFA(td) },
-                      { label: "Total crédit", value: formatFCFA(tc) },
-                      { label: "Solde", value: formatFCFA((td - tc)) },
-                    ];
-                  })(),
-                },
-              )
-            }
-          >
-            <Download className="mr-2 h-4 w-4" /> PDF
-          </Button>
-          <Button
-            size="sm"
-            onClick={() =>
-              generateGrandLivrePDF(filtered, {
-                dateFrom: from || undefined,
-                dateTo: to || undefined,
-                compte,
-              })
-            }
-            disabled={!filtered.length}
-          >
-            <FileDown className="mr-2 h-4 w-4" /> PDF
-          </Button>
-        </div>
-      </div>
+      <ListPageHeader
+        overline="Comptabilité"
+        title="Grand livre"
+        description="Détail des écritures par compte"
+        actions={
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                exportCsv(
+                  "grand-livre",
+                  [
+                    "Compte",
+                    "Libellé compte",
+                    "Date",
+                    "Journal",
+                    "Réf.",
+                    "Libellé",
+                    "Débit",
+                    "Crédit",
+                    "Solde",
+                  ],
+                  filtered.map((l) => [
+                    l.compte,
+                    l.compte_libelle,
+                    l.date_ecriture,
+                    l.journal,
+                    l.reference,
+                    l.libelle,
+                    l.debit,
+                    l.credit,
+                    l.solde,
+                  ]),
+                  {
+                    pageTitle: "GRAND LIVRE",
+                    summary: (() => {
+                      const td = filtered.reduce((s, l) => s + Number(l.debit || 0), 0);
+                      const tc = filtered.reduce((s, l) => s + Number(l.credit || 0), 0);
+                      return [
+                        { label: "Nombre d'écritures", value: String(filtered.length) },
+                        {
+                          label: "Comptes distincts",
+                          value: String(new Set(filtered.map((l) => l.compte)).size),
+                        },
+                        { label: "Total débit", value: formatFCFA(td) },
+                        { label: "Total crédit", value: formatFCFA(tc) },
+                        { label: "Solde", value: formatFCFA(td - tc) },
+                      ];
+                    })(),
+                  },
+                )
+              }
+            >
+              <Download className="mr-2 h-4 w-4" /> PDF
+            </Button>
+            <Button
+              size="sm"
+              onClick={() =>
+                generateGrandLivrePDF(filtered, {
+                  dateFrom: from || undefined,
+                  dateTo: to || undefined,
+                  compte,
+                })
+              }
+              disabled={!filtered.length}
+            >
+              <FileDown className="mr-2 h-4 w-4" /> PDF
+            </Button>
+          </>
+        }
+      />
 
-      <Card>
-        <CardContent className="flex flex-wrap gap-3 p-4">
+      <ListCard>
+        <ListFilterBar>
           <div>
             <Label>Du</Label>
             <Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
@@ -175,70 +174,60 @@ function GrandLivrePage() {
               </SelectContent>
             </Select>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-0">
-          <ResponsiveTable stickyFirstCol>
-            <Table>
-              <TableHeader>
+        </ListFilterBar>
+        <ResponsiveTable stickyFirstCol>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Compte</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Journal</TableHead>
+                <TableHead>Réf.</TableHead>
+                <TableHead>Libellé</TableHead>
+                <TableHead className="text-right">Débit</TableHead>
+                <TableHead className="text-right">Crédit</TableHead>
+                <TableHead className="text-right">Solde</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
                 <TableRow>
-                  <TableHead>Compte</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Journal</TableHead>
-                  <TableHead>Réf.</TableHead>
-                  <TableHead>Libellé</TableHead>
-                  <TableHead className="text-right">Débit</TableHead>
-                  <TableHead className="text-right">Crédit</TableHead>
-                  <TableHead className="text-right">Solde</TableHead>
+                  <TableCell colSpan={8} className="py-10 text-center text-muted-foreground">
+                    Chargement…
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {isLoading ? (
-                  <TableRow>
-                    <TableCell colSpan={8} className="text-center text-muted-foreground">
-                      Chargement…
+              ) : filtered.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="py-10 text-center text-muted-foreground">
+                    Aucune ligne
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filtered.map((l) => (
+                  <TableRow key={l.ligne_id}>
+                    <TableCell className="font-mono text-xs">{l.compte}</TableCell>
+                    <TableCell>{l.date_ecriture ? formatDate(l.date_ecriture) : "—"}</TableCell>
+                    <TableCell>{l.journal}</TableCell>
+                    <TableCell className="font-mono text-xs">{l.reference}</TableCell>
+                    <TableCell className="max-w-[280px] truncate">{l.libelle}</TableCell>
+                    <TableCell className="text-right">
+                      {l.debit ? formatFCFA(l.debit) : "—"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {l.credit ? formatFCFA(l.credit) : "—"}
+                    </TableCell>
+                    <TableCell
+                      className={`text-right font-medium tabular-nums ${l.solde >= 0 ? "text-success" : "text-destructive"}`}
+                    >
+                      {formatFCFA(l.solde)}
                     </TableCell>
                   </TableRow>
-                ) : filtered.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={8} className="text-center text-muted-foreground">
-                      Aucune ligne
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filtered.map((l) => (
-                    <TableRow key={l.ligne_id}>
-                      <TableCell className="font-mono text-xs">{l.compte}</TableCell>
-                      <TableCell>
-                        {l.date_ecriture
-                          ? formatDate(l.date_ecriture)
-                          : "—"}
-                      </TableCell>
-                      <TableCell>{l.journal}</TableCell>
-                      <TableCell className="font-mono text-xs">{l.reference}</TableCell>
-                      <TableCell className="max-w-[280px] truncate">{l.libelle}</TableCell>
-                      <TableCell className="text-right">
-                        {l.debit ? formatFCFA(l.debit) : "—"}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {l.credit ? formatFCFA(l.credit) : "—"}
-                      </TableCell>
-                      <TableCell
-                        className="text-right font-medium"
-                        style={{ color: l.solde >= 0 ? "#10B981" : "#EF4444" }}
-                      >
-                        {formatFCFA(l.solde)}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </ResponsiveTable>
-        </CardContent>
-      </Card>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </ResponsiveTable>
+      </ListCard>
     </div>
   );
 }

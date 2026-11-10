@@ -9,6 +9,7 @@
 - [x] Nouveau style (en-tête, carte unique, onglets) sur proformas, commandes, paiements, clients, produits, stock, fournisseurs, achats — 8 écrans ouverts connectés sans erreur
 - [x] Autres listes : colisage, employés, transferts, incidents, inventaires, retours (tournées et paie via le style partagé) — ouvertes connectées sans erreur
 - [x] Bons de livraison, suivi des livraisons, journal comptable, congés, dépôts — ouverts connectés sans erreur
+- [x] Alertes de stock (onglets par sévérité), grand livre, exercices — ouverts connectés sans erreur
 
 ## Glassy Sidebar V7 — demande du 9 novembre 2026
 - [x] Affichage V7 signalé invisible à 09:46 : contrôle connecté conforme en clair, sombre, rail et tiroir mobile, sans erreur ; capture remise et rechargement conseillé, aucune régression de code reproduite

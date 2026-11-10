@@ -1,9 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { AlertTriangle, Download, Warehouse } from "lucide-react";
+import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { StatusPill, type StatusTone } from "@/components/common/StatusPill";
+import {
+  ListCard,
+  ListFilterBar,
+  ListPageHeader,
+  ListSkeletonRows,
+  ListStatusTabs,
+} from "@/components/common/list/ListParts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -32,13 +39,10 @@ export const Route = createFileRoute("/_authenticated/alertes-stock")({
   notFoundComponent: RouteNotFound,
 });
 
-const SEV_LABEL: Record<
-  string,
-  { label: string; variant: "destructive" | "secondary" | "default" }
-> = {
-  rupture: { label: "Rupture", variant: "destructive" },
-  critique: { label: "Critique", variant: "destructive" },
-  bas: { label: "Bas", variant: "secondary" },
+const SEV_LABEL: Record<string, { label: string; tone: StatusTone }> = {
+  rupture: { label: "Rupture", tone: "danger" },
+  critique: { label: "Critique", tone: "warning" },
+  bas: { label: "Bas", tone: "info" },
 };
 
 function AlertesStockPage() {
@@ -104,131 +108,119 @@ function AlertesStockPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <AlertTriangle className="h-7 w-7 text-destructive" />
-          <div>
-            <h1 className="ds-page-title">Alertes de stock par dépôt</h1>
-            <p className="text-sm text-muted-foreground">
-              Produits sous seuil — seuil dépôt prioritaire, sinon seuil produit
-            </p>
-          </div>
-        </div>
-        <Button variant="outline" size="sm" onClick={onExport} disabled={!rows.length}>
-          <Download className="mr-2 h-4 w-4" /> Exporter
-        </Button>
-      </div>
+      <ListPageHeader
+        overline="Stock"
+        title="Alertes de stock par dépôt"
+        description="Produits sous seuil — seuil dépôt prioritaire, sinon seuil produit"
+        actions={
+          <Button variant="outline" size="sm" onClick={onExport} disabled={!rows.length}>
+            <Download className="mr-2 h-4 w-4" /> Exporter
+          </Button>
+        }
+      />
 
       <div className="grid gap-3 sm:grid-cols-3">
         {(["rupture", "critique", "bas"] as const).map((sev) => (
           <Card key={sev}>
             <CardHeader className="pb-2">
-              <CardTitle className="text-xs uppercase text-muted-foreground">
-                {SEV_LABEL[sev].label}
-              </CardTitle>
+              <CardTitle className="ds-overline">{SEV_LABEL[sev].label}</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{counts[sev]}</div>
+              <div className="text-3xl font-semibold tabular-nums">{counts[sev]}</div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-3 rounded-md border bg-card p-4">
-        <Input
-          placeholder="Rechercher (référence, désignation)…"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          className="w-72"
-        />
-        <Select
-          value={depotFilter || "__all"}
-          onValueChange={(v) => setDepotFilter(v === "__all" ? "" : v)}
-        >
-          <SelectTrigger className="w-56">
-            <SelectValue placeholder="Tous les dépôts" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="__all">Tous les dépôts</SelectItem>
-            {depots.map((d) => (
-              <SelectItem key={d.depot_id} value={d.depot_id}>
-                {d.nom}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select
+      <ListCard>
+        <ListStatusTabs
           value={sevFilter || "__all"}
-          onValueChange={(v) => setSevFilter(v === "__all" ? "" : v)}
-        >
-          <SelectTrigger className="w-48">
-            <SelectValue placeholder="Toutes sévérités" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="__all">Toutes sévérités</SelectItem>
-            <SelectItem value="rupture">Rupture</SelectItem>
-            <SelectItem value="critique">Critique</SelectItem>
-            <SelectItem value="bas">Bas</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+          onChange={(v) => setSevFilter(v === "__all" ? "" : v)}
+          tabs={[
+            { value: "__all", label: "Toutes", count: alertes.length },
+            { value: "rupture", label: "Rupture", count: counts.rupture },
+            { value: "critique", label: "Critique", count: counts.critique },
+            { value: "bas", label: "Bas", count: counts.bas },
+          ]}
+        />
+        <ListFilterBar>
+          <Input
+            placeholder="Rechercher (référence, désignation)…"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            className="w-full sm:w-72"
+          />
+          <Select
+            value={depotFilter || "__all"}
+            onValueChange={(v) => setDepotFilter(v === "__all" ? "" : v)}
+          >
+            <SelectTrigger className="w-56">
+              <SelectValue placeholder="Tous les dépôts" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__all">Tous les dépôts</SelectItem>
+              {depots.map((d) => (
+                <SelectItem key={d.depot_id} value={d.depot_id}>
+                  {d.nom}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </ListFilterBar>
 
-      <div className="rounded-lg border bg-card">
-        <ResponsiveTable stickyFirstCol>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Sévérité</TableHead>
-                <TableHead>
-                  <Warehouse className="inline h-3.5 w-3.5 mr-1" /> Dépôt
-                </TableHead>
-                <TableHead>Référence</TableHead>
-                <TableHead>Désignation</TableHead>
-                <TableHead className="text-right">Quantité</TableHead>
-                <TableHead className="text-right">Seuil</TableHead>
-                <TableHead></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
+        {isLoading ? (
+          <ListSkeletonRows />
+        ) : (
+          <ResponsiveTable stickyFirstCol>
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
-                    Chargement…
-                  </TableCell>
+                  <TableHead>Sévérité</TableHead>
+                  <TableHead>Dépôt</TableHead>
+                  <TableHead>Référence</TableHead>
+                  <TableHead>Désignation</TableHead>
+                  <TableHead className="text-right">Quantité</TableHead>
+                  <TableHead className="text-right">Seuil</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
-              ) : rows.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
-                    Aucune alerte 
-                  </TableCell>
-                </TableRow>
-              ) : (
-                rows.map((r) => (
-                  <TableRow key={`${r.depot_id}-${r.produit_id}`}>
-                    <TableCell>
-                      <Badge variant={SEV_LABEL[r.severite].variant}>
-                        {SEV_LABEL[r.severite].label}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{r.depot_nom}</TableCell>
-                    <TableCell className="font-mono text-xs">{r.reference}</TableCell>
-                    <TableCell>{r.titre}</TableCell>
-                    <TableCell className="text-right font-semibold">{r.quantite}</TableCell>
-                    <TableCell className="text-right">{r.seuil}</TableCell>
-                    <TableCell className="text-right">
-                      <Button asChild variant="ghost" size="sm">
-                        <Link to="/produits/$produitId" params={{ produitId: r.produit_id }}>
-                          Voir
-                        </Link>
-                      </Button>
+              </TableHeader>
+              <TableBody>
+                {rows.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
+                      Aucune alerte
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </ResponsiveTable>
-      </div>
+                ) : (
+                  rows.map((r) => (
+                    <TableRow key={`${r.depot_id}-${r.produit_id}`}>
+                      <TableCell>
+                        <StatusPill tone={SEV_LABEL[r.severite].tone}>
+                          {SEV_LABEL[r.severite].label}
+                        </StatusPill>
+                      </TableCell>
+                      <TableCell>{r.depot_nom}</TableCell>
+                      <TableCell className="font-mono text-xs">{r.reference}</TableCell>
+                      <TableCell>{r.titre}</TableCell>
+                      <TableCell className="text-right font-semibold tabular-nums">
+                        {r.quantite}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">{r.seuil}</TableCell>
+                      <TableCell className="text-right">
+                        <Button asChild variant="ghost" size="sm">
+                          <Link to="/produits/$produitId" params={{ produitId: r.produit_id }}>
+                            Voir
+                          </Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </ResponsiveTable>
+        )}
+      </ListCard>
     </div>
   );
 }
