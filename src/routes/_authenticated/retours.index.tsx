@@ -42,6 +42,19 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { StatusPill } from "@/components/common/StatusPill";
 import { toneForStatut } from "@/lib/statut-tone";
 import { ListSkeletonRows } from "@/components/common/list/ListParts";
+import type { StatusTone } from "@/components/common/StatusPill";
+
+const RETOUR_TONE: Record<string, StatusTone> = {
+  demande_creee: "warning",
+  attente_reception: "warning",
+  receptionne: "info",
+  attente_validation_compta: "warning",
+  valide_compta: "success",
+  cloture: "success",
+  refus_magasin: "danger",
+  refus_compta: "danger",
+  annule: "neutral",
+};
 
 import {
   listRetours,
@@ -325,7 +338,7 @@ function RetoursListPage() {
                       <TableCell className="text-right font-semibold text-sm">{r.total_quantite || 0}</TableCell>
                       <TableCell className="text-center">
                         {st && (
-                          <StatusPill tone={r.statut === "receptionne" ? "info" : toneForStatut(r.statut)}>{st.label}</StatusPill>
+                          <StatusPill tone={RETOUR_TONE[r.statut] ?? toneForStatut(r.statut)}>{st.label}</StatusPill>
                         )}
                       </TableCell>
                           <TableCell className="text-right">
