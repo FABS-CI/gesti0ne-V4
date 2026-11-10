@@ -146,6 +146,7 @@ function FactureDetailPage() {
         <PageHeader
           className="mb-0 border-0 pb-0"
           backTo="/factures"
+          overline="Ventes"
           title={`Facture ${formatDocumentReference(facture.reference)}`}
           description={facture.client_nom ?? "Client non renseigné"}
         />

@@ -115,15 +115,14 @@ function AchatDetailPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="ds-page-title">Approvisionnement {achat.reference}</h1>
+            <p className="ds-overline">Achats</p>
+            <h1 className="ds-page-title mt-1">Approvisionnement {achat.reference}</h1>
             <p className="text-sm text-muted-foreground">{achat.libelle}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           {st && (
-            <Badge style={{ backgroundColor: st.color }} className="text-white">
-              {st.label}
-            </Badge>
+            <StatusPill tone={toneForStatut(achat.statut)}>{st.label}</StatusPill>
           )}
           <Button variant="outline" size="sm" onClick={handleView}>
             <ScanEye className="h-4 w-4 mr-2" /> Aperçu PDF
