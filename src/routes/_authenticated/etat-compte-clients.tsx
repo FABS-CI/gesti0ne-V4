@@ -182,7 +182,7 @@ function EtatComptePage() {
   return (
     <div className="space-y-6">
       <ListPageHeader
-        overline="Ventes"
+        overline="Finances"
         title="États de compte clients"
         description="Soldes et créances clients"
         actions={

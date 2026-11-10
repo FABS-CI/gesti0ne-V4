@@ -146,7 +146,7 @@ function SpecimensListPage() {
   return (
     <div className="space-y-6">
       <ListPageHeader
-        overline="Ventes"
+        overline="Gestion commerciale"
         title="Gestion des Spécimens"
         description="Remises gratuites d'ouvrages aux établissements — décrémentation directe du stock"
         actions={
