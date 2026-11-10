@@ -1,9 +1,9 @@
+import { StatusPill } from "@/components/common/StatusPill";
 import { formatDocumentReference } from "@/lib/document-reference";
 import { FileDown, FileText, Loader2, Users, Eye, Wallet } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { EmptyState } from "@/components/common/EmptyState";
 import { ClientLink } from "@/components/common/ClientLink";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -28,7 +28,7 @@ type Props = {
 export function EtatCompteTable({ clients, isLoading, busy, historiqueBusy, onPdf, onHistorique }: Props) {
   const navigate = useNavigate();
   return (
-    <div className="rounded-lg border">
+    <div>
       <Table>
         <TableHeader>
           <TableRow>
@@ -69,24 +69,17 @@ export function EtatCompteTable({ clients, isLoading, busy, historiqueBusy, onPd
                     <ClientLink clientId={c.client_id} nom={c.nom} />
                   </TableCell>
                   <TableCell
-                    className="text-right font-semibold"
-                    style={{ color: solde > 0 ? "#EF4444" : "#10B981" }}
+                    className={`text-right font-semibold tabular-nums ${solde > 0 ? "text-destructive" : "text-success"}`}
                   >
                     {formatFCFA(solde)}
                   </TableCell>
                   <TableCell>
                     {depasse ? (
-                      <Badge variant="outline" style={{ color: "#EF4444", borderColor: "#EF4444" }}>
-                        Plafond dépassé
-                      </Badge>
+                      <StatusPill tone="danger">Plafond dépassé</StatusPill>
                     ) : solde > 0 ? (
-                      <Badge variant="outline" style={{ color: "#F97316", borderColor: "#F97316" }}>
-                        Débiteur
-                      </Badge>
+                      <StatusPill tone="warning">Débiteur</StatusPill>
                     ) : (
-                      <Badge variant="outline" style={{ color: "#10B981", borderColor: "#10B981" }}>
-                        À jour
-                      </Badge>
+                      <StatusPill tone="success">À jour</StatusPill>
                     )}
                   </TableCell>
                   <TableCell className="text-right">
