@@ -19,6 +19,8 @@ import {
 } from "@/lib/notifications-api";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ListPageHeader } from "@/components/common/list/ListParts";
+import { StatusPill } from "@/components/common/StatusPill";
 import { Card, CardContent } from "@/components/ui/card";
 import { useConfirmDelete } from "@/hooks/use-confirm-delete";
 import {
@@ -118,13 +120,11 @@ function NotificationsCentre() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="ds-page-title">
-            Notifications & alertes
-          </h1>
-          <p className="text-sm text-muted-foreground">Centre de notifications et alertes métier</p>
-        </div>
+      <ListPageHeader
+        overline="Pilotage"
+        title="Notifications & alertes"
+        description="Centre de notifications et alertes métier"
+        actions={
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
             <RefreshCw className={`mr-2 h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
@@ -158,7 +158,8 @@ function NotificationsCentre() {
             Purger les lues
           </Button>
         </div>
-      </div>
+        }
+      />
 
       <NotificationPreferencesPanel />
 
@@ -166,13 +167,13 @@ function NotificationsCentre() {
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground">Total affiché</p>
-            <p className="text-2xl font-bold">{stats.total}</p>
+            <p className="mt-1 text-2xl font-semibold tabular-nums">{stats.total}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground">Non lues</p>
-            <p className="text-2xl font-bold text-warning">{stats.nonLus}</p>
+            <p className="mt-1 text-2xl font-semibold tabular-nums">{stats.nonLus}</p>
           </CardContent>
         </Card>
         <Card>
@@ -260,9 +261,7 @@ function NotificationRow({
               {meta.label}
             </Badge>
             {!n.lu && (
-              <Badge variant="secondary" className="text-xs">
-                Nouveau
-              </Badge>
+              <StatusPill tone="info">Nouveau</StatusPill>
             )}
           </div>
           {n.message && <p className="mt-1 text-sm text-muted-foreground">{n.message}</p>}

@@ -15,6 +15,7 @@ import { useExerciceConsulteId } from "@/contexts/ExerciceContext";
 import { useEtatCompteClients, type EtatCompteClient } from "@/hooks/use-etat-compte-clients";
 
 import { Button } from "@/components/ui/button";
+import { ListCard, ListFilterBar, ListPageHeader } from "@/components/common/list/ListParts";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -180,13 +181,11 @@ function EtatComptePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="ds-page-title">
-            États de compte clients
-          </h1>
-          <p className="text-sm text-muted-foreground">Soldes et créances clients</p>
-        </div>
+      <ListPageHeader
+        overline="Finances"
+        title="États de compte clients"
+        description="Soldes et créances clients"
+        actions={
         <div className="flex flex-wrap gap-2">
           <Button
             variant="outline"
@@ -211,7 +210,8 @@ function EtatComptePage() {
             <FileDown className="mr-2 h-4 w-4" /> Exporter PDF
           </Button>
         </div>
-      </div>
+        }
+      />
 
       {debugOpen && debugByClient && (
         <EtatCompteDebugPanel
@@ -243,7 +243,8 @@ function EtatComptePage() {
         </Card>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
+      <ListCard>
+      <ListFilterBar>
         <div className="relative max-w-sm flex-1 min-w-[220px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -266,7 +267,7 @@ function EtatComptePage() {
             <SelectItem value="soldes">Clients soldés</SelectItem>
           </SelectContent>
         </Select>
-      </div>
+      </ListFilterBar>
 
       <EtatCompteTable
         clients={clients}
@@ -276,6 +277,7 @@ function EtatComptePage() {
         onPdf={handlePdf}
         onHistorique={handleHistorique}
       />
+      </ListCard>
     </div>
   );
 }

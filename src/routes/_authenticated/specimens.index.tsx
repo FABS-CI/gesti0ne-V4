@@ -6,8 +6,9 @@ import { toast } from "sonner";
 import { Gift, Plus, Search, Eye, Printer, Ban, Loader2, RotateCcw, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { ListCard, ListFilterBar, ListPageHeader } from "@/components/common/list/ListParts";
+import { StatusPill } from "@/components/common/StatusPill";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -143,33 +144,31 @@ function SpecimensListPage() {
   };
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Gift className="h-7 w-7 text-primary" />
-          <div>
-            <h1 className="ds-page-title">Gestion des Spécimens</h1>
-            <p className="text-muted-foreground text-sm">
-              Remises gratuites d'ouvrages aux établissements — décrémentation directe du stock
-            </p>
-          </div>
-        </div>
-        <Can permission="specimens.creer">
-          <Button onClick={() => navigate({ to: "/specimens/nouveau" })}>
-            <Plus className="h-4 w-4 mr-2" />
-            Nouveau Spécimen
-          </Button>
-        </Can>
-      </div>
+    <div className="space-y-6">
+      <ListPageHeader
+        overline="Gestion commerciale"
+        title="Gestion des Spécimens"
+        description="Remises gratuites d'ouvrages aux établissements — décrémentation directe du stock"
+        actions={
+          <Can permission="specimens.creer">
+            <Button onClick={() => navigate({ to: "/specimens/nouveau" })}>
+              <Plus className="h-4 w-4 mr-2" />
+              Nouveau Spécimen
+            </Button>
+          </Can>
+        }
+      />
 
       <div className="grid gap-4 md:grid-cols-4">
         <StatCard label="Total" value={stats.total} />
-        <StatCard label="Enregistrés" value={stats.enregistre} accent="text-success" />
-        <StatCard label="Annulés" value={stats.annule} accent="text-destructive" />
+        <StatCard label="Enregistrés" value={stats.enregistre} />
+        <StatCard label="Annulés" value={stats.annule} />
         <StatCard label="Quantité totale remise" value={stats.quantite} />
       </div>
 
-      <div className="grid gap-3 md:grid-cols-5">
+      <ListCard>
+      <ListFilterBar>
+      <div className="grid w-full gap-3 md:grid-cols-6">
         <div className="relative md:col-span-2">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -193,9 +192,9 @@ function SpecimensListPage() {
           </SelectContent>
         </Select>
         <Input placeholder="Ville" value={ville} onChange={(e) => setVille(e.target.value)} />
-        <div className="flex gap-2">
-          <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
-          <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+        <div className="flex min-w-0 gap-2 md:col-span-2">
+          <Input type="date" className="min-w-0" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
+          <Input type="date" className="min-w-0" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
         </div>
       </div>
 
@@ -212,8 +211,8 @@ function SpecimensListPage() {
         ]}
         onResetAll={resetAllFilters}
       />
+      </ListFilterBar>
 
-      <div className="rounded-md border bg-card">
         <ResponsiveTable stickyFirstCol>
           <Table>
             <TableHeader>
@@ -271,9 +270,9 @@ function SpecimensListPage() {
                       <TableCell className="text-right">{s.nb_produits}</TableCell>
                       <TableCell className="text-right">{s.total_quantite}</TableCell>
                       <TableCell>
-                        <Badge style={{ backgroundColor: st?.color, color: "white" }}>
+                        <StatusPill tone={s.statut === "enregistre" ? "success" : "neutral"}>
                           {st?.label ?? s.statut}
-                        </Badge>
+                        </StatusPill>
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
                         {s.gestionnaire_nom ?? "—"}
@@ -322,7 +321,7 @@ function SpecimensListPage() {
             </TableBody>
           </Table>
         </ResponsiveTable>
-      </div>
+      </ListCard>
 
       <AlertDialog open={!!toCancel} onOpenChange={(o) => !o && setToCancel(null)}>
         <AlertDialogContent>
@@ -349,9 +348,9 @@ function SpecimensListPage() {
 
 function StatCard({ label, value, accent }: { label: string; value: number; accent?: string }) {
   return (
-    <div className="rounded-md border bg-card p-4">
+    <div className="rounded-[14px] border bg-card p-4 shadow-[var(--shadow-card)]">
       <div className="text-xs text-muted-foreground">{label}</div>
-      <div className={`text-2xl font-bold ${accent ?? ""}`}>{value}</div>
+      <div className={`mt-1 text-2xl font-semibold tabular-nums ${accent ?? ""}`}>{value}</div>
     </div>
   );
 }
