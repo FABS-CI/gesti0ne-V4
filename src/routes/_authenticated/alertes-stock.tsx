@@ -39,10 +39,7 @@ export const Route = createFileRoute("/_authenticated/alertes-stock")({
   notFoundComponent: RouteNotFound,
 });
 
-const SEV_LABEL: Record<
-  string,
-  { label: string; tone: StatusTone }
-> = {
+const SEV_LABEL: Record<string, { label: string; tone: StatusTone }> = {
   rupture: { label: "Rupture", tone: "danger" },
   critique: { label: "Critique", tone: "warning" },
   bas: { label: "Bas", tone: "info" },
@@ -126,9 +123,7 @@ function AlertesStockPage() {
         {(["rupture", "critique", "bas"] as const).map((sev) => (
           <Card key={sev}>
             <CardHeader className="pb-2">
-              <CardTitle className="ds-overline">
-                {SEV_LABEL[sev].label}
-              </CardTitle>
+              <CardTitle className="ds-overline">{SEV_LABEL[sev].label}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-semibold tabular-nums">{counts[sev]}</div>
@@ -149,79 +144,81 @@ function AlertesStockPage() {
           ]}
         />
         <ListFilterBar>
-        <Input
-          placeholder="Rechercher (référence, désignation)…"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          className="w-full sm:w-72"
-        />
-        <Select
-          value={depotFilter || "__all"}
-          onValueChange={(v) => setDepotFilter(v === "__all" ? "" : v)}
-        >
-          <SelectTrigger className="w-56">
-            <SelectValue placeholder="Tous les dépôts" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="__all">Tous les dépôts</SelectItem>
-            {depots.map((d) => (
-              <SelectItem key={d.depot_id} value={d.depot_id}>
-                {d.nom}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          <Input
+            placeholder="Rechercher (référence, désignation)…"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            className="w-full sm:w-72"
+          />
+          <Select
+            value={depotFilter || "__all"}
+            onValueChange={(v) => setDepotFilter(v === "__all" ? "" : v)}
+          >
+            <SelectTrigger className="w-56">
+              <SelectValue placeholder="Tous les dépôts" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__all">Tous les dépôts</SelectItem>
+              {depots.map((d) => (
+                <SelectItem key={d.depot_id} value={d.depot_id}>
+                  {d.nom}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </ListFilterBar>
 
         {isLoading ? (
           <ListSkeletonRows />
         ) : (
-        <ResponsiveTable stickyFirstCol>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Sévérité</TableHead>
-                <TableHead>Dépôt</TableHead>
-                <TableHead>Référence</TableHead>
-                <TableHead>Désignation</TableHead>
-                <TableHead className="text-right">Quantité</TableHead>
-                <TableHead className="text-right">Seuil</TableHead>
-                <TableHead></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.length === 0 ? (
+          <ResponsiveTable stickyFirstCol>
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
-                    Aucune alerte
-                  </TableCell>
+                  <TableHead>Sévérité</TableHead>
+                  <TableHead>Dépôt</TableHead>
+                  <TableHead>Référence</TableHead>
+                  <TableHead>Désignation</TableHead>
+                  <TableHead className="text-right">Quantité</TableHead>
+                  <TableHead className="text-right">Seuil</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
-              ) : (
-                rows.map((r) => (
-                  <TableRow key={`${r.depot_id}-${r.produit_id}`}>
-                    <TableCell>
-                      <StatusPill tone={SEV_LABEL[r.severite].tone}>
-                        {SEV_LABEL[r.severite].label}
-                      </StatusPill>
-                    </TableCell>
-                    <TableCell>{r.depot_nom}</TableCell>
-                    <TableCell className="font-mono text-xs">{r.reference}</TableCell>
-                    <TableCell>{r.titre}</TableCell>
-                    <TableCell className="text-right font-semibold tabular-nums">{r.quantite}</TableCell>
-                    <TableCell className="text-right tabular-nums">{r.seuil}</TableCell>
-                    <TableCell className="text-right">
-                      <Button asChild variant="ghost" size="sm">
-                        <Link to="/produits/$produitId" params={{ produitId: r.produit_id }}>
-                          Voir
-                        </Link>
-                      </Button>
+              </TableHeader>
+              <TableBody>
+                {rows.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
+                      Aucune alerte
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </ResponsiveTable>
+                ) : (
+                  rows.map((r) => (
+                    <TableRow key={`${r.depot_id}-${r.produit_id}`}>
+                      <TableCell>
+                        <StatusPill tone={SEV_LABEL[r.severite].tone}>
+                          {SEV_LABEL[r.severite].label}
+                        </StatusPill>
+                      </TableCell>
+                      <TableCell>{r.depot_nom}</TableCell>
+                      <TableCell className="font-mono text-xs">{r.reference}</TableCell>
+                      <TableCell>{r.titre}</TableCell>
+                      <TableCell className="text-right font-semibold tabular-nums">
+                        {r.quantite}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">{r.seuil}</TableCell>
+                      <TableCell className="text-right">
+                        <Button asChild variant="ghost" size="sm">
+                          <Link to="/produits/$produitId" params={{ produitId: r.produit_id }}>
+                            Voir
+                          </Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </ResponsiveTable>
         )}
       </ListCard>
     </div>
