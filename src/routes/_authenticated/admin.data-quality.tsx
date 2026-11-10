@@ -9,7 +9,6 @@ import { toneForStatut } from "@/lib/statut-tone";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -302,9 +301,9 @@ function DataQualityPage() {
                   <TableCell className="text-right">{s.stock_actuel}</TableCell>
                   <TableCell className="text-right">{s.stock_calcule}</TableCell>
                   <TableCell className="text-right">
-                    <Badge variant={Math.abs(s.ecart) > 10 ? "destructive" : "outline"}>
+                    <StatusPill tone={Math.abs(s.ecart) > 10 ? "danger" : "neutral"} dot={false}>
                       {s.ecart > 0 ? `+${s.ecart}` : s.ecart}
-                    </Badge>
+                    </StatusPill>
                   </TableCell>
                 </TableRow>
               ))}
