@@ -20,7 +20,6 @@ import { invalidatePaiement } from "@/lib/cache-invalidation";
 import { useUserRoles } from "@/hooks/use-user-roles";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Label } from "@/components/ui/label";
