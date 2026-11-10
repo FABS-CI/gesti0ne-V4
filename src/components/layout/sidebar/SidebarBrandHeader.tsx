@@ -72,7 +72,7 @@ export function SidebarBrandFooter({ compact = false }: { compact?: boolean }) {
   if (compact) return null;
   return (
     <SidebarFooter className="border-t border-sidebar-border bg-sidebar px-4 py-3">
-      <p className="text-[11px] leading-4 font-medium text-sidebar-foreground/85">
+      <p className="text-xs leading-4 font-semibold text-sidebar-foreground">
         © 2026 Éditions FABS-CI. Tous droits réservés.
       </p>
     </SidebarFooter>
