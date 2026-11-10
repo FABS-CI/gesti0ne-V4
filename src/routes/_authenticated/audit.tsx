@@ -1,7 +1,9 @@
 import { formatDateTime } from "@/lib/format";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { History, ShieldAlert, Download, Circle } from "lucide-react";
+import { ShieldAlert, Download, Circle } from "lucide-react";
+import { ListPageHeader } from "@/components/common/list/ListParts";
+import { StatusPill } from "@/components/common/StatusPill";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { exportCsv } from "@/lib/export-csv";
@@ -27,7 +29,6 @@ import { OnlineUserDialog } from "@/components/audit/OnlineUserDialog";
 import { EventDetailDialog } from "@/components/audit/EventDetailDialog";
 import { AuditCharts } from "@/components/audit/AuditCharts";
 import { AuditLiveBar, type PresetKey } from "@/components/audit/AuditLiveBar";
-import { Badge } from "@/components/ui/badge";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
 export const Route = createFileRoute("/_authenticated/audit")({
@@ -35,6 +36,15 @@ export const Route = createFileRoute("/_authenticated/audit")({
   errorComponent: RouteError,
   notFoundComponent: RouteNotFound,
 });
+
+const CRITICITE_LABEL: Record<string, string> = {
+  critical: "Critique",
+  high: "Élevée",
+  medium: "Moyenne",
+  low: "Faible",
+  warning: "Avertissement",
+  info: "Information",
+};
 
 function AuditPage() {
   const [search, setSearch] = useState("");
@@ -376,37 +386,35 @@ function AuditPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <History className="h-6 w-6 text-warning" />
-          <div>
-            <h1 className="ds-page-title">Journal d'audit</h1>
-            <p className="text-sm text-muted-foreground">
-              Traçabilité complète — {rows.length} / {totalEvents} événement(s)
-            </p>
-          </div>
-        </div>
-        <Button variant="outline" size="sm" onClick={onExport}>
-          <Download className="mr-2 h-4 w-4" /> Exporter
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            const blob = new Blob([JSON.stringify(rows, null, 2)], {
-              type: "application/json",
-            });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `journal-audit-${new Date().toISOString().slice(0, 10)}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-          }}
-        >
-          <Download className="mr-2 h-4 w-4" /> JSON
-        </Button>
-      </div>
+      <ListPageHeader
+        overline="Administration"
+        title="Journal d'audit"
+        description={`Traçabilité complète — ${rows.length} / ${totalEvents} événement(s)`}
+        actions={
+          <>
+            <Button variant="outline" size="sm" onClick={onExport}>
+              <Download className="mr-2 h-4 w-4" /> Exporter
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const blob = new Blob([JSON.stringify(rows, null, 2)], {
+                  type: "application/json",
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `journal-audit-${new Date().toISOString().slice(0, 10)}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" /> JSON
+            </Button>
+          </>
+        }
+      />
 
       <AuditLiveBar onApplyPreset={applyPreset} />
 
@@ -503,7 +511,7 @@ function AuditPage() {
         </TabsContent>
 
         <TabsContent value="alerts" className="mt-4">
-          <div className="rounded-lg border">
+          <div className="overflow-hidden rounded-[14px] border bg-card shadow-[var(--shadow-card)]">
             {(alerts ?? []).length === 0 ? (
               <div className="p-8 text-center text-sm text-muted-foreground">
                 Aucune alerte de sécurité.
@@ -512,12 +520,12 @@ function AuditPage() {
               <ul className="divide-y">
                 {(alerts ?? []).map((a) => (
                   <li key={a.id} className="flex items-start gap-3 p-3">
-                    <Badge
-                      variant={a.criticite === "critical" ? "destructive" : "secondary"}
+                    <StatusPill
+                      tone={a.criticite === "critical" ? "danger" : "warning"}
                       className="mt-0.5"
                     >
-                      {a.criticite}
-                    </Badge>
+                      {CRITICITE_LABEL[a.criticite] ?? a.criticite}
+                    </StatusPill>
                     <div className="min-w-0 flex-1">
                       <div className="text-sm font-medium">{a.message}</div>
                       <div className="text-xs text-muted-foreground">

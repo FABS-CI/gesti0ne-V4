@@ -26,9 +26,10 @@ import {
   loadProformaTotals,
 } from "@/lib/pdf/enrich-lignes";
 import { buildRetourDocBase } from "@/lib/pdf/retour-builder";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ListCard, ListFilterBar, ListPageHeader } from "@/components/common/list/ListParts";
+import { StatusPill } from "@/components/common/StatusPill";
+import { toneForStatut } from "@/lib/statut-tone";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { PdfActions } from "@/components/pdf/PdfActions";
 import type { FabsDocCode } from "@/lib/pdf/docTypeConfig";
@@ -223,51 +224,42 @@ function CentreDocumentsPage() {
   const [search, setSearch] = useState("");
 
   return (
-    <div className="p-6 space-y-6">
-      <div>
-        <h1 className="ds-page-title">
-          Centre de documents
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Recherchez et téléchargez vos documents PDF (factures, proformas, BL, retours).
-        </p>
-      </div>
+    <div className="space-y-6">
+      <ListPageHeader
+        overline="Documents"
+        title="Centre de documents"
+        description="Recherchez et téléchargez vos documents PDF (factures, proformas, BL, retours)."
+      />
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Documents émis</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="relative max-w-md">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Référence ou client…"
-              className="pl-8"
-            />
-          </div>
-
-          <Tabs value={tab} onValueChange={(v) => setTab(v as DocKind)}>
+      <ListCard>
+        <Tabs value={tab} onValueChange={(v) => setTab(v as DocKind)}>
+          <div className="custom-scrollbar overflow-x-auto border-b px-4 pt-3">
             <TabsList>
-              {TABS.map((t) => {
-                const Icon = t.icon;
-                return (
-                  <TabsTrigger key={t.key} value={t.key} className="gap-2">
-                    <Icon className="h-4 w-4" style={{ color: t.color }} />
-                    {t.label}
-                  </TabsTrigger>
-                );
-              })}
+              {TABS.map((t) => (
+                <TabsTrigger key={t.key} value={t.key}>
+                  {t.label}
+                </TabsTrigger>
+              ))}
             </TabsList>
-            {TABS.map((t) => (
-              <TabsContent key={t.key} value={t.key} className="mt-4">
-                <DocList kind={t.key} search={search} />
-              </TabsContent>
-            ))}
-          </Tabs>
-        </CardContent>
-      </Card>
+          </div>
+          <ListFilterBar>
+            <div className="relative w-full max-w-md">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Référence ou client…"
+                className="pl-8"
+              />
+            </div>
+          </ListFilterBar>
+          {TABS.map((t) => (
+            <TabsContent key={t.key} value={t.key} className="mt-0">
+              <DocList kind={t.key} search={search} />
+            </TabsContent>
+          ))}
+        </Tabs>
+      </ListCard>
     </div>
   );
 }
@@ -300,7 +292,7 @@ function DocList({ kind, search }: { kind: DocKind; search: string }) {
   }
 
   return (
-    <div className="rounded-md border overflow-auto">
+    <div className="overflow-auto">
       <Table>
         <TableHeader>
           <TableRow>
@@ -323,7 +315,7 @@ function DocList({ kind, search }: { kind: DocKind; search: string }) {
               <TableCell className="text-right">
                 {row.montant != null ? formatFCFA(row.montant) : "—"}
               </TableCell>
-              <TableCell>{row.statut && <Badge variant="outline">{row.statut}</Badge>}</TableCell>
+              <TableCell>{row.statut && <StatusPill tone={toneForStatut(row.statut)}>{row.statut}</StatusPill>}</TableCell>
               <TableCell className="text-right">
                 <PdfActions
                   type={KIND_TO_TYPE[kind]}
