@@ -72,10 +72,7 @@ export function SidebarBrandFooter({ compact = false }: { compact?: boolean }) {
   if (compact) return null;
   return (
     <SidebarFooter className="border-t border-sidebar-border bg-sidebar px-4 py-3">
-      <p className="text-[11px] leading-4 text-sidebar-foreground/55">
-        « Les livres sont des fenêtres par lesquelles on regarde le monde »
-      </p>
-      <p className="mt-1 text-[11px] leading-4 text-sidebar-foreground/40">
+      <p className="text-[11px] leading-4 text-sidebar-foreground/40">
         © 2026 Éditions FABS-CI. Tous droits réservés.
       </p>
     </SidebarFooter>
