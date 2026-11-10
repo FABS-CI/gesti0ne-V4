@@ -168,7 +168,7 @@ function SpecimensListPage() {
 
       <ListCard>
       <ListFilterBar>
-      <div className="grid w-full gap-3 md:grid-cols-5">
+      <div className="grid w-full gap-3 md:grid-cols-6">
         <div className="relative md:col-span-2">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -192,9 +192,9 @@ function SpecimensListPage() {
           </SelectContent>
         </Select>
         <Input placeholder="Ville" value={ville} onChange={(e) => setVille(e.target.value)} />
-        <div className="flex gap-2">
-          <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
-          <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+        <div className="flex min-w-0 gap-2 md:col-span-2">
+          <Input type="date" className="min-w-0" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
+          <Input type="date" className="min-w-0" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
         </div>
       </div>
 
