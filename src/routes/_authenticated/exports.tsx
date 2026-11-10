@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { ListPageHeader } from "@/components/common/list/ListParts";
 import {
   Table,
   TableBody,
@@ -93,12 +94,11 @@ function ExportsPage() {
 
   return (
     <div className="p-6 space-y-6">
-      <div>
-        <h1 className="ds-page-title">Export & sauvegarde</h1>
-        <p className="text-sm text-muted-foreground">
-          Téléchargez vos données au format PDF ou Excel, ou créez une sauvegarde complète.
-        </p>
-      </div>
+      <ListPageHeader
+        overline="Administration"
+        title="Export & sauvegarde"
+        description="Téléchargez vos données au format PDF ou Excel, ou créez une sauvegarde complète."
+      />
 
       <Card>
         <CardHeader>
@@ -172,7 +172,7 @@ function ExportsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Archive className="h-4 w-4" /> Sauvegarde complète (module dédié)
+            Sauvegarde complète (module dédié)
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">

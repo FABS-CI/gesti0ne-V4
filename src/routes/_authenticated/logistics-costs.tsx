@@ -9,7 +9,6 @@ import {
   CheckCircle2,
   Eye,
   FileDown,
-  Filter,
   Undo2,
   XCircle,
 } from "lucide-react";
@@ -18,7 +17,16 @@ import { usePermissions } from "@/hooks/use-permissions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { ListCard, ListPageHeader } from "@/components/common/list/ListParts";
+import { StatusPill, type StatusTone } from "@/components/common/StatusPill";
+
+const COST_TONE: Record<string, StatusTone> = {
+  amber: "warning",
+  blue: "info",
+  red: "danger",
+  gray: "neutral",
+  green: "success",
+};
 import {
   Select,
   SelectContent,
@@ -204,19 +212,16 @@ function LogisticsCostsPage() {
 
   return (
     <div className="space-y-4 p-4">
-      <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="ds-page-title">
-            Coûts logistiques
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Consultation, validation comptable et suivi des dépenses des tournées.
-          </p>
-        </div>
-        <Button variant="outline" size="sm" onClick={exportPdf} disabled={!rows.length}>
-          <FileDown className="mr-2 h-4 w-4" /> Rapport PDF
-        </Button>
-      </div>
+      <ListPageHeader
+        overline="Logistique"
+        title="Coûts logistiques"
+        description="Consultation, validation comptable et suivi des dépenses des tournées."
+        actions={
+          <Button variant="outline" size="sm" onClick={exportPdf} disabled={!rows.length}>
+            <FileDown className="mr-2 h-4 w-4" /> Rapport PDF
+          </Button>
+        }
+      />
 
       <div className="grid gap-3 grid-cols-2 md:grid-cols-4">
         <Kpi label="Aujourd'hui" value={fmtFCFA(kpis.tDay)} />
@@ -250,13 +255,12 @@ function LogisticsCostsPage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm flex items-center gap-2">
-            <Filter className="h-4 w-4" /> Filtres
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-3 grid-cols-2 md:grid-cols-4 lg:grid-cols-7">
+      <ListCard>
+        <div className="flex items-center justify-between border-b px-4 py-3">
+          <h2 className="text-sm font-semibold">Tournées avec coûts</h2>
+          <span className="text-xs tabular-nums text-muted-foreground">{rows.length} tournée(s)</span>
+        </div>
+        <div className="grid gap-3 border-b px-4 py-3 grid-cols-2 md:grid-cols-4 lg:grid-cols-7">
           <div>
             <label className="text-xs text-muted-foreground">Du</label>
             <Input
@@ -331,34 +335,28 @@ function LogisticsCostsPage() {
               </SelectContent>
             </Select>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm">Tournées avec coûts ({rows.length})</CardTitle>
-        </CardHeader>
-        <CardContent className="overflow-x-auto">
+        </div>
+        <div className="overflow-x-auto">
           <table className="w-full border-collapse text-xs">
             <thead>
-              <tr className="bg-muted/40 text-left">
-                <th className="border p-2">Tournée</th>
-                <th className="border p-2">Date</th>
-                <th className="border p-2">Chauffeur</th>
-                <th className="border p-2">Véhicule</th>
-                <th className="border p-2">Type</th>
-                <th className="border p-2 text-right">Clients</th>
-                <th className="border p-2 text-right">Colis</th>
-                <th className="border p-2 text-right">Cartons</th>
-                <th className="border p-2 text-right">Total FCFA</th>
-                <th className="border p-2">Statut</th>
-                <th className="border p-2 text-right">Actions</th>
+              <tr className="bg-muted/40 text-left text-muted-foreground">
+                <th className="border-b px-3 py-2.5">Tournée</th>
+                <th className="border-b px-3 py-2.5">Date</th>
+                <th className="border-b px-3 py-2.5">Chauffeur</th>
+                <th className="border-b px-3 py-2.5">Véhicule</th>
+                <th className="border-b px-3 py-2.5">Type</th>
+                <th className="border-b px-3 py-2.5 text-right">Clients</th>
+                <th className="border-b px-3 py-2.5 text-right">Colis</th>
+                <th className="border-b px-3 py-2.5 text-right">Cartons</th>
+                <th className="border-b px-3 py-2.5 text-right">Total FCFA</th>
+                <th className="border-b px-3 py-2.5">Statut</th>
+                <th className="border-b px-3 py-2.5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
               {rows.length === 0 ? (
                 <tr>
-                  <td colSpan={11} className="border p-4 text-center text-muted-foreground">
+                  <td colSpan={11} className="p-6 text-center text-muted-foreground">
                     {listQ.isLoading ? "Chargement…" : "Aucun coût enregistré."}
                   </td>
                 </tr>
@@ -367,23 +365,21 @@ function LogisticsCostsPage() {
                   const meta = statutMeta(r.validation_statut);
                   return (
                     <tr key={r.tournee_id} className="hover:bg-muted/20">
-                      <td className="border p-2 font-mono">{r.reference}</td>
-                      <td className="border p-2">{r.date_tournee ?? "—"}</td>
-                      <td className="border p-2">{r.chauffeur_nom ?? "—"}</td>
-                      <td className="border p-2">{r.vehicules?.immatriculation ?? "—"}</td>
-                      <td className="border p-2 capitalize">{r.type_tournee ?? "—"}</td>
-                      <td className="border p-2 text-right tabular-nums">{r.nb_clients}</td>
-                      <td className="border p-2 text-right tabular-nums">{r.nb_colis}</td>
-                      <td className="border p-2 text-right tabular-nums">{r.nb_cartons}</td>
-                      <td className="border p-2 text-right tabular-nums font-semibold">
+                      <td className="border-b px-3 py-2.5 font-mono">{r.reference}</td>
+                      <td className="border-b px-3 py-2.5">{r.date_tournee ?? "—"}</td>
+                      <td className="border-b px-3 py-2.5">{r.chauffeur_nom ?? "—"}</td>
+                      <td className="border-b px-3 py-2.5">{r.vehicules?.immatriculation ?? "—"}</td>
+                      <td className="border-b px-3 py-2.5 capitalize">{r.type_tournee ?? "—"}</td>
+                      <td className="border-b px-3 py-2.5 text-right tabular-nums">{r.nb_clients}</td>
+                      <td className="border-b px-3 py-2.5 text-right tabular-nums">{r.nb_colis}</td>
+                      <td className="border-b px-3 py-2.5 text-right tabular-nums">{r.nb_cartons}</td>
+                      <td className="border-b px-3 py-2.5 text-right tabular-nums font-semibold">
                         {formatFCFA(Math.round(Number(r.cout_total ?? 0)), false)}
                       </td>
-                      <td className="border p-2">
-                        <Badge variant="outline" className={`text-${meta.color}-700`}>
-                          {meta.label}
-                        </Badge>
+                      <td className="border-b px-3 py-2.5">
+                        <StatusPill tone={COST_TONE[meta.color] ?? "neutral"}>{meta.label}</StatusPill>
                       </td>
-                      <td className="border p-2 text-right">
+                      <td className="border-b px-3 py-2.5 text-right">
                         <div className="inline-flex gap-1">
                           <Button aria-label="Voir la tournée" asChild variant="ghost" size="icon" title="Ouvrir le bon de tournée">
                             <Link to="/bon-de-tournee/$tourneeId" params={{ tourneeId: r.tournee_id }}>
@@ -453,8 +449,8 @@ function LogisticsCostsPage() {
               )}
             </tbody>
           </table>
-        </CardContent>
-      </Card>
+        </div>
+      </ListCard>
 
       <ValidateDialog
         row={validating}

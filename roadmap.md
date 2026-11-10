@@ -13,6 +13,7 @@
 - [x] Balance, rapport d'exercice, comparatif, journal de clôture — ouverts connectés sans erreur
 - [x] Spécimens, employés en congé, notifications, états de compte clients — ouverts connectés sans erreur
 - [x] Plan comptable, journal d'audit, centre de documents — ouverts connectés sans erreur
+- [x] Coûts logistiques, rapports logistique, rapports de paie, export & sauvegarde — ouverts connectés sans erreur
 - [ ] Journal d'audit : compteur « 500 / 0 événement(s) » et « Événements sur la période 0 » incohérents (existant, à vérifier si l'utilisatrice le souhaite)
 - [x] Écart achats comparatif / rapport d'exercice : le comparatif ignorait les achats « Reçu » — corrigé (migration 0120), 13 770 000 FCFA des deux côtés
 
