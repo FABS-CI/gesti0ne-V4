@@ -3,7 +3,9 @@ import { formatDate, formatFCFA } from "@/lib/format";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { AlertCircle, Users, Package, FileX, RefreshCw, Merge } from "lucide-react";
+import { AlertCircle, RefreshCw, Merge } from "lucide-react";
+import { StatusPill } from "@/components/common/StatusPill";
+import { toneForStatut } from "@/lib/statut-tone";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -200,7 +202,7 @@ function DataQualityPage() {
                 <TableRow key={`${d.nom_normalise ?? "dup"}-${i}`}>
                   <TableCell className="font-medium">{d.nom_normalise}</TableCell>
                   <TableCell className="text-right">
-                    <Badge variant="destructive">{d.nb}</Badge>
+                    <StatusPill tone="danger" dot={false}>{d.nb}</StatusPill>
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">
                     {(d.noms ?? []).join(" • ")}
@@ -254,7 +256,7 @@ function DataQualityPage() {
                     {o.reference ?? o.bl_id.slice(0, 8)}
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline">{o.statut}</Badge>
+                    <StatusPill tone={toneForStatut(o.statut)}>{o.statut}</StatusPill>
                   </TableCell>
                   <TableCell className="text-right">
                     {formatFCFA(o.montant)}
