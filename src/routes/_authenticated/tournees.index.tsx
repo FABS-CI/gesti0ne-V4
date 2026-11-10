@@ -129,6 +129,7 @@ function buildConfig(onCloturer: (tourneeId: string, ref: string) => void): Reso
     table: "tournees",
     idField: "tournee_id",
     title: "Tournées logistiques",
+    overline: "Logistique",
     subtitle: "Journées de travail : véhicules, chauffeurs, livraisons, expéditions et coûts",
     icon: Navigation,
     newLabel: "Nouvelle tournée",

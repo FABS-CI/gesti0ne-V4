@@ -26,6 +26,7 @@ const config: ResourceConfig = {
   table: "documents",
   idField: "document_id",
   title: "Documents & Impression",
+  overline: "Documents",
   subtitle: "Registre documentaire",
   icon: Printer,
   newLabel: "Nouveau document",

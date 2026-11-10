@@ -12,6 +12,7 @@ export const FACTURE_STATUT_TONE: Record<string, StatusTone> = {
 /** Ton générique à partir d'un code de statut (listes diverses). */
 export function toneForStatut(statut: string | null | undefined): StatusTone {
   const s = (statut ?? "").toLowerCase();
+  if (/(inactif|non_pay|impay)/.test(s)) return s.includes("inactif") ? "neutral" : "danger";
   if (/(pay|valid|livr|actif|accept|termin|recu|reçu|confirm|soldé|solde)/.test(s)) return "success";
   if (/(partiel|attente|cours|prepar|prépar|envoy|brouillon)/.test(s)) {
     return s.includes("brouillon") ? "neutral" : "warning";

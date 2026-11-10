@@ -27,6 +27,7 @@ const config: ResourceConfig = {
   table: "vehicules",
   idField: "vehicule_id",
   title: "Flotte",
+  overline: "Logistique",
   subtitle: "Parc automobile de l'entreprise",
   icon: Car,
   newLabel: "Nouveau véhicule",

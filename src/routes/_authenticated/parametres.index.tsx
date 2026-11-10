@@ -13,6 +13,7 @@ const config: ResourceConfig = {
   table: "parametres",
   idField: "parametre_id",
   title: "Paramètres",
+  overline: "Administration",
   icon: Settings,
   newLabel: "Nouveau paramètre",
   entityLabel: "le paramètre",

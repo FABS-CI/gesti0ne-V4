@@ -2,7 +2,6 @@ import { askConfirm } from "@/components/common/GlobalConfirm";
 import { Inbox, Pencil, Trash2 } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -12,6 +11,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { StatusPill } from "@/components/common/StatusPill";
+import { toneForStatut } from "@/lib/statut-tone";
 import { EmptyState } from "@/components/common/EmptyState";
 import { formatFCFA, formatDate } from "@/lib/format";
 
@@ -25,9 +26,7 @@ function renderCell(col: ColumnDef, row: Row): ReactNode {
   if (col.type === "badge") {
     const m = optionMeta(col.options, v);
     return (
-      <Badge variant="outline" style={{ color: m?.color, borderColor: m?.color }}>
-        {m?.label ?? v ?? "—"}
-      </Badge>
+      <StatusPill tone={toneForStatut(String(v ?? ""))}>{m?.label ?? v ?? "—"}</StatusPill>
     );
   }
   // Les colonnes de date sont affichées en JJ/MM/AAAA, même sans type explicite.

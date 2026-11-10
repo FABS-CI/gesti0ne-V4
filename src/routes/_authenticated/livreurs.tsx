@@ -7,6 +7,7 @@ const config: ResourceConfig = {
   table: "livreurs",
   idField: "livreur_id",
   title: "Livreurs",
+  overline: "Logistique",
   subtitle: "Fiche des livreurs (données logistiques — aucun accès à l'application)",
   icon: User,
   newLabel: "Nouveau livreur",

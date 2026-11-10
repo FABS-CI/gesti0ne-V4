@@ -13,6 +13,7 @@ const config: ResourceConfig = {
   table: "departements",
   idField: "departement_id",
   title: "Départements",
+  overline: "Ressources humaines",
   subtitle: "Services et départements de l'entreprise",
   icon: Building2,
   newLabel: "Nouveau département",
