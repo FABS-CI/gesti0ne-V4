@@ -2,6 +2,7 @@ import { attachClientIds } from "@/lib/facture-client-ids";
 import { pgSafe } from "@/lib/postgrest-filter";
 import { supabase } from "@/integrations/supabase/client";
 import { callRpc } from "@/lib/rpc";
+import type { PaiementDette } from "@/lib/paiement-dette";
 
 export const MODES_PAIEMENT = [
   { value: "especes", label: "Espèces" },
@@ -368,6 +369,16 @@ export async function listFacturesImpayeesClient(clientId: string) {
   });
   if (error) throw new Error(error.message);
   return (data ?? []) as FactureImpayee[];
+}
+
+export async function getPaiementDette(clientId: string): Promise<PaiementDette> {
+  const { data, error } = await supabase.rpc("paiement_dette_disponible", { _client_id: clientId });
+  if (error) throw error;
+  const result = data as PaiementDette;
+  if (!result || ![result.solde, result.reserve, result.disponible].every(Number.isFinite)) {
+    throw new Error("Solde indisponible. Réessayez avant d’enregistrer le paiement.");
+  }
+  return result;
 }
 
 export type RecuContext = {

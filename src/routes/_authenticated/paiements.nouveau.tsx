@@ -1,6 +1,6 @@
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
@@ -35,6 +35,7 @@ import { newIdempotencyKey } from "@/lib/idempotency";
 import {
   enregistrerPaiementMulti,
   listFacturesImpayeesClient,
+  getPaiementDette,
   type AllocationInput,
   type EnregistrerPaiementMultiInput,
 } from "@/lib/paiements-api";
@@ -43,12 +44,21 @@ import { paiementSchema } from "@/lib/paiement-recap";
 import { invalidatePaiement } from "@/lib/cache-invalidation";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 import { friendlyError } from "@/lib/friendly-error";
+import { paiementDetteMessage, paiementEntierementAffecte } from "@/lib/paiement-dette";
 
 const searchSchema = z.object({
   clientId: fallback(z.string().optional(), undefined).default(undefined),
 });
 
 export const Route = createFileRoute("/_authenticated/paiements/nouveau")({
+  head: () => ({ meta: [
+    { title: "Nouveau paiement client | GESTI-one FABS-CI" },
+    { name: "description", content: "Enregistrement des règlements clients sur une ou plusieurs factures, dans la limite de la dette restante." },
+    { property: "og:title", content: "Nouveau paiement client | GESTI-one FABS-CI" },
+    { property: "og:description", content: "Règlements clients et contrôle du montant restant dû." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   validateSearch: zodValidator(searchSchema),
   component: NouveauPaiementPage,
   errorComponent: RouteError,
@@ -69,6 +79,8 @@ function NouveauPaiementPage() {
   const [allocs, setAllocs] = useState<Record<string, number>>({});
   const [mode, setMode] = useState<"draft" | "confirm">("draft");
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const saving = useRef(false);
+  const [checking, setChecking] = useState(false);
 
   useEffect(() => {
     if (presetClientId && !clientNom) {
@@ -97,10 +109,21 @@ function NouveauPaiementPage() {
     };
   });
 
-  const { data: factures = [], isLoading: facLoading } = useQuery({
+  const facturesQuery = useQuery({
     queryKey: ["factures-impayees", clientId],
     queryFn: () => (clientId ? listFacturesImpayeesClient(clientId) : Promise.resolve([])),
     enabled: !!clientId,
+    staleTime: 0,
+    refetchInterval: 15_000,
+  });
+  const factures = facturesQuery.data ?? [];
+  const facLoading = facturesQuery.isLoading;
+  const detteQuery = useQuery({
+    queryKey: ["paiement-dette", clientId],
+    queryFn: () => clientId ? getPaiementDette(clientId) : Promise.reject(new Error("Client obligatoire")),
+    enabled: !!clientId,
+    staleTime: 0,
+    refetchInterval: 15_000,
   });
 
   const totalAffecte = useMemo(
@@ -166,13 +189,23 @@ function NouveauPaiementPage() {
         navigate({ to: "/clients/$clientId", params: { clientId: presetClientId } });
       else navigate({ to: "/paiements" });
     },
-    onError: (e: unknown) => toast.error(friendlyError(e, "Erreur")),
+    onError: (e: unknown) => {
+      toast.error(friendlyError(e, "Erreur"));
+      void detteQuery.refetch();
+      void facturesQuery.refetch();
+    },
+    onSettled: () => { saving.current = false; },
   });
 
   const selectedFactures = useMemo(
     () => factures.filter((f) => f.facture_id in allocs),
     [factures, allocs],
   );
+  const selectionDue = selectedFactures.reduce((sum, f) => sum + Number(f.solde), 0);
+  const detteMessage = detteQuery.data
+    ? paiementDetteMessage(detteQuery.data, Number(form.montant), selectedFactures.length ? selectionDue : undefined)
+    : null;
+  const paiementBlocked = !!clientId && (!detteQuery.data || detteQuery.isError || facturesQuery.isError || !!detteMessage);
 
   const recapLignes: RecapLine[] = useMemo(
     () =>
@@ -183,6 +216,10 @@ function NouveauPaiementPage() {
   );
 
   function validate(): boolean {
+    if (paiementBlocked) {
+      toast.error(detteMessage ?? "Solde indisponible. Réessayez avant d’enregistrer le paiement.");
+      return false;
+    }
     const entries = Object.entries(allocs).filter(([, m]) => Number(m) > 0);
     if (!entries.length) {
       toast.error("Veuillez sélectionner au moins une facture");
@@ -191,7 +228,7 @@ function NouveauPaiementPage() {
     for (const [fid, m] of entries) {
       const f = factures.find((x) => x.facture_id === fid);
       if (!f) continue;
-      if (Number(m) > Number(f.solde) + 0.01) {
+      if (Number(m) > Number(f.solde)) {
         toast.error(`Le montant affecté dépasse le solde de la facture ${formatDocumentReference(f.reference)}`);
         return false;
       }
@@ -205,8 +242,8 @@ function NouveauPaiementPage() {
       toast.error(parsed.error.issues[0].message);
       return false;
     }
-    if (totalAffecte > Number(form.montant) + 0.01) {
-      toast.error("Le total affecté aux factures dépasse le montant reçu");
+    if (!paiementEntierementAffecte(Number(form.montant), totalAffecte)) {
+      toast.error("Le montant reçu doit être entièrement affecté aux factures sélectionnées");
       return false;
     }
     return true;
@@ -217,13 +254,29 @@ function NouveauPaiementPage() {
     setConfirmOpen(true);
   };
 
-  const doSave = () => {
-    setConfirmOpen(false);
+  const doSave = async () => {
+    if (saving.current || checking || mutation.isPending) return;
+    saving.current = true;
+    setChecking(true);
     const allocations: AllocationInput[] = Object.entries(allocs)
       .filter(([, m]) => Number(m) > 0)
       .map(([facture_id, montant]) => ({ facture_id, montant: Number(montant) }));
-    if (!allocations.length) return;
-    mutation.mutate({ ...form, client_id: clientId, allocations });
+    try {
+      if (!clientId || !allocations.length || !validate()) return;
+      const [debt, invoices] = await Promise.all([detteQuery.refetch(), facturesQuery.refetch()]);
+      if (debt.error || invoices.error || !debt.data || !invoices.data) throw new Error("Solde indisponible. Réessayez avant d’enregistrer le paiement.");
+      const selected = invoices.data.filter(f => allocations.some(a => a.facture_id === f.facture_id));
+      const message = paiementDetteMessage(debt.data, Number(form.montant), selected.reduce((s, f) => s + Number(f.solde), 0));
+      if (message) throw new Error(message);
+      if (allocations.some(a => !selected.some(f => f.facture_id === a.facture_id && a.montant <= Number(f.solde)))) throw new Error("Le solde des factures a changé. Vérifiez les montants avant de réessayer.");
+      setConfirmOpen(false);
+      await mutation.mutateAsync({ ...form, client_id: clientId, allocations });
+    } catch (e) {
+      if (!mutation.isPending) toast.error(friendlyError(e, "Paiement refusé"));
+    } finally {
+      saving.current = false;
+      setChecking(false);
+    }
   };
 
   const preview = () => {
@@ -281,6 +334,15 @@ function NouveauPaiementPage() {
         }}
       />
 
+      {clientId && detteQuery.data && <div className="text-sm text-muted-foreground">
+        Montant disponible : <span className="font-semibold text-foreground">{formatFCFA(detteQuery.data.disponible)}</span>
+        {detteQuery.data.reserve > 0 && <span> · Paiements en attente : {formatFCFA(detteQuery.data.reserve)}</span>}
+      </div>}
+      {clientId && (detteMessage || detteQuery.isError || facturesQuery.isError) && <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>{detteMessage ?? "Solde indisponible. Réessayez avant d’enregistrer le paiement."}</AlertDescription>
+      </Alert>}
+
       {clientId && (
         <FacturesImpayeesCard
           clientNom={clientNom}
@@ -302,7 +364,7 @@ function NouveauPaiementPage() {
           onSubmit={submit}
           onEdit={() => setMode("draft")}
           onMontantChange={changeMontantRecu}
-          submitting={mutation.isPending}
+          submitting={mutation.isPending || checking || paiementBlocked}
         />
       )}
 
@@ -314,7 +376,7 @@ function NouveauPaiementPage() {
           onPreview={preview}
           onSubmit={submit}
           onEdit={() => setMode("draft")}
-          submitting={mutation.isPending}
+          submitting={mutation.isPending || checking || paiementBlocked}
         />
       )}
 
@@ -370,8 +432,8 @@ function NouveauPaiementPage() {
           )}
           <AlertDialogFooter>
             <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction onClick={doSave} disabled={mutation.isPending}>
-              {mutation.isPending ? "Enregistrement…" : "Confirmer et enregistrer"}
+            <AlertDialogAction onClick={doSave} disabled={mutation.isPending || checking || paiementBlocked}>
+              {mutation.isPending || checking ? "Enregistrement…" : "Confirmer et enregistrer"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
