@@ -1,7 +1,8 @@
 import { formatDocumentReference } from "@/lib/document-reference";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, CheckCircle2, Package, Truck } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { StatusPill } from "@/components/common/StatusPill";
+import { toneForStatut } from "@/lib/statut-tone";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -81,14 +82,13 @@ function ColisageDetailPage() {
             <Package className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="ds-page-title">Colisage — {formatDocumentReference(bl.reference)}</h1>
+            <p className="ds-overline">Logistique</p>
+            <h1 className="ds-page-title mt-1">Colisage — {formatDocumentReference(bl.reference)}</h1>
             <p className="text-sm text-muted-foreground">{bl.client_nom ?? "—"}</p>
           </div>
         </div>
         {st && (
-          <Badge style={{ backgroundColor: st.color }} className="text-white">
-            {st.label}
-          </Badge>
+          <StatusPill tone={toneForStatut(bl.statut)}>{st.label}</StatusPill>
         )}
       </div>
 

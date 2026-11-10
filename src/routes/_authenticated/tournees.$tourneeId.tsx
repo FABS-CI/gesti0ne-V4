@@ -11,6 +11,8 @@ import { Can } from "@/components/rbac/Can";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { StatusPill } from "@/components/common/StatusPill";
+import { toneForStatut } from "@/lib/statut-tone";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -455,7 +457,8 @@ function EditTourneePage() {
           <div className="flex items-center gap-2">
             <Navigation className="h-5 w-5 text-primary" />
             <div>
-              <h1 className="ds-page-title">
+              <p className="ds-overline">Logistique</p>
+              <h1 className="ds-page-title mt-1">
                 Tournée <span className="font-mono text-primary">{form.reference}</span>
               </h1>
               <p className="text-xs text-muted-foreground mt-1">
@@ -463,17 +466,11 @@ function EditTourneePage() {
               </p>
               {form.statut === "terminee" && form.cloture_mode && (
                 <div className="mt-1.5 flex items-center gap-2">
-                  <Badge
-                    className={
-                      form.cloture_mode === "auto"
-                        ? "bg-success hover:bg-success"
-                        : "bg-info hover:bg-info"
-                    }
-                  >
+                  <StatusPill tone={form.cloture_mode === "auto" ? "success" : "info"}>
                     {form.cloture_mode === "auto"
                       ? "Clôture auto (tous colis livrés)"
                       : "Clôture manuelle"}
-                  </Badge>
+                  </StatusPill>
                   {form.cloture_at && (
                     <span className="text-xs text-muted-foreground">
                       le {formatDateTime(form.cloture_at)}

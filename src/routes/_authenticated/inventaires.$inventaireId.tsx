@@ -5,7 +5,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ArrowLeft, ClipboardList } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
+import { StatusPill } from "@/components/common/StatusPill";
+import { toneForStatut } from "@/lib/statut-tone";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -184,14 +185,15 @@ function InventaireDetailPage() {
           </Button>
           <ClipboardList className="h-7 w-7 text-primary" />
           <div>
-            <h1 className="ds-page-title">{inv.numero}</h1>
+            <p className="ds-overline">Stock</p>
+            <h1 className="ds-page-title mt-1">{inv.numero}</h1>
             <p className="text-sm text-muted-foreground capitalize">
               Inventaire {inv.type_inventaire} ·{" "}
               {formatDate(inv.date_inventaire)} ·{" "}
               {inv.depots?.nom ?? "Tous dépôts"}
             </p>
           </div>
-          <Badge style={{ backgroundColor: st.color, color: "white" }}>{st.label}</Badge>
+          <StatusPill tone={toneForStatut(inv.statut)}>{st.label}</StatusPill>
         </div>
         <InventaireHeaderActions
           editable={editable}
