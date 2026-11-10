@@ -63,7 +63,8 @@ suite('paiements — base locale explicitement jetable', () => {
     const c = await setup(); await db.query("INSERT INTO retours(client_id,montant,statut) VALUES($1,300000,'cloture')",[c.id]);
     await db.query('SET CONSTRAINTS ALL IMMEDIATE');
     await reject(() => pay(payload(c.id,c.invoices,[300000])));
-    await pay(payload(c.id,c.invoices,[200000])); expect(await balance(c.id)).toBe(0);
+    await db.query('SET CONSTRAINTS ALL DEFERRED');
+    await pay(payload(c.id,c.invoices,[200000])); await db.query('SET CONSTRAINTS ALL IMMEDIATE'); expect(await balance(c.id)).toBe(0);
   }));
   it('refuse un montant reçu non entièrement affecté', async () => rollback(async () => {
     const c = await setup(); const p = payload(c.id,c.invoices,[300000]); p.montant = 400000;
@@ -109,9 +110,10 @@ suite('paiements — base locale explicitement jetable', () => {
     const c = await setup(); const p = payload(c.id,c.invoices,[300000]);
     try {
       await db.query('BEGIN'); await second.query('BEGIN'); const first = await pay(p);
-      const pending = pay(sameKey ? p : {...p,idempotency_key:randomUUID()},second);
+      const pending = pay(sameKey ? p : {...p,idempotency_key:randomUUID()},second).then(value => ({value,error:null}),error => ({value:null,error}));
       await db.query('COMMIT'); const other = await pending;
-      if (sameKey) { expect(other).toBe(first); await second.query('COMMIT'); }
+      if (sameKey) { expect(other.error).toBeNull(); expect(other.value).toBe(first); await second.query('COMMIT'); }
+      else if (other.error) expect(other.error).toMatchObject({code:'P0001'});
       else await expect(second.query('COMMIT')).rejects.toMatchObject({code:'P0001'});
       expect(await balance(c.id)).toBe(200000);
     } finally {
