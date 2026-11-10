@@ -72,6 +72,48 @@ suite("retour encours — base locale jetable", () => {
       await refuses(async () => { await db.query("INSERT INTO retour_lignes(retour_id,total_ligne) VALUES($1,600000)", [rid]); await db.query("SET CONSTRAINTS ALL IMMEDIATE"); });
     } finally { await db.query("ROLLBACK"); }
   });
+  it("remise globale de 25 % : réserve 300 000 sur 400 000 de lignes", async () => {
+    await db.query("BEGIN");
+    try {
+      const id = await client(500_000); const rid = await retour(id, 300_000);
+      await db.query("UPDATE retours SET remise_globale_pct=25 WHERE retour_id=$1", [rid]);
+      await db.query("INSERT INTO retour_lignes(retour_id,total_ligne) VALUES($1,400000)", [rid]);
+      await db.query("SET CONSTRAINTS ALL IMMEDIATE");
+      const r = await db.query("SELECT _retour_encours_etat($1) etat", [id]);
+      expect(r.rows[0].etat).toEqual({ solde: 500_000, reserve: 300_000, disponible: 200_000 });
+    } finally { await db.query("ROLLBACK"); }
+  });
+  it("annulation : libère la réservation sans changer la dette", async () => {
+    await db.query("BEGIN");
+    try {
+      const id = await client(500_000); const rid = await retour(id, 300_000);
+      await db.query("UPDATE retours SET statut='annule' WHERE retour_id=$1", [rid]);
+      await db.query("SET CONSTRAINTS ALL IMMEDIATE");
+      const r = await db.query("SELECT _retour_encours_etat($1) etat", [id]);
+      expect(r.rows[0].etat).toEqual({ solde: 500_000, reserve: 0, disponible: 500_000 });
+    } finally { await db.query("ROLLBACK"); }
+  });
+  it("paiement concurrent : recontrôle le solde au moment de valider", async () => {
+    if (!url) throw new Error("Base jetable obligatoire");
+    const second = new Client({ connectionString: url, ssl: false }); await second.connect();
+    const id = await client(500_000); const rid = await retour(id, 300_000);
+    let pid: string | undefined;
+    try {
+      await db.query("BEGIN"); await second.query("BEGIN");
+      const payment = await db.query("INSERT INTO paiements(statut) VALUES('valide') RETURNING paiement_id"); pid = payment.rows[0].paiement_id;
+      await db.query("INSERT INTO payment_allocations(facture_id,paiement_id,montant) SELECT facture_id,$2,250000 FROM factures WHERE client_id=$1", [id, pid]);
+      const pending = second.query("UPDATE retours SET statut='cloture' WHERE retour_id=$1", [rid]);
+      await db.query("COMMIT"); await pending;
+      await expect(second.query("COMMIT")).rejects.toMatchObject({ code: "P0001" });
+      const r = await db.query("SELECT statut FROM retours WHERE retour_id=$1", [rid]); expect(r.rows[0].statut).toBe("demande_creee");
+    } finally {
+      await db.query("ROLLBACK"); await second.query("ROLLBACK"); await second.end();
+      await db.query("DELETE FROM retours WHERE client_id=$1", [id]);
+      await db.query("DELETE FROM payment_allocations WHERE paiement_id=$1", [pid]);
+      await db.query("DELETE FROM paiements WHERE paiement_id=$1", [pid]);
+      await db.query("DELETE FROM factures WHERE client_id=$1", [id]); await db.query("DELETE FROM clients WHERE client_id=$1", [id]);
+    }
+  });
   it("deux demandes simultanées de 300 000 : la seconde attend puis est refusée", async () => {
     if (!url) throw new Error("Base jetable obligatoire");
     const second = new Client({ connectionString: url, ssl: false }); await second.connect();

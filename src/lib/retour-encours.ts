@@ -4,10 +4,7 @@ import { formatFCFA } from "@/lib/format";
 export type RetourEncours = { solde: number; reserve: number; disponible: number };
 
 export async function getRetourEncours(clientId: string): Promise<RetourEncours> {
-  const rpc = supabase as unknown as {
-    rpc: (name: string, args: { _client_id: string }) => Promise<{ data: unknown; error: Error | null }>;
-  };
-  const { data, error } = await rpc.rpc("retour_encours_disponible", { _client_id: clientId });
+  const { data, error } = await supabase.rpc("retour_encours_disponible", { _client_id: clientId });
   if (error) throw error;
   const result = data as RetourEncours;
   if (!result || ![result.solde, result.reserve, result.disponible].every(Number.isFinite)) {
