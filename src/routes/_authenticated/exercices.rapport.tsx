@@ -91,7 +91,7 @@ function RapportExercicePage() {
       const totalPaiements = (pai.data ?? [])
         .filter((r) => r.statut !== "annule")
         .reduce((s, r) => s + Number(r.montant ?? 0), 0);
-      const totalAchats = (ach.data ?? []).reduce((s, r) => s + Number(r.montant ?? 0), 0);
+      const achats = totalAchatsComptabilises(ach.data ?? []);
 
       return {
         nbCommandes: cmd.data?.length ?? 0,
@@ -102,8 +102,8 @@ function RapportExercicePage() {
         resteAPayer: totalFactures - totalPaye,
         nbPaiements: pai.data?.length ?? 0,
         totalPaiements,
-        nbAchats: ach.data?.length ?? 0,
-        totalAchats,
+        nbAchats: achats.nb,
+        totalAchats: achats.total,
       };
     },
   });
@@ -211,7 +211,7 @@ function RapportExercicePage() {
             <Kpi
               label="Achats fournisseurs"
               value={formatFCFA(ventes.totalAchats)}
-              hint={`${ventes.nbAchats} achat(s)`}
+              hint={`${ventes.nbAchats} achat(s) reçu(s) ou payé(s)`}
             />
           </div>
         )}
