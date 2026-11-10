@@ -4,6 +4,7 @@ import type { ResourceConfig } from "@/components/crud/ResourceManager";
 export const evaluationsConfig: ResourceConfig = {
   table: "evaluations",
   idField: "evaluation_id",
+  overline: "Ressources humaines",
   title: "Évaluations",
   subtitle: "Évaluations de performance du personnel",
   icon: Star,

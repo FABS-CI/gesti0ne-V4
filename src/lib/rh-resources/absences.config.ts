@@ -17,6 +17,7 @@ const statuts = [
 export const absencesConfig: ResourceConfig = {
   table: "absences",
   idField: "absence_id",
+  overline: "Ressources humaines",
   title: "Absences",
   subtitle: "Suivi des absences du personnel",
   icon: UserX,
