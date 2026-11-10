@@ -172,3 +172,4 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Nouveau style : Rôles et droits, Santé du système, Qualité des données
 - [x] Santé du système : « Prochaine » sauvegarde lue sur la vraie tâche planifiée (toutes les 3 h)
 - [x] Nouveau style : statuts en pastilles sur la liste des Retours
+- [x] Nouveau style : Tournées + 8 écrans au même gabarit (surtitres, pastilles de statut)
