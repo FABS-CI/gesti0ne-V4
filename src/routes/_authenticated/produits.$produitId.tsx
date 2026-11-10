@@ -5,8 +5,8 @@ import { ProductCoverActions } from "@/components/produits/ProductCoverActions";
 import { ArrowLeft } from "lucide-react";
 import { buildProduitHistorique } from "@/lib/produits-360-api";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { StatusPill } from "@/components/common/StatusPill";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUserRoles } from "@/hooks/use-user-roles";
@@ -95,13 +95,14 @@ function ProduitDetailPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="ds-page-title">{produit.titre}</h1>
+            <p className="ds-overline">Stock</p>
+            <h1 className="ds-page-title mt-1">{produit.titre}</h1>
             <p className="text-sm text-muted-foreground">
               {produit.reference} · {produit.categorie}
             </p>
           </div>
         </div>
-        <Badge variant="secondary">Consulter l'onglet Dépôts pour le stock</Badge>
+        <StatusPill tone="info">Consulter l'onglet Dépôts pour le stock</StatusPill>
       </div>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
