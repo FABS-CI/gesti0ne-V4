@@ -213,7 +213,7 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {canSeeSolde && (
             <>
-              <Kpi label="Encours" value={formatFCFA(encours)} accent="text-destructive" />
+              <Kpi label="Encours" value={formatFCFA(encours)} />
               <Kpi label="Plafond crédit" value={formatFCFA(plafond)} />
               <Kpi
                 label="Utilisation crédit"
