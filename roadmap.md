@@ -1,5 +1,10 @@
 # Audit ERP — module par module
 
+## Retours plafonnés à l'encours — 10 novembre 2026
+- [x] Examiner les règles demandées, le calcul du solde et les points d'entrée des retours
+- [ ] Contrôle centralisé côté serveur, réservations des demandes en attente et protection des opérations simultanées — validation du plan requise avant modification comptable
+- [ ] Affichage des alertes, tests des plafonds et de concurrence dans une base jetable, vérification connectée sans modifier l'historique
+
 ## Relevé PDF — retours conditionnels (10 novembre 2026)
 - [x] Masquer ensemble colonne et total des retours absents, rééquilibrer les largeurs sans changer les calculs
 - [x] 15 tests réussis ; quatre PDF de scénarios vérifiés et vrai relevé AGBOVILLE téléchargé avec le compte connecté, sans colonne ni total retours ; contrôle visuel avec/sans retours conforme
