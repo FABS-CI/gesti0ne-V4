@@ -1,5 +1,9 @@
 # Audit ERP — module par module
 
+## Relevé PDF — retours conditionnels (10 novembre 2026)
+- [ ] Masquer ensemble colonne et total des retours absents, rééquilibrer les largeurs sans changer les calculs
+- [ ] Tester les quatre scénarios et vérifier le téléchargement d'un relevé réel
+
 ## Style sobre premium — demande du 9 novembre 2026
 - [x] Réglages globaux : couleurs chaudes, bleu pétrole, Inter, arrondis, ombres légères, pastille de statut
 - [x] Menu : rubriques Pilotage / Activité / Gestion, module actif bleu pétrole plein

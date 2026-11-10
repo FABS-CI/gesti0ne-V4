@@ -4,6 +4,7 @@ import { formatDocumentReference } from "@/lib/document-reference";
 import { BaseDocument, BODY, roundedRect, COLORS, MARGINS, PAGE, CONTENT_W, CONTENT_BOTTOM } from "./base-document";
 import { formatFCFA, formatTelephone } from "@/lib/format";
 import tamponUrl from "@/assets/tampon-comptabilite.png";
+import { hasStatementReturns } from "./statement-returns";
 
 const ROW_H = 20;
 const TAMPON_TITLE_H = 18;
@@ -17,7 +18,8 @@ export class StatementDocument extends BaseDocument {
     y = await this.drawClientInfo(y, data);
     
     // Tableau des opérations
-    const colonnes = [
+    const afficherRetours = hasStatementReturns(data.lignes);
+    const colonnesBase = [
       { label: "Date", key: "date", width: 58 },
       { label: "Référence", key: "reference", width: 82 },
       { label: "Libellé", key: "libelle", width: 127 },
@@ -26,6 +28,12 @@ export class StatementDocument extends BaseDocument {
       { label: "Retour", key: "retour", width: 65 },
       { label: "Solde", key: "solde", width: 65 },
     ];
+    const colonnesVisibles = colonnesBase.filter((col) => afficherRetours || col.key !== "retour");
+    const largeurBase = colonnesVisibles.reduce((sum, col) => sum + col.width, 0);
+    const colonnes = colonnesVisibles.map((col) => ({
+      ...col,
+      width: col.width * CONTENT_W / largeurBase,
+    }));
     
     const lignes = data.lignes.map((l: any) => ({
       date: /^\d{4}-\d{2}-\d{2}/.test(String(l.date ?? ""))
@@ -129,7 +137,7 @@ export class StatementDocument extends BaseDocument {
     }
   }
 
-  /** Lignes du récapitulatif : paiements, retours et solde toujours affichés, les autres montants à 0 omis. */
+  /** Paiements et solde conservés ; retours affichés seulement si une opération réelle existe. */
   summaryRows(data: any): Array<{ label: string; value: number; total?: boolean }> {
     const totalDebit = Number(data.totalDebit ?? data.lignes.reduce((a: number, l: any) => a + (l.debit || 0), 0));
     const totalPaiement = Number(data.totalPaiement ?? data.lignes
@@ -145,7 +153,7 @@ export class StatementDocument extends BaseDocument {
     const rows: Array<{ label: string; value: number; total?: boolean }> = [];
     if (totalDebit !== 0) rows.push({ label: "Total Débit", value: totalDebit });
     rows.push({ label: "Total Paiement", value: totalPaiement });
-    rows.push({ label: "Total Retours", value: totalRetours });
+    if (hasStatementReturns(data.lignes)) rows.push({ label: "Total Retours", value: totalRetours });
     // Information seule : déjà comprise dans les factures, jamais ajoutée au solde.
     if (transport > 0) rows.push({ label: "Frais de transport compris dans les factures", value: transport });
     rows.push({
