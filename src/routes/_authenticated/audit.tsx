@@ -39,9 +39,6 @@ export const Route = createFileRoute("/_authenticated/audit")({
 
 const CRITICITE_LABEL: Record<string, string> = {
   critical: "Critique",
-  high: "Élevée",
-  medium: "Moyenne",
-  low: "Faible",
   warning: "Avertissement",
   info: "Information",
 };
@@ -521,7 +518,7 @@ function AuditPage() {
                 {(alerts ?? []).map((a) => (
                   <li key={a.id} className="flex items-start gap-3 p-3">
                     <StatusPill
-                      tone={a.criticite === "critical" ? "danger" : "warning"}
+                      tone={a.criticite === "critical" ? "danger" : a.criticite === "warning" ? "warning" : "info"}
                       className="mt-0.5"
                     >
                       {CRITICITE_LABEL[a.criticite] ?? a.criticite}
