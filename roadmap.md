@@ -11,7 +11,7 @@
 - [x] Bons de livraison, suivi des livraisons, journal comptable, congés, dépôts — ouverts connectés sans erreur
 - [x] Alertes de stock (onglets par sévérité), grand livre, exercices — ouverts connectés sans erreur
 - [x] Balance, rapport d'exercice, comparatif, journal de clôture — ouverts connectés sans erreur
-- [ ] Écart signalé : achats 13 770 000 FCFA au rapport d'exercice mais 0 FCFA au comparatif (2026-2027) — à analyser si l'utilisatrice le demande
+- [x] Écart achats comparatif / rapport d'exercice : le comparatif ignorait les achats « Reçu » — corrigé (migration 0120), 13 770 000 FCFA des deux côtés
 
 ## Glassy Sidebar V7 — demande du 9 novembre 2026
 - [x] Affichage V7 signalé invisible à 09:46 : contrôle connecté conforme en clair, sombre, rail et tiroir mobile, sans erreur ; capture remise et rechargement conseillé, aucune régression de code reproduite
