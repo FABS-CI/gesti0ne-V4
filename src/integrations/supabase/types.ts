@@ -8448,6 +8448,15 @@ export type Database = {
         Args: { p_date: string; p_regime: string }
         Returns: Json
       }
+      _paiement_dette_assert: { Args: { _id: string }; Returns: undefined }
+      _paiement_dette_etat: {
+        Args: { _client: string; _exclure?: string }
+        Returns: Json
+      }
+      _paiement_soumission_verifier: {
+        Args: { _payload: Json }
+        Returns: undefined
+      }
       _plan_compte_utilise: {
         Args: { _compte_id: string; _numero: string }
         Returns: boolean
@@ -9982,6 +9991,7 @@ export type Database = {
         Args: { p_bulletin_id: string }
         Returns: undefined
       }
+      paiement_dette_disponible: { Args: { _client_id: string }; Returns: Json }
       payer_achat: { Args: { _achat_id: string }; Returns: undefined }
       preview_cloture_exercice: {
         Args: { _exercice_id: string }
