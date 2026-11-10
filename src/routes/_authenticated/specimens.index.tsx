@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { ListCard, ListFilterBar, ListPageHeader } from "@/components/common/list/ListParts";
 import { StatusPill } from "@/components/common/StatusPill";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,

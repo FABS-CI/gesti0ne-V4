@@ -14,7 +14,8 @@ import {
 import { exportCsv } from "@/lib/export-csv";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 
-import { Badge } from "@/components/ui/badge";
+import { ListCard, ListPageHeader } from "@/components/common/list/ListParts";
+import { StatusPill } from "@/components/common/StatusPill";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -150,36 +151,34 @@ function CongesEnCoursPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0">
-          <div className="mb-1">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/rh-dashboard">
-                <ArrowLeft className="mr-2 h-4 w-4" /> Retour au tableau de bord
-              </Link>
+      <div className="print:hidden">
+        <Button variant="ghost" size="sm" asChild>
+          <Link to="/rh-dashboard">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Retour au tableau de bord
+          </Link>
+        </Button>
+      </div>
+      <ListPageHeader
+        overline="Ressources humaines"
+        title="Employés en congé"
+        description={`${sorted.length} employé(s) actuellement en congé approuvé`}
+        actions={
+          <div className="flex flex-wrap gap-2 print:hidden">
+            <Button variant="outline" size="sm" onClick={handleExportExcel} disabled={!sorted.length}>
+              <FileSpreadsheet className="mr-2 h-4 w-4" /> Excel
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleExportPdf} disabled={!sorted.length}>
+              <Download className="mr-2 h-4 w-4" /> PDF
+            </Button>
+            <Button variant="outline" size="sm" onClick={handlePrint} disabled={!sorted.length}>
+              <Printer className="mr-2 h-4 w-4" /> Imprimer
             </Button>
           </div>
-          <h1 className="ds-page-title">
-            Employés en congé
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {sorted.length} employé(s) actuellement en congé approuvé
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2 print:hidden">
-          <Button variant="outline" size="sm" onClick={handleExportExcel} disabled={!sorted.length}>
-            <FileSpreadsheet className="mr-2 h-4 w-4" /> Excel
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleExportPdf} disabled={!sorted.length}>
-            <Download className="mr-2 h-4 w-4" /> PDF
-          </Button>
-          <Button variant="outline" size="sm" onClick={handlePrint} disabled={!sorted.length}>
-            <Printer className="mr-2 h-4 w-4" /> Imprimer
-          </Button>
-        </div>
-      </div>
+        }
+      />
 
-      <div className="flex flex-wrap gap-2 print:hidden">
+      <ListCard>
+      <div className="flex flex-wrap gap-2 border-b px-4 py-3 print:hidden">
         <div className="relative min-w-[240px] flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -232,7 +231,7 @@ function CongesEnCoursPage() {
         </Select>
       </div>
 
-      <div className="rounded-lg border">
+      <div>
         <Table>
           <TableHeader>
             <TableRow>
@@ -315,9 +314,7 @@ function CongesEnCoursPage() {
                   <TableCell>{formatDate(c.date_fin)}</TableCell>
                   <TableCell className="text-right">{c.jours}</TableCell>
                   <TableCell>
-                    <Badge variant="default" style={{ backgroundColor: "#10B981" }}>
-                      Approuvé
-                    </Badge>
+                    <StatusPill tone="success">Approuvé</StatusPill>
                   </TableCell>
                 </TableRow>
               ))
@@ -327,7 +324,7 @@ function CongesEnCoursPage() {
       </div>
 
       {pageCount > 1 && (
-        <div className="flex items-center justify-between print:hidden">
+        <div className="flex items-center justify-between border-t px-4 py-3 print:hidden">
           <p className="text-sm text-muted-foreground">
             Page {currentPage} / {pageCount} — {sorted.length} résultat(s)
           </p>
@@ -351,6 +348,7 @@ function CongesEnCoursPage() {
           </div>
         </div>
       )}
+      </ListCard>
     </div>
   );
 }
