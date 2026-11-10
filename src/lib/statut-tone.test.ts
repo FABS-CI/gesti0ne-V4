@@ -20,4 +20,10 @@ describe("toneForStatut", () => {
     expect(toneForStatut("rejetee")).toBe("danger");
     expect(toneForStatut("validee")).toBe("success");
   });
+  it("une attente de validation n'est pas en vert", () => {
+    expect(toneForStatut("en_attente_validation")).toBe("warning");
+    expect(toneForStatut("attente_validation_compta")).toBe("warning");
+    expect(toneForStatut("annulation_en_attente")).toBe("warning");
+    expect(toneForStatut("validee")).toBe("success");
+  });
 });
