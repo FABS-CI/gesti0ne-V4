@@ -27,3 +27,16 @@ describe("toneForStatut", () => {
     expect(toneForStatut("validee")).toBe("success");
   });
 });
+
+import { describe as d2, it as i2, expect as e2 } from "vitest";
+import { toneForStatut as t2 } from "./statut-tone";
+d2("toneForStatut — incidents et inventaires", () => {
+  i2("résolu et régularisé sont en succès", () => {
+    e2(t2("resolu")).toBe("success");
+    e2(t2("regularise")).toBe("success");
+  });
+  i2("ouvert et déclaré sont à surveiller", () => {
+    e2(t2("ouvert")).toBe("warning");
+    e2(t2("declare")).toBe("warning");
+  });
+});
