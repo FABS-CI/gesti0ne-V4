@@ -1,5 +1,9 @@
 # Audit ERP — module par module
 
+## Relevé PDF — retours conditionnels (10 novembre 2026)
+- [x] Masquer ensemble colonne et total des retours absents, rééquilibrer les largeurs sans changer les calculs
+- [x] 15 tests réussis ; quatre PDF de scénarios vérifiés et vrai relevé AGBOVILLE téléchargé avec le compte connecté, sans colonne ni total retours ; contrôle visuel avec/sans retours conforme
+
 ## Style sobre premium — demande du 9 novembre 2026
 - [x] Réglages globaux : couleurs chaudes, bleu pétrole, Inter, arrondis, ombres légères, pastille de statut
 - [x] Menu : rubriques Pilotage / Activité / Gestion, module actif bleu pétrole plein
