@@ -22,7 +22,8 @@ import {
 } from "@/lib/rh-api";
 import { formatDate, formatFCFA } from "@/lib/format";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { StatusPill } from "@/components/common/StatusPill";
+import { toneForStatut } from "@/lib/statut-tone";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -125,9 +126,9 @@ function EmployeDetailPage() {
                 <Pencil className="mr-2 h-4 w-4" /> Modifier
               </Link>
             </Button>
-            <Badge variant={employe.actif ? "secondary" : "destructive"}>
+            <StatusPill tone={employe.actif ? "success" : "neutral"}>
               {employe.actif ? "Actif" : "Inactif"}
-            </Badge>
+            </StatusPill>
           </>
         }
       />
@@ -192,9 +193,7 @@ function EmployeDetailPage() {
                   frDate(c.date_debut),
                   frDate(c.date_fin),
                   c.motif ?? "—",
-                  <Badge variant="outline" className="capitalize">
-                    {c.statut}
-                  </Badge>,
+                  <StatusPill tone={toneForStatut(c.statut)}><span className="capitalize">{String(c.statut ?? "—").replace(/_/g, " ")}</span></StatusPill>,
                 ])}
                 emptyLabel="Aucun congé"
               />
@@ -215,9 +214,7 @@ function EmployeDetailPage() {
                   frDate(a.date_debut),
                   frDate(a.date_fin),
                   a.motif ?? "—",
-                  <Badge variant="outline" className="capitalize">
-                    {a.statut}
-                  </Badge>,
+                  <StatusPill tone={toneForStatut(a.statut)}><span className="capitalize">{String(a.statut ?? "—").replace(/_/g, " ")}</span></StatusPill>,
                 ])}
                 emptyLabel="Aucune absence"
               />
@@ -238,9 +235,7 @@ function EmployeDetailPage() {
                   frDate(c.date_debut),
                   frDate(c.date_fin),
                   formatFCFA(c.salaire),
-                  <Badge variant="outline" className="capitalize">
-                    {c.statut}
-                  </Badge>,
+                  <StatusPill tone={toneForStatut(c.statut)}><span className="capitalize">{String(c.statut ?? "—").replace(/_/g, " ")}</span></StatusPill>,
                 ])}
                 emptyLabel="Aucun contrat"
               />
@@ -261,9 +256,7 @@ function EmployeDetailPage() {
                   formatFCFA(b.salaire_brut),
                   formatFCFA(b.retenues),
                   <span className="font-semibold">{formatFCFA(b.salaire_net)}</span>,
-                  <Badge variant="outline" className="capitalize">
-                    {b.statut}
-                  </Badge>,
+                  <StatusPill tone={toneForStatut(b.statut)}><span className="capitalize">{String(b.statut ?? "—").replace(/_/g, " ")}</span></StatusPill>,
                 ])}
                 emptyLabel="Aucun bulletin"
               />

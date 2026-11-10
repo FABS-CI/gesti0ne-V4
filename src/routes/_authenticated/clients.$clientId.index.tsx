@@ -9,6 +9,7 @@ import { formatFCFA } from "@/lib/format";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { StatusPill } from "@/components/common/StatusPill";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePermissions } from "@/hooks/use-permissions";
 import { ClientEditSheet } from "@/components/clients/ClientEditSheet";
@@ -118,12 +119,12 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
   const statutEnrichi = !client.actif
     ? { label: "Inactif", cls: "bg-muted text-muted-foreground" }
     : facturesImpayees.length > 0 && tauxCredit > 90
-      ? { label: "Plafond critique", cls: "bg-destructive text-white" }
+      ? { label: "Plafond critique", cls: "bg-destructive text-white", tone: "danger" as const }
       : tauxCredit > 70
-        ? { label: "Encours élevé", cls: "bg-warning text-white" }
+        ? { label: "Encours élevé", cls: "bg-warning text-white", tone: "warning" as const }
         : facturesImpayees.length > 0
-          ? { label: "Impayés", cls: "bg-warning text-white" }
-          : { label: "Actif", cls: "bg-success text-white" };
+          ? { label: "Impayés", cls: "bg-warning text-white", tone: "warning" as const }
+          : { label: "Actif", cls: "bg-success text-white", tone: "success" as const };
 
 
   return (
@@ -143,7 +144,7 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button
-            className="bg-warning hover:bg-warning text-white"
+            variant="outline"
             onClick={() => setEditOpen(true)}
           >
             <Pencil className="mr-2 h-4 w-4" /> Modifier le client
@@ -159,7 +160,7 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
             <PlusCircle className="mr-2 h-4 w-4" /> Commander
           </Button>
           <Button
-            variant="secondary"
+            variant="outline"
             onClick={() =>
               navigate({ to: "/paiements/nouveau", search: { clientId: client.client_id } })
             }
@@ -167,8 +168,7 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
             <Wallet className="mr-2 h-4 w-4" /> Imputer un paiement
           </Button>
           <Button
-            variant="secondary"
-            className="bg-purple-600 hover:bg-purple-700 text-white"
+            variant="outline"
             onClick={() =>
               navigate({ to: "/retours/nouveau", search: { clientId: client.client_id, type_retour: "avoir" } })
             }
@@ -184,7 +184,8 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
             <RotateCcw className="mr-2 h-4 w-4" /> Retour
           </Button>
           <Button
-            className="whitespace-nowrap bg-success text-white shadow-sm transition-colors hover:bg-success"
+            variant="outline"
+            className="whitespace-nowrap"
             onClick={() => setReleveOpen(true)}
           >
             <FileText className="mr-2 h-4 w-4" /> Relevé de compte
@@ -192,7 +193,7 @@ function ClientDetailInner({ clientId }: { clientId: string }) {
           <Badge style={{ backgroundColor: type?.bg ?? "#CFD8DC", color: type?.color ?? "#0A2540" }}>
             {type?.label ?? client.type_client}
           </Badge>
-          <Badge className={statutEnrichi.cls}>{statutEnrichi.label}</Badge>
+          <StatusPill tone={statutEnrichi.tone}>{statutEnrichi.label}</StatusPill>
         </div>
       </div>
 
