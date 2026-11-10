@@ -14,4 +14,10 @@ describe("toneForStatut", () => {
     expect(toneForStatut("en_cours")).toBe("warning");
     expect(toneForStatut("annulee")).toBe("neutral");
   });
+  it("contrats", () => {
+    expect(toneForStatut("expire")).toBe("neutral");
+    expect(toneForStatut("resilie")).toBe("danger");
+    expect(toneForStatut("rejetee")).toBe("danger");
+    expect(toneForStatut("validee")).toBe("success");
+  });
 });

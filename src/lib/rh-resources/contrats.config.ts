@@ -17,6 +17,7 @@ const statuts = [
 export const contratsConfig: ResourceConfig = {
   table: "contrats",
   idField: "contrat_id",
+  overline: "Ressources humaines",
   title: "Contrats",
   subtitle: "Contrats des employés",
   icon: FileText,
