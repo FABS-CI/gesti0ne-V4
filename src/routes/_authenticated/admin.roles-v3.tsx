@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { friendlyError } from "@/lib/friendly-error";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
+import { ListPageHeader } from "@/components/common/list/ListParts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -215,19 +216,16 @@ function RolesV3Page() {
 
   return (
     <div className="space-y-6 p-4 md:p-6">
-      <header className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="ds-page-title">
-            Sécurité — Moteur v3
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Rôles, matrice module × action et affectations utilisateurs (source de vérité des règles d'accès).
-          </p>
-        </div>
-        <Button variant="outline" onClick={() => void reload()} disabled={loading}>
-          <RefreshCcw className="mr-2 h-4 w-4" /> Recharger
-        </Button>
-      </header>
+      <ListPageHeader
+        overline="Administration"
+        title="Rôles et droits"
+        description="Rôles, matrice module × action et affectations utilisateurs (source de vérité des règles d'accès)."
+        actions={
+          <Button variant="outline" onClick={() => void reload()} disabled={loading}>
+            <RefreshCcw className="mr-2 h-4 w-4" /> Recharger
+          </Button>
+        }
+      />
 
       <Tabs defaultValue="matrice">
         <TabsList>

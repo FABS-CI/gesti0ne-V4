@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dialog";
 import { useUserRoles } from "@/hooks/use-user-roles";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
+import { ListPageHeader } from "@/components/common/list/ListParts";
 import { friendlyError } from "@/lib/friendly-error";
 import { ReconciliationFinanceCard } from "@/components/data-quality/ReconciliationFinanceCard";
 import { ReconciliationStockCard } from "@/components/data-quality/ReconciliationStockCard";
@@ -126,47 +127,43 @@ function DataQualityPage() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="ds-page-title">Qualité des données</h1>
-          <p className="text-sm text-muted-foreground">
-            Rapports d'audit : doublons clients, BL orphelins, écarts stock théorique vs mouvements.
-          </p>
-        </div>
-        <Button variant="outline" size="sm" onClick={refetchAll}>
-          <RefreshCw className="h-4 w-4 mr-2" /> Actualiser
-        </Button>
-      </div>
+      <ListPageHeader
+        overline="Administration"
+        title="Qualité des données"
+        description="Rapports d'audit : doublons clients, BL orphelins, écarts stock théorique vs mouvements."
+        actions={
+          <Button variant="outline" size="sm" onClick={refetchAll}>
+            <RefreshCw className="h-4 w-4 mr-2" /> Actualiser
+          </Button>
+        }
+      />
 
       {/* KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-sm text-muted-foreground">Doublons clients</CardTitle>
-            <Users className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{dupQ.data?.length ?? "—"}</p>
+            <p className="text-3xl font-semibold tabular-nums">{dupQ.data?.length ?? "—"}</p>
             <p className="text-xs text-muted-foreground">groupes de noms identiques</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-sm text-muted-foreground">BL orphelins</CardTitle>
-            <FileX className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{orphanQ.data?.length ?? "—"}</p>
+            <p className="text-3xl font-semibold tabular-nums">{orphanQ.data?.length ?? "—"}</p>
             <p className="text-xs text-muted-foreground">sans commande liée</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-sm text-muted-foreground">Écarts stock</CardTitle>
-            <Package className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{stockQ.data?.length ?? "—"}</p>
+            <p className="text-3xl font-semibold tabular-nums">{stockQ.data?.length ?? "—"}</p>
             <p className="text-xs text-muted-foreground">produits avec écart</p>
           </CardContent>
         </Card>
