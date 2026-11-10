@@ -39,6 +39,8 @@ import {
 import { PaiementVentilationCard } from "@/components/paiements/PaiementVentilationCard";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 import { friendlyError } from "@/lib/friendly-error";
+import { StatusPill } from "@/components/common/StatusPill";
+import { toneForStatut } from "@/lib/statut-tone";
 
 export const Route = createFileRoute("/_authenticated/paiements/$paiementId")({
   component: PaiementDetailPage,
@@ -126,7 +128,8 @@ function PaiementDetailPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="ds-page-title">Paiement {formatDocumentReference(paiement.reference)}</h1>
+            <p className="ds-overline">Ventes</p>
+            <h1 className="ds-page-title mt-1">Paiement {formatDocumentReference(paiement.reference)}</h1>
             <p className="text-sm text-muted-foreground">
               {paiement.client_nom ?? "Client non renseigné"}
             </p>
@@ -192,9 +195,7 @@ function PaiementDetailPage() {
           </Button>
 
           {statut && (
-            <Badge style={{ backgroundColor: statut.color }} className="text-white">
-              {statut.label}
-            </Badge>
+            <StatusPill tone={toneForStatut(paiement.statut)}>{statut.label}</StatusPill>
           )}
 
           {paiement.statut !== "annule" && (
