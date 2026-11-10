@@ -8479,6 +8479,17 @@ export type Database = {
         Args: { _action: string; _details?: Json; _retour_id: string }
         Returns: undefined
       }
+      _retour_encours_actif: { Args: { _statut: string }; Returns: boolean }
+      _retour_encours_assert: { Args: { _id: string }; Returns: undefined }
+      _retour_encours_comptabilise: {
+        Args: { _statut: string }
+        Returns: boolean
+      }
+      _retour_encours_etat: {
+        Args: { _client: string; _exclure?: string }
+        Returns: Json
+      }
+      _retour_encours_montant: { Args: { _id: string }; Returns: number }
       _retour_recalc_totaux: {
         Args: { p_retour_id: string }
         Returns: undefined
@@ -10358,6 +10369,7 @@ export type Database = {
       restore_employe: { Args: { _employe_id: string }; Returns: undefined }
       retour_creer_demande: { Args: { _payload: Json }; Returns: string }
       retour_creer_et_valider: { Args: { _payload: Json }; Returns: string }
+      retour_encours_disponible: { Args: { _client_id: string }; Returns: Json }
       retour_forcer_cloture: {
         Args: { _motif: string; _retour_id: string }
         Returns: undefined

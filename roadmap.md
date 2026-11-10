@@ -2,8 +2,9 @@
 
 ## Retours plafonnés à l'encours — 10 novembre 2026
 - [x] Examiner les règles demandées, le calcul du solde et les points d'entrée des retours
-- [ ] Contrôle centralisé côté serveur, réservations des demandes en attente et protection des opérations simultanées — validation du plan requise avant modification comptable
-- [ ] Affichage des alertes, tests des plafonds et de concurrence dans une base jetable, vérification connectée sans modifier l'historique
+- [x] Migration 0122 appliquée : contrôle centralisé sur retours/lignes, réservations, verrou commun et suppression de l'écriture directe de solde dans la validation interne
+- [x] 30 tests réussis, dont 10 sur PostgreSQL jetable : plafonds, concurrence demandes/paiement, remises, refus/annulation, accès direct et validation sans double comptage ; formulaire AGBOVILLE connecté bloqué à 0 FCFA
+- [ ] Validation exhaustive du workflow stock/comptabilité sur une copie intégrale jetable — la base de test utilisée contient uniquement les tables financières minimales ; aucune validation de retour réel effectuée
 
 ## Relevé PDF — retours conditionnels (10 novembre 2026)
 - [x] Masquer ensemble colonne et total des retours absents, rééquilibrer les largeurs sans changer les calculs
