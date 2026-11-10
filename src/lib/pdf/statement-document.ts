@@ -104,7 +104,8 @@ export class StatementDocument extends BaseDocument {
 
     // Bloc Période (sans cadre) + QR code à droite
     const perX = MARGINS.x + boxW + 15;
-    await this.drawStatementQr(PAGE.w - MARGINS.x - boxH + 8, y - boxH + 8, boxH - 16, data);
+    const qrSize = 64;
+    await this.drawStatementQr(PAGE.w - MARGINS.x - qrSize - 12, y - boxH + 12, qrSize, data);
     this.page.drawText("PÉRIODE", { x: perX + 10, y: y - 15, size: 7, font: this.fonts.bold, color: BODY.donnee });
     const periode = data.periodeDebut && data.periodeFin 
       ? `Du ${data.periodeDebut} au ${data.periodeFin}`
