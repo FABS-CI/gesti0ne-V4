@@ -1,8 +1,8 @@
 import { formatDateLong } from "@/lib/format";
 import { Lock, LockOpen, Pencil } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { StatusPill, type StatusTone } from "@/components/common/StatusPill";
+import { ListCard } from "@/components/common/list/ListParts";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -13,6 +13,14 @@ import {
 } from "@/components/ui/table";
 import type { ExerciceStatut } from "@/contexts/ExerciceContext";
 import { STATUT_LABEL, type EditingExercice } from "./exercices-shared";
+
+const STATUT_TONE: Record<ExerciceStatut, StatusTone> = {
+  preparation: "neutral",
+  actif: "success",
+  cloture_en_cours: "warning",
+  cloture: "info",
+  archive: "neutral",
+};
 
 type Exercice = {
   exercice_id: string;
@@ -42,11 +50,7 @@ export function ExercicesTable({
   onRouvrir,
 }: Props) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Liste des exercices</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <ListCard>
         <Table>
           <TableHeader>
             <TableRow>
@@ -64,10 +68,10 @@ export function ExercicesTable({
                   {formatDateLong(ex.date_debut)} → {formatDateLong(ex.date_fin)}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={ex.is_actif ? "default" : "outline"}>
+                  <StatusPill tone={ex.is_actif ? "success" : STATUT_TONE[ex.statut]}>
                     {STATUT_LABEL[ex.statut]}
-                    {ex.is_actif && " ●"}
-                  </Badge>
+                    {ex.is_actif && ex.statut !== "actif" && " · en cours"}
+                  </StatusPill>
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
@@ -115,7 +119,6 @@ export function ExercicesTable({
             ))}
           </TableBody>
         </Table>
-      </CardContent>
-    </Card>
+    </ListCard>
   );
 }

@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Download, FileDown } from "lucide-react";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { ListCard, ListFilterBar, ListPageHeader } from "@/components/common/list/ListParts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -75,14 +75,12 @@ function GrandLivrePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="ds-page-title">
-            Grand livre
-          </h1>
-          <p className="text-sm text-muted-foreground">Détail des écritures par compte</p>
-        </div>
-        <div className="flex gap-2">
+      <ListPageHeader
+        overline="Comptabilité"
+        title="Grand livre"
+        description="Détail des écritures par compte"
+        actions={
+          <>
           <Button
             variant="outline"
             size="sm"
@@ -146,11 +144,12 @@ function GrandLivrePage() {
           >
             <FileDown className="mr-2 h-4 w-4" /> PDF
           </Button>
-        </div>
-      </div>
+          </>
+        }
+      />
 
-      <Card>
-        <CardContent className="flex flex-wrap gap-3 p-4">
+      <ListCard>
+        <ListFilterBar>
           <div>
             <Label>Du</Label>
             <Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
@@ -175,11 +174,7 @@ function GrandLivrePage() {
               </SelectContent>
             </Select>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-0">
+        </ListFilterBar>
           <ResponsiveTable stickyFirstCol>
             <Table>
               <TableHeader>
@@ -197,13 +192,13 @@ function GrandLivrePage() {
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center text-muted-foreground">
+                    <TableCell colSpan={8} className="py-10 text-center text-muted-foreground">
                       Chargement…
                     </TableCell>
                   </TableRow>
                 ) : filtered.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center text-muted-foreground">
+                    <TableCell colSpan={8} className="py-10 text-center text-muted-foreground">
                       Aucune ligne
                     </TableCell>
                   </TableRow>
@@ -226,8 +221,7 @@ function GrandLivrePage() {
                         {l.credit ? formatFCFA(l.credit) : "—"}
                       </TableCell>
                       <TableCell
-                        className="text-right font-medium"
-                        style={{ color: l.solde >= 0 ? "#10B981" : "#EF4444" }}
+                        className={`text-right font-medium tabular-nums ${l.solde >= 0 ? "text-success" : "text-destructive"}`}
                       >
                         {formatFCFA(l.solde)}
                       </TableCell>
@@ -237,8 +231,7 @@ function GrandLivrePage() {
               </TableBody>
             </Table>
           </ResponsiveTable>
-        </CardContent>
-      </Card>
+      </ListCard>
     </div>
   );
 }

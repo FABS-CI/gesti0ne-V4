@@ -26,6 +26,7 @@ import { EditExerciceDialog } from "@/components/exercices/index/EditExerciceDia
 import type { EditingExercice, PreviewResult } from "@/components/exercices/index/exercices-shared";
 
 import { COMPARATIF_SEARCH_DEFAULTS } from "@/lib/route-schemas";
+import { ListPageHeader } from "@/components/common/list/ListParts";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 import { friendlyError } from "@/lib/friendly-error";
 
@@ -127,29 +128,26 @@ function ExercicesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="ds-page-title">
-            Exercices comptables
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Gérez les exercices et clôturez-les après contrôle de la comptabilité.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button asChild variant="outline">
-            <Link to="/exercices/rapport">Rapport d'exercice</Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link to="/exercices/comparatif" search={COMPARATIF_SEARCH_DEFAULTS}>
-              Comparatif
-            </Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link to="/exercices/journal">Journal de clôture</Link>
-          </Button>
-        </div>
-      </div>
+      <ListPageHeader
+        overline="Comptabilité"
+        title="Exercices comptables"
+        description="Gérez les exercices et clôturez-les après contrôle de la comptabilité."
+        actions={
+          <>
+            <Button asChild variant="outline" size="sm">
+              <Link to="/exercices/rapport">Rapport d'exercice</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link to="/exercices/comparatif" search={COMPARATIF_SEARCH_DEFAULTS}>
+                Comparatif
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link to="/exercices/journal">Journal de clôture</Link>
+            </Button>
+          </>
+        }
+      />
 
       <ExercicesTable
         exercices={exercices}
