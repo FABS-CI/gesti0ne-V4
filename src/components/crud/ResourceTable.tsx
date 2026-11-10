@@ -2,7 +2,6 @@ import { askConfirm } from "@/components/common/GlobalConfirm";
 import { Inbox, Pencil, Trash2 } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Table,
