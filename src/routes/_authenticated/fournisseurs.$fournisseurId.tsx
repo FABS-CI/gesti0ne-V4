@@ -180,9 +180,7 @@ function FournisseurDetailPage() {
                           <TableCell>{frDate(a.date_achat)}</TableCell>
                           <TableCell>
                             {st && (
-                              <Badge style={{ backgroundColor: st.color }} className="text-white">
-                                {st.label}
-                              </Badge>
+                              <StatusPill tone={toneForStatut(a.statut)}>{st.label}</StatusPill>
                             )}
                           </TableCell>
                           <TableCell className="text-right font-medium">
