@@ -175,8 +175,8 @@ function DataQualityPage() {
       {/* Doublons clients */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" /> Doublons clients
+          <CardTitle className="text-base">
+            Doublons clients
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -233,8 +233,8 @@ function DataQualityPage() {
       {/* BL orphelins */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileX className="h-5 w-5" /> Bons de livraison sans commande
+          <CardTitle className="text-base">
+            Bons de livraison sans commande
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -279,8 +279,8 @@ function DataQualityPage() {
       {/* Écarts stock */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Package className="h-5 w-5" /> Écarts stock théorique vs mouvements
+          <CardTitle className="text-base">
+            Écarts stock théorique vs mouvements
           </CardTitle>
         </CardHeader>
         <CardContent>

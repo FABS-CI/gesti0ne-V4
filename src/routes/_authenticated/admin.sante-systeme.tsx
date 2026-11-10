@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useUserRoles } from "@/hooks/use-user-roles";
 import { audit } from "@/lib/audit-client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
@@ -14,8 +13,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import {
-  Activity, RefreshCw, AlertTriangle, CheckCircle2, XCircle, AlertCircle,
-  Users, Database, HardDrive, Shield, ServerCog, FileText, PlayCircle,
+  RefreshCw, CheckCircle2, XCircle, AlertCircle, PlayCircle,
 } from "lucide-react";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 import { ListPageHeader } from "@/components/common/list/ListParts";
