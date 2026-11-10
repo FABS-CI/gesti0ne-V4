@@ -19,6 +19,7 @@ import {
   type SortKey,
 } from "@/components/exercices/comparatif/ComparatifFilters";
 import { ComparatifTable } from "@/components/exercices/comparatif/ComparatifTable";
+import { ListPageHeader } from "@/components/common/list/ListParts";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
 const LS_KEY = "exercices-comparatif-state-v1";
@@ -150,24 +151,26 @@ function ComparatifPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <Button aria-label="Retour" asChild variant="ghost" size="icon">
-          <Link to="/exercices">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-        </Button>
-        <div className="flex-1">
-          <h1 className="ds-page-title">
-            Comparatif multi-exercices
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Évolution du chiffre d'affaires, des encaissements et du résultat par exercice
-          </p>
-        </div>
-        <Button variant="outline" onClick={handleExportPdf} disabled={!filteredRows.length}>
-          <FileDown className="mr-2 h-4 w-4" /> Exporter PDF
-        </Button>
-      </div>
+      <Button asChild variant="ghost" size="sm" className="-ml-2 text-muted-foreground">
+        <Link to="/exercices">
+          <ArrowLeft className="mr-1 h-4 w-4" /> Exercices
+        </Link>
+      </Button>
+      <ListPageHeader
+        overline="Comptabilité · Exercices"
+        title="Comparatif multi-exercices"
+        description="Évolution du chiffre d'affaires, des encaissements et du résultat par exercice"
+        actions={
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportPdf}
+            disabled={!filteredRows.length}
+          >
+            <FileDown className="mr-2 h-4 w-4" /> Exporter PDF
+          </Button>
+        }
+      />
 
       {error && (
         <Alert variant="destructive">

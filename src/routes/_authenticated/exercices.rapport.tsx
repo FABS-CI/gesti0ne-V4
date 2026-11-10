@@ -1,28 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  ArrowLeft,
-  AlertCircle,
-  ShoppingCart,
-  FileText,
-  Wallet,
-  TrendingUp,
-  TrendingDown,
-  Scale,
-  Users,
-  Truck,
-  Package,
-} from "lucide-react";
+import { ArrowLeft, AlertCircle } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { formatFCFA, formatDate } from "@/lib/format";
 import { useExercice } from "@/contexts/ExerciceContext";
 import { getDashboardCompta } from "@/lib/compta-api";
 
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { StatusPill } from "@/components/common/StatusPill";
+import { toneForStatut } from "@/lib/statut-tone";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Select,
@@ -33,6 +23,8 @@ import {
 } from "@/components/ui/select";
 
 import { COMPARATIF_SEARCH_DEFAULTS } from "@/lib/route-schemas";
+import { ListPageHeader } from "@/components/common/list/ListParts";
+import { STATUT_LABEL } from "@/components/exercices/index/exercices-shared";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
 export const Route = createFileRoute("/_authenticated/exercices/rapport")({
@@ -143,21 +135,16 @@ function RapportExercicePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <Button aria-label="Retour" asChild variant="ghost" size="icon">
-          <Link to="/exercices">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-        </Button>
-        <div className="flex-1">
-          <h1 className="ds-page-title">
-            Rapport d'exercice
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Synthèse ventes et finances pour un exercice donné
-          </p>
-        </div>
-      </div>
+      <Button asChild variant="ghost" size="sm" className="-ml-2 text-muted-foreground">
+        <Link to="/exercices">
+          <ArrowLeft className="mr-1 h-4 w-4" /> Exercices
+        </Link>
+      </Button>
+      <ListPageHeader
+        overline="Comptabilité · Exercices"
+        title="Rapport d'exercice"
+        description="Synthèse ventes et finances pour un exercice donné"
+      />
 
       <Card>
         <CardContent className="flex flex-wrap items-end gap-3 p-4">
@@ -177,16 +164,15 @@ function RapportExercicePage() {
             </Select>
           </div>
           {exercice && (
-            <Badge variant={exercice.is_actif ? "default" : "outline"}>
-              {exercice.statut}
-              {exercice.is_actif && " ●"}
-            </Badge>
+            <StatusPill tone={exercice.is_actif ? "success" : toneForStatut(exercice.statut)}>
+              {STATUT_LABEL[exercice.statut as keyof typeof STATUT_LABEL] ?? exercice.statut}
+            </StatusPill>
           )}
         </CardContent>
       </Card>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Activité commerciale</h2>
+        <h2 className="ds-overline">Activité commerciale</h2>
         {ventesError ? (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
@@ -205,83 +191,48 @@ function RapportExercicePage() {
               label="Commandes"
               value={formatFCFA(ventes.totalCommandes)}
               hint={`${ventes.nbCommandes} commande(s)`}
-              icon={ShoppingCart}
-              color="#3B82F6"
             />
             <Kpi
               label="Factures émises"
               value={formatFCFA(ventes.totalFactures)}
               hint={`${ventes.nbFactures} facture(s)`}
-              icon={FileText}
-              color="#8B5CF6"
             />
             <Kpi
               label="Encaissements"
               value={formatFCFA(ventes.totalPaiements)}
               hint={`${ventes.nbPaiements} paiement(s)`}
-              icon={Wallet}
-              color="#10B981"
             />
             <Kpi
               label="Reste à encaisser"
               value={formatFCFA(ventes.resteAPayer)}
               hint="Factures - déjà payé"
-              icon={Users}
-              color={ventes.resteAPayer > 0 ? "#EF4444" : "#10B981"}
+              tone={ventes.resteAPayer > 0 ? "danger" : undefined}
             />
             <Kpi
               label="Achats fournisseurs"
               value={formatFCFA(ventes.totalAchats)}
               hint={`${ventes.nbAchats} achat(s)`}
-              icon={Package}
-              color="#F97316"
             />
           </div>
         )}
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Situation comptable</h2>
+        <h2 className="ds-overline">Situation comptable</h2>
         {loadingCompta || !compta ? (
           <p className="text-sm text-muted-foreground">Chargement…</p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <Kpi
-              label="Produits (cl. 7)"
-              value={formatFCFA(compta.produits)}
-              icon={TrendingUp}
-              color="#10B981"
-            />
-            <Kpi
-              label="Charges (cl. 6)"
-              value={formatFCFA(compta.charges)}
-              icon={TrendingDown}
-              color="#EF4444"
-            />
+            <Kpi label="Produits (cl. 7)" value={formatFCFA(compta.produits)} />
+            <Kpi label="Charges (cl. 6)" value={formatFCFA(compta.charges)} />
             <Kpi
               label="Résultat"
               value={formatFCFA(compta.resultat)}
-              icon={Scale}
-              color={compta.resultat >= 0 ? "#10B981" : "#EF4444"}
+              tone={compta.resultat >= 0 ? "success" : "danger"}
             />
-            <Kpi
-              label="Trésorerie (cl. 5)"
-              value={formatFCFA(compta.tresorerie)}
-              icon={Wallet}
-              color="#F97316"
-            />
-            <Kpi
-              label="Créances clients (411)"
-              value={formatFCFA(compta.creancesClients)}
-              icon={Users}
-              color="#3B82F6"
-            />
-            <Kpi
-              label="Dettes fournisseurs (401)"
-              value={formatFCFA(compta.dettesFournisseurs)}
-              icon={Truck}
-              color="#8B5CF6"
-            />
+            <Kpi label="Trésorerie (cl. 5)" value={formatFCFA(compta.tresorerie)} />
+            <Kpi label="Créances clients (411)" value={formatFCFA(compta.creancesClients)} />
+            <Kpi label="Dettes fournisseurs (401)" value={formatFCFA(compta.dettesFournisseurs)} />
           </div>
         )}
       </section>
@@ -293,23 +244,27 @@ function Kpi({
   label,
   value,
   hint,
-  icon: Icon,
-  color,
+  tone,
 }: {
   label: string;
   value: string;
   hint?: string;
-  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
-  color: string;
+  /** Couleur réservée aux montants à surveiller (résultat, reste à encaisser). */
+  tone?: "success" | "danger";
 }) {
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <CardHeader className="pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">{label}</CardTitle>
-        <Icon className="h-5 w-5" style={{ color }} />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold" style={{ color }}>
+        <div
+          className={cn(
+            "text-2xl font-semibold tabular-nums",
+            tone === "success" && "text-success",
+            tone === "danger" && "text-destructive",
+          )}
+        >
           {value}
         </div>
         {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}

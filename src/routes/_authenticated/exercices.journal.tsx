@@ -1,11 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { formatDateTime, formatFCFA } from "@/lib/format";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -14,6 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ListCard, ListPageHeader } from "@/components/common/list/ListParts";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
 
 export const Route = createFileRoute("/_authenticated/exercices/journal")({
@@ -51,73 +51,63 @@ function JournalCloturePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <Button aria-label="Retour" asChild variant="ghost" size="icon">
-          <Link to="/exercices">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-        </Button>
-        <div>
-          <h1 className="ds-page-title">
-            Journal de clôture
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Historique des clôtures d'exercice et reports à-nouveau
-          </p>
-        </div>
-      </div>
+      <Button asChild variant="ghost" size="sm" className="-ml-2 text-muted-foreground">
+        <Link to="/exercices">
+          <ArrowLeft className="mr-1 h-4 w-4" /> Exercices
+        </Link>
+      </Button>
+      <ListPageHeader
+        overline="Comptabilité · Exercices"
+        title="Journal de clôture"
+        description="Historique des clôtures d'exercice et reports à-nouveau"
+      />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Clôtures effectuées</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
+      <ListCard>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Date</TableHead>
+              <TableHead>Exercice source</TableHead>
+              <TableHead>Exercice cible</TableHead>
+              <TableHead className="text-right">Clients reportés</TableHead>
+              <TableHead className="text-right">Montant clients</TableHead>
+              <TableHead className="text-right">Fournisseurs reportés</TableHead>
+              <TableHead className="text-right">Montant fournisseurs</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Exercice source</TableHead>
-                <TableHead>Exercice cible</TableHead>
-                <TableHead className="text-right">Clients reportés</TableHead>
-                <TableHead className="text-right">Montant clients</TableHead>
-                <TableHead className="text-right">Fournisseurs reportés</TableHead>
-                <TableHead className="text-right">Montant fournisseurs</TableHead>
+                <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
+                  Chargement…
+                </TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
-                    Chargement...
+            ) : rows.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
+                  Aucune clôture enregistrée
+                </TableCell>
+              </TableRow>
+            ) : (
+              rows.map((r) => (
+                <TableRow key={r.journal_id}>
+                  <TableCell>{formatDateTime(r.date_cloture)}</TableCell>
+                  <TableCell className="font-mono text-xs">{r.source?.code ?? "—"}</TableCell>
+                  <TableCell className="font-mono text-xs">{r.cible?.code ?? "—"}</TableCell>
+                  <TableCell className="text-right">{r.nb_clients_reportes}</TableCell>
+                  <TableCell className="text-right font-medium">
+                    {formatFCFA(Number(r.montant_total_clients))}
+                  </TableCell>
+                  <TableCell className="text-right">{r.nb_fournisseurs_reportes}</TableCell>
+                  <TableCell className="text-right font-medium">
+                    {formatFCFA(Number(r.montant_total_fournisseurs))}
                   </TableCell>
                 </TableRow>
-              ) : rows.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
-                    Aucune clôture enregistrée
-                  </TableCell>
-                </TableRow>
-              ) : (
-                rows.map((r) => (
-                  <TableRow key={r.journal_id}>
-                    <TableCell>{formatDateTime(r.date_cloture)}</TableCell>
-                    <TableCell className="font-mono text-xs">{r.source?.code ?? "—"}</TableCell>
-                    <TableCell className="font-mono text-xs">{r.cible?.code ?? "—"}</TableCell>
-                    <TableCell className="text-right">{r.nb_clients_reportes}</TableCell>
-                    <TableCell className="text-right font-medium">
-                      {formatFCFA(Number(r.montant_total_clients))}
-                    </TableCell>
-                    <TableCell className="text-right">{r.nb_fournisseurs_reportes}</TableCell>
-                    <TableCell className="text-right font-medium">
-                      {formatFCFA(Number(r.montant_total_fournisseurs))}
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </ListCard>
     </div>
   );
 }
