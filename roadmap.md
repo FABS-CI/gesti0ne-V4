@@ -164,3 +164,4 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [ ] Lot 4 : vérification module par module (connexion de l'aperçu nécessaire)
 
 - [x] Menu : ancien menu sombre rétabli à la demande
+- [x] Rapport d'exercice : achats comptés seulement si reçus ou payés (même règle que le Comparatif)
