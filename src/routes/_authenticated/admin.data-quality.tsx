@@ -3,11 +3,12 @@ import { formatDate, formatFCFA } from "@/lib/format";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { AlertCircle, Users, Package, FileX, RefreshCw, Merge } from "lucide-react";
+import { AlertCircle, RefreshCw, Merge } from "lucide-react";
+import { StatusPill } from "@/components/common/StatusPill";
+import { toneForStatut } from "@/lib/statut-tone";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -26,6 +27,7 @@ import {
 } from "@/components/ui/dialog";
 import { useUserRoles } from "@/hooks/use-user-roles";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
+import { ListPageHeader } from "@/components/common/list/ListParts";
 import { friendlyError } from "@/lib/friendly-error";
 import { ReconciliationFinanceCard } from "@/components/data-quality/ReconciliationFinanceCard";
 import { ReconciliationStockCard } from "@/components/data-quality/ReconciliationStockCard";
@@ -126,47 +128,43 @@ function DataQualityPage() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="ds-page-title">Qualité des données</h1>
-          <p className="text-sm text-muted-foreground">
-            Rapports d'audit : doublons clients, BL orphelins, écarts stock théorique vs mouvements.
-          </p>
-        </div>
-        <Button variant="outline" size="sm" onClick={refetchAll}>
-          <RefreshCw className="h-4 w-4 mr-2" /> Actualiser
-        </Button>
-      </div>
+      <ListPageHeader
+        overline="Administration"
+        title="Qualité des données"
+        description="Rapports d'audit : doublons clients, BL orphelins, écarts stock théorique vs mouvements."
+        actions={
+          <Button variant="outline" size="sm" onClick={refetchAll}>
+            <RefreshCw className="h-4 w-4 mr-2" /> Actualiser
+          </Button>
+        }
+      />
 
       {/* KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-sm text-muted-foreground">Doublons clients</CardTitle>
-            <Users className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{dupQ.data?.length ?? "—"}</p>
+            <p className="text-3xl font-semibold tabular-nums">{dupQ.data?.length ?? "—"}</p>
             <p className="text-xs text-muted-foreground">groupes de noms identiques</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-sm text-muted-foreground">BL orphelins</CardTitle>
-            <FileX className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{orphanQ.data?.length ?? "—"}</p>
+            <p className="text-3xl font-semibold tabular-nums">{orphanQ.data?.length ?? "—"}</p>
             <p className="text-xs text-muted-foreground">sans commande liée</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-sm text-muted-foreground">Écarts stock</CardTitle>
-            <Package className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{stockQ.data?.length ?? "—"}</p>
+            <p className="text-3xl font-semibold tabular-nums">{stockQ.data?.length ?? "—"}</p>
             <p className="text-xs text-muted-foreground">produits avec écart</p>
           </CardContent>
         </Card>
@@ -178,8 +176,8 @@ function DataQualityPage() {
       {/* Doublons clients */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" /> Doublons clients
+          <CardTitle className="text-base">
+            Doublons clients
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -203,7 +201,7 @@ function DataQualityPage() {
                 <TableRow key={`${d.nom_normalise ?? "dup"}-${i}`}>
                   <TableCell className="font-medium">{d.nom_normalise}</TableCell>
                   <TableCell className="text-right">
-                    <Badge variant="destructive">{d.nb}</Badge>
+                    <StatusPill tone="danger" dot={false}>{d.nb}</StatusPill>
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">
                     {(d.noms ?? []).join(" • ")}
@@ -236,8 +234,8 @@ function DataQualityPage() {
       {/* BL orphelins */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileX className="h-5 w-5" /> Bons de livraison sans commande
+          <CardTitle className="text-base">
+            Bons de livraison sans commande
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -257,7 +255,7 @@ function DataQualityPage() {
                     {o.reference ?? o.bl_id.slice(0, 8)}
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline">{o.statut}</Badge>
+                    <StatusPill tone={toneForStatut(o.statut)}>{o.statut}</StatusPill>
                   </TableCell>
                   <TableCell className="text-right">
                     {formatFCFA(o.montant)}
@@ -282,8 +280,8 @@ function DataQualityPage() {
       {/* Écarts stock */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Package className="h-5 w-5" /> Écarts stock théorique vs mouvements
+          <CardTitle className="text-base">
+            Écarts stock théorique vs mouvements
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -303,9 +301,9 @@ function DataQualityPage() {
                   <TableCell className="text-right">{s.stock_actuel}</TableCell>
                   <TableCell className="text-right">{s.stock_calcule}</TableCell>
                   <TableCell className="text-right">
-                    <Badge variant={Math.abs(s.ecart) > 10 ? "destructive" : "outline"}>
+                    <StatusPill tone={Math.abs(s.ecart) > 10 ? "danger" : "neutral"} dot={false}>
                       {s.ecart > 0 ? `+${s.ecart}` : s.ecart}
-                    </Badge>
+                    </StatusPill>
                   </TableCell>
                 </TableRow>
               ))}

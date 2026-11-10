@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useUserRoles } from "@/hooks/use-user-roles";
 import { audit } from "@/lib/audit-client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
@@ -14,10 +13,11 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import {
-  Activity, RefreshCw, AlertTriangle, CheckCircle2, XCircle, AlertCircle,
-  Users, Database, HardDrive, Shield, ServerCog, FileText, PlayCircle,
+  RefreshCw, CheckCircle2, XCircle, AlertCircle, PlayCircle,
 } from "lucide-react";
 import { RouteError, RouteNotFound } from "@/components/route-boundaries";
+import { ListPageHeader } from "@/components/common/list/ListParts";
+import { StatusPill, type StatusTone } from "@/components/common/StatusPill";
 
 export const Route = createFileRoute("/_authenticated/admin/sante-systeme")({
   component: SanteSystemePage,
@@ -343,33 +343,28 @@ function SanteSystemePage() {
 
   return (
     <div className="container mx-auto space-y-6 p-4 md:p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="ds-page-title">
-            Santé du système
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            Supervision temps réel de l'ERP · Rafraîchissement automatique 30s
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button onClick={refreshAll} variant="outline" size="sm">
-            <RefreshCw className="mr-2 h-4 w-4" /> Actualiser
-          </Button>
-          <Button onClick={() => testServices.mutate()} disabled={testing} variant="outline" size="sm">
-            <PlayCircle className="mr-2 h-4 w-4" /> Tester les services
-          </Button>
-        </div>
-      </div>
+      <ListPageHeader
+        overline="Administration"
+        title="Santé du système"
+        description="Supervision temps réel de l'ERP · Rafraîchissement automatique 30s"
+        actions={
+          <>
+            <Button onClick={refreshAll} variant="outline" size="sm">
+              <RefreshCw className="mr-2 h-4 w-4" /> Actualiser
+            </Button>
+            <Button onClick={() => testServices.mutate()} disabled={testing} variant="outline" size="sm">
+              <PlayCircle className="mr-2 h-4 w-4" /> Tester les services
+            </Button>
+          </>
+        }
+      />
 
       {/* Overall + KPIs top */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <OverallCard status={overall} />
-        <StatCard icon={<Users className="h-5 w-5" />} label="Connexions aujourd'hui" value={kpis.data?.connectionsToday ?? "—"} />
-        <StatCard icon={<Activity className="h-5 w-5" />} label="Opérations aujourd'hui" value={kpis.data?.opsToday ?? "—"} />
+        <StatCard label="Connexions aujourd'hui" value={kpis.data?.connectionsToday ?? "—"} />
+        <StatCard label="Opérations aujourd'hui" value={kpis.data?.opsToday ?? "—"} />
         <StatCard
-          icon={<AlertTriangle className="h-5 w-5" />}
           label="Erreurs aujourd'hui"
           value={kpis.data?.errorsToday ?? "—"}
           tone={(kpis.data?.errorsToday ?? 0) > 0 ? "error" : undefined}
@@ -379,7 +374,7 @@ function SanteSystemePage() {
       {/* Services + Perf */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
-          <CardHeader><CardTitle className="flex items-center gap-2"><ServerCog className="h-5 w-5" /> Services</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">Services</CardTitle></CardHeader>
           <CardContent>
             {services.isLoading ? <Skeleton className="h-24" /> : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -418,7 +413,7 @@ function SanteSystemePage() {
       {/* Activity + DB stats */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
-          <CardHeader><CardTitle className="flex items-center gap-2 text-base"><FileText className="h-5 w-5" /> Activité du jour</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">Activité du jour</CardTitle></CardHeader>
           <CardContent className="grid grid-cols-2 gap-3 text-sm">
             <Row label="Commandes créées" value={kpis.data?.cmdToday ?? "—"} />
             <Row label="Factures créées" value={kpis.data?.factToday ?? "—"} />
@@ -428,7 +423,7 @@ function SanteSystemePage() {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Database className="h-5 w-5" /> Base de données</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">Base de données</CardTitle></CardHeader>
           <CardContent className="grid grid-cols-2 gap-3 text-sm">
             <Row label="Clients" value={kpis.data?.clients ?? "—"} />
             <Row label="Produits" value={kpis.data?.produits ?? "—"} />
@@ -443,7 +438,7 @@ function SanteSystemePage() {
       {/* Sécurité + Sauvegardes + Intégrité */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card>
-          <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Shield className="h-5 w-5" /> Sécurité (24h)</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">Sécurité (24h)</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
             <Row label="Connexions échouées" value={kpis.data?.loginFailed24 ?? "—"} error={(kpis.data?.loginFailed24 ?? 0) > 10} />
             <Row label="Connexions réussies (aujourd'hui)" value={kpis.data?.connectionsToday ?? "—"} />
@@ -451,7 +446,7 @@ function SanteSystemePage() {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="flex items-center gap-2 text-base"><HardDrive className="h-5 w-5" /> Sauvegardes</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">Sauvegardes</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
             {backups.data?.list[0] ? (
               <>
@@ -469,7 +464,7 @@ function SanteSystemePage() {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="flex items-center gap-2 text-base"><AlertCircle className="h-5 w-5" /> Intégrité</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">Intégrité</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
             <Row
               label="Stocks négatifs"
@@ -485,7 +480,7 @@ function SanteSystemePage() {
 
       {/* Alertes */}
       <Card>
-        <CardHeader><CardTitle className="flex items-center gap-2 text-base"><AlertTriangle className="h-5 w-5" /> Alertes récentes</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-base">Alertes récentes</CardTitle></CardHeader>
         <CardContent>
           {alerts.isLoading ? <Skeleton className="h-16" /> : (alerts.data?.length ?? 0) === 0 ? (
             <div className="text-sm text-muted-foreground">Aucune alerte active</div>
@@ -498,7 +493,7 @@ function SanteSystemePage() {
                     <div className="text-xs text-muted-foreground">{a.message}</div>
                   </div>
                   <div className="flex flex-col items-end gap-1">
-                    <Badge variant={severityVariant(a.severity)}>{a.severity ?? "info"}</Badge>
+                    <StatusPill tone={severityTone(a.severity)}>{a.severity ?? "info"}</StatusPill>
                     <span className="text-xs text-muted-foreground">
                       {formatDateTime(a.created_at)}
                     </span>
@@ -540,7 +535,7 @@ function SanteSystemePage() {
                     <TableCell className="text-xs max-w-[380px] truncate" title={e.error_message ?? ""}>
                       {e.error_message ?? "—"}
                     </TableCell>
-                    <TableCell><Badge variant={severityVariant(e.criticite)}>{e.criticite ?? "error"}</Badge></TableCell>
+                    <TableCell><StatusPill tone={severityTone(e.criticite)}>{e.criticite ?? "error"}</StatusPill></TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -571,8 +566,8 @@ function SanteSystemePage() {
                     <TableCell className="text-xs">{l.ip ?? "—"}</TableCell>
                     <TableCell>
                       {l.success
-                        ? <Badge variant="secondary">Succès</Badge>
-                        : <Badge variant="destructive">Échec</Badge>}
+                        ? <StatusPill tone="success">Succès</StatusPill>
+                        : <StatusPill tone="danger">Échec</StatusPill>}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -604,12 +599,12 @@ function computeOverall(m: {
 
 function OverallCard({ status }: { status: Overall }) {
   const cfg = {
-    excellent: { label: "Excellent", cls: "bg-success/10 border-success/40 text-success", icon: <CheckCircle2 className="h-6 w-6" /> },
-    attention: { label: "Attention", cls: "bg-warning/10 border-warning/40 text-warning", icon: <AlertCircle className="h-6 w-6" /> },
-    critique:  { label: "Critique", cls: "bg-destructive/10 border-destructive/40 text-destructive", icon: <XCircle className="h-6 w-6" /> },
+    excellent: { label: "Excellent", cls: "bg-success-soft border-transparent text-success-soft-foreground", icon: <CheckCircle2 className="h-6 w-6" /> },
+    attention: { label: "Attention", cls: "bg-warning-soft border-transparent text-warning-soft-foreground", icon: <AlertCircle className="h-6 w-6" /> },
+    critique:  { label: "Critique", cls: "bg-danger-soft border-transparent text-danger-soft-foreground", icon: <XCircle className="h-6 w-6" /> },
   }[status];
   return (
-    <Card className={`border-2 ${cfg.cls}`}>
+    <Card className={`border ${cfg.cls}`}>
       <CardContent className="pt-6">
         <div className="flex items-center gap-3">
           {cfg.icon}
@@ -624,10 +619,10 @@ function OverallCard({ status }: { status: Overall }) {
 }
 
 function StatusBadge({ status }: { status: ServiceStatus }) {
-  if (status === "online") return <Badge className="bg-success hover:bg-success">En ligne</Badge>;
-  if (status === "degraded") return <Badge className="bg-warning hover:bg-warning">Dégradé</Badge>;
-  if (status === "offline") return <Badge variant="destructive">Hors ligne</Badge>;
-  return <Badge variant="secondary">Inconnu</Badge>;
+  if (status === "online") return <StatusPill tone="success">En ligne</StatusPill>;
+  if (status === "degraded") return <StatusPill tone="warning">Dégradé</StatusPill>;
+  if (status === "offline") return <StatusPill tone="danger">Hors ligne</StatusPill>;
+  return <StatusPill tone="neutral">Inconnu</StatusPill>;
 }
 
 function StatCard({ icon, label, value, tone }: { icon?: React.ReactNode; label: string; value: React.ReactNode; tone?: "error" | "warn" }) {
@@ -636,7 +631,7 @@ function StatCard({ icon, label, value, tone }: { icon?: React.ReactNode; label:
     <Card>
       <CardContent className="pt-6">
         <div className="text-muted-foreground text-sm" data-has-icon={icon ? "1" : "0"}>{label}</div>
-        <div className={`mt-2 text-3xl font-bold ${color}`}>{value}</div>
+        <div className={`mt-2 text-3xl font-semibold tabular-nums ${color}`}>{value}</div>
       </CardContent>
     </Card>
   );
@@ -651,10 +646,10 @@ function Row({ label, value, error }: { label: string; value: React.ReactNode; e
   );
 }
 
-function severityVariant(s?: string | null): "default" | "secondary" | "destructive" | "outline" {
-  if (s === "critical" || s === "high" || s === "error") return "destructive";
-  if (s === "warning" || s === "medium") return "secondary";
-  return "outline";
+function severityTone(s?: string | null): StatusTone {
+  if (s === "critical" || s === "high" || s === "error") return "danger";
+  if (s === "warning" || s === "medium") return "warning";
+  return "info";
 }
 
 function formatBytes(n?: number | null): string {
