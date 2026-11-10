@@ -1,5 +1,10 @@
 # Audit ERP — module par module
 
+## Paiements plafonnés à la dette — 10 novembre 2026
+- [ ] Examiner les contrôles réels, les affectations et l'idempotence sans toucher aux historiques
+- [ ] Renforcer le plafond client/factures et les soumissions simultanées côté serveur, conserver la validation existante
+- [ ] Afficher les alertes demandées et tester les sept scénarios dans une base jetable
+
 ## Retours plafonnés à l'encours — 10 novembre 2026
 - [x] Examiner les règles demandées, le calcul du solde et les points d'entrée des retours
 - [x] Migration 0122 appliquée : contrôle centralisé sur retours/lignes, réservations, verrou commun et suppression de l'écriture directe de solde dans la validation interne
