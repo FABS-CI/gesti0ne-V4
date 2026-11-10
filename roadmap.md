@@ -174,3 +174,4 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Nouveau style : statuts en pastilles sur la liste des Retours
 - [x] Nouveau style : Tournées + 8 écrans au même gabarit (surtitres, pastilles de statut)
 - [x] Nouveau style : Contrats, Évaluations, Absences (surtitre RH, pastilles)
+- [x] Nouveau style : fiches client, employé, commande (pastilles, boutons sobres)

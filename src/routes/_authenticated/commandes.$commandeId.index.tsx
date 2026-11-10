@@ -26,7 +26,8 @@ import {
 import { friendlyError } from "@/lib/friendly-error";
 import { formatDate, formatFCFA } from "@/lib/format";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { StatusPill } from "@/components/common/StatusPill";
+import { toneForStatut } from "@/lib/statut-tone";
 import { usePermissions } from "@/hooks/use-permissions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -115,9 +116,7 @@ function CommandeDetailPage() {
           description={commande.client_nom ?? "Client non renseigné"}
         />
         {statut && (
-          <Badge style={{ backgroundColor: statut.color }} className="text-white">
-            {statut.label}
-          </Badge>
+          <StatusPill tone={toneForStatut(commande.statut)}>{statut.label}</StatusPill>
         )}
         <div className="flex items-center gap-2">
           {(() => {
@@ -194,9 +193,7 @@ function CommandeDetailPage() {
             </Button>
           )}
         {commande.statut === "annulation_en_attente" && (
-          <Badge variant="outline" className="border-warning text-warning">
-            Annulation en attente
-          </Badge>
+          <StatusPill tone="warning">Annulation en attente</StatusPill>
         )}
       </div>
 
