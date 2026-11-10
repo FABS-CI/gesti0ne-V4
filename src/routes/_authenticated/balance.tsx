@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Download, FileText, } from "lucide-react";
+import { Download, FileText } from "lucide-react";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { ListCard, ListFilterBar, ListPageHeader } from "@/components/common/list/ListParts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -54,81 +54,82 @@ function BalancePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="ds-page-title">
-            Balance générale
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {parExercice
-              ? `Exercice ${exerciceConsulte.code} : à-nouveaux, mouvements et soldes de clôture`
-              : "Cumul débit/crédit par compte sur la période"}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button
-            size="sm"
-            variant={parExercice ? "default" : "outline"}
-            disabled={!exerciceConsulte}
-            onClick={() => setMode("exercice")}
-          >
-            Exercice
-          </Button>
-          <Button
-            size="sm"
-            variant={parExercice ? "outline" : "default"}
-            onClick={() => setMode("periode")}
-          >
-            Période libre
-          </Button>
-        </div>
-        <div className={parExercice ? "hidden" : "flex gap-2"}>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              exportCsv(
-                "balance",
-                ["Compte", "Libellé", "Débit", "Crédit", "Solde"],
-                rows.map((r) => [r.compte, r.compte_libelle, r.debit, r.credit, r.solde]),
-                {
-                  pageTitle: "BALANCE GÉNÉRALE",
-                  summary: [
-                    { label: "Nombre de comptes", value: String(rows.length) },
-                    { label: "Total débit", value: formatFCFA(totals.debit) },
+      <ListPageHeader
+        overline="Comptabilité"
+        title="Balance générale"
+        description={
+          parExercice
+            ? `Exercice ${exerciceConsulte.code} : à-nouveaux, mouvements et soldes de clôture`
+            : "Cumul débit/crédit par compte sur la période"
+        }
+        actions={
+          <>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                size="sm"
+                variant={parExercice ? "default" : "outline"}
+                disabled={!exerciceConsulte}
+                onClick={() => setMode("exercice")}
+              >
+                Exercice
+              </Button>
+              <Button
+                size="sm"
+                variant={parExercice ? "outline" : "default"}
+                onClick={() => setMode("periode")}
+              >
+                Période libre
+              </Button>
+            </div>
+            <div className={parExercice ? "hidden" : "flex gap-2"}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  exportCsv(
+                    "balance",
+                    ["Compte", "Libellé", "Débit", "Crédit", "Solde"],
+                    rows.map((r) => [r.compte, r.compte_libelle, r.debit, r.credit, r.solde]),
                     {
-                      label: "Total crédit",
-                      value: formatFCFA(totals.credit),
+                      pageTitle: "BALANCE GÉNÉRALE",
+                      summary: [
+                        { label: "Nombre de comptes", value: String(rows.length) },
+                        { label: "Total débit", value: formatFCFA(totals.debit) },
+                        {
+                          label: "Total crédit",
+                          value: formatFCFA(totals.credit),
+                        },
+                        {
+                          label: "Solde net",
+                          value: formatFCFA(totals.debit - totals.credit),
+                        },
+                      ],
                     },
-                    {
-                      label: "Solde net",
-                      value: formatFCFA(totals.debit - totals.credit),
-                    },
-                  ],
-                },
-              )
-            }
-          >
-            <Download className="mr-2 h-4 w-4" /> PDF
-          </Button>
-          <Button
-            size="sm"
-            onClick={() =>
-              generateBalancePDF(rows, { dateFrom: from || undefined, dateTo: to || undefined })
-            }
-            disabled={!rows.length}
-          >
-            <FileText className="mr-2 h-4 w-4" /> PDF
-          </Button>
-        </div>
-      </div>
+                  )
+                }
+              >
+                <Download className="mr-2 h-4 w-4" /> PDF
+              </Button>
+              <Button
+                size="sm"
+                onClick={() =>
+                  generateBalancePDF(rows, { dateFrom: from || undefined, dateTo: to || undefined })
+                }
+                disabled={!rows.length}
+              >
+                <FileText className="mr-2 h-4 w-4" /> PDF
+              </Button>
+            </div>
+          </>
+        }
+      />
 
       {parExercice ? (
         <BalanceExerciceTable exerciceId={exerciceConsulte.exercice_id} />
       ) : (
         <>
-          <Card>
-            <CardContent className="flex flex-wrap gap-3 p-4">
+          <ListCard>
+            <ListFilterBar>
               <div>
                 <Label>Du</Label>
                 <Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
@@ -137,66 +138,60 @@ function BalancePage() {
                 <Label>Au</Label>
                 <Input type="date" value={to} onChange={(e) => setTo(e.target.value)} />
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-0">
-              <ResponsiveTable stickyFirstCol>
-                <Table>
-                  <TableHeader>
+            </ListFilterBar>
+            <ResponsiveTable stickyFirstCol>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Compte</TableHead>
+                    <TableHead>Libellé</TableHead>
+                    <TableHead className="text-right">Débit</TableHead>
+                    <TableHead className="text-right">Crédit</TableHead>
+                    <TableHead className="text-right">Solde</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {isLoading ? (
                     <TableRow>
-                      <TableHead>Compte</TableHead>
-                      <TableHead>Libellé</TableHead>
-                      <TableHead className="text-right">Débit</TableHead>
-                      <TableHead className="text-right">Crédit</TableHead>
-                      <TableHead className="text-right">Solde</TableHead>
+                      <TableCell colSpan={5} className="py-10 text-center text-muted-foreground">
+                        Chargement…
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {isLoading ? (
-                      <TableRow>
-                        <TableCell colSpan={5} className="text-center text-muted-foreground">
-                          Chargement…
-                        </TableCell>
-                      </TableRow>
-                    ) : rows.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={5} className="text-center text-muted-foreground">
-                          Aucune écriture sur la période
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      <>
-                        {rows.map((r) => (
-                          <TableRow key={r.compte}>
-                            <TableCell className="font-mono">{r.compte}</TableCell>
-                            <TableCell>{r.compte_libelle}</TableCell>
-                            <TableCell className="text-right">{formatFCFA(r.debit)}</TableCell>
-                            <TableCell className="text-right">{formatFCFA(r.credit)}</TableCell>
-                            <TableCell
-                              className="text-right font-medium"
-                              style={{ color: r.solde >= 0 ? "#10B981" : "#EF4444" }}
-                            >
-                              {formatFCFA(r.solde)}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                        <TableRow className="bg-muted/50 font-semibold">
-                          <TableCell colSpan={2}>TOTAL</TableCell>
-                          <TableCell className="text-right">{formatFCFA(totals.debit)}</TableCell>
-                          <TableCell className="text-right">{formatFCFA(totals.credit)}</TableCell>
-                          <TableCell className="text-right">
-                            {formatFCFA(totals.debit - totals.credit)}
+                  ) : rows.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="py-10 text-center text-muted-foreground">
+                        Aucune écriture sur la période
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    <>
+                      {rows.map((r) => (
+                        <TableRow key={r.compte}>
+                          <TableCell className="font-mono">{r.compte}</TableCell>
+                          <TableCell>{r.compte_libelle}</TableCell>
+                          <TableCell className="text-right">{formatFCFA(r.debit)}</TableCell>
+                          <TableCell className="text-right">{formatFCFA(r.credit)}</TableCell>
+                          <TableCell
+                            className={`text-right font-medium tabular-nums ${r.solde >= 0 ? "text-success" : "text-destructive"}`}
+                          >
+                            {formatFCFA(r.solde)}
                           </TableCell>
                         </TableRow>
-                      </>
-                    )}
-                  </TableBody>
-                </Table>
-              </ResponsiveTable>
-            </CardContent>
-          </Card>
+                      ))}
+                      <TableRow className="bg-muted/50 font-semibold">
+                        <TableCell colSpan={2}>TOTAL</TableCell>
+                        <TableCell className="text-right">{formatFCFA(totals.debit)}</TableCell>
+                        <TableCell className="text-right">{formatFCFA(totals.credit)}</TableCell>
+                        <TableCell className="text-right">
+                          {formatFCFA(totals.debit - totals.credit)}
+                        </TableCell>
+                      </TableRow>
+                    </>
+                  )}
+                </TableBody>
+              </Table>
+            </ResponsiveTable>
+          </ListCard>
         </>
       )}
     </div>
