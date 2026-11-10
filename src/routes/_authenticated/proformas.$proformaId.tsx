@@ -141,6 +141,7 @@ function ProformaDetailPage() {
         <PageHeader
           className="mb-0 border-0 pb-0"
           backTo="/proformas"
+          overline="Ventes"
           title={`Proforma ${formatDocumentReference(proforma.reference)}`}
           description={proforma.client_nom ?? "Client non renseigné"}
         />
