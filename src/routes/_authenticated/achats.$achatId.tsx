@@ -21,7 +21,8 @@ import { buildAchatPdfData } from "@/lib/pdf/achat-pdf-data";
 import { printCached, viewCached } from "@/lib/pdf/actions";
 import { pdfCacheKey } from "@/lib/pdf/pdfCache";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { StatusPill } from "@/components/common/StatusPill";
+import { toneForStatut } from "@/lib/statut-tone";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
