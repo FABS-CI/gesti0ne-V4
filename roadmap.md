@@ -170,3 +170,4 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Menu : ancien menu sombre rétabli à la demande
 - [x] Rapport d'exercice : achats comptés seulement si reçus ou payés (même règle que le Comparatif)
 - [x] Nouveau style : Rôles et droits, Santé du système, Qualité des données
+- [x] Santé du système : « Prochaine » sauvegarde lue sur la vraie tâche planifiée (toutes les 3 h)
