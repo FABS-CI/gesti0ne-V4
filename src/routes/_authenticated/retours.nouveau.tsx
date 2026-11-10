@@ -14,7 +14,9 @@ import { creerEtValiderRetour as creerRetourDemande } from "@/lib/retours-api";
 import { invalidateRetour } from "@/lib/cache-invalidation";
 import { usePermissions } from "@/hooks/use-permissions";
 import { listDepots } from "@/lib/depots-api";
-import { retourFormSchema, type RetourFormValues } from "@/lib/retours-form";
+import { retourFormSchema, calcTotauxRetour, type RetourFormValues } from "@/lib/retours-form";
+import { getRetourEncours, retourEncoursMessage } from "@/lib/retour-encours";
+import { formatFCFA } from "@/lib/format";
 import { ClientSection } from "@/components/retours/nouveau/ClientSection";
 import { DocumentSection } from "@/components/retours/nouveau/DocumentSection";
 import { InfosSection } from "@/components/retours/nouveau/InfosSection";
@@ -102,6 +104,16 @@ function RetourNouveauPage() {
   });
 
   const { data: depots = [] } = useQuery({ queryKey: ["depots"], queryFn: listDepots });
+  const clientId = form.watch("client_id");
+  const montantRetour = calcTotauxRetour(form.watch("lignes") ?? [], form.watch("remise_globale_pct") ?? 0).net;
+  const encoursQuery = useQuery({
+    queryKey: ["retour-encours", clientId],
+    queryFn: () => getRetourEncours(clientId),
+    enabled: !!clientId && canManage,
+    staleTime: 0,
+    refetchInterval: 15_000,
+  });
+  const encoursMessage = encoursQuery.data ? retourEncoursMessage(encoursQuery.data, montantRetour) : null;
 
 
   const applyClient = (c: Client | null) => {
@@ -147,11 +159,23 @@ function RetourNouveauPage() {
       invalidateRetour(qc, { clientId: values.client_id });
       navigate({ to: "/retours" });
     },
-    onError: (e: Error) => toast.error(friendlyError(e)),
+    onError: (e: Error) => {
+      void encoursQuery.refetch();
+      toast.error(friendlyError(e));
+    },
   });
 
   const onSubmit = form.handleSubmit(
-    (values) => mutation.mutate(values),
+    async (values) => {
+      try {
+        const encours = await getRetourEncours(values.client_id);
+        const message = retourEncoursMessage(encours, calcTotauxRetour(values.lignes, values.remise_globale_pct ?? 0).net);
+        if (message) return toast.error(message);
+        mutation.mutate(values);
+      } catch (e) {
+        toast.error(friendlyError(e));
+      }
+    },
     () => toast.error("Veuillez corriger les erreurs du formulaire"),
   );
 
@@ -233,6 +257,17 @@ function RetourNouveauPage() {
           />
         ) : null}
         <ClientSection form={form} applyClient={applyClient} />
+        {clientId && (
+          <div className="space-y-2 border-l-2 border-primary pl-4 text-sm" aria-live="polite">
+            {encoursQuery.data && <div className="flex flex-wrap gap-x-6 gap-y-1">
+              <span>Encours débiteur : <strong>{formatFCFA(Math.max(encoursQuery.data.solde, 0))}</strong></span>
+              <span>Demandes réservées : <strong>{formatFCFA(encoursQuery.data.reserve)}</strong></span>
+              <span>Disponible pour retour : <strong>{formatFCFA(encoursQuery.data.disponible)}</strong></span>
+            </div>}
+            {encoursMessage && <p role="alert" className="text-destructive">{encoursMessage}</p>}
+            {encoursQuery.error && <p role="alert" className="text-destructive">{friendlyError(encoursQuery.error)}</p>}
+          </div>
+        )}
         <DocumentSection form={form} fa={fa} />
         <InfosSection form={form} depots={depots} />
         <LignesSection form={form} fa={fa} onProduitChange={onProduitChange} />
@@ -241,7 +276,7 @@ function RetourNouveauPage() {
           <Button type="button" variant="outline" asChild>
             <Link to="/retours">Annuler</Link>
           </Button>
-          <Button type="submit" disabled={mutation.isPending}>
+          <Button type="submit" disabled={mutation.isPending || form.formState.isSubmitting || (!!clientId && (!encoursQuery.data || !!encoursMessage || !!encoursQuery.error))}>
             {mutation.isPending ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
             ) : (
