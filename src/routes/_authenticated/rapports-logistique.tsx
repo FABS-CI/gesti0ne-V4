@@ -4,7 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { ListCard, ListPageHeader } from "@/components/common/list/ListParts";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -136,25 +137,31 @@ function RapportsLogistique() {
 
   return (
     <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="ds-page-title">
-            Rapports logistique
-          </h1>
-          <p className="text-sm text-muted-foreground">Analyse des tournées et coûts par période</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => window.print()}>
-            Imprimer
-          </Button>
-          <Button onClick={handleExport}>
-            <Download className="mr-2 h-4 w-4" /> Exporter PDF
-          </Button>
-        </div>
+      <ListPageHeader
+        overline="Logistique"
+        title="Rapports logistique"
+        description="Analyse des tournées et coûts par période"
+        actions={
+          <>
+            <Button variant="outline" onClick={() => window.print()}>
+              Imprimer
+            </Button>
+            <Button onClick={handleExport}>
+              <Download className="mr-2 h-4 w-4" /> Exporter PDF
+            </Button>
+          </>
+        }
+      />
+
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <Kpi label="Tournées" value={String(rows.length)} />
+        <Kpi label="Coût total" value={formatFCFA(totaux.cout)} />
+        <Kpi label="Colis" value={String(totaux.colis)} />
+        <Kpi label="Cartons" value={String(totaux.cartons)} />
       </div>
 
-      <Card>
-        <CardContent className="grid grid-cols-1 gap-3 p-4 md:grid-cols-4">
+      <ListCard>
+        <div className="grid min-w-0 grid-cols-1 gap-3 border-b px-4 py-3 md:grid-cols-4">
           <div>
             <Label>Du</Label>
             <Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
@@ -187,21 +194,8 @@ function RapportsLogistique() {
               onChange={(e) => setChauffeur(e.target.value)}
             />
           </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Kpi label="Tournées" value={String(rows.length)} />
-        <Kpi label="Coût total" value={formatFCFA(totaux.cout)} />
-        <Kpi label="Colis" value={String(totaux.colis)} />
-        <Kpi label="Cartons" value={String(totaux.cartons)} />
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Détail</CardTitle>
-        </CardHeader>
-        <CardContent>
+        </div>
+        <div>
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
@@ -240,8 +234,8 @@ function RapportsLogistique() {
               </TableBody>
             </Table>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </ListCard>
     </div>
   );
 }

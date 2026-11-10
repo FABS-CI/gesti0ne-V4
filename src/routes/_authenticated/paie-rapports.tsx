@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { BarChart3 } from "lucide-react";
+import { ListCard, ListPageHeader } from "@/components/common/list/ListParts";
 import { supabase } from "@/integrations/supabase/client";
 import { Money } from "@/components/common/Money";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -113,24 +113,24 @@ function RapportsPaiePage() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex flex-wrap items-center gap-3">
-        <BarChart3 className="h-6 w-6 text-primary" />
-        <div className="flex-1">
-          <h1 className="ds-page-title">Rapports de paie</h1>
-          <p className="text-sm text-muted-foreground">Calculés à partir des bulletins enregistrés (hors bulletins annulés)</p>
-        </div>
-        <Select value={annee} onValueChange={setAnnee}>
-          <SelectTrigger className="w-32" aria-label="Année"><SelectValue /></SelectTrigger>
-          <SelectContent>{annees.map((a) => <SelectItem key={a} value={a}>{a}</SelectItem>)}</SelectContent>
-        </Select>
-      </div>
+      <ListPageHeader
+        overline="Ressources humaines"
+        title="Rapports de paie"
+        description="Calculés à partir des bulletins enregistrés (hors bulletins annulés)"
+        actions={
+          <Select value={annee} onValueChange={setAnnee}>
+            <SelectTrigger className="w-32" aria-label="Année"><SelectValue /></SelectTrigger>
+            <SelectContent>{annees.map((a) => <SelectItem key={a} value={a}>{a}</SelectItem>)}</SelectContent>
+          </Select>
+        }
+      />
 
       {isLoading ? <Skeleton className="h-64 w-full" /> : (
         <>
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
-            <div className="rounded-lg border bg-card p-3"><div className="text-xs text-muted-foreground">Bulletins</div><div className="text-lg font-semibold tabular-nums">{total.n}</div></div>
+            <div className="rounded-[14px] border bg-card p-3 shadow-[var(--shadow-card)]"><div className="text-xs text-muted-foreground">Bulletins</div><div className="text-lg font-semibold tabular-nums">{total.n}</div></div>
             {kpis.map(([l, v]) => (
-              <div key={l} className="rounded-lg border bg-card p-3"><div className="text-xs text-muted-foreground">{l}</div><Money value={v} className="text-lg font-semibold" /></div>
+              <div key={l} className="rounded-[14px] border bg-card p-3 shadow-[var(--shadow-card)]"><div className="text-xs text-muted-foreground">{l}</div><Money value={v} className="text-lg font-semibold" /></div>
             ))}
           </div>
 
@@ -165,7 +165,7 @@ function RapportsPaiePage() {
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return <section className="rounded-lg border bg-card"><h2 className="px-4 pt-3 text-sm font-semibold">{title}</h2><div className="overflow-x-auto">{children}</div></section>;
+  return <ListCard><h2 className="border-b px-4 py-3 text-sm font-semibold">{title}</h2><div className="overflow-x-auto">{children}</div></ListCard>;
 }
 
 function TotRow({ label, t }: { label: string; t: Tot }) {
