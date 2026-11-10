@@ -1,9 +1,10 @@
 # Audit ERP — module par module
 
 ## Paiements plafonnés à la dette — 10 novembre 2026
-- [ ] Examiner les contrôles réels, les affectations et l'idempotence sans toucher aux historiques
-- [ ] Renforcer le plafond client/factures et les soumissions simultanées côté serveur, conserver la validation existante
-- [ ] Afficher les alertes demandées et tester les sept scénarios dans une base jetable
+- [x] Examiner les contrôles réels : 115 paiements historiques intégralement affectés et dotés d'une clé ; aucun montant historique modifié
+- [x] Plafond canonique client/factures, réservations des paiements en attente, contrôles différés et clé vérifiée sous verrou commun ; ventilation produit non imposée, workflows conservés
+- [x] Alertes exactes et confirmation vérifiées avec le compte connecté (zéro, dépassement bloqué, 1 000 FCFA partiel), sans encaissement réel ; sept scénarios couverts dans PostgreSQL jetable
+- [ ] Parcours exhaustif comptabilité/RBAC avec copie intégrale de production — tests financiers et RPC exécutés avec les dépendances non financières simulées, pas une restauration complète
 
 ## Retours plafonnés à l'encours — 10 novembre 2026
 - [x] Examiner les règles demandées, le calcul du solde et les points d'entrée des retours

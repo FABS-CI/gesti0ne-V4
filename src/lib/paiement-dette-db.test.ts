@@ -99,6 +99,23 @@ suite('paiements — base locale explicitement jetable', () => {
     await db.query("INSERT INTO retours(client_id,montant,statut) VALUES($1,250000,'cloture')",[c.id]);
     await reject(() => db.query('SELECT * FROM valider_paiement($1)',[pid]));
   }));
+  it('validation normale déduit une seule fois 300 000', async () => rollback(async () => {
+    const c = await setup(); const pid = await pay(payload(c.id,c.invoices,[300000]));
+    await db.query("UPDATE paiements SET statut='en_attente_validation' WHERE paiement_id=$1",[pid]);
+    await db.query('SET CONSTRAINTS ALL IMMEDIATE');
+    expect(await balance(c.id)).toBe(500000);
+    await db.query('SELECT * FROM valider_paiement($1)',[pid]);
+    expect(await balance(c.id)).toBe(200000);
+  }));
+  it('ancienne entrée mono-facture respecte le plafond et la clé', async () => rollback(async () => {
+    const c = await setup();
+    const p = { facture_id: c.invoices[0], montant: 300000, idempotency_key: randomUUID(), mode_paiement: 'especes' };
+    const first = await db.query('SELECT * FROM enregistrer_paiement($1::jsonb)',[JSON.stringify(p)]);
+    const second = await db.query('SELECT * FROM enregistrer_paiement($1::jsonb)',[JSON.stringify(p)]);
+    expect(first.rows[0].paiement_id).toBe(second.rows[0].paiement_id);
+    await db.query('SET CONSTRAINTS ALL IMMEDIATE');
+    expect(await balance(c.id)).toBe(200000);
+  }));
   it('écriture directe excédentaire et suppression d’affectation refusées', async () => rollback(async () => {
     const c = await setup(); const pid = await pay(payload(c.id,c.invoices,[300000])); await db.query('SET CONSTRAINTS ALL IMMEDIATE');
     await reject(() => db.query('UPDATE paiements SET montant=600000 WHERE paiement_id=$1',[pid]));
