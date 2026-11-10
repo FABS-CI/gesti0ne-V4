@@ -39,6 +39,22 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { EmptyState } from "@/components/common/EmptyState";
+import { StatusPill } from "@/components/common/StatusPill";
+import { toneForStatut } from "@/lib/statut-tone";
+import { ListSkeletonRows } from "@/components/common/list/ListParts";
+import type { StatusTone } from "@/components/common/StatusPill";
+
+const RETOUR_TONE: Record<string, StatusTone> = {
+  demande_creee: "warning",
+  attente_reception: "warning",
+  receptionne: "info",
+  attente_validation_compta: "warning",
+  valide_compta: "success",
+  cloture: "success",
+  refus_magasin: "danger",
+  refus_compta: "danger",
+  annule: "neutral",
+};
 
 import {
   listRetours,
@@ -256,7 +272,7 @@ function RetoursListPage() {
         )}
 
         {isLoading ? (
-          <Skeleton className="h-64 w-full" />
+          <ListSkeletonRows rows={8} />
         ) : retours.length === 0 ? (
           <EmptyState
             variant={hasActiveFilters ? "compact" : "rich"}
@@ -288,15 +304,15 @@ function RetoursListPage() {
               <ResponsiveTable stickyFirstCol>
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-muted/50">
-                      <TableHead className="w-[8%] font-bold">N°</TableHead>
-                      <TableHead className="w-[10%] font-bold">Date</TableHead>
-                      <TableHead className="w-[25%] font-bold">Client (Établissement)</TableHead>
-                      <TableHead className="w-[15%] font-bold">Représentant</TableHead>
-                      <TableHead className="w-[10%] font-bold">Ville</TableHead>
-                      <TableHead className="w-[7%] text-right font-bold">Qté</TableHead>
-                      <TableHead className="w-[15%] font-bold text-center">Statut</TableHead>
-                      <TableHead className="w-[10%] text-right font-bold">Actions</TableHead>
+                    <TableRow>
+                      <TableHead className="w-[8%] font-medium">N°</TableHead>
+                      <TableHead className="w-[10%] font-medium">Date</TableHead>
+                      <TableHead className="w-[25%] font-medium">Client (Établissement)</TableHead>
+                      <TableHead className="w-[15%] font-medium">Représentant</TableHead>
+                      <TableHead className="w-[10%] font-medium">Ville</TableHead>
+                      <TableHead className="w-[7%] text-right font-medium">Qté</TableHead>
+                      <TableHead className="w-[15%] font-medium text-center">Statut</TableHead>
+                      <TableHead className="w-[10%] text-right font-medium">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -322,13 +338,7 @@ function RetoursListPage() {
                       <TableCell className="text-right font-semibold text-sm">{r.total_quantite || 0}</TableCell>
                       <TableCell className="text-center">
                         {st && (
-                          <Badge
-                            variant="outline"
-                            className="text-xs px-2 py-0 h-5 whitespace-nowrap inline-flex text-white border-none"
-                            style={{ backgroundColor: st.color }}
-                          >
-                            {st.label}
-                          </Badge>
+                          <StatusPill tone={RETOUR_TONE[r.statut] ?? toneForStatut(r.statut)}>{st.label}</StatusPill>
                         )}
                       </TableCell>
                           <TableCell className="text-right">
