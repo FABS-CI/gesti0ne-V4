@@ -173,3 +173,4 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Santé du système : « Prochaine » sauvegarde lue sur la vraie tâche planifiée (toutes les 3 h)
 - [x] Nouveau style : statuts en pastilles sur la liste des Retours
 - [x] Nouveau style : Tournées + 8 écrans au même gabarit (surtitres, pastilles de statut)
+- [x] Nouveau style : Contrats, Évaluations, Absences (surtitre RH, pastilles)
