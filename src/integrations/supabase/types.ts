@@ -4852,6 +4852,36 @@ export type Database = {
         }
         Relationships: []
       }
+      paie_regimes_historique: {
+        Row: {
+          anciens: Json | null
+          id: string
+          modifie_le: string
+          modifie_par: string | null
+          modifie_par_nom: string | null
+          nouveaux: Json
+          regime_code: string
+        }
+        Insert: {
+          anciens?: Json | null
+          id?: string
+          modifie_le?: string
+          modifie_par?: string | null
+          modifie_par_nom?: string | null
+          nouveaux: Json
+          regime_code: string
+        }
+        Update: {
+          anciens?: Json | null
+          id?: string
+          modifie_le?: string
+          modifie_par?: string | null
+          modifie_par_nom?: string | null
+          nouveaux?: Json
+          regime_code?: string
+        }
+        Relationships: []
+      }
       paiement_annulations_audit: {
         Row: {
           annule_le: string
@@ -9988,6 +10018,10 @@ export type Database = {
         Returns: string
       }
       paie_periode_label: { Args: { _date: string }; Returns: string }
+      paie_regime_enregistrer: {
+        Args: { _code: string; _parametres: Json }
+        Returns: Json
+      }
       paie_valider_bulletin: {
         Args: { p_bulletin_id: string }
         Returns: undefined
