@@ -42,9 +42,9 @@
 - [x] Appliquer le prompt de 09:18 : verre clair/sombre, rail avec bulles de sous-pages, recherche, exercice et carte utilisateur ; routes et RBAC conservés
 
 ## Titres PDF uniques — demande du 6 novembre 2026
-- [ ] Auditer les générateurs partagés et spécifiques de tous les modules
-- [ ] Supprimer uniquement les titres principaux dupliqués ; conserver identité, sous-titres, tableaux, filtres et montants
-- [ ] Générer plusieurs PDF, contrôler leur pagination et livrer le bilan avec les limites de vérification
+- [x] Auditer les générateurs partagés et spécifiques de tous les modules
+- [x] Supprimer uniquement les titres principaux dupliqués ; conserver identité, sous-titres, tableaux, filtres et montants
+- [x] 8 PDF d'exemple contrôlés (1 titre chacun) + 3 tests d'en-tête ; rapports internes non générés un par un
 
 ## Bon de retour — demande du 5 novembre 2026
 - [x] Vérifier RET-261104-001 et ses données d’origine en lecture seule : 500 facturés, 100 retournés, remise globale 25 %, montant enregistré 225 000
