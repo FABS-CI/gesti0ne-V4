@@ -30,7 +30,7 @@
 - [x] Spécimens, employés en congé, notifications, états de compte clients — ouverts connectés sans erreur
 - [x] Plan comptable, journal d'audit, centre de documents — ouverts connectés sans erreur
 - [x] Coûts logistiques, rapports logistique, rapports de paie, export & sauvegarde — ouverts connectés sans erreur
-- [ ] Journal d'audit : compteur « 500 / 0 événement(s) » et « Événements sur la période 0 » incohérents (existant, à vérifier si l'utilisatrice le souhaite)
+- [x] Journal d'audit : compteur corrigé — en-tête, carte « Événements sur la période » et pagination Chronologie affichent le même nombre (734, puis 38 avec filtre action, puis 20 avec recherche « création ») ; plus de « 0 / » pendant le chargement, plus de crash à la recherche, 11 tests et 740 tests du projet réussis
 - [x] Écart achats comparatif / rapport d'exercice : le comparatif ignorait les achats « Reçu » — corrigé (migration 0120), 13 770 000 FCFA des deux côtés
 
 ## Glassy Sidebar V7 — demande du 9 novembre 2026
