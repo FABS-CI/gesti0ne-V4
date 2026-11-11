@@ -46,7 +46,9 @@ export function OnlineUserDialog({
             <div className="text-xs uppercase text-muted-foreground">Dernière action</div>
             <div className="mt-1 flex flex-wrap items-center gap-2">
               <Badge variant={ACTION_VARIANT(selectedUserEvents[0].action)}>
-                {ACTION_LABEL[selectedUserEvents[0].action] ?? selectedUserEvents[0].action}
+                {ACTION_LABEL[selectedUserEvents[0].action ?? ""] ??
+                  selectedUserEvents[0].action ??
+                  "—"}
               </Badge>
               <span className="capitalize">{selectedUserEvents[0].table_name}</span>
               <span className="text-muted-foreground">
@@ -73,7 +75,7 @@ export function OnlineUserDialog({
                   </TableCell>
                   <TableCell>
                     <Badge variant={ACTION_VARIANT(r.action)} className="text-xs">
-                      {ACTION_LABEL[r.action] ?? r.action}
+                      {ACTION_LABEL[r.action ?? ""] ?? r.action ?? "—"}
                     </Badge>
                   </TableCell>
                   <TableCell className="capitalize text-xs">{r.table_name}</TableCell>

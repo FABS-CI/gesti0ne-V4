@@ -2,9 +2,9 @@ export type AuditRow = {
   id: string;
   user_email: string | null;
   user_id: string | null;
-  action: string;
+  action: string | null;
   module: string | null;
-  table_name: string;
+  table_name: string | null;
   record_id: string | null;
   record_ref: string | null;
   occurred_at: string;
@@ -170,10 +170,12 @@ export function matchesAuditFilters(
   ].some((value) => value.toLowerCase().includes(q));
 }
 
-export const ACTION_VARIANT = (action: string): "default" | "secondary" | "destructive" => {
-  if (action.startsWith("delete") || action.startsWith("cancel") || action === "DELETE")
-    return "destructive";
-  if (action.startsWith("update") || action === "UPDATE") return "secondary";
+export const ACTION_VARIANT = (
+  action?: string | null,
+): "default" | "secondary" | "destructive" => {
+  const a = action ?? "";
+  if (a.startsWith("delete") || a.startsWith("cancel") || a === "DELETE") return "destructive";
+  if (a.startsWith("update") || a === "UPDATE") return "secondary";
   return "default";
 };
 

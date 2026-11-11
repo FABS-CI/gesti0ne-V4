@@ -68,7 +68,9 @@ const Row = React.memo(function Row({
         </button>
       </TableCell>
       <TableCell>
-        <Badge variant={ACTION_VARIANT(r.action)}>{ACTION_LABEL[r.action] ?? r.action}</Badge>
+        <Badge variant={ACTION_VARIANT(r.action)}>
+          {ACTION_LABEL[r.action ?? ""] ?? r.action ?? "—"}
+        </Badge>
       </TableCell>
       <TableCell className="capitalize text-xs">{r.table_name}</TableCell>
       <TableCell className="font-mono text-xs text-muted-foreground max-w-[180px] truncate">
