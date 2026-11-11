@@ -299,8 +299,9 @@ export async function generateBulletinPaieCIPDF(
   text(ent.raisonSociale, X0 + 4, y0 + 8.5, { size: 13, style: "bold" });
   text(ent.adresse ?? "", X0 + 4, y0 + 15, { size: fs - 0.5 });
   if (ent.telephone) text(`Tél. ${ent.telephone}`, X0 + leftW - 4, y0 + 15, { size: fs - 0.5, align: "right" });
-  if (ent.cnpsEmployeur) text(`CNPS Employeur: ${ent.cnpsEmployeur}`, X0 + 4, y0 + 20.5, { size: fs - 0.5 });
-  if (ent.rccm) text(`RCCM: ${ent.rccm}`, X0 + leftW - 4, y0 + 20.5, { size: fs - 0.5, align: "right" });
+  // CNPS et RCCM sur une ligne chacun : côte à côte, ils se touchaient.
+  if (ent.cnpsEmployeur) text(`CNPS Employeur : ${ent.cnpsEmployeur}`, X0 + 4, y0 + 19.5, { size: fs - 1 });
+  if (ent.rccm) text(`RCCM : ${ent.rccm}`, X0 + 4, y0 + 23, { size: fs - 1 });
 
   box(rightX, y0, rightW, h1);
   doc.setFont("helvetica", "bold");
@@ -405,34 +406,39 @@ export async function generateBulletinPaieCIPDF(
   footLabel("COÛT SALARIAL :", moneyAlways(cout), fx[2], X1);
   text(moneyAlways(cout), X1 - 2, fy, { size: fs - 1.5, style: "bolditalic", align: "right" });
 
-  // ===== NET A PAYER — encadré premium =====================================
-  // Fond bleu clair #EAF1F8, bordure marine #0B2540 (1,5 px), coins 6 px,
-  // filet vertical orange #F26A1B (5 px) à l'intérieur du bord gauche.
+  // ===== NET A PAYER — bande bleue centrée ================================
+  // Fond bleu clair #EAF1F8, bordure marine #0B2540, coins arrondis. La bande
+  // entoure uniquement le libellé et le montant, centrés et rapprochés :
+  // pas de filet orange ni de ligne « Payé par … » (date dans le bloc signature).
   const NAVY: RGB = [11, 37, 64];
   const LIGHT: RGB = [234, 241, 248];
-  const ORANGE: RGB = [242, 106, 27];
-  const NAVY_80: RGB = [55, 78, 101]; // marine à 80 % sur fond bleu clair
-  const PX = 0.3528; // px -> pt/mm (1 px ≈ 0,3528 mm)
+  const PX = 0.3528; // 1 px ≈ 0,3528 mm
+  const netLabel = "NET À PAYER";
+  const netAmount = `${moneyAlways(tot.netAPayer)} FCFA`;
+  const labelSize = 13;
+  const amountSize = 20;
+  const labelSpace = 0.5;
+  const innerGap = 8;
+  const padX = 8;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(labelSize);
+  const labelW = doc.getTextWidth(netLabel) + labelSpace * (netLabel.length - 1);
+  doc.setFontSize(amountSize);
+  const amountW = doc.getTextWidth(netAmount);
+  const bandW = Math.min(TW, labelW + innerGap + amountW + padX * 2);
+  const bandX = X0 + (TW - bandW) / 2;
   const netTop = footBottom + 5;
-  const netH = 19;
+  const netH = 14;
   const netBot = netTop + netH;
+  const baseY = netTop + netH / 2 + 2.6;
   doc.setFillColor(LIGHT[0], LIGHT[1], LIGHT[2]);
   doc.setDrawColor(NAVY[0], NAVY[1], NAVY[2]);
   doc.setLineWidth(1.5 * PX);
-  doc.roundedRect(X0, netTop, TW, netH, 6 * PX, 6 * PX, "FD");
-  doc.setFillColor(ORANGE[0], ORANGE[1], ORANGE[2]);
-  doc.rect(X0 + 1.5 * PX, netTop + 1.5 * PX, 5 * PX, netH - 3 * PX, "F");
-  const padX = 16 * PX;
-  doc.setCharSpace(0.5);
-  text("NET À PAYER", X0 + padX + 5 * PX, netTop + 8.6, { size: 13, style: "bold", color: NAVY });
+  doc.roundedRect(bandX, netTop, bandW, netH, 6 * PX, 6 * PX, "FD");
+  doc.setCharSpace(labelSpace);
+  text(netLabel, bandX + padX, baseY - 0.4, { size: labelSize, style: "bold", color: NAVY });
   doc.setCharSpace(0);
-  text(`${moneyAlways(tot.netAPayer)} FCFA`, X1 - padX, netTop + 9.6, { size: 22, style: "bold", align: "right", color: NAVY });
-  if (data.paiement?.date) {
-    const mode = data.paiement.mode ? `par ${data.paiement.mode.toLowerCase()} ` : "";
-    text(`Payé ${mode}le ${dateEnLettres(data.paiement.date)}`, X1 - padX, netBot - 3.2, {
-      size: 8, align: "right", color: NAVY_80,
-    });
-  }
+  text(netAmount, bandX + bandW - padX, baseY, { size: amountSize, style: "bold", align: "right", color: NAVY });
 
   // ===== CUMULS ANNUELS =====================================================
   const cTop = netBot + 3;
