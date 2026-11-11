@@ -64,7 +64,7 @@
 
 ## Paramètres Paie CI — demande du 22 octobre 2026
 - [x] Source unique régime, paramètres éditables et audit, suppression du chemin legacy
-- [ ] Calcul serveur et aperçu : CMU 500 chacun, ITS 2024 nul, ancienneté, transport et arrondi supérieur à 5
+- [x] Calcul serveur et aperçu : CMU 500 chacun, ITS 2024 nul, ancienneté, transport et arrondi supérieur à 5 — 5 cas réels contrôlés sur le serveur (162 435, 158 100, 179 585, prorata 20 jours, gros salaire ITS 0), identiques aux tests ; aperçu connecté conforme (net 766 905, arrondi +2), rien enregistré
 - [ ] Simulation, tests unitaires/SQL par régime et PDF du cas de référence, contrôle visuel
 
 ## Liens clients et produits (file-80)
