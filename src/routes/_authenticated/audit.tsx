@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { exportCsv } from "@/lib/export-csv";
 import { exportListePDF } from "@/lib/pdf/exportListe";
-import { ACTION_LABEL, type AuditRow } from "@/lib/audit-helpers";
+import { ACTION_LABEL, matchesAuditFilters, type AuditRow } from "@/lib/audit-helpers";
 import {
   useAuditEvents,
   useAuditEventsStats,
@@ -70,7 +70,7 @@ function AuditPage() {
   const { data, isLoading, error } = useAuditEvents(moduleFilter, periodFilter);
   const { data: loginMap } = useLoginHistoryLast();
   const presences = useOnlinePresence();
-  const { data: stats } = useAuditEventsStats({
+  const { data: stats, isLoading: statsLoading } = useAuditEventsStats({
     moduleFilter,
     periodFilter,
     userFilter,
@@ -104,18 +104,9 @@ function AuditPage() {
     return Array.from(set).sort();
   }, [data]);
 
-  const rows = (data ?? []).filter((r) => {
-    if (actionFilter && r.action !== actionFilter) return false;
-    if (userFilter && r.user_email !== userFilter) return false;
-    if (!search.trim()) return true;
-    const q = search.toLowerCase();
-    return (
-      (r.user_email ?? "").toLowerCase().includes(q) ||
-      r.table_name.toLowerCase().includes(q) ||
-      (r.record_id ?? "").toLowerCase().includes(q) ||
-      (ACTION_LABEL[r.action] ?? r.action).toLowerCase().includes(q)
-    );
-  });
+  const rows = (data ?? []).filter((r) =>
+    matchesAuditFilters(r, { userFilter, actionFilter, search }),
+  );
 
   const perUser = useMemo(() => {
     const map = new Map<
@@ -313,7 +304,7 @@ function AuditPage() {
     });
   }
 
-  const totalEvents = stats?.totalEvents ?? data?.length ?? 0;
+  const totalEvents = stats?.totalEvents ?? 0;
   const uniqueUsers = stats?.uniqueUsers ?? users.length;
   const todayCount =
     stats?.todayEvents ??
