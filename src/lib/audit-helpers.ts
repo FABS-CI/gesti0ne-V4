@@ -2,9 +2,9 @@ export type AuditRow = {
   id: string;
   user_email: string | null;
   user_id: string | null;
-  action: string;
+  action: string | null;
   module: string | null;
-  table_name: string;
+  table_name: string | null;
   record_id: string | null;
   record_ref: string | null;
   occurred_at: string;
@@ -145,10 +145,37 @@ export const ACTION_LABEL: Record<string, string> = {
   cancel_incident_stock: "Annulation incident",
 };
 
-export const ACTION_VARIANT = (action: string): "default" | "secondary" | "destructive" => {
-  if (action.startsWith("delete") || action.startsWith("cancel") || action === "DELETE")
-    return "destructive";
-  if (action.startsWith("update") || action === "UPDATE") return "secondary";
+/**
+ * Filtre appliqué à un événement d'audit. Reproduit exactement la predicate
+ * serveur de `audit_events_stats` / `audit_events_list` (mêmes colonnes,
+ * même libellé français d'action) pour que le compteur affiché et la liste
+ * correspondent toujours.
+ */
+export function matchesAuditFilters(
+  row: AuditRow,
+  filters: { userFilter?: string; actionFilter?: string; search?: string },
+): boolean {
+  if (filters.actionFilter && row.action !== filters.actionFilter) return false;
+  if (filters.userFilter && (row.user_email ?? "") !== filters.userFilter) return false;
+  const q = (filters.search ?? "").trim().toLowerCase();
+  if (!q) return true;
+  return [
+    row.user_email ?? "",
+    row.action ?? "",
+    row.table_name ?? "",
+    row.record_id ?? "",
+    row.record_ref ?? "",
+    row.url ?? "",
+    ACTION_LABEL[row.action ?? ""] ?? row.action ?? "",
+  ].some((value) => value.toLowerCase().includes(q));
+}
+
+export const ACTION_VARIANT = (
+  action?: string | null,
+): "default" | "secondary" | "destructive" => {
+  const a = action ?? "";
+  if (a.startsWith("delete") || a.startsWith("cancel") || a === "DELETE") return "destructive";
+  if (a.startsWith("update") || a === "UPDATE") return "secondary";
   return "default";
 };
 

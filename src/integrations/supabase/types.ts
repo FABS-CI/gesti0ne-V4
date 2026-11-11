@@ -8667,6 +8667,7 @@ export type Database = {
         Returns: undefined
       }
       assert_permission: { Args: { _perm: string }; Returns: undefined }
+      audit_action_label: { Args: { p_action: string }; Returns: string }
       audit_compta_factures_anomalies: {
         Args: never
         Returns: {

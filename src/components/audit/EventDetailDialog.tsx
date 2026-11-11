@@ -52,7 +52,7 @@ export function EventDetailDialog({ selected, onClose }: Props) {
                 <span className="font-medium">{selected.user_email || "—"}</span>
                 <span>·</span>
                 <Badge variant={ACTION_VARIANT(selected.action)}>
-                  {ACTION_LABEL[selected.action] ?? selected.action}
+                  {ACTION_LABEL[selected.action ?? ""] ?? selected.action ?? "—"}
                 </Badge>
                 <span>
                   sur <span className="capitalize">{selected.table_name}</span>
@@ -66,7 +66,7 @@ export function EventDetailDialog({ selected, onClose }: Props) {
         {selected && (
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="grid grid-cols-2 gap-2 text-xs sm:col-span-2">
-              <Meta label="Module" value={selected.module ?? selected.table_name} />
+              <Meta label="Module" value={selected.module ?? selected.table_name ?? null} />
               <Meta label="Référence" value={selected.record_ref ?? selected.record_id} />
               <Meta label="URL" value={selected.url} />
               <Meta label="Méthode" value={selected.http_method} />

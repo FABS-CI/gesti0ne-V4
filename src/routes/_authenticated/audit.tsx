@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { exportCsv } from "@/lib/export-csv";
 import { exportListePDF } from "@/lib/pdf/exportListe";
-import { ACTION_LABEL, type AuditRow } from "@/lib/audit-helpers";
+import { ACTION_LABEL, matchesAuditFilters, type AuditRow } from "@/lib/audit-helpers";
 import {
   useAuditEvents,
   useAuditEventsStats,
@@ -70,7 +70,7 @@ function AuditPage() {
   const { data, isLoading, error } = useAuditEvents(moduleFilter, periodFilter);
   const { data: loginMap } = useLoginHistoryLast();
   const presences = useOnlinePresence();
-  const { data: stats } = useAuditEventsStats({
+  const { data: stats, isLoading: statsLoading } = useAuditEventsStats({
     moduleFilter,
     periodFilter,
     userFilter,
@@ -94,7 +94,9 @@ function AuditPage() {
 
   const actions = useMemo(() => {
     const set = new Set<string>();
-    (data ?? []).forEach((r) => set.add(r.action));
+    (data ?? []).forEach((r) => {
+      if (r.action) set.add(r.action);
+    });
     return Array.from(set).sort();
   }, [data]);
 
@@ -104,18 +106,9 @@ function AuditPage() {
     return Array.from(set).sort();
   }, [data]);
 
-  const rows = (data ?? []).filter((r) => {
-    if (actionFilter && r.action !== actionFilter) return false;
-    if (userFilter && r.user_email !== userFilter) return false;
-    if (!search.trim()) return true;
-    const q = search.toLowerCase();
-    return (
-      (r.user_email ?? "").toLowerCase().includes(q) ||
-      r.table_name.toLowerCase().includes(q) ||
-      (r.record_id ?? "").toLowerCase().includes(q) ||
-      (ACTION_LABEL[r.action] ?? r.action).toLowerCase().includes(q)
-    );
-  });
+  const rows = (data ?? []).filter((r) =>
+    matchesAuditFilters(r, { userFilter, actionFilter, search }),
+  );
 
   const perUser = useMemo(() => {
     const map = new Map<
@@ -127,7 +120,7 @@ function AuditPage() {
       const cur = map.get(key) ?? { email: key, total: 0, last: r.occurred_at, actions: {} };
       cur.total += 1;
       if (r.occurred_at > cur.last) cur.last = r.occurred_at;
-      const label = ACTION_LABEL[r.action] ?? r.action;
+      const label = ACTION_LABEL[r.action ?? ""] ?? r.action ?? "—";
       cur.actions[label] = (cur.actions[label] ?? 0) + 1;
       map.set(key, cur);
     });
@@ -145,7 +138,7 @@ function AuditPage() {
         email: r.user_email ?? "—",
         user_id: r.user_id,
         last: r.occurred_at,
-        last_action: r.action,
+        last_action: r.action ?? "",
         ip: r.ip_address,
         count: 0,
         device: r.device ?? null,
@@ -158,7 +151,7 @@ function AuditPage() {
       cur.count += 1;
       if (r.occurred_at > cur.last) {
         cur.last = r.occurred_at;
-        cur.last_action = r.action;
+        cur.last_action = r.action ?? "";
         cur.ip = r.ip_address ?? cur.ip;
         cur.device = r.device ?? cur.device;
         cur.browser = r.browser ?? cur.browser;
@@ -313,12 +306,27 @@ function AuditPage() {
     });
   }
 
-  const totalEvents = stats?.totalEvents ?? data?.length ?? 0;
+  const totalEvents = stats?.totalEvents ?? 0;
   const uniqueUsers = stats?.uniqueUsers ?? users.length;
   const todayCount =
     stats?.todayEvents ??
     (data ?? []).filter((r) => new Date(r.occurred_at).toDateString() === new Date().toDateString())
       .length;
+
+  const PERIOD_LABEL: Record<string, string> = {
+    "1": "aujourd'hui",
+    "7": "7 derniers jours",
+    "30": "30 derniers jours",
+    "90": "90 derniers jours",
+    all: "tout l'historique",
+  };
+  const periodLabel = PERIOD_LABEL[periodFilter] ?? "tout l'historique";
+  const hasActiveFilters = !!(userFilter || actionFilter || moduleFilter || search.trim());
+  const headerDescription = statsLoading
+    ? "Traçabilité complète — chargement…"
+    : hasActiveFilters
+      ? `Traçabilité complète — ${totalEvents} événement(s) correspondant aux filtres · ${periodLabel}`
+      : `Traçabilité complète — ${totalEvents} événement(s) · ${periodLabel}`;
 
   if (error) {
     return (
@@ -361,20 +369,21 @@ function AuditPage() {
       rows.map((r) => [
         formatDateTime(r.occurred_at),
         r.user_email ?? "",
-        ACTION_LABEL[r.action] ?? r.action,
-        r.table_name,
+        ACTION_LABEL[r.action ?? ""] ?? r.action ?? "",
+        r.table_name ?? "",
         r.record_ref ?? r.record_id ?? "",
       ]),
       {
         pageTitle: "JOURNAL D'AUDIT",
         summary: [
           { label: "Événements exportés", value: String(rows.length) },
-          { label: "Événements totaux", value: String(totalEvents) },
+          { label: "Événements correspondants", value: String(totalEvents) },
+          { label: "Période", value: periodLabel },
           { label: "Événements du jour", value: String(todayCount) },
           { label: "Utilisateurs distincts", value: String(uniqueUsers) },
           {
             label: "Modules concernés",
-            value: String(new Set(rows.map((r) => r.table_name)).size),
+            value: String(new Set(rows.map((r) => r.table_name ?? "")).size),
           },
         ],
       },
@@ -386,7 +395,7 @@ function AuditPage() {
       <ListPageHeader
         overline="Administration"
         title="Journal d'audit"
-        description={`Traçabilité complète — ${rows.length} / ${totalEvents} événement(s)`}
+        description={headerDescription}
         actions={
           <>
             <Button variant="outline" size="sm" onClick={onExport}>
@@ -415,7 +424,7 @@ function AuditPage() {
 
       <AuditLiveBar onApplyPreset={applyPreset} />
 
-      <AuditStats kpi={kpi} totalEvents={totalEvents} />
+      <AuditStats kpi={kpi} totalEvents={totalEvents} isLoading={statsLoading} />
 
       <AuditCharts days={Number(periodFilter) || 30} />
 
