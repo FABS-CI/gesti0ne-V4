@@ -65,7 +65,8 @@
 ## Paramètres Paie CI — demande du 22 octobre 2026
 - [x] Source unique régime, paramètres éditables et audit, suppression du chemin legacy
 - [x] Calcul serveur et aperçu : CMU 500 chacun, ITS 2024 nul, ancienneté, transport et arrondi supérieur à 5 — 5 cas réels contrôlés sur le serveur (162 435, 158 100, 179 585, prorata 20 jours, gros salaire ITS 0), identiques aux tests ; aperçu connecté conforme (net 766 905, arrondi +2), rien enregistré
-- [ ] Simulation, tests unitaires/SQL par régime et PDF du cas de référence, contrôle visuel
+- [x] PDF du cas de référence (162 435 FCFA) contrôlé visuellement : bande NET À PAYER rétablie (centrée, sans filet orange ni « Payé par… ») sur PDF et écran, CNPS/RCCM séparés ; 137 tests paie/PDF réussis
+- [ ] Arbitrage I.G.R régime 2022 (0 par la formule 2024 contre 1 693 sur le bulletin modèle) — attend la réponse de l'utilisateur
 
 ## Liens clients et produits (file-80)
 - [ ] Enrichir les lectures avec les identifiants réels, par lots de 200
