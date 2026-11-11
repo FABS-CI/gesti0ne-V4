@@ -161,12 +161,12 @@ export function matchesAuditFilters(
   if (!q) return true;
   return [
     row.user_email ?? "",
-    row.action,
-    row.table_name,
+    row.action ?? "",
+    row.table_name ?? "",
     row.record_id ?? "",
     row.record_ref ?? "",
     row.url ?? "",
-    ACTION_LABEL[row.action] ?? row.action,
+    ACTION_LABEL[row.action ?? ""] ?? row.action ?? "",
   ].some((value) => value.toLowerCase().includes(q));
 }
 

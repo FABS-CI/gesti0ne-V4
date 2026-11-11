@@ -53,6 +53,13 @@ describe("matchesAuditFilters", () => {
   it("ignore la casse et les espaces de recherche", () => {
     expect(matchesAuditFilters(row({}), { search: "  FAC-2026-00042  " })).toBe(true);
   });
+
+  it("reste utilisable quand le module, l'action ou l'url sont absents", () => {
+    const sparse = row({ table_name: null, action: null, url: null, record_id: null, record_ref: null });
+    expect(matchesAuditFilters(sparse, { search: "suppression" })).toBe(false);
+    expect(matchesAuditFilters(sparse, { search: "" })).toBe(true);
+    expect(matchesAuditFilters(sparse, { actionFilter: "DELETE" })).toBe(false);
+  });
 });
 
 describe("diffAuditValues", () => {
