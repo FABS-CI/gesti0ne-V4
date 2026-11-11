@@ -63,7 +63,7 @@
 - [ ] Lot 1 : session perdue au rechargement quand « Se souvenir de moi » est décoché — à analyser
 
 ## Paramètres Paie CI — demande du 22 octobre 2026
-- [ ] Source unique régime, paramètres éditables et audit, suppression du chemin legacy
+- [x] Source unique régime, paramètres éditables et audit, suppression du chemin legacy
 - [ ] Calcul serveur et aperçu : CMU 500 chacun, ITS 2024 nul, ancienneté, transport et arrondi supérieur à 5
 - [ ] Simulation, tests unitaires/SQL par régime et PDF du cas de référence, contrôle visuel
 
