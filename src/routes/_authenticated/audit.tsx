@@ -311,6 +311,21 @@ function AuditPage() {
     (data ?? []).filter((r) => new Date(r.occurred_at).toDateString() === new Date().toDateString())
       .length;
 
+  const PERIOD_LABEL: Record<string, string> = {
+    "1": "aujourd'hui",
+    "7": "7 derniers jours",
+    "30": "30 derniers jours",
+    "90": "90 derniers jours",
+    all: "tout l'historique",
+  };
+  const periodLabel = PERIOD_LABEL[periodFilter] ?? "tout l'historique";
+  const hasActiveFilters = !!(userFilter || actionFilter || moduleFilter || search.trim());
+  const headerDescription = statsLoading
+    ? "Traçabilité complète — chargement…"
+    : hasActiveFilters
+      ? `Traçabilité complète — ${totalEvents} événement(s) correspondant aux filtres · ${periodLabel}`
+      : `Traçabilité complète — ${totalEvents} événement(s) · ${periodLabel}`;
+
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-20 text-center">
@@ -360,7 +375,8 @@ function AuditPage() {
         pageTitle: "JOURNAL D'AUDIT",
         summary: [
           { label: "Événements exportés", value: String(rows.length) },
-          { label: "Événements totaux", value: String(totalEvents) },
+          { label: "Événements correspondants", value: String(totalEvents) },
+          { label: "Période", value: periodLabel },
           { label: "Événements du jour", value: String(todayCount) },
           { label: "Utilisateurs distincts", value: String(uniqueUsers) },
           {
@@ -377,7 +393,7 @@ function AuditPage() {
       <ListPageHeader
         overline="Administration"
         title="Journal d'audit"
-        description={`Traçabilité complète — ${rows.length} / ${totalEvents} événement(s)`}
+        description={headerDescription}
         actions={
           <>
             <Button variant="outline" size="sm" onClick={onExport}>
@@ -406,7 +422,7 @@ function AuditPage() {
 
       <AuditLiveBar onApplyPreset={applyPreset} />
 
-      <AuditStats kpi={kpi} totalEvents={totalEvents} />
+      <AuditStats kpi={kpi} totalEvents={totalEvents} isLoading={statsLoading} />
 
       <AuditCharts days={Number(periodFilter) || 30} />
 
