@@ -53,10 +53,11 @@ const TILES: Tile[] = [
   { key: "security_alerts", label: "Alertes sécurité", icon: Bell, color: "text-destructive" },
 ];
 
-type Props = { kpi?: AuditKpi; totalEvents?: number };
+type Props = { kpi?: AuditKpi; totalEvents?: number; isLoading?: boolean };
 
-export function AuditStats({ kpi, totalEvents }: Props) {
+export function AuditStats({ kpi, totalEvents, isLoading }: Props) {
   const v = (k: keyof AuditKpi) => Number(kpi?.[k] ?? 0);
+  const kpiReady = kpi != null;
   return (
     <div className="space-y-3">
       {typeof totalEvents === "number" && (
@@ -64,7 +65,7 @@ export function AuditStats({ kpi, totalEvents }: Props) {
           <CardContent className="flex items-center gap-3 p-4">
             <div className="text-sm text-muted-foreground">Événements sur la période</div>
             <div className="ml-auto text-2xl font-bold tabular-nums">
-              {formatFCFA(totalEvents, false)}
+              {isLoading ? "…" : formatFCFA(totalEvents, false)}
             </div>
           </CardContent>
         </Card>
@@ -75,7 +76,7 @@ export function AuditStats({ kpi, totalEvents }: Props) {
             <CardContent className="p-3">
               <div className="min-w-0">
                 <div className="text-lg font-bold tabular-nums leading-tight">
-                  {formatFCFA(v(key), false)}
+                  {kpiReady ? formatFCFA(v(key), false) : "…"}
                 </div>
                 <div className="truncate text-xs text-muted-foreground">{label}</div>
               </div>
