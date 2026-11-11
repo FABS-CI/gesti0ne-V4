@@ -94,7 +94,9 @@ function AuditPage() {
 
   const actions = useMemo(() => {
     const set = new Set<string>();
-    (data ?? []).forEach((r) => set.add(r.action));
+    (data ?? []).forEach((r) => {
+      if (r.action) set.add(r.action);
+    });
     return Array.from(set).sort();
   }, [data]);
 
@@ -118,7 +120,7 @@ function AuditPage() {
       const cur = map.get(key) ?? { email: key, total: 0, last: r.occurred_at, actions: {} };
       cur.total += 1;
       if (r.occurred_at > cur.last) cur.last = r.occurred_at;
-      const label = ACTION_LABEL[r.action] ?? r.action;
+      const label = ACTION_LABEL[r.action ?? ""] ?? r.action ?? "—";
       cur.actions[label] = (cur.actions[label] ?? 0) + 1;
       map.set(key, cur);
     });
@@ -136,7 +138,7 @@ function AuditPage() {
         email: r.user_email ?? "—",
         user_id: r.user_id,
         last: r.occurred_at,
-        last_action: r.action,
+        last_action: r.action ?? "",
         ip: r.ip_address,
         count: 0,
         device: r.device ?? null,
@@ -149,7 +151,7 @@ function AuditPage() {
       cur.count += 1;
       if (r.occurred_at > cur.last) {
         cur.last = r.occurred_at;
-        cur.last_action = r.action;
+        cur.last_action = r.action ?? "";
         cur.ip = r.ip_address ?? cur.ip;
         cur.device = r.device ?? cur.device;
         cur.browser = r.browser ?? cur.browser;
@@ -367,8 +369,8 @@ function AuditPage() {
       rows.map((r) => [
         formatDateTime(r.occurred_at),
         r.user_email ?? "",
-        ACTION_LABEL[r.action] ?? r.action,
-        r.table_name,
+        ACTION_LABEL[r.action ?? ""] ?? r.action ?? "",
+        r.table_name ?? "",
         r.record_ref ?? r.record_id ?? "",
       ]),
       {
@@ -381,7 +383,7 @@ function AuditPage() {
           { label: "Utilisateurs distincts", value: String(uniqueUsers) },
           {
             label: "Modules concernés",
-            value: String(new Set(rows.map((r) => r.table_name)).size),
+            value: String(new Set(rows.map((r) => r.table_name ?? "")).size),
           },
         ],
       },
