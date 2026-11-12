@@ -171,8 +171,8 @@ Rapport cumulatif : AUDIT-RAPPORT.md
 - [x] Centre d'approbations retiré, 2 retours en attente approuvés
 ## Matricule employés EP-01
 - [x] Base : génération EP-01…, 7 employés renumérotés, contraintes
-- [ ] Formulaire employé (champ en lecture seule), page Employés, texte de confirmation
-- [ ] Tests du nouveau format
+- [x] Formulaire employé (champ en lecture seule, jamais envoyé), page Employés, confirmation « Employé créé — matricule EP-NN »
+- [x] Tests du nouveau format (4 tests)
 
 - [ ] Sécurité : ajouter un contrôle de droit aux 12 fonctions signalées par le test RLS n°11 (dont paie_enregistrer_bulletin)
 - [ ] Sécurité : tables hors migrations (backup_cron_config, signature_keys…) — attend validation après lecture des politiques
