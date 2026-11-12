@@ -192,7 +192,7 @@ function EmployesPage() {
           <Button
             variant="outline"
             onClick={async () => {
-              if (await askConfirm("Renuméroter tous les matricules (EMP-00001…) ?"))
+              if (await askConfirm("Renuméroter tous les matricules (EP-01, EP-02…) par ancienneté ?"))
                 renumberMutation.mutate();
             }}
             disabled={renumberMutation.isPending || !employes.length}
