@@ -1,3 +1,4 @@
+import { withoutMatricule } from "@/lib/employe-matricule";
 import { pgSafe } from "@/lib/postgrest-filter";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -156,8 +157,8 @@ export async function listEmployes(q?: string) {
 }
 
 export async function createEmploye(input: EmployeInput) {
-  const payload = { ...input };
-  if (!payload.matricule) delete (payload as { matricule?: string | null }).matricule;
+  // Le matricule (EP-NN) est attribué uniquement par la base.
+  const payload = withoutMatricule(input);
   const { data, error } = await supabase
     .from("employes")
     .insert(payload as never)
@@ -168,10 +169,8 @@ export async function createEmploye(input: EmployeInput) {
 }
 
 export async function updateEmploye(id: string, input: Partial<EmployeInput>) {
-  const payload = { ...input };
-  if (payload.matricule === "" || payload.matricule === null) {
-    delete (payload as { matricule?: string | null }).matricule;
-  }
+  // Le matricule ne se modifie pas depuis le formulaire (renumérotation dédiée).
+  const payload = withoutMatricule(input);
   const { data, error } = await supabase
     .from("employes")
     .update(payload as never)

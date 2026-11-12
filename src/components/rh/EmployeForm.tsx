@@ -1,3 +1,4 @@
+import { employeCreeMessage } from "@/lib/employe-matricule";
 import { askConfirm } from "@/components/common/GlobalConfirm";
 import { formatDateTime } from "@/lib/format";
 import { useRef, useState } from "react";
@@ -202,7 +203,7 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
         }
       }
       setInitialSnapshot(JSON.stringify(form));
-      toast.success(editing ? "Employé modifié" : "Employé créé");
+      toast.success(editing ? "Employé modifié" : employeCreeMessage(emp.matricule));
       qc.invalidateQueries({ queryKey: ["employes"] });
       qc.invalidateQueries({ queryKey: ["employe", emp.employe_id] });
       qc.invalidateQueries({ queryKey: ["rh-dashboard"] });
@@ -271,9 +272,11 @@ export function EmployeForm({ employe }: { employe?: Employe }) {
               </div>
               <Field label="Matricule">
                 <Input
-                  value={form.matricule ?? ""}
-                  onChange={(e) => set("matricule", e.target.value)}
-                  placeholder={editing ? employe!.matricule : "Auto si vide"}
+                  value={editing ? employe!.matricule : ""}
+                  readOnly
+                  disabled
+                  aria-readonly="true"
+                  placeholder="Attribué automatiquement (EP-01, EP-02…)"
                 />
               </Field>
               <Field label="Civilité">
